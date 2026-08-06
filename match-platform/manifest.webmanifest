@@ -1,0 +1,10 @@
+{
+  "name": "羽毛球比赛现场管理平台",
+  "short_name": "羽球赛管",
+  "description": "羽毛球比赛现场签到、分组、对阵、计分、统计与汇总",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f1f5f9",
+  "theme_color": "#0f766e",
+  "icons": []
+}
