@@ -1,0 +1,483 @@
+/* ui.js — 渲染层：8 个 Tab + 弹窗 + 对阵图 + 比分录入
+ * 纯 DOM 字符串渲染 + 事件委托（app.js 统一分发 data-act）。
+ */
+window.UI = (function () {
+  const DISC_CODES = ["MS", "WS", "MD", "WD", "XD"];
+  const DISC_NAMES = CSVUtil.DISC_BY_CODE;
+
+  function esc(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+  function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.hidden = false;
+    clearTimeout(toast._t); toast._t = setTimeout(() => { t.hidden = true; }, 1800);
+  }
+  function openModal(html) {
+    const mask = document.getElementById("modal");
+    document.getElementById("modalCard").innerHTML = html;
+    mask.hidden = false;
+  }
+  function closeModal() { document.getElementById("modal").hidden = true; }
+
+  /* ---------- context helpers ---------- */
+  function activeEvent() { return Store.curEvent(); }
+  function activeDisc() {
+    const ev = activeEvent(); if (!ev) return null;
+    const discs = ev.disciplines || [];
+    const ui = Store.getUI();
+    let d = discs.find(x => x.id === ui.activeDisciplineId);
+    if (!d && discs.length) d = discs[0];
+    return d || null;
+  }
+
+  function newDiscipline(code) {
+    return {
+      id: Store.uid("D"), code: code, name: DISC_NAMES[code],
+      scoringMode: "31x1", thirdPlace: true, seedCount: 0,
+      entrants: [], matches: [], totalRounds: 0, bracketSize: 0, byeCount: 0, status: "empty"
+    };
+  }
+
+  function entrantLabel(disc, id) {
+    if (!id) return null;
+    const e = Store.getEntrant(disc, id);
+    return e ? e.label : "?";
+  }
+
+  /* ============================================================
+   *  TAB: 赛事
+   * ========================================================== */
+  function renderEvents() {
+    const events = Store.allEvents();
+    let h = '<div class="card"><div class="spread"><h2>赛事管理</h2>'
+      + '<button class="btn primary sm" data-act="new-event">+ 新建赛事</button></div>';
+    if (!events.length) {
+      h += '<div class="empty">还没有赛事，点右上角「新建赛事」开始。</div>';
+    } else {
+      events.forEach(ev => {
+        const isActive = Store.getUI().activeEventId === ev.id;
+        const discTxt = (ev.disciplines || []).map(d => esc(d.name)).join("、") || "无项目";
+        h += '<div class="list-item">'
+          + '<div class="avatar">' + esc((ev.name || "赛")[0]) + '</div>'
+          + '<div class="item-main"><div class="nm">' + esc(ev.name) + (isActive ? ' <span class="badge done">当前</span>' : '') + '</div>'
+          + '<div class="sub">' + esc(ev.date || "日期未设") + ' · ' + esc(ev.venue || "地点未设") + ' · ' + discTxt + '</div></div>'
+          + '<button class="btn sm" data-act="open-event" data-id="' + ev.id + '">打开</button>'
+          + '<button class="btn sm" data-act="edit-event" data-id="' + ev.id + '">编辑</button>'
+          + '<button class="btn sm danger" data-act="del-event" data-id="' + ev.id + '">删除</button>'
+          + '</div>';
+      });
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function eventForm(ev) {
+    const isEdit = !!ev;
+    const e = ev || { name: "", date: "", venue: "星羿羽毛球馆", note: "", disciplines: [] };
+    const checked = {};
+    (e.disciplines || []).forEach(d => { checked[d.code] = true; });
+    let chips = DISC_CODES.map(c =>
+      '<label class="chip ' + (checked[c] ? "on" : "") + '"><input type="checkbox" name="disc" value="' + c + '" ' + (checked[c] ? "checked" : "") + '> ' + DISC_NAMES[c] + '</label>'
+    ).join("");
+    return '<div class="modal-card">'
+      + '<h3>' + (isEdit ? "编辑赛事" : "新建赛事") + '</h3>'
+      + '<div class="field"><label>赛事名称</label><input id="f_name" value="' + esc(e.name) + '" placeholder="如：2026 星羿杯"></div>'
+      + '<div class="row">'
+      + '<div class="field" style="flex:1"><label>日期</label><input id="f_date" value="' + esc(e.date) + '" placeholder="2026-08-10"></div>'
+      + '<div class="field" style="flex:1"><label>地点</label><input id="f_venue" value="' + esc(e.venue) + '"></div></div>'
+      + '<div class="field"><label>比赛项目（可多选）</label><div class="check-grid">' + chips + '</div></div>'
+      + '<div class="field"><label>备注</label><input id="f_note" value="' + esc(e.note) + '"></div>'
+      + '<div class="row" style="margin-top:8px">'
+      + '<button class="btn primary block" data-act="' + (isEdit ? "save-event" : "create-event") + '" ' + (isEdit ? 'data-id="' + e.id + '"' : '') + '>保存</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>'
+      + '</div>';
+  }
+
+  /* ============================================================
+   *  TAB: 名单
+   * ========================================================== */
+  function renderRoster() {
+    const players = Store.allPlayers();
+    let h = '<div class="card"><div class="spread"><h2>选手名单</h2>'
+      + '<div class="row">'
+      + '<button class="btn sm" data-act="import-players">从表格导入</button>'
+      + '<button class="btn sm" data-act="new-player">+ 添加</button>'
+      + '<button class="btn sm" data-act="export-players">导出</button>'
+      + '</div></div>';
+    if (!players.length) {
+      h += '<div class="empty">还没有选手。可手动添加，或粘贴 Excel / 微信导出的表格批量导入。</div>';
+    } else {
+      h += '<div class="tbl-wrap"><table><thead><tr><th>姓名</th><th>搭档</th><th>项目</th><th>单位</th><th></th></tr></thead><tbody>';
+      players.forEach(p => {
+        const discs = (p.disciplines || []).map(c => DISC_NAMES[c] || c).join("/");
+        h += '<tr><td>' + esc(p.name) + '</td><td>' + esc(p.partner || "—") + '</td><td>' + esc(discs || "—") + '</td><td>' + esc(p.club || "—") + '</td>'
+          + '<td><button class="btn sm danger" data-act="del-player" data-id="' + p.id + '">删</button></td></tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function playerForm() {
+    let chips = DISC_CODES.map(c =>
+      '<label class="chip"><input type="checkbox" name="pdisc" value="' + c + '"> ' + DISC_NAMES[c] + '</label>'
+    ).join("");
+    return '<h3>添加选手</h3>'
+      + '<div class="field"><label>姓名</label><input id="p_name" placeholder="必填"></div>'
+      + '<div class="row">'
+      + '<div class="field" style="flex:1"><label>搭档（双打）</label><input id="p_partner" placeholder="如参加双打填这里"></div>'
+      + '<div class="field" style="flex:1"><label>性别</label><input id="p_gender" placeholder="男/女"></div></div>'
+      + '<div class="row">'
+      + '<div class="field" style="flex:1"><label>单位/俱乐部</label><input id="p_club"></div>'
+      + '<div class="field" style="flex:1"><label>电话</label><input id="p_phone"></div></div>'
+      + '<div class="row">'
+      + '<div class="field" style="flex:1"><label>水平分档（用于种子排序）</label><input id="p_level" type="number" placeholder="数字越大越强"></div>'
+      + '<div class="field" style="flex:1"><label>种子号</label><input id="p_seed" type="number" placeholder="0=非种子"></div></div>'
+      + '<div class="field"><label>报名项目</label><div class="check-grid">' + chips + '</div></div>'
+      + '<div class="row" style="margin-top:8px">'
+      + '<button class="btn primary block" data-act="save-player">保存</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>';
+  }
+
+  function importForm() {
+    return '<h3>从表格导入</h3>'
+      + '<p class="muted" style="margin:0 0 8px">支持两种方式：① 点下方「选择文件」直接上传 .csv / .txt / 制表符表格；② 从 Excel / 微信复制后粘贴到文本框。'
+      + '支持表头：姓名、搭档、性别、项目、单位、电话、水平、种子。逗号 / 制表符 / 中文逗号均可。同名且同项目自动去重。</p>'
+      + '<div class="field"><label>从文件导入</label><input type="file" id="imp_csv" accept=".csv,.txt,.tsv,text/csv,text/plain"></div>'
+      + '<textarea id="imp_text" placeholder="姓名,项目,单位\n张三,男单/男双,星羿\n李四,女单,星羿"></textarea>'
+      + '<div id="imp_preview" class="muted" style="margin:8px 0"></div>'
+      + '<div class="row">'
+      + '<button class="btn primary block" data-act="confirm-import">解析并导入</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>';
+  }
+
+  /* ============================================================
+   *  TAB: 签到
+   * ========================================================== */
+  function renderCheckin() {
+    const players = Store.allPlayers();
+    const sum = Checkin.summary();
+    let h = '<div class="card"><div class="stat-grid">'
+      + '<div class="stat-box"><div class="stat-num">' + sum.total + '</div><div class="muted">总人数</div></div>'
+      + '<div class="stat-box"><div class="stat-num" style="color:var(--ok)">' + sum.present + '</div><div class="muted">已签到</div></div>'
+      + '<div class="stat-box"><div class="stat-num" style="color:var(--bad)">' + sum.absent + '</div><div class="muted">未到</div></div>'
+      + '</div>';
+    const dc = DISC_CODES.filter(c => sum.byDisc[c]).map(c => DISC_NAMES[c] + " " + sum.byDisc[c]).join(" · ");
+    if (dc) h += '<div class="muted" style="margin-top:8px">各项目到场：' + dc + '</div>';
+    h += '<div class="row" style="margin-top:10px">'
+      + '<button class="btn sm primary" data-act="checkin-all" data-id="1">全部签到</button>'
+      + '<button class="btn sm" data-act="checkin-all" data-id="0">全部取消</button>'
+      + '</div></div>';
+
+    h += '<div class="card"><h2>签到名单</h2>';
+    if (!players.length) h += '<div class="empty">名单为空，请先到「名单」添加选手。</div>';
+    else {
+      players.forEach(p => {
+        const discs = (p.disciplines || []).map(c => DISC_NAMES[c] || c).join("/");
+        h += '<div class="list-item">'
+          + '<div class="avatar">' + esc((p.name || "?")[0]) + '</div>'
+          + '<div class="item-main"><div class="nm">' + esc(p.name) + (p.present ? ' <span class="badge done">已到</span>' : '') + '</div>'
+          + '<div class="sub">' + esc(discs || "无项目") + (p.club ? ' · ' + esc(p.club) : '') + '</div></div>'
+          + '<label class="switch"><input type="checkbox" ' + (p.present ? "checked" : "") + ' data-act="toggle-present" data-id="' + p.id + '"><span class="slider"></span></label>'
+          + '</div>';
+      });
+    }
+    h += '</div>';
+    return h;
+  }
+
+  /* ============================================================
+   *  通用：项目选择器
+   * ========================================================== */
+  function disciplineSelector() {
+    const ev = activeEvent(); if (!ev) return "";
+    const discs = ev.disciplines || [];
+    const cur = activeDisc();
+    if (!discs.length) return '<div class="empty">该赛事未设置比赛项目。</div>';
+    let h = '<div class="disc-select">';
+    discs.forEach(d => {
+      h += '<button class="disc-pill ' + (cur && cur.id === d.id ? "active" : "") + '" data-act="set-disc" data-id="' + d.id + '">' + esc(d.name) + '</button>';
+    });
+    h += '</div>';
+    return h;
+  }
+
+  /* ============================================================
+   *  TAB: 分组 / 生成对阵
+   * ========================================================== */
+  function renderGroup() {
+    const ev = activeEvent();
+    if (!ev) return '<div class="card"><div class="empty">请先在「赛事」中创建并打开一个赛事。</div></div>';
+    const sel = disciplineSelector();
+    const d = activeDisc();
+    if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
+
+    const entrants = Seeding.buildEntrants(d);
+    let h = '<div class="card">' + sel;
+    h += '<div class="spread"><h2>' + esc(d.name) + ' · 分组与对阵</h2></div>';
+
+    // 配置
+    const rules = Scoring.RULES;
+    let ruleOpts = Object.keys(rules).map(k => '<option value="' + k + '" ' + (d.scoringMode === k ? "selected" : "") + '>' + rules[k].name + '</option>').join("");
+    h += '<div class="row" style="margin:8px 0">'
+      + '<div class="field" style="flex:1"><label>赛制（计分）</label><select id="g_scoring">' + ruleOpts + '</select></div>'
+      + '<div class="field" style="flex:1"><label>种子数量</label><input id="g_seed" type="number" min="0" value="' + (d.seedCount || 0) + '"></div>'
+      + '<div class="field" style="flex:0 0 auto"><label>&nbsp;</label><label class="chip ' + (d.thirdPlace ? "on" : "") + '"><input type="checkbox" id="g_third" ' + (d.thirdPlace ? "checked" : "") + '> 打三四名</label></div>'
+      + '</div>';
+
+    // 到场人数
+    h += '<div class="muted">当前到场可参赛人数：<b>' + entrants.length + '</b> 人'
+      + (d.code === "MS" || d.code === "WS" ? '（单打，每人 1 席）' : '（双打，需已填搭档）') + '</div>';
+    if (d.code !== "MS" && d.code !== "WS") {
+      const miss = Seeding.missingPartner(d);
+      if (miss.length) h += '<div class="badge bye">有 ' + miss.length + ' 名到场选手未填搭档，将无法成组</div>';
+    }
+    if (!entrants.length) {
+      h += '<div class="empty">到场人数不足。请先到「签到」让选手签到。</div>';
+    }
+
+    // 已生成状态
+    if (d.status === "drawn" && d.matches.length) {
+      h += '<div class="row" style="margin-top:10px">'
+        + '<span class="badge done">已生成对阵</span>'
+        + '<span class="muted">签表 ' + d.bracketSize + ' · 轮空 ' + d.byeCount + ' · 共 ' + d.matches.length + ' 场</span>'
+        + '<button class="btn sm primary" data-act="draw">重新生成</button></div>';
+    } else {
+      h += '<div class="row" style="margin-top:10px">'
+        + '<button class="btn primary" data-act="draw"' + (entrants.length < 2 ? " disabled" : "") + '>生成对阵</button></div>';
+    }
+
+    // 名单预览
+    if (entrants.length) {
+      h += '<div class="tbl-wrap" style="margin-top:10px"><table><thead><tr><th>#</th><th>参赛单元</th><th>种子</th></tr></thead><tbody>';
+      entrants.forEach((e, i) => {
+        h += '<tr><td>' + (i + 1) + '</td><td>' + esc(e.label) + '</td><td>' + (e.seed > 0 ? "S" + e.seed : "—") + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  /* ============================================================
+   *  TAB: 赛程
+   * ========================================================== */
+  function renderSchedule() {
+    const ev = activeEvent();
+    if (!ev) return '<div class="card"><div class="empty">请先创建并打开赛事。</div></div>';
+    const sel = disciplineSelector();
+    const d = activeDisc();
+    if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
+    if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵，请先到「分组」生成。</div></div>';
+
+    const rounds = {};
+    d.matches.forEach(m => { (rounds[m.round] = rounds[m.round] || []).push(m); });
+    const rkeys = Object.keys(rounds).map(Number).sort((a, b) => a - b);
+
+    let h = '<div class="card">' + sel + '<h2>赛程 · ' + esc(d.name) + '</h2>';
+    rkeys.forEach(r => {
+      const ms = rounds[r].slice().sort((a, b) => a.slotIndex - b.slotIndex);
+      h += '<h3>' + esc(ms[0].roundLabel || ("第" + r + "轮")) + '</h3>';
+      h += '<div class="tbl-wrap"><table><thead><tr><th>场序</th><th>对阵</th><th>状态</th><th>台号</th><th>操作</th></tr></thead><tbody>';
+      ms.forEach((m, i) => {
+        const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
+        let vs = (!aL ? "待定" : esc(aL)) + " vs " + (!bL ? "待定" : esc(bL));
+        if (m.a.source && m.a.source.type === "bye") vs = "轮空 → " + esc(bL || "待定");
+        else if (m.b.source && m.b.source.type === "bye") vs = esc(aL || "待定") + " → 轮空";
+        const score = m.result ? m.result.games.map(g => g[0] + ":" + g[1]).join("，") : "";
+        const stCls = m.status === "done" ? "done" : (m.status === "ready" ? "ready" : "pending");
+        const stTxt = m.status === "done" ? "已录" : (m.status === "ready" ? "可进行" : "待定");
+        const op = m.status === "done"
+          ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
+          : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '"' + (m.status !== "ready" ? " disabled" : "") + '>录入</button>';
+        h += '<tr><td>' + (i + 1) + '</td><td>' + vs + (score ? ' <span class="muted">(' + score + ')</span>' : '') + '</td>'
+          + '<td><span class="badge ' + stCls + '">' + stTxt + '</span></td>'
+          + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:54px;padding:5px 6px" placeholder="台"></td>'
+          + '<td>' + op + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    });
+    h += '</div>';
+    return h;
+  }
+
+  /* ============================================================
+   *  TAB: 对阵图
+   * ========================================================== */
+  function renderBracket() {
+    const ev = activeEvent();
+    if (!ev) return '<div class="card"><div class="empty">请先创建并打开赛事。</div></div>';
+    const sel = disciplineSelector();
+    const d = activeDisc();
+    if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
+    if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵，请先到「分组」生成。</div></div>';
+
+    const total = d.totalRounds || 1;
+    let h = '<div class="card">' + sel + '<h2>对阵图 · ' + esc(d.name) + '</h2>';
+    h += '<div class="bracket-scroll"><div class="bracket">';
+    for (let r = 1; r <= total; r++) {
+      const ms = d.matches.filter(m => m.round === r && m.stage === "ko")
+        .slice().sort((a, b) => a.slotIndex - b.slotIndex);
+      if (r === total) {
+        const third = d.matches.find(m => m.stage === "third");
+        if (third) ms.push(third);
+      }
+      h += '<div class="round"><div class="round-label">' + esc(ms[0] && ms[0].stage === "third" ? "三四名" : (ms[0] ? ms[0].roundLabel : "R" + r)) + '</div>';
+      ms.forEach(m => { h += matchCard(d, m); });
+      h += '</div>';
+    }
+    h += '</div></div></div>';
+    return h;
+  }
+
+  function matchCard(d, m) {
+    const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
+    const isByeA = m.a.source && m.a.source.type === "bye";
+    const isByeB = m.b.source && m.b.source.type === "bye";
+    const winSide = m.result ? m.result.winner : null;
+    const score = m.result ? m.result.games.map(g => g[0] + ":" + g[1]).join(" ") : "";
+    function slot(side, label, isBye) {
+      if (!label && !isBye) return '<div class="slot empty"><span class="nm">待定</span></div>';
+      let cls = "slot";
+      if (m.result) cls += (winSide === side ? " win" : " lose");
+      const nm = isBye ? "轮空" : label;
+      return '<div class="' + cls + '"><span class="nm">' + esc(nm) + '</span>' + (score && winSide === side ? '<span class="sc">' + esc(score) + '</span>' : (isBye ? '<span class="sc">轮空</span>' : '')) + '</div>';
+    }
+    const clickable = m.status === "ready" || m.status === "done";
+    const attr = clickable ? ' data-act="score" data-id="' + m.id + '" style="cursor:pointer"' : '';
+    return '<div class="match ' + (m.status === "done" ? "done" : "tbd") + '"' + attr + '>'
+      + slot("a", aL, isByeA)
+      + slot("b", bL, isByeB)
+      + '</div>';
+  }
+
+  /* ============================================================
+   *  TAB: 汇总
+   * ========================================================== */
+  function renderSummary() {
+    const ev = activeEvent();
+    if (!ev) return '<div class="card"><div class="empty">请先创建并打开赛事。</div></div>';
+    const sel = disciplineSelector();
+    const d = activeDisc();
+    if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
+    if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵。</div></div>';
+
+    const done = d.matches.filter(m => m.result).length;
+    const total = d.matches.length;
+    let h = '<div class="card">' + sel + '<h2>汇总 · ' + esc(d.name) + '</h2>';
+    h += '<div class="stat-grid">'
+      + '<div class="stat-box"><div class="stat-num">' + done + '/' + total + '</div><div class="muted">已录场次</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + (d.entrants ? d.entrants.length : 0) + '</div><div class="muted">参赛单元</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + d.bracketSize + '</div><div class="muted">签表</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + d.byeCount + '</div><div class="muted">轮空</div></div>'
+      + '</div>';
+    h += '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出名次 CSV</button></div>';
+
+    const rank = Stats.finalRanking(d);
+    if (rank.length) {
+      h += '<h3>最终名次</h3><div class="tbl-wrap"><table><thead><tr><th>名次</th><th>参赛单元</th><th>类型</th></tr></thead><tbody>';
+      rank.forEach(r => {
+        const medal = r.rank === 1 ? "🥇" : r.rank === 2 ? "🥈" : r.rank === 3 ? "🥉" : r.rank;
+        h += '<tr><td class="rank-' + r.rank + '">' + (typeof medal === "string" && r.rank <= 3 ? medal + " " : "") + r.rank + '</td><td>' + esc(r.label) + '</td><td>' + (r.kind === "pair" ? "双打" : "单打") + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    } else {
+      h += '<div class="empty">比赛尚未产生名次，录完决赛后自动生成。</div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  /* ============================================================
+   *  TAB: 数据备份
+   * ========================================================== */
+  function renderBackup() {
+    return '<div class="card"><h2>数据备份与恢复</h2>'
+      + '<p class="muted">所有数据保存在本机浏览器（localStorage）。换设备请用「导出 JSON」备份，再到新设备「导入 JSON」。</p>'
+      + '<div class="row" style="margin-top:6px">'
+      + '<button class="btn" data-act="export-json">导出全部数据(JSON)</button>'
+      + '<button class="btn" data-act="export-players">导出选手名单(CSV)</button>'
+      + '</div>'
+      + '<div class="field" style="margin-top:12px"><label>导入 JSON 备份</label>'
+      + '<input type="file" id="imp_json" accept="application/json,.json"></div>'
+      + '<button class="btn primary" data-act="import-json">选择文件并导入</button>'
+      + '<hr style="border:none;border-top:1px solid var(--line);margin:16px 0">'
+      + '<button class="btn danger" data-act="reset-all">清空所有数据</button>'
+      + '</div>';
+  }
+
+  /* ============================================================
+   *  比分录入弹窗
+   * ========================================================== */
+  function scoreModal(disc, m) {
+    const aL = entrantLabel(disc, m.a.entrantId) || "待定";
+    const bL = entrantLabel(disc, m.b.entrantId) || "待定";
+    const rule = Scoring.RULES[disc.scoringMode] || Scoring.RULES["31x1"];
+    let games = "";
+    for (let i = 0; i < rule.bestOf; i++) {
+      const g = m.result && m.result.games[i];
+      games += '<div class="game-row"><span class="gl">第' + (i + 1) + '局</span>'
+        + '<input id="g_' + i + '_a" inputmode="numeric" value="' + (g ? g[0] : "") + '" placeholder="A">'
+        + '<span class="vs-sep">:</span>'
+        + '<input id="g_' + i + '_b" inputmode="numeric" value="' + (g ? g[1] : "") + '" placeholder="B"></div>';
+    }
+    const exi = m.result ? m.result.reason : "normal";
+    return '<h3>录入比分</h3>'
+      + '<div class="vs">' + esc(aL) + ' <small>VS</small> ' + esc(bL) + '</div>'
+      + '<div id="scoreGames">' + games + '</div>'
+      + '<div class="wo-row"><label class="muted">特殊情况：</label>'
+      + '<select id="wo_type">'
+      + '<option value="normal" ' + (exi === "normal" ? "selected" : "") + '>正常比赛</option>'
+      + '<option value="wo_a" ' + (m.result && m.result.reason === "walkover" && m.result.winner === "b" ? "selected" : "") + '>A 弃权（B 胜）</option>'
+      + '<option value="wo_b" ' + (m.result && m.result.reason === "walkover" && m.result.winner === "a" ? "selected" : "") + '>B 弃权（A 胜）</option>'
+      + '<option value="ret_a" ' + (m.result && m.result.reason === "retire" && m.result.winner === "b" ? "selected" : "") + '>A 退赛（B 胜）</option>'
+      + '<option value="ret_b" ' + (m.result && m.result.reason === "retire" && m.result.winner === "a" ? "selected" : "") + '>B 退赛（A 胜）</option>'
+      + '</select></div>'
+      + '<div class="row" style="margin-top:10px">'
+      + '<button class="btn primary block" data-act="save-score" data-id="' + m.id + '">保存</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>'
+      + (m.result ? '<div class="row" style="margin-top:8px"><button class="btn sm danger block" data-act="clear-score" data-id="' + m.id + '">清除本场成绩</button></div>' : '');
+  }
+
+  /* ============================================================
+   *  主渲染分发
+   * ========================================================== */
+  function render() {
+    const tab = Store.getUI().activeTab || "events";
+    const view = document.getElementById("view");
+    let html = "";
+    if (tab === "events") html = renderEvents();
+    else if (tab === "roster") html = renderRoster();
+    else if (tab === "checkin") html = renderCheckin();
+    else if (tab === "group") html = renderGroup();
+    else if (tab === "schedule") html = renderSchedule();
+    else if (tab === "bracket") html = renderBracket();
+    else if (tab === "summary") html = renderSummary();
+    else if (tab === "backup") html = renderBackup();
+    view.innerHTML = html;
+    // 同步 Tab 高亮
+    document.querySelectorAll(".tab").forEach(t => {
+      t.classList.toggle("active", t.getAttribute("data-tab") === tab);
+    });
+    // 同步上下文条
+    const ev = activeEvent();
+    const ctx = document.getElementById("ctxBar");
+    if (ctx) {
+      if (!ev) ctx.textContent = "未选择赛事";
+      else {
+        const d = activeDisc();
+        ctx.textContent = esc(ev.name) + (d ? " · " + esc(d.name) : "");
+      }
+    }
+  }
+
+  return {
+    esc, toast, openModal, closeModal, render, activeEvent, activeDisc,
+    eventForm, playerForm, importForm, scoreModal, newDiscipline,
+    entrantLabel
+  };
+})();
