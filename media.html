@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>星羿羽毛球馆 · 自媒体内容规划</title>
+<style>
+:root {
+  --primary: #FF6B35;
+  --primary-light: #FFE8E0;
+  --secondary: #2563EB;
+  --secondary-light: #DBEAFE;
+  --bg: #F8F9FA;
+  --card: #FFFFFF;
+  --text: #1F2937;
+  --text-light: #6B7280;
+  --border: #E5E7EB;
+  --green: #10B981;
+  --yellow: #F59E0B;
+  --purple: #8B5CF6;
+  --pink: #EC4899;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.header {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+  color: white;
+  padding: 20px 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(255,107,53,0.3);
+}
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  background: var(--card);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.tab:active { background: var(--primary-light); }
+
+.content { padding: 16px; padding-bottom: 80px; }
+.panel { display: none; }
+.panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-title .icon { font-size: 18px; }
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-right: 4px;
+  margin-bottom: 4px;
+}
+.tag-douyin { background: #FFE0E0; color: #E63946; }
+.tag-red { background: #FFE0EC; color: #D63384; }
+.tag-both { background: #E8E0FF; color: #6B2DDE; }
+.tag-hot { background: #FFF3CD; color: #856404; }
+
+/* Search */
+.search-box {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.search-box:focus { border-color: var(--primary); }
+
+/* Topic card */
+.topic-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-left: 4px solid var(--primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.topic-card .topic-title {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.topic-card .topic-desc {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+.topic-card .topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Script block */
+.script-block {
+  background: #F3F4F6;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 12px;
+  position: relative;
+}
+.script-block .script-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 6px;
+}
+.script-block .script-content {
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  color: var(--text);
+}
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0.85;
+}
+.copy-btn:active { opacity: 1; transform: scale(0.95); }
+.copy-btn.copied { background: var(--green); }
+
+/* Calendar */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.cal-head {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-light);
+  padding: 4px 0;
+}
+.cal-cell {
+  aspect-ratio: 1;
+  border-radius: 6px;
+  padding: 4px;
+  font-size: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #F3F4F6;
+}
+.cal-cell .day { font-size: 11px; font-weight: 700; }
+.cal-cell .label { font-size: 9px; color: var(--text-light); margin-top: 2px; }
+.cal-cell.dy { background: #FFE0E0; }
+.cal-cell.dy .label { color: #E63946; }
+.cal-cell.xhs { background: #FFE0EC; }
+.cal-cell.xhs .label { color: #D63384; }
+.cal-cell.both { background: linear-gradient(135deg, #FFE0E0 50%, #FFE0EC 50%); }
+.cal-cell.both .label { color: #6B2DDE; }
+.cal-cell.rest { opacity: 0.4; }
+
+/* Steps */
+.step-list { counter-reset: step; }
+.step-item {
+  position: relative;
+  padding-left: 36px;
+  margin-bottom: 16px;
+}
+.step-item::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 26px;
+  height: 26px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+.step-item .step-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.step-item .step-desc { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+.step-item .step-tip {
+  font-size: 12px;
+  background: var(--primary-light);
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 6px;
+  color: var(--primary);
+}
+
+/* Info rows */
+.info-row {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row .label { width: 90px; font-weight: 700; color: var(--text-light); flex-shrink: 0; }
+.info-row .value { flex: 1; }
+
+/* Platform card */
+.platform-card {
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  color: white;
+}
+.platform-douyin { background: linear-gradient(135deg, #E63946, #FF5252); }
+.platform-xhs { background: linear-gradient(135deg, #D63384, #FF4081); }
+.platform-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.platform-card .p-row { font-size: 13px; margin-bottom: 6px; opacity: 0.95; }
+.platform-card .p-row b { font-weight: 700; }
+
+/* Pillar grid */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.pillar-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.pillar-card .p-icon { font-size: 28px; margin-bottom: 6px; }
+.pillar-card .p-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.pillar-card .p-desc { font-size: 11px; color: var(--text-light); line-height: 1.4; }
+
+/* Highlight box */
+.highlight {
+  background: linear-gradient(135deg, #FFF3CD, #FFE8A0);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--yellow);
+}
+.highlight h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #856404; }
+.highlight p { font-size: 13px; color: #856404; line-height: 1.6; }
+
+/* Filter chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.chip {
+  padding: 5px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--card);
+  color: var(--text-light);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 13px;
+  z-index: 999;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+
+/* Section divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+/* Mini table */
+.mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+.mini-table th {
+  background: var(--primary);
+  color: white;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+}
+.mini-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mini-table tr:nth-child(even) td { background: #F9FAFB; }
+</style>
+<style>
+:root{--primary:#0f766e;--primary-light:#14b8a6;}
+.header{background:linear-gradient(135deg,#0f766e,#14b8a6)!important;}
+.xy-topbar{position:static;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid #e3ece9;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:#0f766e;letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:#0f766e;text-decoration:none;font-weight:700;background:#d6f3ec;padding:5px 11px;border-radius:20px;}
+.xy-footer{text-align:center;font-size:11.5px;color:#8aa09a;margin:30px 14px 36px;line-height:1.9;}
+.xy-footer a{color:#0f766e;text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="header">
+  <h1>🏸 星羿羽毛球馆 · 自媒体内容规划</h1>
+  <p>抖音 + 小红书 + 微信朋友圈 · 从0到1内容实操手册</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('positioning')">账号定位</div>
+  <div class="tab" onclick="switchTab('matrix')">内容矩阵</div>
+  <div class="tab" onclick="switchTab('topics')">选题库</div>
+  <div class="tab" onclick="switchTab('scripts')">脚本模板</div>
+  <div class="tab" onclick="switchTab('calendar')">发布排期</div>
+  <div class="tab" onclick="switchTab('wechat')">微信朋友圈</div>
+  <div class="tab" onclick="switchTab('xhs')">小红书</div>
+  <div class="tab" onclick="switchTab('sop')">执行SOP</div>
+</div>
+
+<div class="content">
+
+<!-- ===== 账号定位 ===== -->
+<div class="panel active" id="panel-positioning">
+
+  <div class="highlight">
+    <h4>📌 核心定位一句话</h4>
+    <p>九江开发区最接地气的羽毛球馆，教孩子打球也教孩子做人，球馆老板亲自上阵分享干货，让家长放心、让球友上瘾。</p>
+  </div>
+
+  <div class="platform-card platform-douyin">
+    <h3>📱 抖音定位</h3>
+    <div class="p-row"><b>人设：</b>随性亲和的羽毛球馆老板 / 教练</div>
+    <div class="p-row"><b>调性：</b>轻松、专业不端着、有梗</div>
+    <div class="p-row"><b>目标受众：</b>25-45岁家长 + 15-50岁羽毛球爱好者</div>
+    <div class="p-row"><b>内容形式：</b>短视频（15-60秒）为主</div>
+    <div class="p-row"><b>核心标签：</b>#九江羽毛球 #少儿羽毛球培训 #羽毛球教学 #羽毛球馆</div>
+    <div class="p-row"><b>差异化：</b>老板真人出镜 + 学员真实日常 + 教学干货</div>
+    <div class="p-row"><b>更新频率：</b>每周3-4条（周一/三/五/六）</div>
+  </div>
+
+  <div class="platform-card platform-xhs">
+    <h3 style="margin-bottom:10px;">📕 小红书定位</h3>
+    <div class="p-row"><b>人设：</b>懂教育又懂羽毛球的球馆主理人</div>
+    <div class="p-row"><b>调性：</b>温暖、干货、种草感、生活化</div>
+    <div class="p-row"><b>目标受众：</b>28-40岁宝妈（决策者）</div>
+    <div class="p-row"><b>内容形式：</b>图文笔记为主 + 少量短视频</div>
+    <div class="p-row"><b>核心标签：</b>#九江遛娃 #少儿羽毛球 #儿童运动 #羽毛球培训</div>
+    <div class="p-row"><b>差异化：</b>宝妈视角的教育价值 + 真实课堂记录 + 装备避坑</div>
+    <div class="p-row"><b>更新频率：</b>每周2-3条（周二/四/日）</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> 冷启动策略（前30天）</div>
+    <table class="mini-table">
+      <tr><th>阶段</th><th>重点</th><th>目标</th></tr>
+      <tr><td>第1周</td><td>发5条基础内容建立账号标签</td><td>打上"羽毛球"标签</td></tr>
+      <tr><td>第2周</td><td>发教学干货类+球馆日常</td><td>积累基础播放</td></tr>
+      <tr><td>第3周</td><td>发1条家长最关心的话题</td><td>测试爆款方向</td></tr>
+      <tr><td>第4周</td><td>加大爆款方向产出+互动</td><td>破100粉</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 冷启动期不要发招生广告！先建立专业形象，让平台给你打上羽毛球标签，后续内容才会推给对的人。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔑</span> 账号基础设置清单</div>
+    <div class="info-row"><div class="label">抖音昵称</div><div class="value">星羿羽毛球馆（九江）或 星羿羽毛球·星星教练</div></div>
+    <div class="info-row"><div class="label">抖音简介</div><div class="value">九江开发区星羿羽毛球馆🏸<br>少儿羽毛球培训 · 散客约球<br>随性但不随便，打球我们是认真的<br>👇体验课预约</div></div>
+    <div class="info-row"><div class="label">小红书昵称</div><div class="value">星羿羽毛球馆 | 九江</div></div>
+    <div class="info-row"><div class="label">小红书简介</div><div class="value">九江开发区羽毛球馆主理人🏸<br>分享少儿羽毛球教学干货和成长记录<br>孩子学球那些事，问我准没错</div></div>
+    <div class="info-row"><div class="label">头像</div><div class="value">球馆logo或老板打球照片（清晰、有辨识度）</div></div>
+    <div class="info-row"><div class="label">背景图</div><div class="value">球馆内景/学员上课照片</div></div>
+  </div>
+</div>
+
+<!-- ===== 内容矩阵 ===== -->
+<div class="panel" id="panel-matrix">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏗️</span> 六大内容支柱</div>
+    <p style="font-size:13px;color:var(--text-light);margin-bottom:14px;">所有内容围绕这6个方向展开，每周覆盖至少4个方向，保持内容多样性。</p>
+    
+    <div class="pillar-grid">
+      <div class="pillar-card" style="border-left:3px solid var(--primary);">
+        <div class="p-icon">🎓</div>
+        <div class="p-name">教学干货</div>
+        <div class="p-desc">动作教学、训练方法、常见错误纠正</div>
+      </div>
+      <div class="pillar-card" style="border-left:3px solid var(--green);">
+        <div class="p-icon">⭐</div>
+        <div class="p-name">学员风采</div>
+        <div class="p-desc">进步记录、课堂花絮、比赛瞬间</div>
+      </div>
+      <div class="pillar-card" style="border-left:3px solid var(--secondary);">
+        <div class="p-icon">🏸</div>
+        <div class="p-name">球馆日常</div>
+        <div class="p-desc">穿线服务、散客故事、球馆氛围</div>
+      </div>
+      <div class="pillar-card" style="border-left:3px solid var(--yellow);">
+        <div class="p-icon">📣</div>
+        <div class="p-name">招生转化</div>
+        <div class="p-desc">课程介绍、优惠活动、试听邀约</div>
+      </div>
+      <div class="pillar-card" style="border-left:3px solid var(--purple);">
+        <div class="p-icon">📖</div>
+        <div class="p-name">科普种草</div>
+        <div class="p-desc">装备选择、运动保护、规则讲解</div>
+      </div>
+      <div class="pillar-card" style="border-left:3px solid var(--pink);">
+        <div class="p-icon">💪</div>
+        <div class="p-name">老板IP</div>
+        <div class="p-desc">经营故事、个人魅力、行业洞察</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> 内容配比建议</div>
+    <table class="mini-table">
+      <tr><th>内容类型</th><th>占比</th><th>抖音</th><th>小红书</th></tr>
+      <tr><td>教学干货</td><td>25%</td><td>✅ 主力</td><td>✅ 图文版</td></tr>
+      <tr><td>学员风采</td><td>20%</td><td>✅ 日常</td><td>✅ 种草</td></tr>
+      <tr><td>球馆日常</td><td>15%</td><td>✅ 轻松</td><td>➖ 少发</td></tr>
+      <tr><td>招生转化</td><td>10%</td><td>✅ 软广</td><td>✅ 攻略</td></tr>
+      <tr><td>科普种草</td><td>20%</td><td>✅ 涨知识</td><td>✅ 主力</td></tr>
+      <tr><td>老板IP</td><td>10%</td><td>✅ 人设</td><td>➖ 偶尔</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 招生类内容不要超过10%！家长先信任你这个人，才会把孩子交给你。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔄</span> 内容复用策略</div>
+    <p style="font-size:13px;line-height:1.8;color:var(--text);">
+      <b>一条素材，三个用法：</b><br>
+      1️⃣ 课堂拍了视频 → 抖音发短视频（剪辑15-60秒）<br>
+      2️⃣ 同一素材截图 → 小红书发图文笔记（加文字说明）<br>
+      3️⃣ 精彩片段 → 朋友圈/家长群分享（增加粘性）<br><br>
+      <b>一鱼多吃，省时省力。不用每条都重新拍！</b>
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🤝</span> 家长共创机制</div>
+    <p style="font-size:13px;line-height:1.8;color:var(--text);">
+      年卡家长每月需发抖音领体能课 → 这就是你的<b>免费推广矩阵</b>！<br><br>
+      <b>怎么用好这个机制：</b><br>
+      1. 每月给家长一个<b>拍摄主题</b>（如"孩子这周学会了xx"）<br>
+      2. 提供<b>文案模板</b>让家长直接复制<br>
+      3. 家长发完@你，你转发评论互动<br>
+      4. 月底选"最佳家长抖音"送小奖品<br><br>
+      <span style="color:var(--primary);font-weight:700;">10个年卡家长 = 10个推广账号，比你自己发传播面大10倍。</span>
+    </p>
+  </div>
+</div>
+
+<!-- ===== 选题库 ===== -->
+<div class="panel" id="panel-topics">
+  <input type="text" class="search-box" id="topicSearch" placeholder="🔍 搜索选题关键词..." oninput="filterTopics()">
+
+  <div class="chips" id="topicChips">
+    <div class="chip active" onclick="filterTopicByCat('all', this)">全部</div>
+    <div class="chip" onclick="filterTopicByCat('teach', this)">教学干货</div>
+    <div class="chip" onclick="filterTopicByCat('student', this)">学员风采</div>
+    <div class="chip" onclick="filterTopicByCat('daily', this)">球馆日常</div>
+    <div class="chip" onclick="filterTopicByCat('recruit', this)">招生转化</div>
+    <div class="chip" onclick="filterTopicByCat('science', this)">科普种草</div>
+    <div class="chip" onclick="filterTopicByCat('ip', this)">老板IP</div>
+  </div>
+
+  <div id="topicList">
+
+    <!-- 教学干货 -->
+    <div class="topic-card" data-cat="teach" data-keywords="高远球 正手 教学 动作">
+      <div class="topic-title">60秒学会正手高远球</div>
+      <div class="topic-desc">拆解正手高远球3个关键动作：握拍、引拍、击球点。慢动作演示+常见错误对比。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-hot">🔥爆款方向</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="发球 反手 教学">
+      <div class="topic-title">反手发球总下网？一招解决</div>
+      <div class="topic-desc">分析反手发球下网的3个原因，给出纠正方法。用学员真实案例对比前后变化。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="网前小球 搓球 教学">
+      <div class="topic-title">网前小球怎么搓才贴网</div>
+      <div class="topic-desc">搓球的手指发力技巧，用慢镜头展示拍面角度变化。适合有一定基础的学员。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="步法 米字步 移动 教学">
+      <div class="topic-title">羽毛球米字步，在家也能练</div>
+      <div class="topic-desc">不需要球场，一块空地就能练步法。拆解6个方向的移动要点，适合在家练习。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span><span class="tag tag-hot">🔥宝妈最爱</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="热身 拉伸 受伤 保护">
+      <div class="topic-title">打球前5个热身动作，远离崴脚</div>
+      <div class="topic-desc">专业热身流程：脚踝、膝盖、肩关节、腰部、手腕。每个动作10次，3分钟搞定。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="体能 训练 在家 练习">
+      <div class="topic-title">5个在家就能做的羽毛球体能训练</div>
+      <div class="topic-desc">跳绳、深蹲、弓步走、平板支撑、高抬腿。配标准动作示范和组数建议。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span><span class="tag tag-hot">🔥收藏向</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="teach" data-keywords="杀球 杀球教学 力量">
+      <div class="topic-title">为什么你的杀球没有力量</div>
+      <div class="topic-desc">3个原因：发力顺序不对、击球点太低、手腕没放松。逐个分析+纠正练习。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-hot">🔥爆款方向</span></div>
+    </div>
+
+    <!-- 学员风采 -->
+    <div class="topic-card" data-cat="student" data-keywords="学员 进步 成长 记录">
+      <div class="topic-title">学员蜕变：从接不到球到对打10回合</div>
+      <div class="topic-desc">记录一个学员3个月的进步过程。对比第一节课和现在的表现，配上教练点评。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span><span class="tag tag-hot">🔥家长爱看</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="student" data-keywords="课堂 花絮 快乐 有趣">
+      <div class="topic-title">课堂花絮：今天的小学员们太可爱了</div>
+      <div class="topic-desc">抓拍课堂中有趣的瞬间：接球摔倒、互相加油、打中教练等。轻松搞笑向。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="student" data-keywords="比赛 积分赛 PK">
+      <div class="topic-title">球馆内部积分赛精彩集锦</div>
+      <div class="topic-desc">剪辑比赛中的精彩回合、扣杀、救球。配上慢动作和bgm，制造紧张感。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="student" data-keywords="结业 证书 成长 总结">
+      <div class="topic-title">这期学员结业啦！看看他们的变化</div>
+      <div class="topic-desc">结业仪式记录+每个学员的进步总结。适合小红书发图文合集。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="student" data-keywords="年龄 几岁 学球 适合">
+      <div class="topic-title">5岁 vs 8岁 vs 12岁学球，有什么区别</div>
+      <div class="topic-desc">不同年龄段孩子的学习特点、进度差异、家长预期管理。干货向。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span><span class="tag tag-hot">🔥宝妈最关心</span></div>
+    </div>
+
+    <!-- 球馆日常 -->
+    <div class="topic-card" data-cat="daily" data-keywords="穿线 球拍 服务">
+      <div class="topic-title">球拍穿线全过程，2分钟看完</div>
+      <div class="topic-desc">穿线机操作+不同磅数选择建议。展示专业服务能力，顺便科普穿线知识。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="daily" data-keywords="球馆 一天 日常 vlog">
+      <div class="topic-title">羽毛球馆老板的一天</div>
+      <div class="topic-desc">从开门到关灯，记录一天的真实工作：打扫场地、穿线、上课、和家长沟通、收尾。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-hot">🔥人设向</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="daily" data-keywords="散客 约球 打球 故事">
+      <div class="topic-title">球馆里的散客故事</div>
+      <div class="topic-desc">采访常来的散客：为什么喜欢打球、在球馆交到的朋友、打球改变了什么。走心向。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="daily" data-keywords="场地 维护 打扫">
+      <div class="topic-title">每天闭馆前的5件事</div>
+      <div class="topic-desc">场地清洁、器材归位、检查设备、关窗断电、次日准备。展示专业管理。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <!-- 招生转化 -->
+    <div class="topic-card" data-cat="recruit" data-keywords="试听 体验课 预约 报名">
+      <div class="topic-title">体验课实录：第一次来打球的孩子</div>
+      <div class="topic-desc">记录一节真实的体验课，从紧张到开心的过程。结尾引导预约体验课。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span><span class="tag tag-hot">🔥转化向</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="recruit" data-keywords="课程 介绍 价格 年卡 次卡">
+      <div class="topic-title">星羿羽毛球馆课程全介绍</div>
+      <div class="topic-desc">次卡/年卡课程包介绍，重点讲年卡"寒暑假不限次数"的性价比。配合上课时间表。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="recruit" data-keywords="暑假班 暑假 招生">
+      <div class="topic-title">暑假别让孩子只玩手机，来打羽毛球</div>
+      <div class="topic-desc">暑假班招生向，强调运动对孩子的好处+暑假课表+年卡寒暑假不限次卖点。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span><span class="tag tag-hot">🔥季节性</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="recruit" data-keywords="年卡 优惠 朋友圈 体能课">
+      <div class="topic-title">年卡家长每月领免费体能课的秘密</div>
+      <div class="topic-desc">讲解年卡优惠机制：发朋友圈享优惠价+每月发抖音领体能课。用家长视角讲价值。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <!-- 科普种草 -->
+    <div class="topic-card" data-cat="science" data-keywords="球拍 选择 新手 推荐">
+      <div class="topic-title">新手买羽毛球拍，3个参数看懂不踩坑</div>
+      <div class="topic-desc">重量（U）、平衡点、中杆硬度。用大白话解释，推荐适合新手的拍子。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span><span class="tag tag-hot">🔥收藏向</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="science" data-keywords="球鞋 重要 装备">
+      <div class="topic-title">打羽毛球不穿专业鞋，脚踝早晚遭殃</div>
+      <div class="topic-desc">普通运动鞋vs羽毛球鞋对比，展示鞋底差异、侧向支撑。安全科普向。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="science" data-keywords="磅数 拉线 穿线">
+      <div class="topic-title">球拍拉多少磅合适？一张表看懂</div>
+      <div class="topic-desc">22-28磅的适用人群对照表。新手推荐24磅，进阶26磅，高手28磅+。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span><span class="tag tag-hot">🔥干货收藏</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="science" data-keywords="孩子 运动 好处 身高">
+      <div class="topic-title">打羽毛球能长高吗？真相是...</div>
+      <div class="topic-desc">从运动科学角度解释羽毛球对儿童发育的促进作用（骨骼、视力、协调性），客观不夸大。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span><span class="tag tag-hot">🔥宝妈搜索词</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="science" data-keywords="羽毛球 规则 新手 入门">
+      <div class="topic-title">3分钟看懂羽毛球比赛规则</div>
+      <div class="topic-desc">计分制、发球规则、界内界外判断。用动画/画图方式讲解，适合纯新手。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="science" data-keywords="护腕 护膝 受伤 预防">
+      <div class="topic-title">羽毛球3大常见伤病及预防</div>
+      <div class="topic-desc">网球肘、膝盖损伤、脚踝扭伤。讲解成因+预防动作+护具选择。</div>
+      <div class="topic-meta"><span class="tag tag-red">小红书</span></div>
+    </div>
+
+    <!-- 老板IP -->
+    <div class="topic-card" data-cat="ip" data-keywords="开球馆 创业 经营">
+      <div class="topic-title">开一家羽毛球馆要多少钱</div>
+      <div class="topic-desc">算一笔账：场地租金、装修、器材、人工。真实分享经营成本，建立专业形象。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-hot">🔥搜索流量大</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="ip" data-keywords="教练 资质 选择 避坑">
+      <div class="topic-title">怎么判断一个羽毛球教练靠不靠谱</div>
+      <div class="topic-desc">3个标准：看教学逻辑（不是看自己打得好不好）、看学员进步、看沟通能力。</div>
+      <div class="topic-meta"><span class="tag tag-both">双平台</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="ip" data-keywords="梦想 坚持 热爱">
+      <div class="topic-title">为什么我选择开羽毛球馆</div>
+      <div class="topic-desc">个人故事向：从小打球到开馆的经历，为什么选择做少儿培训，对羽毛球的理解。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span><span class="tag tag-hot">🔥人设打造</span></div>
+    </div>
+
+    <div class="topic-card" data-cat="ip" data-keywords="同行 竞争 差异化">
+      <div class="topic-title">九江羽毛球馆那么多，我家凭什么活下来</div>
+      <div class="topic-desc">差异化竞争策略：亲和力、随性氛围、教学品质。展示自信但不贬低同行。</div>
+      <div class="topic-meta"><span class="tag tag-douyin">抖音</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ===== 脚本模板 ===== -->
+<div class="panel" id="panel-scripts">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎬</span> 模板一：60秒教学干货</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">抖音短视频脚本 · 教学类</div>
+      <div class="script-content">【0-3秒 · 钩子】
+（教练持球拍面对镜头）
+"打羽毛球XX年，我发现90%的人这个动作都做错了"
+
+【3-10秒 · 问题展示】
+（演示常见错误动作）
+"看，大多数人是这样的——（演示错误动作）
+问题出在：XXX"
+
+【10-45秒 · 教学拆解】
+（慢动作演示正确动作，分3步）
+"正确的做法分3步：
+第一步：XXX（特写手部/脚部）
+第二步：XXX（侧面慢动作）
+第三步：XXX（正面正常速度）"
+
+【45-55秒 · 效果对比】
+（学员纠正前后对比）
+"看看学员纠正后的效果——（播放学员练习画面）
+是不是完全不一样了？"
+
+【55-60秒 · 引导互动】
+"你觉得哪个动作最难？评论区告诉我，下期教你。
+关注星羿羽毛球馆，九江人自己的羽毛球教练。"</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📱</span> 模板二：学员风采记录</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">抖音/小红书通用 · 学员记录</div>
+      <div class="script-content">【标题】
+XX小朋友的羽毛球成长记（第X个月）
+
+【开头 · 3秒钩子】
+（学员第一节课的笨拙画面）
+"你还记得第一次上课的样子吗？"
+
+【中间 · 对比展示】
+（切换到现在的表现）
+"X个月前，连球都接不到
+现在，已经能和教练对打X个回合了"
+
+【教练点评 · 口播或字幕】
+"XX最大的变化不是技术，是自信。
+刚开始上课不敢说话，现在每次来都笑着进门。
+羽毛球教会他的不只是打球，是面对困难不放弃。"
+
+【结尾 · 升华+引导】
+"每个孩子都有自己的节奏
+我们要做的就是陪他慢慢长大
+星羿羽毛球馆，九江开发区
+想让孩子试试？私信我预约体验课"
+
+【字幕标签】
+#九江羽毛球 #少儿羽毛球培训 #羽毛球教学 #儿童运动</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏸</span> 模板三：球馆日常Vlog</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">抖音 · 日常向</div>
+      <div class="script-content">【开头 · 5秒】
+（开门进球馆，环视空荡荡的场地）
+"羽毛球馆老板的一天，开始了"
+
+【上午 · 准备工作 10秒】
+（快剪：开灯→开空调→检查场地→整理器材）
+"每天第一件事：让场地准备好
+等第一个客人来"
+
+【中午 · 穿线服务 10秒】
+（穿线机操作特写+完成展示）
+"今天有3把拍子要穿
+这把拉26磅，打双打的球友指定要这个磅数"
+
+【下午 · 上课 15秒】
+（课堂片段快剪：热身→挥拍练习→对打）
+"下午是少儿培训时间
+今天XX终于学会了正手高远球，开心坏了"
+
+【晚上 · 散客时间 10秒】
+（散客打球画面+老板闲聊）
+"晚上是最热闹的时候
+老面孔新面孔，来了就是球友"
+
+【结尾 · 关灯 5秒】
+（最后一个离开，关灯锁门）
+"关门，明天见
+我是星羿羽毛球馆的星星
+九江开发区，等你来打球"</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📕</span> 模板四：小红书图文笔记</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 种草干货类</div>
+      <div class="script-content">【封面标题】
+孩子几岁学羽毛球最好？
+（配图：不同年龄段孩子打球的照片拼图）
+
+【正文】
+作为九江开了X年羽毛球馆的教练
+经常被家长问：我家孩子X岁了，能学吗？
+今天一次说清楚👇
+
+🌱 5-6岁：启蒙期
+可以用短拍+软球玩，培养兴趣
+重点：不是学技术，是让孩子觉得好玩！
+
+🌱 7-9岁：黄金入门期
+身体协调性快速发展，最适合开始系统学习
+建议：一周1-2次，每次90分钟
+
+🌱 10-12岁：提高期
+可以开始参加比赛，技术精细化
+建议：一周2-3次，加入体能训练
+
+💡 选球馆的3个建议：
+1️⃣ 看教练会不会教，不是看教练打得好不好
+2️⃣ 看课堂氛围，孩子开不开心最诚实
+3️⃣ 看场地条件，地板比灯光重要
+
+我们在九江开发区星羿羽毛球馆
+暑假班/学期班正在招生
+想体验的宝妈可以私信预约免费试听课🏸
+
+#九江遛娃 #少儿羽毛球 #儿童运动 #羽毛球培训 #九江开发区</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📣</span> 模板五：招生软广（不招人烦的那种）</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">抖音/小红书 · 软性招生</div>
+      <div class="script-content">【开头 · 制造共鸣】
+"暑假你家孩子是不是这样——
+（配孩子躺沙发玩手机的画面）
+手机不离手，出门喊不动"
+
+【转折 · 给方案】
+"其实不是孩子不想动
+是没有找到他喜欢的运动
+不如来试试羽毛球？"
+
+【展示 · 真实课堂】
+（课堂快乐画面：孩子笑、击掌、击球）
+"在星羿，我们不只是教打球
+是让孩子在运动里找到自信和快乐"
+
+【信息植入 · 自然不硬】
+"暑假班周一到周五都有课
+10:00-11:30 / 16:00-17:30 / 18:00-19:30
+年卡寒暑假不限次数，想来就来"
+
+【行动引导】
+"私信我发课表和体验课预约方式
+九江开发区的家长，就近来试试"
+（评论区置顶：体验课预约链接/微信号）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🤝</span> 模板六：家长共创（发抖音领体能课）</div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">发给家长复制的文案模板</div>
+      <div class="script-content">【每月主题模板 · 家长直接复制修改】
+
+📝 主题：孩子这周学会了XX
+
+"孩子在星羿羽毛球馆学球第X个月啦！
+这周教练说XX学会了正手高远球🏆
+从刚开始连拍都握不稳
+到现在能和教练对打X个回合
+老母亲在旁边看着太欣慰了
+
+教练特别有耐心，每次课后都会跟我沟通
+孩子的进步点和需要在家练习的地方
+不是那种上了就走的培训班
+是真的在用心教
+
+#九江羽毛球 #少儿羽毛球培训 #星羿羽毛球馆
+@星羿羽毛球馆"
+
+💡 使用说明：
+1. 把XX替换成孩子的名字和具体内容
+2. 配上孩子上课的视频或照片
+3. 发抖音时@球馆账号
+4. 截图发给教练，领取当月免费体能课！</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 发布排期 ===== -->
+<div class="panel" id="panel-calendar">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 每周发布计划</div>
+    <div style="font-size:12px;color:var(--text-light);margin-bottom:10px;">
+      <span style="color:#E63946;">■</span> 抖音 &nbsp;
+      <span style="color:#D63384;">■</span> 小红书 &nbsp;
+      <span style="color:#6B2DDE;">■</span> 双平台
+    </div>
+    <div class="cal-grid">
+      <div class="cal-head">周一</div>
+      <div class="cal-head">周二</div>
+      <div class="cal-head">周三</div>
+      <div class="cal-head">周四</div>
+      <div class="cal-head">周五</div>
+      <div class="cal-head">周六</div>
+      <div class="cal-head">周日</div>
+
+      <div class="cal-cell dy"><div class="day">1</div><div class="label">抖音</div></div>
+      <div class="cal-cell xhs"><div class="day">2</div><div class="label">小红书</div></div>
+      <div class="cal-cell dy"><div class="day">3</div><div class="label">抖音</div></div>
+      <div class="cal-cell xhs"><div class="day">4</div><div class="label">小红书</div></div>
+      <div class="cal-cell dy"><div class="day">5</div><div class="label">抖音</div></div>
+      <div class="cal-cell dy"><div class="day">6</div><div class="label">抖音</div></div>
+      <div class="cal-cell xhs"><div class="day">7</div><div class="label">小红书</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> 每周内容安排</div>
+    <table class="mini-table">
+      <tr><th>日期</th><th>平台</th><th>内容方向</th><th>最佳发布时间</th></tr>
+      <tr><td>周一</td><td>抖音</td><td>教学干货（60秒教学）</td><td>18:00-19:00</td></tr>
+      <tr><td>周二</td><td>小红书</td><td>科普种草（图文笔记）</td><td>12:00-13:00</td></tr>
+      <tr><td>周三</td><td>抖音</td><td>学员风采/球馆日常</td><td>18:00-19:00</td></tr>
+      <tr><td>周四</td><td>小红书</td><td>教育干货/宝妈向</td><td>20:00-21:00</td></tr>
+      <tr><td>周五</td><td>抖音</td><td>招生软广/活动预告</td><td>17:00-18:00</td></tr>
+      <tr><td>周六</td><td>抖音</td><td>课堂花絮/趣味向</td><td>10:00-11:00</td></tr>
+      <tr><td>周日</td><td>小红书</td><td>学员记录/周末总结</td><td>19:00-20:00</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📆</span> 月度内容节奏</div>
+    <table class="mini-table">
+      <tr><th>周次</th><th>重点</th><th>说明</th></tr>
+      <tr><td>第1周</td><td>教学干货为主</td><td>建立专业形象，拉新流量</td></tr>
+      <tr><td>第2周</td><td>学员风采+日常</td><td>展示真实课堂，建立信任</td></tr>
+      <tr><td>第3周</td><td>科普种草为主</td><td>涨粉+收藏，扩大触达</td></tr>
+      <tr><td>第4周</td><td>招生+活动</td><td>月底转化，推体验课/优惠</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 每月最后一周配合月度复盘提醒，规划下月内容方向。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⏰</span> 最佳发布时间</div>
+    <div class="info-row"><div class="label">抖音·工作日</div><div class="value">17:00-19:00（下班通勤高峰）</div></div>
+    <div class="info-row"><div class="label">抖音·周末</div><div class="value">10:00-11:00、19:00-21:00</div></div>
+    <div class="info-row"><div class="label">小红书·工作日</div><div class="value">12:00-13:00（午休）、20:00-22:00（睡前）</div></div>
+    <div class="info-row"><div class="label">小红书·周末</div><div class="value">9:00-11:00、19:00-21:00</div></div>
+    <div class="info-row"><div class="label">提示</div><div class="value">发布后30分钟内积极回复评论，提升互动率</div></div>
+  </div>
+
+</div>
+
+<!-- ===== 微信朋友圈 ===== -->
+<div class="panel" id="panel-wechat">
+
+  <div class="highlight">
+    <h4>💬 朋友圈定位：私域转化的主阵地</h4>
+    <p>抖音/小红书是公域拉新，朋友圈是私域成交。家长都在你微信里，朋友圈是触达最直接、信任度最高、转化最快的渠道。一鱼多吃——上课拍的素材截图就能发，不额外费劲。</p>
+  </div>
+
+  <div class="platform-card" style="background:linear-gradient(135deg,#07C160,#10B981);">
+    <h3>💬 微信朋友圈定位</h3>
+    <div class="p-row"><b>角色：</b>客服微信 / 老板私人号，真人日常</div>
+    <div class="p-row"><b>调性：</b>真实、亲切、像朋友分享，不硬广</div>
+    <div class="p-row"><b>目标受众：</b>已在微信里的家长 + 潜在家长（老带新）</div>
+    <div class="p-row"><b>内容形式：</b>图文九宫格 / 短视频 / 纯文字</div>
+    <div class="p-row"><b>更新频率：</b>每天1条（保持存在感即可）</div>
+    <div class="p-row"><b>核心目的：</b>建立信任 → 自然引导体验课 / 续费</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 每周朋友圈排期（每天1条）</div>
+    <table class="mini-table">
+      <tr><th>日期</th><th>内容方向</th><th>最佳时间</th></tr>
+      <tr><td>周一</td><td>一周开场 / 今日上课预告</td><td>09:00</td></tr>
+      <tr><td>周二</td><td>学员进步对比（前后图+教练点评）</td><td>20:00</td></tr>
+      <tr><td>周三</td><td>课堂氛围花絮（孩子快乐抓拍）</td><td>12:00</td></tr>
+      <tr><td>周四</td><td>科普短文（打球长高/护眼）</td><td>12:00</td></tr>
+      <tr><td>周五</td><td>周末体验课预告 + 接龙名额</td><td>20:00</td></tr>
+      <tr><td>周六</td><td>学员高光时刻（精彩击球）</td><td>10:00</td></tr>
+      <tr><td>周日</td><td>本周小结 + 家长好评</td><td>20:00</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 素材和抖音/小红书一鱼多吃：上课拍的视频截图、剪映导出的片段都能直接发，不用重新拍。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✍️</span> 朋友圈文案模板（直接复制改名字）</div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周二 · 学员进步</div>
+      <div class="script-content">今天翻到XX一个月前刚来时的视频
+对比今天这节课的表现，真的肉眼可见的进步🏸
+
+刚开始连拍都握不稳
+现在正手高远球能稳稳打到底线了
+更重要的是——每次来都笑嘻嘻的，不再怕失误了
+
+教球的快乐就在这儿：
+不是把动作教标准，是看着一个孩子一点点变自信
+
+#星羿羽毛球馆 #少儿羽毛球 #见证成长</div>
+    </div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周三 · 课堂氛围</div>
+      <div class="script-content">今天的课堂也太欢乐了😆
+
+XX打中教练那一拍，全场笑翻
+XX摔倒了爬起来第一句话是"再来！"
+
+这就是我想给孩子的氛围——
+在运动里学会不怕摔、不怕输
+比赢球重要的，是这股劲儿
+
+下午场还有名额，想来的私信我🏸</div>
+    </div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周四 · 科普短文</div>
+      <div class="script-content">很多家长问：打羽毛球能帮孩子长高吗？
+
+真相是——羽毛球不是"增高药"，但它是目前最适合长高期的运动之一：
+✅ 纵向跳跃拉伸脊柱和下肢
+✅ 户外日光促进维生素D合成
+✅ 用眼远近切换，缓解近视加深
+
+比起纠结长几厘米，更该看中的是：
+孩子愿意动起来了，体质和专注力都上来了
+
+#儿童运动 #羽毛球好处 #九江宝妈</div>
+    </div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周五 · 体验课预告</div>
+      <div class="script-content">周末又要开体验课啦📣
+
+很多家长问"孩子没基础能来吗"
+——体验课就是给零基础孩子准备的呀！
+
+一节90分钟的课，专业教练带
+看看孩子喜不喜欢，比啥都重要
+
+本周还剩3个体验名额
+九江开发区的家长，想来的私信我约时间
+（发"体验"两个字就行，我给你排课表）</div>
+    </div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周日 · 本周小结</div>
+      <div class="script-content">一周结束，照例碎碎念几句📝
+
+这周最开心的是看到好几个"怕球"的小朋友
+开始主动举手要上场了
+从躲到抢，中间差的不是技术，是一次次鼓励
+
+谢谢各位家长的信任
+把孩子交到星羿
+我们也一定会用心接住
+
+新的一周，继续陪孩子们球场见🏸
+（有想约体验或了解课程的，随时私信我）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💬</span> 朋友圈实战文案（新增30条，点击复制）</div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周一 · 新周开场</div>
+      <div class="script-content">新的一周开始啦☀️
+球场已经扫干净，空调也开好了
+就等咱们的小学员们来挥拍
+这周又会有什么进步呢，期待ing🏸</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">当日 · 开课预告</div>
+      <div class="script-content">今晚6点少儿班准时开课
+还有一个旁听位，想看的家长可以来
+（偷偷说：今天练发球，萌点很多）
+来不了的朋友，我课后发花絮～</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">周中 · 课表提醒</div>
+      <div class="script-content">本周课表更新咯📅
+雨天也照常，室内场不怕淋
+提醒大家：记得带水壶和毛巾
+迟到的小朋友要补热身哦</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">学员进步 · 敢接球了</div>
+      <div class="script-content">三个月前XX连球都不敢接
+今天居然主动跟我对拉单打
+虽然还赢不了我，但这股冲劲
+比赢球更让我高兴😆</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">学员进步 · 前后对比</div>
+      <div class="script-content">把XX刚来时的视频和现在放一起
+妈妈看完直接红了眼眶
+从握拍都歪，到高远球稳稳到底线
+时间真的看得见努力</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">学员进步 · 多拍相持</div>
+      <div class="script-content">今天最惊喜的：XX能打20拍多拍了！
+以前3拍就飞
+坚持练球感，量变真的会质变🏸</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">学员进步 · 暑假变化</div>
+      <div class="script-content">一个暑假下来
+XX不仅个子长高，小肚子也没了
+运动时分泌的多巴胺，让他整个人更阳光
+这比报多少补习班都值</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">学员进步 · 怕生到主动</div>
+      <div class="script-content">记得XX刚来时躲在我身后
+今天自己大声喊"教练我来发球！"
+内向的孩子，在球场慢慢打开了
+当老师的，最爱的就是这一刻</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">课堂花絮 · 打进水杯</div>
+      <div class="script-content">今天有个娃一拍把球打进了我的水杯😂
+全场笑到打不住
+这就是少儿课的真实日常
+比任何剧本都好笑</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">课堂花絮 · 输了加练</div>
+      <div class="script-content">分组对抗，输了那组
+居然主动要求加练10分钟
+这股不服输的劲儿，服了
+未来的冠军可能就在里面</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">课堂花絮 · 看慢动作</div>
+      <div class="script-content">课间一群小孩围着我看慢动作回放
+一个个眼睛瞪得圆圆的
+"教练他刚才是不是假动作！"
+被这群小家伙认真的样子萌到了</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">课堂花絮 · 自己绑手胶</div>
+      <div class="script-content">最小的学员今天自己绑好了手胶
+虽然缠得歪歪扭扭
+但那是他第一次"自己的拍自己管"
+成长的标志往往很小</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">科普 · 护眼</div>
+      <div class="script-content">科普一下：为什么打球对眼睛好👀
+眼睛追球远近切换，等于给睫状肌做体操
+再加户外自然光，能缓近视加深
+每周来3次，比盯屏幕强太多</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">科普 · 核心力量</div>
+      <div class="script-content">孩子总喊累、跑两步就喘？
+可能不是懒，是核心力量弱
+羽毛球全场移动正好练核心
+练一阵，耐力肉眼可见上来</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">科普 · 换季免疫</div>
+      <div class="script-content">换季容易感冒？运动提高免疫力是真的
+规律出汗，白细胞活跃度更高
+咱们室内恒温，不怕着凉
+坚持来的孩子，这季请假明显少</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">科普 · 体态</div>
+      <div class="script-content">发现没，打球的孩子坐姿都正了
+高远球要挺胸展肩，久了成习惯
+含胸驼背？来球场练两个月看看
+体态好了，人看着都精神</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">招生 · 体验课满员</div>
+      <div class="script-content">周末体验课又满员啦🎉
+下一批接龙开启，限8个名额
+零基础也完全OK，就是带孩子玩球感
+想来的私信我排时间</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">招生 · 几岁合适</div>
+      <div class="script-content">常被问：孩子几岁开始学合适？
+一般5岁+就能接触球感训练
+太小的以游戏为主，别急着上强度
+具体看孩子协调和兴趣，可来试听判断</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">招生 · 零基础</div>
+      <div class="script-content">零基础别慌🙌
+第一节课我们不教标准动作
+先带孩子熟悉球、玩球感、建立喜欢
+喜欢了，后面学什么都不难</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">招生 · 附近邀约</div>
+      <div class="script-content">九江开发区的家长看过来👀
+带孩子来挥两拍，比逛商场有意义
+就在星羿，专业教练带着玩
+私信"体验"我给你留位</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">招生 · 免费试听</div>
+      <div class="script-content">免费的体验课名额还有2个
+不用花钱，先让孩子试试喜不喜欢
+适合纠结"万一不感兴趣"的家长
+私信"试听"锁定，不来可改期😄</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">好评 · 长反馈</div>
+      <div class="script-content">收到一位家长长长的反馈
+说孩子现在每天催着来打球
+"以前叫他动一动都难"
+被信任的感觉，真的暖
+谢谢你们把娃交给我</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">好评 · 老带新</div>
+      <div class="script-content">今天又一位老学员带来同学
+说"我教练可好了，你也来"
+这就是最好的口碑广告
+孩子的朋友，往往是最真诚的推荐</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">好评 · 不想停课</div>
+      <div class="script-content">XX跟妈妈说"我不想停课"
+就这一句，比啥宣传都管用
+做少儿培训图啥？
+不就是孩子愿意来、舍不得走嘛</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">好评 · 爸爸陪练</div>
+      <div class="script-content">一位爸爸从旁观到上场陪练
+现在周末主动来当"编外助教"
+父子关系在球场上好了不少
+运动，原来是亲子桥梁</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">季节 · 立秋</div>
+      <div class="script-content">立秋了🍂
+别让孩子窝家里吹空调刷手机
+来球场出出汗，整个人都通透
+秋天是最适合运动的季节，约吗</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">季节 · 开学收心</div>
+      <div class="script-content">开学季收心难？
+每天一节羽毛球，帮孩子找回节奏
+动完脑子更清醒，写作业都快些
+运动+学习，不冲突反而互补</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">季节 · 周末遛娃</div>
+      <div class="script-content">周末去哪遛娃？商场人挤人
+不如来球馆，放电又长身体
+一节课下来，回家倒头就睡
+家长省心，孩子开心🏸</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">日常 · 备课</div>
+      <div class="script-content">今晚加练，把新教案又改了两遍
+每个孩子的薄弱点都不一样
+得针对性设计，不能一套通吃
+累是累点，但上课效果肉眼不同</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">日常 · 闭馆治愈</div>
+      <div class="script-content">闭馆后独自在场里打了一会儿
+空荡荡的场馆，只有球拍声
+一天疲惫就这么散了
+明天见，我的小队员们🏸</div>
+    </div>
+  </div>
+
+  <div class="card">
+  <div class="card">
+    <div class="card-title"><span class="icon">🏆</span> 瑞小羽杯系列赛 · 报名宣传（可直接发圈）</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">九江星羿羽毛球馆协办 · 混双/女双/男双三项目 · 甲乙可选分组 · 报名微信 15107920066</div>
+
+    <div class="script-block">
+      <div class="script-label">系列赛总宣 · 招募报名</div>
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-content">🏸【瑞小羽杯羽毛球系列赛】开赛啦！
+九江星羿羽毛球馆 × 瑞昌羽翔体育 联合主办
+混双 / 女双 / 男双 三项目任你选，甲乙分组你来定
+8月23日混双首战，晚上6:30开打！
+报名加微信：15107920066（限业余选手，未在三大网注册）
+30元/人含球含场地，奖杯证书+瑞小羽好球拿到手软
+一起来打球，赢球更赢快乐！🎉</div>
+    </div>
+
+    <div class="script-block">
+      <div class="script-label">混双首场 · 倒计时提醒</div>
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-content">⏰倒计时！【瑞小羽杯】混双赛本周日（8/23）晚6:30 开打
+地点：九江星羿羽毛球馆（经开区杭州路百星文体产业园）
+报名今晚截止，手慢无！微信 15107920066 锁定名额
+31分制超刺激，甲组高手乙组欢乐，总有一档适合你
+带上搭档，我们球场见！🏸🔥</div>
+    </div>
+
+    <div class="script-block">
+      <div class="script-label">招募队友 · 报名指引</div>
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-content">想打【瑞小羽杯】但缺搭档？评论区扣「找搭子」我帮你牵线！
+混双/女双/男双 三项目持续举办，这周混双下周女双男双
+报名方式超简单👇
+① 加微信 15107920066
+② 报项目+分组（甲组高手/乙组欢乐）
+③ 30元/人，线上抽签8/22，比赛日8/23
+业余友好，没打过比赛也欢迎，来感受一下赛场心跳💓</div>
+    </div>
+  </div>
+
+    <div class="card-title"><span class="icon">⚠️</span> 朋友圈发圈注意</div>
+    <div style="font-size:13px;line-height:2;color:var(--text);">
+      🔒 <b>隐私第一：</b>学员对比图、正面照先征得家长同意，该打码打码，别露真实姓名和学校<br>
+      🌟 <b>真实感 &gt; 精致感：</b>随手拍抓拍比精修图更有温度，别像发广告<br>
+      💬 <b>结尾带钩子：</b>每条结尾顺一句"想体验私信我/报名找我"，把流量引到私域<br>
+      🔁 <b>一鱼多吃：</b>抖音剪出来的片段、课堂截图，都是朋友圈素材，不重复劳动<br>
+      ⏰ <b>别刷屏：</b>每天1条足够，多了招人烦、被屏蔽<br>
+      👍 <b>互动维护：</b>家长评论/点赞要回，尤其咨询类评论，第一时间私信接住
+    </div>
+  </div>
+
+</div>
+
+<div class="panel" id="panel-xhs">
+
+  <div class="highlight">
+    <h4>📕 小红书定位：种草+信任的图文主阵地</h4>
+    <p>小红书是宝妈决策前的"搜索入口"。家长搜"九江少儿羽毛球/孩子长高运动"时能看到你，比硬广有用。图文重在封面标题+干货感，真实不精致也能火。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📕</span> 小红书可直接发帖（30条，点击复制）</div>
+
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】接杀球总被攻破？3个防守站位救你
+很多孩子一被杀球就慌，其实防守站位对了能化解80%的威胁：
+① 双脚与肩同宽，重心压低，像坐小板凳
+② 拍子举在胸前偏左，护住中线
+③ 对手杀左边你往左半步，别原地不动
+练熟这3点，下次被攻也能稳稳顶回去🏸
+#九江少儿羽毛球 #羽毛球防守 #羽毛球教学</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】挑球老出界？手腕这个细节错了
+挑球不是用手臂抡，是手腕"抖"出去的：
+✅ 拍面稍仰，触球瞬间手腕由下往上弹
+❌ 常见错误：整个大臂发力→球飞出底线
+在家拿拍空挥50次找手感，比上场乱打有用
+#羽毛球挑球 #羽毛球基础 #九江遛娃</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】发球总不过网？站位比动作更重要
+很多家长不知道，孩子发球下网，90%是站位太靠后：
+✅ 双脚前后站，前脚离前发球线一脚距离
+✅ 重心在前脚，球自然往前送
+站近一点，球轻松过网还不容易下网
+#羽毛球发球 #少儿羽毛球 #羽毛球入门</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】单打怎么跑位不白跑？4个落点记牢
+孩子单打满场乱跑？教他记4个点：
+① 左前 ② 右前 ③ 左后 ④ 右后
+打哪回哪，回到场地中心等下一拍
+跑位有章法，体力省一半，赢球更轻松
+#羽毛球单打 #跑位教学 #羽毛球战术</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】双打轮转总撞拍？前后站位口诀
+双打最怕俩人挤一起。记住八字：
+"前封后攻，谁上网谁前"
+搭档杀球你立刻补到中场，他上网你退后
+练几次就有默契，再也不撞拍
+#羽毛球双打 #双打配合 #少儿羽毛球</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】吊球吊不死人？这2个假动作加分
+吊球不是轻轻碰，是"骗"出来的：
+① 先做出杀球架势，最后手腕一收吊网前
+② 吊斜线比吊直线更难防
+对手被你假动作晃一下，这分就到手了
+#羽毛球吊球 #假动作 #羽毛球技巧</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】手腕僵硬打不出爆发力？5分钟灵活训练
+杀球没力，多半是手腕太僵。每天5分钟：
+绕腕画圈×20、握力器捏×30、抖腕空挥×50
+坚持两周，发力明显顺了
+#手腕训练 #羽毛球爆发力 #居家训练</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 教学干货</div>
+      <div class="script-content">【封面标题】步法总慢半拍？米字步这3个坑别踩
+米字步练了还是慢？看看踩没踩这3个坑：
+✘ 只动脚不动胯
+✘ 启动先迈同侧脚
+✘ 回中心太慢
+纠正：启动先转胯、交叉步启动、每拍回中
+#米字步 #羽毛球步法 #羽毛球基础</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】儿童第一支球拍怎么选？按年龄给清单
+别一上来买贵拍！按年龄来：
+5-7岁：5U超轻拍，重量＜80g
+8-10岁：4U，平衡点偏头轻
+11岁+：3U，可上26磅
+拍子轻，孩子才挥得动、不伤手腕
+#儿童球拍 #羽毛球装备 #新手选购</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】羽毛球鞋不是随便穿！3个挑选标准
+普通运动鞋打球=伤脚踝。选鞋看3点：
+① 鞋底生胶，抓地不打滑
+② 侧向有支撑，急停不掉跟
+③ 前掌薄，启动快
+一双好鞋，比贵的拍更值得投资
+#羽毛球鞋 #运动装备 #护脚踝</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】手胶缠得好，出汗也不滑（附缠法）
+手滑拍子飞？问题在 hand grip：
+✅ 从拍柄底向上斜缠，重叠1/3
+✅ 最后用封口胶带收尾
+吸汗带+外握把带，两层更稳
+教程图放最后一张，照着缠就行
+#手胶缠法 #羽毛球配件 #干货收藏</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】打球护具别省！护腕护膝怎么选
+孩子容易伤的就是手腕和膝盖：
+护腕：选加压款，稳住腕关节
+护膝：选带硅胶环的，跳起落地下滑
+不是软弱，是聪明保护
+#运动护具 #羽毛球安全 #少儿运动</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】球包怎么装才专业？收纳清单
+球包不是塞满就行，分区装：
+① 主仓放拍（最多2支）
+② 侧袋放鞋，别和衣服混
+③ 小袋放手胶、水、毛巾
+整齐的包=专业的开始
+#羽毛球包 #收纳 #运动好物</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 装备种草</div>
+      <div class="script-content">【封面标题】穿线磅数不是越高越好！一张表看懂
+很多爸妈以为磅数高=厉害，错：
+22-24磅：新手，弹性好控球
+25-26磅：进阶，指向准
+27磅+：高手，吃发力
+孩子别超26，伤手又打不动
+#穿线磅数 #羽毛球科普 #选拍指南</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】孩子打羽毛球真的护眼吗？眼科视角
+不是玄学，有道理：
+打球时眼睛追球远近切换→放松睫状肌
+户外自然光→促维D、抑近视加深
+每周3次、每次1小时，比眼保健操香
+#护眼 #羽毛球好处 #少儿视力</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】打球能长高？这份运动清单收好
+羽毛球不是增高药，但是"长高友好运动"：
+纵向跳跃拉伸脊柱+下肢骨骼
+建议搭配：跳绳、摸高、游泳
+睡眠+营养+运动，才是长高三件套
+#长高 #少儿运动 #羽毛球</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】含胸驼背？羽毛球是最自然的矫正操
+玩手机含胸？羽毛球专治：
+打高远球要挺胸展肩→打开胸廓
+长期坚持，体态比补习班见效快
+#体态矫正 #驼背 #少儿体态</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】专注力差？球类运动比刷题管用
+羽毛球要盯球+判断+反应，全程专注：
+一场球=30分钟专注力训练
+很多孩子打球后写作业都坐得住了
+#专注力 #少儿训练 #羽毛球</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】体质弱爱生病？运动习惯这样养
+换季就感冒？从规律运动开始：
+每周3次中等强度，免疫稳了
+球馆恒温室内，不怕风吹感冒
+坚持一季，请假次数肉眼变少
+#增强体质 #少儿健康 #运动习惯</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 宝妈科普</div>
+      <div class="script-content">【封面标题】内向不合群？球场是最好的社交课
+羽毛球是双打友好运动：
+要沟通、要配合、要鼓励队友
+很多害羞娃，在球场上交到了第一个朋友
+#社交能力 #少儿成长 #团队合作</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 学员风采</div>
+      <div class="script-content">【封面标题】从零基础到第一个高远球，他用了21天
+XX刚来时连拍都不敢挥
+21天，每天进步一点点
+今天他打出了人生第一个标准高远球🎉
+进步不是突然的，是每天的积累
+#学员蜕变 #零基础 #见证成长</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 学员风采</div>
+      <div class="script-content">【封面标题】考级现场｜星羿小学员过关瞬间
+今天带孩子们去考级
+XX紧张到手抖，上场却稳稳发挥
+拿到证书那一刻，眼睛亮了✨
+为每一个认真的孩子骄傲
+#羽毛球考级 #小学员 #星羿时刻</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 学员风采</div>
+      <div class="script-content">【封面标题】比赛拿奖了！但比奖更珍贵的是…
+XX拿了小组第二
+比奖更让我触动的是：
+落后时没放弃，最后两分翻盘
+这股韧劲，比奖牌值钱
+#羽毛球比赛 #少年成长 #不服输</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 学员风采</div>
+      <div class="script-content">【封面标题】结课不是结束｜一学期成长记录
+这期班结课了
+翻看第一节课的视频，对比现在：
+动作标准了，笑容也更自信了
+结业证书是起点，不是终点🏸
+#结课 #成长记录 #少儿羽毛球</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 学员风采</div>
+      <div class="script-content">【封面标题】一位妈妈的留言，让我红了眼眶
+收到XX妈妈的长留言：
+"孩子以前一运动就喊累，现在催着来打球"
+做少儿培训的成就感，就在这句话里
+谢谢信任，我们会一直认真
+#家长反馈 #被信任 #星羿羽毛球</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 球馆日常</div>
+      <div class="script-content">【封面标题】星羿教练的一天｜比上课更累的是备课
+6:30起床，先自己练一小时保持手感
+白天写教案、研究每个孩子的薄弱点
+晚上连上4节课，嗓子哑但值
+把每个孩子当自己娃教，是我的底线
+#羽毛球教练 #日常vlog #星羿</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 球馆日常</div>
+      <div class="script-content">【封面标题】一支球拍的诞生｜穿线全过程揭秘
+很多家长好奇拍子怎么穿线
+从定磅、拉线、打结到剪线头
+一支拍要穿20分钟，每一根都绷紧
+专业的事，交给专业的人
+#穿线过程 #羽毛球拍 #幕后</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 球馆日常</div>
+      <div class="script-content">【封面标题】星羿球馆长这样｜九江家长实地考察
+很多家长要来看看场地再报名
+木地板+专业灯光+恒温空调
+4片标准场，安全又舒适
+欢迎随时来转转，眼见为实
+#球馆环境 #九江 #实地考察</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 球馆日常</div>
+      <div class="script-content">【封面标题】为什么我开了家少儿羽毛球馆
+不为了暴富，就想让更多孩子动起来
+看到孩子从手机里抬头、在场上笑
+这事儿就值得做一辈子
+九江的家长们，把孩子交给我，放心
+#创业故事 #少儿培训 #星羿初心</div>
+    </div>
+    <div class="script-block">
+      <button class="copy-btn" onclick="copyScript(this)">复制</button>
+      <div class="script-label">小红书图文 · 球馆日常</div>
+      <div class="script-content">【封面标题】九江的球友们，这里有个属于你的场
+不管你是想让孩子动起来
+还是自己想找个场地挥两拍
+星羿都给你留着灯
+来这儿，不止是打球，是找到一群人
+#九江球友 #羽毛球馆 #社群</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 执行SOP ===== -->
+<div class="panel" id="panel-sop">
+
+  <div class="highlight">
+    <h4>⚡ 核心原则：一鱼多吃，批量生产</h4>
+    <p>不要每天临时想"今天发什么"。每周集中1小时规划+批量拍摄，工作日只做剪辑发布。你下午和晚上效率最高，自媒体安排在上课间隙做。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> 每周执行流程</div>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-title">周日晚上：选题规划（20分钟）</div>
+        <div class="step-desc">看选题库，挑出本周要发的5-6条内容方向，写在本子或手机备忘录上。</div>
+        <div class="step-tip">💡 参考本规划的"选题库"和"发布排期"两个tab</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">周一/三/五上课时：顺手拍素材（零额外时间）</div>
+        <div class="step-desc">上课时用手机支架录教学片段、学员表现、课堂花絮。不用刻意拍，正常上课顺手记录。</div>
+        <div class="step-tip">💡 手机支架固定一个机位，全程录制，课后剪精彩片段</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">每天15分钟：剪辑+发布</div>
+        <div class="step-desc">用剪映APP快速剪辑（模板化操作），加字幕加BGM，按排期时间发布。小红书图文用醒图/美图秀秀排版。</div>
+        <div class="step-tip">💡 剪映有"同款模板"功能，找到喜欢的模板直接套用，3分钟出片</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">发布后30分钟：互动维护</div>
+        <div class="step-desc">回复评论、看数据。播放量高的内容方向记住，下周多做类似内容。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">每周日：数据复盘（10分钟）</div>
+        <div class="step-desc">看本周哪条播放最高、哪条互动最多，分析原因，调整下周选题。</div>
+        <div class="step-tip">💡 不用追求每条都爆，找到1-2个爆款方向持续做就行</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🛠️</span> 工具清单</div>
+    <table class="mini-table">
+      <tr><th>用途</th><th>工具</th><th>说明</th></tr>
+      <tr><td>视频剪辑</td><td>剪映APP</td><td>免费，模板多，手机直接剪</td></tr>
+      <tr><td>图文排版</td><td>醒图/美图秀秀</td><td>小红书图文排版</td></tr>
+      <tr><td>素材管理</td><td>手机相册分类</td><td>按日期/类型分相册</td></tr>
+      <tr><td>文案灵感</td><td>本规划+话术库</td><td>脚本模板直接套</td></tr>
+      <tr><td>数据分析</td><td>抖音创作者中心</td><td>看播放/互动/粉丝画像</td></tr>
+      <tr><td>定时发布</td><td>抖音自带定时</td><td>提前设好时间自动发</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> 前30天行动清单</div>
+    <table class="mini-table">
+      <tr><th>时间</th><th>任务</th><th>✅</th></tr>
+      <tr><td>Day 1</td><td>注册/完善抖音+小红书账号信息</td><td>☐</td></tr>
+      <tr><td>Day 1</td><td>关注10个同行业账号，学习对标</td><td>☐</td></tr>
+      <tr><td>Day 2</td><td>拍3条教学素材（上课时顺手拍）</td><td>☐</td></tr>
+      <tr><td>Day 3</td><td>剪辑发布第1条抖音（教学干货）</td><td>☐</td></tr>
+      <tr><td>Day 4</td><td>发第1条小红书笔记（科普类）</td><td>☐</td></tr>
+      <tr><td>Day 5-7</td><td>每天1条抖音，测试不同内容方向</td><td>☐</td></tr>
+      <tr><td>Day 8</td><td>第1周数据复盘，找方向</td><td>☐</td></tr>
+      <tr><td>Day 9-14</td><td>聚焦数据好的方向，稳定产出</td><td>☐</td></tr>
+      <tr><td>Day 15</td><td>尝试1条"爆款向"内容（争议/共鸣）</td><td>☐</td></tr>
+      <tr><td>Day 16-21</td><td>继续稳定输出+优化标题封面</td><td>☐</td></tr>
+      <tr><td>Day 22</td><td>启动家长共创：发月度拍摄主题</td><td>☐</td></tr>
+      <tr><td>Day 23-28</td><td>加大爆款方向产出+评论互动</td><td>☐</td></tr>
+      <tr><td>Day 29-30</td><td>月度复盘，规划下月内容</td><td>☐</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> 数据看什么</div>
+    <table class="mini-table">
+      <tr><th>指标</th><th>看什么</th><th>目标</th></tr>
+      <tr><td>播放量</td><td>哪类内容流量大</td><td>找到稳定500+的方向</td></tr>
+      <tr><td>完播率</td><td>内容是否吸引人</td><td>>30%为合格</td></tr>
+      <tr><td>互动率</td><td>评论/点赞/转发比例</td><td>>5%为优秀</td></tr>
+      <tr><td>涨粉数</td><td>哪天涨粉多，发什么内容</td><td>月涨50-100粉</td></tr>
+      <tr><td>粉丝画像</td><td>年龄/性别/地域对不对</td><td>25-45岁本地人为主</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 前30天不追求数据好看，追求找到"什么内容有人看"这个答案。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span> 常见踩坑</div>
+    <div style="font-size:13px;line-height:2;color:var(--text);">
+      ❌ <b>一上来就发招生广告</b> → 平台不给流量，账号标签也乱了<br>
+      ❌ <b>什么内容都发</b> → 没有标签，系统不知道推给谁<br>
+      ❌ <b>三天打鱼两天晒网</b> → 断更一周等于重新冷启动<br>
+      ❌ <b>只发不互动</b> → 不回复评论=浪费流量<br>
+      ❌ <b>追求完美不发</b> → 先发再优化，60分的发布 > 100分的草稿<br>
+      ❌ <b>标题太随意</b> → 标题决定点击率，花30秒想标题
+    </div>
+  </div>
+
+</div>
+
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板 ✓</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function copyScript(btn) {
+  const content = btn.parentElement.querySelector('.script-content').innerText;
+  navigator.clipboard.writeText(content).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '已复制 ✓';
+    showToast();
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '复制';
+    }, 2000);
+  });
+}
+
+function showToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1500);
+}
+
+// Topic search
+function filterTopics() {
+  const query = document.getElementById('topicSearch').value.toLowerCase();
+  const activeChip = document.querySelector('.chip.active');
+  const activeCat = activeChip ? activeChip.dataset.cat : 'all';
+  
+  document.querySelectorAll('.topic-card').forEach(card => {
+    const title = card.querySelector('.topic-title').textContent.toLowerCase();
+    const desc = card.querySelector('.topic-desc').textContent.toLowerCase();
+    const keywords = (card.dataset.keywords || '').toLowerCase();
+    const cat = card.dataset.cat;
+    
+    const matchesText = !query || title.includes(query) || desc.includes(query) || keywords.includes(query);
+    const matchesCat = activeCat === 'all' || cat === activeCat;
+    
+    card.style.display = (matchesText && matchesCat) ? 'block' : 'none';
+  });
+}
+
+function filterTopicByCat(cat, el) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  el.dataset.cat = cat;
+  filterTopics();
+}
+
+// Set initial cat on chips
+document.querySelectorAll('.chip').forEach((c, i) => {
+  const cats = ['all','teach','student','daily','recruit','science','ip'];
+  c.dataset.cat = cats[i];
+});
+</script>
+
+<footer class="xy-footer">🏸 星羿羽毛球馆 · 自媒体内容规划<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+</body>
+</html>

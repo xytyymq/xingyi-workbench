@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿球馆 · 定级测试邀约实战简报</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6f8; color: #1f2933; line-height: 1.7; padding-bottom: 40px; }
+  .hero { background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; padding: 28px 22px 22px; }
+  .hero h1 { font-size: 20px; font-weight: 700; letter-spacing: .5px; }
+  .hero p { font-size: 12.5px; opacity: .92; margin-top: 6px; }
+  .container { padding: 16px 14px; }
+  .card { background: #fff; border-radius: 14px; padding: 16px 14px; margin-bottom: 13px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card h2 { font-size: 16px; color: #0f766e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .num { background: #0f766e; color: #fff; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .card h3 { font-size: 14px; margin: 12px 0 5px; color: #334155; }
+  p, li { font-size: 13.5px; line-height: 1.65; color: #374151; }
+  ul { padding-left: 18px; } li { margin-bottom: 4px; }
+  .script { background: #f0fdfa; border-left: 4px solid #14b8a6; border-radius: 6px; padding: 12px 14px; font-size: 13.5px; margin: 10px 0; white-space: pre-line; }
+  .tip { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 11px; font-size: 12.5px; color: #92400e; margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin-top: 6px; }
+  th, td { border: 1px solid #e5e7eb; padding: 6px 7px; text-align: left; vertical-align: top; }
+  th { background: #f1f5f9; color: #334155; font-weight: 600; }
+  .obj { background: #fef2f2; border-radius: 8px; padding: 11px 13px; margin-bottom: 9px; }
+  .obj .q { font-weight: 600; color: #b91c1c; font-size: 13.5px; }
+  .obj .a { font-size: 13.5px; color: #374151; margin-top: 4px; white-space: pre-line; }
+  .path { display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; margin: 8px 0; font-size: 12.5px; font-weight: 600; }
+  .path span { padding: 4px 9px; border-radius: 7px; color: #fff; }
+  .p1 { background: #16a34a; } .p2 { background: #0d9488; } .p3 { background: #2563eb; } .p4 { background: #ca8a04; }
+  .path .arrow { color: #94a3b8; }
+  .gate { background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 11px 13px; margin: 8px 0; }
+  .gate h3 { font-size: 13.5px; color: #b45309; margin: 0 0 5px; }
+  .gate ul { padding-left: 18px; } .gate li { font-size: 12.5px; margin-bottom: 2px; color: #475569; }
+  .tools a { display: block; background: #ecfdf5; border: 1px solid #99f6e4; border-radius: 8px; padding: 10px 12px; margin: 6px 0; color: #0f766e; text-decoration: none; font-size: 13px; font-weight: 600; }
+  .memo { background: #0f172a; color: #fff; border-radius: 12px; padding: 15px; font-size: 13.5px; line-height: 2; text-align: center; }
+  .memo b { color: #5eead4; }
+  .footer { text-align: center; font-size: 11.5px; color: #9ca3af; margin-top: 8px; }
+</style>
+<style>
+:root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--mint-50)!important;color:var(--ink);line-height:1.68;font-size:15px;}
+.xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+.hero{background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500))!important;color:#fff;padding:30px 20px 26px!important;position:relative;overflow:hidden;}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+.hero>*{position:relative;z-index:1;}
+.hero h1{font-size:clamp(20px,5.4vw,25px)!important;font-weight:800!important;letter-spacing:.5px;}
+.hero p{font-size:13px!important;opacity:.92;}
+.container{max-width:680px;margin:0 auto;padding:16px 14px 40px!important;}
+.card{background:var(--card);border:1px solid var(--line)!important;border-radius:16px!important;padding:16px 15px!important;margin-bottom:13px!important;box-shadow:0 2px 10px rgba(15,32,29,.06)!important;}
+.card h2{font-size:16px;color:var(--teal-700)!important;margin:0 0 10px;display:flex;align-items:center;gap:8px;}
+.card h2 .num{background:var(--teal-700)!important;color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.card h3{font-size:14px;margin:12px 0 5px;color:#334155;}
+p,li{font-size:13.5px;line-height:1.7;color:#374151;}
+ul{padding-left:18px;} li{margin-bottom:4px;}
+.script{background:var(--teal-100)!important;border-left:4px solid var(--teal-500)!important;border-radius:6px;padding:12px 14px;font-size:13.5px;margin:10px 0;white-space:pre-line;color:#0f201d;}
+.tip{background:var(--coral-soft)!important;border:1px solid #f6d3c0!important;border-radius:8px;padding:9px 11px;font-size:12.5px;color:#9a4a28!important;margin-top:8px;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px;}
+th,td{border:1px solid var(--line)!important;padding:7px 8px;text-align:left;vertical-align:top;}
+th{background:var(--teal-100)!important;color:var(--teal-900)!important;font-weight:700;}
+.obj{background:#fef2f2;border-radius:10px;padding:12px 14px;margin-bottom:10px;border:1px solid #fbd5d5;}
+.obj .q{font-weight:700;color:var(--bad)!important;font-size:13.5px;}
+.obj .a{font-size:13.5px;color:#374151;margin-top:5px;white-space:pre-line;}
+.path{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:10px 0;font-size:13px;font-weight:600;}
+.path span{padding:5px 10px;border-radius:8px;color:#fff;}
+.p1{background:var(--good)!important;} .p2{background:#0d9488!important;} .p3{background:#2563eb!important;} .p4{background:var(--gold)!important;}
+.path .arrow{color:var(--muted)!important;font-size:16px;}
+.gate{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:12px 14px;margin:8px 0;}
+.gate h3{font-size:14px;color:#b45309;margin:0 0 6px;}
+.gate ul{padding-left:18px;} .gate li{font-size:12.5px;margin-bottom:3px;color:#475569;}
+.tools a{display:block;background:var(--teal-100)!important;border:1px solid var(--teal-500)!important;border-radius:10px;padding:11px 13px;margin:7px 0;color:var(--teal-700)!important;text-decoration:none;font-size:13.5px;font-weight:700;}
+.memo{background:var(--teal-900)!important;color:#fff;border-radius:12px;padding:16px;font-size:13.5px;line-height:2;text-align:center;margin-top:6px;}
+.memo b{color:#5eead4;}
+.footer{text-align:center;font-size:11.5px;color:var(--muted)!important;margin-top:24px!important;padding:0 14px 36px;line-height:1.9;}
+.footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>星羿球馆 · 定级测试邀约实战简报</h1>
+  <p>结合分级教学体系（启蒙/初级/中级/精英）· 以定级分班切入，完成续费转化</p>
+</div>
+
+<div class="container">
+
+  <!-- 核心逻辑 -->
+  <div class="card">
+    <h2><span class="num">★</span>核心逻辑</h2>
+    <p><b>定级测试是钩子，9月分班是紧迫感，续费是水到渠成。</b></p>
+    <p style="margin-top:6px;">表面是定级测试 → 实际是让家长看到孩子对照标准到了哪个级别、进步在哪、差距在哪 → 最终自然落到续费和正确分班。</p>
+  </div>
+
+  <!-- 家长画像 -->
+  <div class="card">
+    <h2><span class="num">1</span>家长心理画像</h2>
+    <table>
+      <tr><th>类型</th><th>特征</th><th>动机</th></tr>
+      <tr><td>认可型 ~40%</td><td>孩子喜欢，看到进步</td><td>怕换机构不适应</td></tr>
+      <tr><td>观望型 ~35%</td><td>还行但没觉得非你不可</td><td>想确认"值不值"</td></tr>
+      <tr><td>动摇型 ~15%</td><td>兴趣减退，看其他机构</td><td>需要留下的理由</td></tr>
+      <tr><td>价格敏感 ~10%</td><td>觉得贵但孩子想学</td><td>需要感到"赚了"</td></tr>
+    </table>
+    <div class="tip">家长潜在顾虑：花了钱学了啥？开学太忙？换班级不适应？又要涨价？别家也不错？</div>
+  </div>
+
+  <!-- 邀约话术 -->
+  <div class="card">
+    <h2><span class="num">2</span>邀约话术（电话/微信通用）</h2>
+    <div class="script">XX妈妈/爸爸你好，我是星羿球馆的X教练。
+
+开学前我们给所有在学的小朋友安排一次羽毛球水平定级测试。
+我们球馆是按启蒙班、初级班、中级班分级教学的，每个级别都有明确的考核标准。
+这次测试就是对照标准，看孩子现在到了哪个级别、9月份该进哪个班。
+
+主要测三项：基本功（握拍、发球、高远球）、体能（折返、跳绳、步伐）、比赛意识。
+大概30-40分钟，测完我会给你一份定级报告，
+上面写清楚孩子达标的项目、下一阶段要重点练什么。
+
+分班就是按这个定级结果来的，程度相近的孩子分一班，训练效果最好，也不会互相拖累。
+你看这周几有空带小朋友过来？</div>
+    <h3>话术拆解</h3>
+    <ul>
+      <li><b>从众</b>："所有在学的小朋友"——不是只叫你一个</li>
+      <li><b>体系感</b>："分级教学+明确考核标准"——显得专业正规，不是随便测</li>
+      <li><b>低门槛</b>："30-40分钟"——降低时间压力</li>
+      <li><b>价值感</b>："定级报告写清楚达标项和下一步"——家长期待</li>
+      <li><b>紧迫感</b>："分班按定级结果，程度相近分一班"——合理且必要</li>
+      <li><b>假定成交</b>："你看这周几有空"——直接约时间</li>
+    </ul>
+  </div>
+
+  <!-- 分级体系 -->
+  <div class="card">
+    <h2><span class="num">3</span>分级教学体系（邀约时的底气来源）</h2>
+    <div class="path">
+      <span class="p1">启蒙班 5-7岁</span><span class="arrow">→</span>
+      <span class="p2">初级班 8-12岁</span><span class="arrow">→</span>
+      <span class="p3">中级班 10-14岁</span><span class="arrow">→</span>
+      <span class="p4">精英班</span>
+    </div>
+    <p style="font-size:13px;color:#475569;">每个级别有阶段考核，通关全部达标项才能升班。定级测试就是对照这套标准给孩子的当前位置"画像"。</p>
+
+    <div class="gate">
+      <h3>🌱 启蒙班 → 初级班（须全部达标）</h3>
+      <ul>
+        <li>正手击球过网：10球中 ≥5 过网</li>
+        <li>正手发球/颠球：发球10中6过网；连续颠球正手≥10</li>
+        <li>架拍定型：听口令能摆出标准架拍</li>
+        <li>出勤率 ≥80%（16/20课以上）</li>
+      </ul>
+    </div>
+    <div class="gate">
+      <h3>🌿 初级班 → 中级班（须全部达标）</h3>
+      <ul>
+        <li>高远球合格率 ≥60%（30球中18到后场）</li>
+        <li>米字步 ≤26秒；比赛中能综合用技术</li>
+        <li>结课联赛积极参与、能打完整场</li>
+        <li>出勤率 ≥80%（32/40课以上）</li>
+      </ul>
+    </div>
+    <div class="tip">邀约时不必报全数字，但你要心里有数：家长一问"测完怎么分班"，你能讲清逻辑——这就是专业度的差距。</div>
+  </div>
+
+  <!-- 测试流程 -->
+  <div class="card">
+    <h2><span class="num">4</span>定级测试流程（约40分钟）</h2>
+    <table>
+      <tr><th>时间</th><th>内容</th></tr>
+      <tr><td>0-5分</td><td>热身 & 聊天，让孩子放松</td></tr>
+      <tr><td>5-20分</td><td>技术测试（握拍、发球、高远球、网前、步伐）</td></tr>
+      <tr><td>20-30分</td><td>体能测试（折返跑、跳绳、协调性）</td></tr>
+      <tr><td>30-35分</td><td>小型对抗（比赛意识和心态）</td></tr>
+      <tr><td>35-40分</td><td>家长单独沟通（定级报告 + 续费引导）</td></tr>
+    </table>
+    <div class="tip">带去球场对照打分的是《考核速查图》，每项记实测数字，不靠感觉（详见文末配套工具）。</div>
+  </div>
+
+  <!-- 续费策略 -->
+  <div class="card">
+    <h2><span class="num">5</span>现场续费策略（黄金4步）</h2>
+    <h3>① 先报喜（1分钟）</h3>
+    <p>说具体的进步——"小明今天高远球比上次远了至少1米，发力链条通了。"</p>
+    <h3>② 再指路（1分钟）</h3>
+    <p>"他现在处于启蒙向初级过渡的关键阶段，对照标准几项已经达标，再系统练一期基本就能稳定升班。"</p>
+    <h3>③ 给分班方案（1分钟）</h3>
+    <p>"按他现在的定级，9月建议进周六上午的初级班，这个班孩子水平最接近。"</p>
+    <h3>④ 自然过渡续费（2分钟）</h3>
+    <p>"9月新学期我们的分级体系和课程都做了升级，现在续有一个专门给老学员的优惠。"</p>
+    <div class="tip"><b>顺序不能乱：先给价值 → 再谈续费。</b>报告没给、进步没夸之前，一个字别提交钱。</div>
+  </div>
+
+  <!-- 异议应对 -->
+  <div class="obj">
+    <div class="q">异议1："太贵了 / 能不能便宜点"</div>
+    <div class="a">理解，现在养孩子都不容易。不过我们定价在九江少儿羽毛球培训里性价比已经很高了。你看，一周两次年卡5680——暑假62天、寒假28天全包，学期38周每周两节，再加全年12节体能课，林林总总算下来一年178节课，一节课才30出头。孩子要是喜欢多来，一周四次一年6980、254节课，一节才27块。外面一节少儿羽毛球私教少说80到120，咱们小班课一节30来块，只有人家三分之一的价。你投入的是一笔钱，换的是孩子一年的运动习惯和身体素质，这账真不贵。</div>
+    <div class="tip">应对要点：把"5680一年"拆成"178节课、一节30出头"，再用"外面私教80起"做锚点对比，让家长觉得捡了便宜。注意别虚报课次——寒暑假天数、学期周数、体能课都实打实算进去，经得起家长当场算。</div>
+  </div>
+  <div class="obj">
+    <div class="q">异议2："孩子开学太忙，怕没时间"</div>
+    <div class="a">理解，开学事情多。但正因为压力大才更需要运动调剂。一周两次90分钟，就是把刷手机看电视的时间换成运动。固定时间训练反而帮孩子养成时间管理。不少家长担心时间，坚持下来的都说孩子做作业效率反而更高了。</div>
+    <div class="tip">应对要点：把"占用时间"变成"提高效率" + 用社交证据</div>
+  </div>
+  <div class="obj">
+    <div class="q">异议3："孩子好像不太想学了"</div>
+    <div class="a">兴趣有起伏很正常。今天我对照标准看了一下，他基础打得不错，现在正是出效果的时候。如果停了过两个月再捡起来基本等于从头开始，之前投入就浪费了。建议先续一期试试，到期还抵触就不勉强，但别在刚要出成果时断掉，太可惜了。</div>
+    <div class="tip">应对要点：沉没成本提醒 + 降低门槛（"先续一期"不是"续一年"）</div>
+  </div>
+  <div class="obj">
+    <div class="q">异议4："我再考虑考虑，回去跟爸爸商量"</div>
+    <div class="a">完全理解。9月分班是按定级结果排的，我先帮你预留一个周六上午的位置。你商量好了跟我说，确定不续我就放给其他小朋友。但你至少有个优先权，不会想来又没位置。</div>
+    <div class="tip">应对要点：制造稀缺感（名额有限）+ 给deadline + 降心理压力</div>
+  </div>
+  <div class="obj">
+    <div class="q">异议5："别家比你们便宜"</div>
+    <div class="a">确实市面价格有高有低。但我们是按启蒙、初级、中级分级教学、按水平分班的，每个级别都有明确考核标准，寒暑假还全包。差几百块一年，但训练质量和孩子进步的确定性差别很大。孩子已经适应这边的环境和教练，换个地方重新适应至少两三个月在磨合，划不来。</div>
+    <div class="tip">应对要点：强调分级体系+分班+寒暑假全包 + 转换成本</div>
+  </div>
+  <div class="obj">
+    <div class="q">异议6："我们就想让孩子锻炼锻炼，不用那么专业"</div>
+    <div class="a">99%的家长都这么想，包括我自己。但"锻炼"跟"有标准"不矛盾。我们不是要培养职业运动员，而是让孩子动作标准不受伤、有进步才有成就感、养成运动习惯。分级测试和定级报告，就是为了让每个孩子在适合自己的节奏里快乐进步，不是为了"卷"。</div>
+    <div class="tip">应对要点：共情 + 重新定义"标准"（不是卷，是保护和安全）</div>
+  </div>
+
+  <!-- 优惠政策 -->
+  <div class="card">
+    <h2><span class="num">6</span>续费优惠政策速查</h2>
+    <h3>次卡续费</h3>
+    <table>
+      <tr><th>套餐</th><th>原价</th><th>老学员续费价</th></tr>
+      <tr><td>24节课</td><td>1980</td><td>1780（发朋友圈再减100→1680）</td></tr>
+      <tr><td>45节课</td><td>3280</td><td>3080（发朋友圈再减100→2980）</td></tr>
+    </table>
+    <h3>年卡续费（重点推）</h3>
+    <table>
+      <tr><th>频次</th><th>标准价</th><th>优惠价（发朋友圈）</th></tr>
+      <tr><td>一周一次</td><td>5680</td><td>4980</td></tr>
+      <tr><td>一周两次</td><td>6680</td><td>5680</td></tr>
+      <tr><td>一周四次</td><td>10880</td><td>6980</td></tr>
+    </table>
+    <div class="tip">年卡是利润核心：锁定一年、降低流失、寒暑假全包是最大差异化卖点。老学员彩蛋（自定）：续费送穿线1次（成本≈0）+ 年卡送定制球衣（仪式感）。</div>
+  </div>
+
+  <!-- 执行时间线 -->
+  <div class="card">
+    <h2><span class="num">7</span>执行时间线</h2>
+    <table>
+      <tr><th>周次</th><th>动作</th></tr>
+      <tr><td>第1周 8/4-10</td><td>逐一邀约，预定测试时间</td></tr>
+      <tr><td>第2周 8/11-17</td><td>集中定级测试，现场推续费</td></tr>
+      <tr><td>第3周 8/18-24</td><td>未续费家长第二轮跟进</td></tr>
+      <tr><td>第4周 8/25-31</td><td>分班公布，最后续费窗口</td></tr>
+      <tr><td>9月第1周</td><td>正式开课</td></tr>
+    </table>
+    <h3>每日任务</h3>
+    <ul>
+      <li><b>上午</b>：电话邀约3-5个家长，确认测试时间</li>
+      <li><b>下午</b>：执行定级测试2-3个 + 现场续费沟通</li>
+      <li><b>晚上</b>：微信跟进当天家长 + 确认次日安排</li>
+    </ul>
+  </div>
+
+  <!-- 配套工具 -->
+  <div class="card">
+    <h2><span class="num">8</span>现场配套工具</h2>
+    <div class="tools">
+      <a href="chart.html">📋 考核速查图（带去球场对照打分）</a>
+      <a href="cert.html">🏆 荣誉证书（测试完打印发给小朋友）</a>
+    </div>
+  </div>
+
+  <!-- 教练视角 -->
+  <div class="card">
+    <h2><span class="num">!</span>教练视角 · 记住三件事</h2>
+    <ul>
+      <li><b>顺序不能乱</b>：先给价值（定级报告+进步）→ 再谈续费</li>
+      <li><b>让家长自己算账</b>：不说"我们很好"，让他自己算出"一节30来块，只有外面私教三分之一的价"</li>
+      <li><b>不怕拒绝，怕没下次</b>：递一份纸质定级报告，"9月前随时找我"——是伏笔不是结束</li>
+    </ul>
+  </div>
+
+  <!-- 备忘 -->
+  <div class="memo">
+    <b>叫来测试</b> → <b>先夸进步</b> → <b>对照标准定级</b><br>
+    → <b>给分班方案</b> → <b>算一节课才20多</b> → <b>留个位置</b><br>
+    → <b>不续也没关系，报告+证书拿走</b>
+  </div>
+
+  <footer class="footer">星羿羽毛球馆 · 定级测试邀约实战简报 · 祝续费率爆表 🔥<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+
+</div>
+</body>
+</html>

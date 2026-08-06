@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="星羿教学">
+<meta name="theme-color" content="#e85d2f">
+<title>星羿羽毛球馆 · 教学与话术系统</title>
+<style>
+:root{--p:#e85d2f;--pl:#ff8a5b;--g:#1a8a52;--bg:#f8f6f4;--cb:#fff;--t:#2c2c2c;--tl:#666;--bd:#e8e4e0;--sh:0 2px 12px rgba(0,0,0,.06);--ac:#f5a623;--pp:#7b4dff;--bl:#2196f3;--rd:#e53e3e}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:var(--bg);color:var(--t);line-height:1.7;font-size:14px}
+.hd{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:18px 16px 14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(232,93,47,.25)}
+.hd h1{font-size:18px;font-weight:700}
+.hd p{font-size:12px;opacity:.9}
+.sb{background:#fff;margin:10px 12px;border-radius:12px;padding:9px 14px;display:flex;align-items:center;gap:8px;box-shadow:var(--sh)}
+.sb input{border:none;outline:none;flex:1;font-size:14px;background:transparent}
+.sb .si{font-size:16px;opacity:.5}
+.mnav{display:flex;background:#fff;overflow-x:auto;border-bottom:2px solid var(--bd);position:sticky;top:78px;z-index:99;scrollbar-width:none}
+.mnav::-webkit-scrollbar{display:none}
+.mtab{flex-shrink:0;padding:12px 20px;font-size:14px;font-weight:700;color:var(--tl);border:none;background:none;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.mtab.on{color:var(--p);border-bottom-color:var(--p)}
+.snav{display:flex;background:#fff;overflow-x:auto;border-bottom:1px solid var(--bd);scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.stab{flex-shrink:0;padding:10px 14px;font-size:13px;font-weight:600;color:var(--tl);border:none;background:none;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent}
+.stab.on{color:var(--p);border-bottom-color:var(--p);font-weight:700}
+.ctn{padding:12px 14px 60px}
+.panel{display:none}
+.panel.on{display:block;animation:fi .3s ease}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--cb);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:var(--sh)}
+.ct{font-size:16px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ct .em{font-size:18px}
+.ig{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.ii{background:#f5f5f5;border-radius:10px;padding:10px;text-align:center}
+.ii .l{font-size:11px;color:var(--tl);margin-bottom:2px}
+.ii .v{font-size:15px;font-weight:700}
+.hb{background:linear-gradient(135deg,#fff8e1,#fff3e0);border:1px solid #ffe082;border-radius:12px;padding:14px;margin-bottom:12px}
+.hb .t{font-weight:700;font-size:14px;margin-bottom:6px;color:#e65100}
+.ph{border-left:4px solid var(--p);padding-left:14px;margin-bottom:16px}
+.ph.bl{border-left-color:var(--bl)}.ph.bg{border-left-color:var(--g)}.ph.bp{border-left-color:var(--pp)}
+.pt{font-size:15px;font-weight:700;margin-bottom:4px}
+.pm{font-size:12px;color:var(--tl);margin-bottom:8px}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:4px;margin-right:3px;margin-bottom:3px;font-weight:600}
+.to{background:#ffe0b2;color:#e65100}.tg{background:#c8e6c9;color:#2e7d32}.tb{background:#bbdefb;color:#1565c0}.tp{background:#e1bee7;color:#7b1fa2}
+.ls{background:#fafafa;border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--bd)}
+.lh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.ln{background:var(--p);color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+.ln.bl{background:var(--bl)}.ln.bg{background:var(--g)}.ln.bp{background:var(--pp)}
+.lt{font-size:14px;font-weight:600;flex:1;margin-left:6px}
+.ld{font-size:11px;color:var(--tl)}
+.lsc{margin-bottom:8px}
+.lsc:last-child{margin-bottom:0}
+.lst{font-size:12px;font-weight:700;color:var(--tl);margin-bottom:3px}
+.lsc ul{list-style:none;padding-left:0}
+.lsc li{font-size:13px;padding:2px 0;padding-left:14px;position:relative}
+.lsc li::before{content:'\2022';position:absolute;left:4px;color:var(--p)}
+.tb2{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;margin-right:3px;margin-bottom:3px}
+.tw{background:#fff3e0;color:#e65100}.tm{background:#e3f2fd;color:#1565c0}.tg2{background:#e8f5e9;color:#2e7d32}.tc{background:#f3e5f5;color:#7b1fa2}
+.sc{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--sh);border:1px solid var(--bd)}
+.sc .tr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.stg{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:600}
+.chg{font-size:10px;padding:1px 6px;border-radius:4px;background:#f0f0f0;color:var(--tl)}
+.sc h3{font-size:15px;margin-bottom:8px}
+.sb2{background:#f9f9f9;border-radius:8px;padding:12px 14px;margin-bottom:8px;white-space:pre-wrap;font-size:13px;line-height:1.8;color:#333;border-left:3px solid var(--p)}
+.sc .tip{font-size:12px;color:var(--tl);padding:8px 12px;background:#fff8e1;border-radius:8px;border-left:3px solid #ffc107}
+.sc .tip strong{color:#f57c00}
+.cbtn{float:right;padding:4px 12px;border:1px solid var(--bd);border-radius:6px;background:#fff;cursor:pointer;font-size:11px;color:var(--tl)}
+.cbtn:hover{background:var(--p);color:#fff;border-color:var(--p)}
+.cbtn.cp{background:var(--p);color:#fff;border-color:var(--p)}
+.xref{display:inline-block;background:var(--bl);color:#fff;font-size:11px;padding:3px 10px;border-radius:6px;border:none;cursor:pointer;font-weight:600;margin-top:6px}
+.xref:active{opacity:.7}
+.ct2{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12px}
+.ct2 th{background:var(--g);color:#fff;padding:8px;text-align:left;font-weight:600}
+.ct2 td{padding:8px;border-bottom:1px solid var(--bd);vertical-align:top}
+.ct2 tr:nth-child(even) td{background:#f9f9f9}
+.ct2 .ps{color:var(--g);font-weight:700}
+.fb{background:#f5f5f5;border-radius:12px;padding:14px;margin-top:8px;position:relative;border:1px dashed var(--bd)}
+.fb .cbtn{position:absolute;top:8px;right:8px}
+.fb pre{font-family:inherit;font-size:13px;white-space:pre-wrap;word-wrap:break-word;margin-top:8px}
+.tg2{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;margin-right:4px;margin-bottom:4px;font-weight:600}
+.tg2-a{background:#FF6B6B;color:#fff}.tg2-b{background:#4ECDC4;color:#fff}.tg2-c{background:#45B7D1;color:#fff}.tg2-d{background:#96CEB4;color:#fff}.tg2-e{background:#F0A500;color:#fff}.tg2-f{background:#DDA0DD;color:#fff}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(80px);background:#333;color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:9999;transition:transform .3s}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:600px){.ctn{padding:10px 10px 50px}.ig{grid-template-columns:repeat(2,1fr)}}
+</style>
+<style>
+:root{--p:#0f766e;--pl:#14b8a6;}
+.xy-topbar{position:static;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid #e3ece9;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:#0f766e;letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:#0f766e;text-decoration:none;font-weight:700;background:#d6f3ec;padding:5px 11px;border-radius:20px;}
+.xy-footer{text-align:center;font-size:11.5px;color:#8aa09a;margin:30px 14px 36px;line-height:1.9;}
+.xy-footer a{color:#0f766e;text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hd">
+<h1>🏸 星羿羽毛球馆 · 教学与话术系统</h1>
+<p>课程大纲 · 每课内容 · 阶段考核 · 家长话术 · 课后反馈</p>
+</div>
+<div class="sb"><span class="si">🔍</span><input type="text" id="search" placeholder="搜索课程、动作、话术场景…" oninput="doSearch()"></div>
+
+<div class="mnav">
+<button class="mtab on" onclick="switchMain('course')">📚 教学课程</button>
+<button class="mtab" onclick="switchMain('script')">💬 家长话术</button>
+</div>
+
+<!-- ====== COURSE PANEL ====== -->
+<div class="panel on" id="panel-course">
+<div class="snav">
+<button class="stab on" onclick="switchSub('qimeng')">🌱 启蒙班 5-7岁</button>
+<button class="stab" onclick="switchSub('tigao')">⚡ 提高班 8-12岁</button>
+<button class="stab" onclick="switchSub('gaoji')">🏆 高级班</button>
+<button class="stab" onclick="switchSub('fankui')">📋 课后反馈</button>
+</div>
+<div class="ctn">
+<div class="panel on" id="sub-qimeng">
+<div class="card">
+<div class="ct"><span class="em">🌱</span> 启蒙班教学大纲</div>
+<div class="ig"><div class="ii"><div class="l">适合年龄</div><div class="v">5-7岁</div></div><div class="ii"><div class="l">课时时长</div><div class="v">90分钟</div></div><div class="ii"><div class="l">班级人数</div><div class="v">6-8人</div></div><div class="ii"><div class="l">师生比</div><div class="v">1:6-8</div></div></div>
+<div class="hb"><div class="t">🎯 教学核心原则</div><div style="font-size:13px;"><b>玩中学，不枯燥。</b>每节课必须有游戏环节，技术练习不超过15分钟换项。<b>口诀化教学</b>："拍子像苍蝇拍"、"脚像小兔子跳"。</div></div>
+<div class="ph"><div class="pt">第一阶段：认识羽毛球（第1-4课）</div><div class="pm">目标：建立兴趣，学会握拍，认识场地</div><span class="tag to">握拍</span><span class="tag to">球感</span><span class="tag to">场地认知</span><span class="tag to">基本站姿</span></div>
+<div class="ph bl"><div class="pt">第二阶段：基础动作入门（第5-8课）</div><div class="pm">目标：正手颠球，基础步法，发球体验</div><span class="tag tb">颠球进阶</span><span class="tag tb">前后步法</span><span class="tag tb">正手发球</span><span class="tag tb">抛接球</span></div>
+<div class="ph bg"><div class="pt">第三阶段：简单击球与对抗（第9-12课）</div><div class="pm">目标：正手高远球，隔网对打，计分赛，阶段巩固</div><span class="tag tg">高远球</span><span class="tag tg">隔网对打</span><span class="tag tg">计分赛</span><span class="tag tg">技术串联</span></div>
+<div class="ph bp"><div class="pt">第四阶段：巩固提升与实战入门（第13-16课）</div><div class="pm">目标：网前技术，综合串联，对抗强化，结课大赛</div><span class="tag tp">网前放网</span><span class="tag tp">挑球</span><span class="tag tp">综合串联</span><span class="tag tp">结课大赛</span></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">📋</span> 每节课具体内容</div>
+<button class="xref" onclick="goScript('b')">📋 课前提醒话术 →</button>
+<br><br>
+<div class="ls"><div class="lh"><span class="ln">第1课</span><span class="lt">认识羽毛球 & 我的第一个球拍</span><span class="ld">90min</span></div><div class="lsc"><div class="lst">⏱️ 流程</div><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术25</span><span class="tb2 tg2">游戏40</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><div class="lst">详细内容</div><ul><li><b>热身</b>：动物模仿操（兔子跳/袋鼠跳/企鹅走）</li><li><b>认识球拍</b>：摸拍框/拍面/拍柄，"拍面是手心，拍框是手指"</li><li><b>正确握拍</b>：像"握手"一样握住，虎口对准拍框侧面</li><li><b>球感游戏·颠球初体验</b>：托球走路不掉，再尝试颠球1-2次</li><li><b>趣味游戏·羽毛球传递</b>：分两组托球接力赛跑</li><li><b>放松+总结</b>：每人说一个今天学会的本领，击掌下课</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能正确说出拍子各部位名称</li><li>能做出基本正确的握手式握拍</li><li>能用拍子托球走3米不掉</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第2课</span><span class="lt">球感训练营 & 认识球场</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术30</span><span class="tb2 tg2">游戏35</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>复习握拍</b>→<b>抛接球</b>：左手抛→右手接→双手交替</li><li><b>颠球进阶</b>：目标3次不掉，挑战5次</li><li><b>认识球场</b>：走场地线，认识前/后发球线/中线</li><li><b>趣味游戏</b>：运球过河接力 + 找位置指令游戏</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>连续颠球3次以上</li><li>说出3个场地区域名称</li><li>抛接球连续10次不失误</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第3课</span><span class="lt">运动小达人 & 挥拍初体验</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术35</span><span class="tb2 tg2">游戏30</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>基本站姿</b>：脚与肩同宽，微屈膝，重心前脚掌。口诀"小马步站好，拍子举高高"</li><li><b>启动步</b>：原地小跳+落地，"像弹簧一样弹起来"</li><li><b>空挥拍</b>：从后面甩到前面，"像扔飞盘"。分解：举拍→转体→挥拍→随挥</li><li><b>击吊球体验</b>：悬挂羽毛球，站位挥拍击打</li><li><b>趣味游戏</b>：墙上打靶 + 姿势模仿秀</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能做出标准准备姿势保持10秒</li><li>空挥拍轨迹基本正确</li><li>能击中悬挂吊球</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第4课</span><span class="lt">脚步小飞侠 & 综合复习</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术30</span><span class="tb2 tg2">游戏35</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>复习前3课</b>：握拍→颠球→准备姿势→空挥拍</li><li><b>前后步法</b>：向前跨步上网，向后退步回位。"上网跨大步，退步小碎步"</li><li><b>移动中击吊球</b>：启动→移动→击球→退回</li><li><b>趣味游戏</b>：脚步迷宫 + 颠球接力</li><li><b>第一阶段验收</b>：每人展示握拍+准备姿势+空挥拍</li></ul></div><div class="lsc"><div class="lst">✅ 第一阶段验收</div><ul><li>握拍正确率、颠球次数、挥拍轨迹综合评估</li><li>教练记录每个孩子阶段表现</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bl">第5课</span><span class="lt">颠球达人 & 方向控制</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术30</span><span class="tb2 tg2">游戏35</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>正手颠球进阶</b>：目标连续10次。技巧：拍面平、手腕稳、力量小、眼看球</li><li><b>定向颠球</b>：控制球往左/右偏移，感受拍面角度</li><li><b>颠球走动</b>：边走边颠球，从底线到网前</li><li><b>趣味游戏</b>：颠球大PK + 颠球障碍赛</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>连续颠球10次以上</li><li>能控制颠球方向</li><li>能边走边颠球5米不掉</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第6课</span><span class="lt">步法强化 & 反应训练</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术35</span><span class="tb2 tg2">游戏30</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>两步上网</b>：启动步→右脚跨大步上网。每组10次</li><li><b>两步退后</b>："前脚蹬后脚退，交叉退到后场"</li><li><b>步法+击球组合</b>：移动到网前→击打吊球→退回</li><li><b>反应训练</b>：教练喊方向快速启动</li><li><b>趣味游戏</b>：踩影子训练启动速度</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能完成两步上网和退后</li><li>启动反应1秒以内</li><li>能在移动后完成击球</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第7课</span><span class="lt">我来发球！正手发球入门</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术35</span><span class="tb2 tg2">游戏30</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>认识发球规则</b>：站发球区、球过网、落对角发球区</li><li><b>正手发球分解</b>：站姿→持球→引拍→击球。"球放低，拍从下往上捞"</li><li><b>对网发球</b>：先不要求落点，能过网就鼓励</li><li><b>发球进区</b>：对角放标志物，发进目标区域</li><li><b>趣味游戏</b>：发球打靶 + 发球过河</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能做出正手发球基本动作</li><li>10次发球至少3次过网</li><li>了解发球基本规则</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第8课</span><span class="lt">协调小能手 & 第二阶段验收</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术25</span><span class="tb2 tg2">游戏40</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>抛接球进阶</b>：抛球→转一圈→接球；抛球→拍手3次→接球</li><li><b>复习发球</b>：每人5球过网，记录成功率</li><li><b>综合闯关</b>：颠球5次+发球过网2次+步法四角+击吊球3次</li><li><b>第二阶段验收</b>：颠球+发球过网+步法移动</li></ul></div><div class="lsc"><div class="lst">✅ 第二阶段验收</div><ul><li>颠球连续15次以上</li><li>发球过网成功率50%以上</li><li>能完成前后步法移动并回位</li><li>教练出具阶段评估报告反馈家长</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bg">第9课</span><span class="lt">正手高远球入门</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术40</span><span class="tb2 tg2">游戏25</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>高远球动作分解</b>：侧身→举拍（拍子在头后）→蹬地转体→手臂伸展→最高点击球→随挥。口诀"侧身举拍像拉弓，蹬地转体往上打"</li><li><b>击球点练习</b>：教练抛球，在最高点击球，"不要等球掉下来"</li><li><b>多球喂球</b>：教练隔网喂球，正手击球过网。每人10球</li><li><b>趣味游戏</b>：高远球打靶 + 比比谁打得远</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能做出正手高远球基本动作</li><li>10球中至少3球击过网</li><li>理解"在最高点击球"</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 课堂表现反馈话术 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bg">第10课</span><span class="lt">高远球强化 & 移动中击球</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术40</span><span class="tb2 tg2">游戏25</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>高远球定点</b>：教练喂球定点击球，重点击球点和挥拍完整性</li><li><b>移动中高远球</b>：准备→退到后场→击球→回位</li><li><b>对打体验</b>：两人隔网对打，多打回合</li><li><b>多球强化</b>：10球一组，记录过网+落点合格数</li><li><b>趣味游戏</b>：回合挑战 + 高远球接力</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>移动中能完成正手高远球</li><li>10球中至少5球过网</li><li>能和同伴连续对打3回合以上</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bg">第11课</span><span class="lt">我来打球！隔网对抗初体验</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术25</span><span class="tb2 tg2">游戏40</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>简单战术</b>："尽量往后面打"、"把球打到空的地方"</li><li><b>认识计分</b>：每球得分制，21分</li><li><b>1v1 mini赛</b>：7分制换人，教练当裁判</li><li><b>双打体验</b>：2v2场地缩小，体验配合</li><li><b>趣味挑战赛</b>：特殊规则——只能用正手等</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能完成发球→对打完整流程</li><li>理解基本计分方式</li><li>体验比赛乐趣，培养竞争意识</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bg">第12课</span><span class="lt">阶段巩固 & 技术串联</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术35</span><span class="tb2 tg2">实战30</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>技术复习</b>：发球→高远球→对打完整流程</li><li><b>技术串联</b>：发球过网→对方回球→高远球打回→连续对打</li><li><b>多球综合</b>：教练随机喂球到不同位置</li><li><b>计分mini赛</b>：7分制，每人至少2场</li><li><b>第三阶段验收</b>：高远球+发球+对打展示</li></ul></div><div class="lsc"><div class="lst">✅ 第三阶段验收</div><ul><li>高远球10球中至少3球过网</li><li>能完成发球→对打完整回合</li><li>连续对打3回合以上</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bp">第13课</span><span class="lt">网前小精灵 & 放网挑球入门</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术35</span><span class="tb2 tg2">游戏30</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>网前放网</b>：上网跨步→拍面朝上轻挡→球贴网翻过。"拍面朝天，轻轻一碰"</li><li><b>挑球</b>：拍面朝上→手腕向上挑→球高高飞过网</li><li><b>放网vs挑球判断</b>："球近网→放，球离网远→挑"</li><li><b>趣味游戏</b>：网前乒乓球 + 放网打靶</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能做出网前放网基本动作</li><li>15球中至少8球放网过网</li><li>初步掌握挑球动作</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第14课</span><span class="lt">全能小选手 & 综合技术串联</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术40</span><span class="tb2 tg2">游戏25</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>技术串联</b>：发球→高远球→网前放网，教练发指令快速切换</li><li><b>前后场移动击球</b>：后场高远球→上网放网→退后高远球</li><li><b>综合多球</b>：随机喂球到前/后场，判断用什么技术</li><li><b>对打综合</b>：鼓励使用高远球/放网/挑球/发球</li><li><b>全能闯关</b>：6关综合挑战</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能完成发球→高远球→网前球技术串联</li><li>在移动中能选择正确技术</li><li>对打中能使用2种以上技术</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第15课</span><span class="lt">对抗达人 & 计分赛强化</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术15</span><span class="tb2 tg2">比赛50</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>比赛规则</b>：每球得分制，11分制</li><li><b>单打对抗赛</b>：分组循环赛，每人至少3场</li><li><b>双打体验</b>：2v2，一前一后站位</li><li><b>特殊挑战赛</b>：趣味规则变化</li><li><b>心理引导</b>："赢了不骄傲，输了不哭，最重要的是有没有进步"</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能独立完成完整计分比赛</li><li>比赛中能运用至少2种技术</li><li>理解输赢都是正常的</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第16课</span><span class="lt">结课大赛 & 颁奖典礼</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">展示15</span><span class="tb2 tg2">比赛50</span><span class="tb2 tc">颁奖15</span></div></div><div class="lsc"><ul><li><b>技能展示</b>：颠球+发球+高远球+网前放网+挑球，家长可观摩</li><li><b>结课比赛</b>：分组淘汰赛，11分制。设"最佳技术/最努力/最佳进步/最佳战术/体育精神奖"，确保每人有奖</li><li><b>颁奖典礼</b>：结业证书+奖牌，教练对每个孩子说专属鼓励</li><li><b>课后事项</b>：教练出具16课完整评估报告，建议下阶段课程</li></ul></div><div class="lsc"><div class="lst">✅ 本课目标</div><ul><li>完整体验一场正式比赛</li><li>展示16节课全部学习成果</li><li>教练出具结业评估报告和升级建议</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发结课报告给家长 →</button>
+<button class="xref" onclick="goScript('c')" style="background:var(--g)">📋 续费话术 →</button>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">🎖️</span> 启蒙班阶段考核标准</div>
+<p style="font-size:13px;color:var(--tl);margin-bottom:12px;">每阶段结束后考核，达标方可进入下一阶段。未达标需补练，不降级不淘汰。</p>
+<div class="ph"><div class="pt">第一阶段考核（第4课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>握拍姿势</td><td class="ps">基本正确，虎口对准拍框</td><td class="ps">标准正确，无需提醒</td></tr><tr><td>连续颠球</td><td class="ps">3次以上</td><td class="ps">5次以上</td></tr><tr><td>空挥拍轨迹</td><td class="ps">基本正确，从后向前上方</td><td class="ps">完整流畅，发力顺序正确</td></tr><tr><td>准备姿势</td><td class="ps">能做出并保持5秒</td><td class="ps">保持10秒且重心稳定</td></tr><tr><td>托球走</td><td class="ps">3米不掉</td><td class="ps">5米以上不掉</td></tr></table>
+<div class="ph bl"><div class="pt">第二阶段考核（第8课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>连续颠球</td><td class="ps">10次以上</td><td class="ps">15次以上</td></tr><tr><td>发球过网</td><td class="ps">10球中3球过网</td><td class="ps">10球中5球以上</td></tr><tr><td>前后步法</td><td class="ps">能完成两步上网和退后</td><td class="ps">移动后能快速回位</td></tr><tr><td>启动反应</td><td class="ps">1秒内启动</td><td class="ps">0.5秒内启动</td></tr><tr><td>抛接球</td><td class="ps">连续10次不失误</td><td class="ps">连续15次以上</td></tr></table>
+<div class="ph bg"><div class="pt">第三阶段考核（第12课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>高远球过网</td><td class="ps">10球中3球过网</td><td class="ps">10球中5球以上</td></tr><tr><td>移动中击球</td><td class="ps">能退到后场完成击球</td><td class="ps">10球中5球到合格区</td></tr><tr><td>连续对打</td><td class="ps">3回合以上</td><td class="ps">5回合以上</td></tr><tr><td>发球过网率</td><td class="ps">50%以上</td><td class="ps">70%以上</td></tr><tr><td>计分赛理解</td><td class="ps">了解基本计分</td><td class="ps">能运用"往空位打"战术</td></tr></table>
+<div class="ph bp"><div class="pt">第四阶段/结课考核（第16课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>综合技能展示</td><td class="ps">能完成全部5项展示</td><td class="ps">各项质量高，动作规范</td></tr><tr><td>结课比赛</td><td class="ps">能完成完整比赛</td><td class="ps">进入前3名</td></tr><tr><td>网前放网</td><td class="ps">能做出基本放网动作</td><td class="ps">10球中5球过网且贴网</td></tr><tr><td>技术串联</td><td class="ps">能完成发球→高远球→网前</td><td class="ps">对打中灵活切换多种技术</td></tr><tr><td>比赛心态</td><td class="ps">能完成比赛不哭闹</td><td class="ps">落后时不放弃</td></tr><tr><td>出勤率</td><td class="ps">16课中出勤12课以上</td><td class="ps">出勤14课以上</td></tr></table>
+<div class="hb"><div class="t">📋 提高班入学标准</div><div style="font-size:13px;">以下<b>全部达标</b>方可进入提高班：<br>1. 高远球10球中至少3球过网<br>2. 能完成发球→对打完整回合（3回合以上）<br>3. 初步掌握网前放网或挑球其中一项<br>4. 能完成完整计分比赛且态度端正<br>5. 出勤率达标（12/16课以上）<br><br><b>未达标但接近：</b>续报启蒙班第二期巩固，通常1-2个月可达标<br><b>明显超前：</b>可跳过部分启蒙内容，直接进入提高班试训</div></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">💡</span> 启蒙班教学注意事项</div>
+<div class="hb"><div class="t">⏰ 时间管理铁律</div>单项练习不超过15分钟。用"还有最后5个球！""再做3次就换游戏了！"制造紧迫感。</div>
+<div class="hb"><div class="t">🎮 每课必须有游戏</div>技术练习是"苦"，游戏是"甜"。先苦后甜，孩子知道练完就有好玩的。</div>
+<div class="hb"><div class="t">🗣️ 语言要儿童化</div>不要说"侧身转体展臂击球"，要说"像拉弓射箭一样，嗖的一下打出去！"</div>
+<div class="hb"><div class="t">⭐ 每个孩子都要被看见</div>每节课确保跟每个孩子至少一次单独互动/鼓励。</div>
+<div class="hb"><div class="t">📸 课堂记录</div>每节课拍3-5张照片/短视频，课后发家长群。续课和口碑传播的最佳素材。</div>
+</div>
+</div>
+<div class="panel" id="sub-tigao">
+<div class="card">
+<div class="ct"><span class="em">🚀</span> 提高班教学大纲</div>
+<div class="ig"><div class="ii"><div class="l">适合年龄</div><div class="v">8-12岁</div></div><div class="ii"><div class="l">课时时长</div><div class="v">90分钟</div></div><div class="ii"><div class="l">班级人数</div><div class="v">6-8人</div></div><div class="ii"><div class="l">入学要求</div><div class="v">启蒙班结业</div></div></div>
+<div class="hb"><div class="t">🎯 教学核心原则</div><div style="font-size:13px;"><b>技术精细化+实战化。</b>引入<b>战术意识</b>：不只是把球打过去，而是打到哪里、为什么。<b>量化标准</b>：每个动作有明确达标标准。</div></div>
+<div class="ph"><div class="pt">第一阶段：基本功强化（第1-4课）</div><div class="pm">高远球稳定、步法快速、发球准确、网前搓球</div><span class="tag to">高远球强化</span><span class="tag to">全场步法</span><span class="tag to">正反手发球</span><span class="tag to">网前搓球</span></div>
+<div class="ph bl"><div class="pt">第二阶段：技术拓展（第5-8课）</div><div class="pm">吊球、杀球、反手技术、接发球</div><span class="tag tb">吊球</span><span class="tag tb">杀球</span><span class="tag tb">反手</span><span class="tag tb">接发球</span></div>
+<div class="ph bg"><div class="pt">第三阶段：战术与实战（第9-12课）</div><div class="pm">单打战术、双打配合、模拟比赛</div><span class="tag tg">单打战术</span><span class="tag tg">双打配合</span><span class="tag tg">比赛实战</span></div>
+<div class="ph bp"><div class="pt">第四阶段：攻防战术与竞技提升（第13-16课）</div><div class="pm">进攻防守战术、全场移动、综合模拟赛、结课升级</div><span class="tag tp">进攻战术</span><span class="tag tp">防守反击</span><span class="tag tp">体能强化</span><span class="tag tp">结课升级</span></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">📋</span> 每节课具体内容</div>
+<button class="xref" onclick="goScript('b')">📋 课前提醒话术 →</button><br><br>
+<div class="ls"><div class="lh"><span class="ln">第1课</span><span class="lt">高远球精修 & 基本功诊断</span><span class="ld">90min</span></div><div class="lsc"><div><span class="tb2 tw">热身10</span><span class="tb2 tm">技术45</span><span class="tb2 tg2">实战20</span><span class="tb2 tc">放松15</span></div></div><div class="lsc"><ul><li><b>基本功诊断</b>：每人高远球10个，记录击球点/挥拍/落点/过网高度</li><li><b>动作精修</b>：纠正①击球点偏后②挥拍不完整③重心没转移</li><li><b>多球强化</b>：每人30球，10球到后场1/3为合格</li><li><b>半场对打</b>：两人对打高远球，最少10回合达标</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>30球中至少15球到后场合格区域</li><li>连续高远球对打达到10回合</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第2课</span><span class="lt">全场步法 & 移动速度</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>左右步法</b>："左脚蹬右脚跨，右脚蹬左脚跨"</li><li><b>米字步</b>：从中心向6方向移动，先慢速理解再加速</li><li><b>米字步计时</b>：6方向依次移动击球，记录时间</li><li><b>步法+击球</b>：教练随机指方向，启动移动击球</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>掌握6方向全场步法</li><li>米字步25秒以内</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第3课</span><span class="lt">发球精修 & 落点控制</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>正手发球精修</b>：发高远球+发网前小球，拍面角度决定弧线</li><li><b>反手发球教学</b>：反手握拍→球放拍前→轻推过网。动作小、球速快</li><li><b>发球落点挑战</b>：4个目标圈，进圈得分</li><li><b>发球+接发球配合</b>：一人发一人接</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>正手发高远球10球中8球到后场</li><li>初步掌握反手发球</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln">第4课</span><span class="lt">网前搓球 & 前场技术</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>网前搓球</b>：上网跨步→拍面斜对球→手指轻捻旋转→球翻滚过网。"拍面斜，手指转"</li><li><b>多球搓球</b>：每人20球，记录过网+贴网率</li><li><b>搓球vs挑球</b>：球近网→搓，球离网远→挑</li><li><b>半场网前对抗</b>：两人只打前场</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>20球中至少10球搓球过网且贴网</li><li>能根据球的位置选择搓或挑</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bl">第5课</span><span class="lt">吊球技术 & 高吊结合</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>吊球</b>：和高远球一样准备，击球瞬间切削球托。"准备动作一样，最后一下切一下"</li><li><b>高吊结合</b>：交替打高远球和吊球，准备动作一模一样</li><li><b>高吊定点</b>：5个高远到后场+5个吊到前场</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>20球中至少10球吊到前场</li><li>高吊结合时准备动作一致</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第6课</span><span class="lt">杀球入门 & 进攻技术</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>杀球</b>：和高远球准备相同，击球点更靠前、拍面下压。"高远球往前上方打，杀球往前下方砸"</li><li><b>多球杀球</b>：先追求方向和下压角度，不追求力量</li><li><b>杀球落点</b>：左/中/右三区域控制</li><li><b>杀球+上网</b>：杀球后快速上网处理挡回的网前球</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>20球中至少8球杀球过网且下压</li><li>能控制杀球方向</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第7课</span><span class="lt">反手技术入门</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>反手握拍</b>：大拇指顶拍柄宽面，像"按电梯按钮"。反复练习正反手切换</li><li><b>反手挑球</b>：转体→反手引拍→拇指顶击→球向上飞</li><li><b>反手高远球</b>：判断来球→转身背对网→反手引拍→击球</li><li><b>正反手切换</b>：教练随机喂正手/反手位</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>能快速正反手握拍切换</li><li>反手发球15球中10球贴网过网</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bl">第8课</span><span class="lt">接发球技术 & 第二阶段验收</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>接发球站位</b>：站在发球区后方，重心前倾，拍子举起</li><li><b>接发球多球</b>：教练发不同类型球（高远/网前/平快）</li><li><b>接发球战术</b>：接高球→打后场或吊网前；接网前→搓/推/挑</li><li><b>第二阶段验收</b>：高远球+吊球+杀球+反手挑球+发球各10球</li></ul></div><div class="lsc"><div class="lst">✅ 第二阶段验收</div><ul><li>高远球合格率≥60% / 吊球≥50% / 杀球≥40%</li><li>反手挑球≥50% / 发球落点≥70%</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bg">第9课</span><span class="lt">单打战术 & 场上意识</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>四角调动</b>：把球打到场地四个角让对方跑动。"打完一个角，下个打对角"</li><li><b>重复落点</b>：连续打同一位置，对方以为要变线时再变</li><li><b>战术运用</b>：教练追问"为什么打那里？"</li><li><b>录像回看</b>：手机录对打片段，回看分析</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>理解四角调动并能在对打中运用</li><li>击球前有"打哪里"的思考</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bg">第10课</span><span class="lt">双打配合 & 轮转战术</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>进攻站位</b>：前后（一人前封网，一人后进攻）</li><li><b>防守站位</b>：左右（各守半场）</li><li><b>轮转</b>：防守挑高球后→平行退→一人上网一人后退</li><li><b>双打对抗赛</b>：2v2，11分制</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>理解进攻/防守站位及切换时机</li><li>能在比赛中基本完成轮转</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bg">第11课</span><span class="lt">模拟赛 & 比赛心理</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>比赛心理</b>：①落后"一分一分追"②领先"没到21不算赢"③关键分打最有把握的球④失误后"下一球更重要"</li><li><b>模拟赛</b>：21分制单打循环赛，教练录像+观察</li><li><b>赛中暂停指导</b>：每局中间叫暂停给战术指导</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>比赛中能运用学过的技术和战术</li><li>比分落后时能调整心态</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bg">第12课</span><span class="lt">阶段总结 & 战术整合</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>战术整合</b>：设场景"你领先15:10怎么打？""落后8:15怎么追？"</li><li><b>综合对打</b>：要求至少3种技术+2种战术</li><li><b>录像回看</b>：对比进步，找出仍需改进的问题</li><li><b>第三阶段验收</b>：战术运用+比赛能力评估</li></ul></div><div class="lsc"><div class="lst">✅ 第三阶段验收</div><ul><li>比赛中能运用2种以上战术</li><li>能完成双打基本轮转</li><li>落后时心态稳定</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发阶段汇报给家长 →</button>
+</div>
+<div class="ls"><div class="lh"><span class="ln bp">第13课</span><span class="lt">进攻战术 & 防守反击</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>进攻战术</b>：①杀球后快速上网封堵②杀吊结合③发球抢攻。"杀完上网别站着"</li><li><b>杀球+上网连贯</b>：杀球→对方挡回网前→快速上网</li><li><b>防守反击</b>：①接杀球挡网②挡网后准备反击③被动时挑高球争取回位</li><li><b>攻防转换</b>：进攻3拍→转防守→再转进攻</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>掌握杀球后上网连贯技术</li><li>能接杀球挡网防守</li><li>理解攻防转换时机</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第14课</span><span class="lt">全场飞人 & 体能强化</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>米字步计时</b>：每人2轮，突破个人最好成绩</li><li><b>多方向移动击球</b>：教练随机指6方向，20球</li><li><b>间歇跑</b>：30米冲刺/15秒休息×8组</li><li><b>核心力量</b>：平板支撑+仰卧起坐+俄罗斯转体</li><li><b>体能测试</b>：1分钟跳绳+30米冲刺+米字步</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>米字步突破个人最好成绩</li><li>多方向移动到位率≥75%</li><li>1分钟跳绳120个以上 / 30米冲刺5.5秒以内</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第15课</span><span class="lt">综合模拟赛 & 录像分析</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>比赛策略</b>：每人制定自己的策略——"我的强项是什么？怎么用？"</li><li><b>综合模拟赛</b>：21分制单打循环赛，教练全程录像</li><li><b>录像回看分析</b>：选2-3个关键片段全班一起看</li><li><b>个人复盘</b>：1个做得好的+1个需要改进的</li></ul></div><div class="lsc"><div class="lst">✅ 目标</div><ul><li>在21分制完整比赛中综合运用所学</li><li>能通过录像发现自己的问题</li></ul></div></div>
+<div class="ls"><div class="lh"><span class="ln bp">第16课</span><span class="lt">结课大赛 & 升级评估</span><span class="ld">90min</span></div><div class="lsc"><ul><li><b>技能展示</b>：高远球+吊球+杀球+反手+网前搓球+放网，家长可观摩</li><li><b>结课大赛</b>：单打淘汰赛+双打表演赛，21分制。设多奖项确保每人有奖</li><li><b>颁奖典礼</b>：结业证书+教练寄语+下阶段建议</li><li><b>升级评估</b>：技术达标率+战术意识+比赛成绩+体能数据+升级建议</li></ul></div><div class="lsc"><div class="lst">✅ 本课目标</div><ul><li>完整比赛展示综合技术水平</li><li>教练出具结业评估报告和升级建议</li><li>达到高级班标准的学生可获推荐</li></ul></div>
+<button class="xref" onclick="goScript('b')">📋 发结课报告给家长 →</button>
+<button class="xref" onclick="goScript('c')" style="background:var(--g)">📋 续费话术 →</button>
+</div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">🎖️</span> 提高班阶段考核标准</div>
+<div class="ph"><div class="pt">第一阶段考核（第4课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>高远球</td><td class="ps">30球中15球到后场</td><td class="ps">20球以上到后场</td></tr><tr><td>米字步</td><td class="ps">25秒以内</td><td class="ps">20秒以内</td></tr><tr><td>正手发球</td><td class="ps">10球中8球到后场</td><td class="ps">10球中9球以上</td></tr><tr><td>网前搓球</td><td class="ps">20球中10球过网贴网</td><td class="ps">15球以上</td></tr><tr><td>对打高远球</td><td class="ps">连续10回合</td><td class="ps">15回合以上</td></tr></table>
+<div class="ph bl"><div class="pt">第二阶段考核（第8课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>高远球合格率</td><td class="ps">≥60%</td><td class="ps">≥80%</td></tr><tr><td>吊球合格率</td><td class="ps">≥50%</td><td class="ps">≥70%</td></tr><tr><td>杀球合格率</td><td class="ps">≥40%</td><td class="ps">≥60%</td></tr><tr><td>反手挑球</td><td class="ps">命中率≥50%</td><td class="ps">≥70%</td></tr><tr><td>发球落点</td><td class="ps">合格率≥70%</td><td class="ps">≥85%</td></tr><tr><td>高吊一致性</td><td class="ps">准备动作基本一致</td><td class="ps">完全一致，对方难判断</td></tr></table>
+<div class="ph bg"><div class="pt">第三阶段考核（第12课后）</div></div>
+<table class="ct2"><tr><th>项目</th><th>达标</th><th>优秀</th></tr><tr><td>战术运用</td><td class="ps">比赛中用2种战术</td><td class="ps">3种以上且有效</td></tr><tr><td>双打轮转</td><td class="ps">能完成基本轮转</td><td class="ps">轮转流畅，配合默契</td></tr><tr><td>比赛心态</td><td class="ps">落后时不崩溃</td><td class="ps">能追分，心态稳定</td></tr><tr><td>模拟赛</td><td class="ps">能完成完整比赛</td><td class="ps">进入前3名</td></tr><tr><td>录像分析</td><td class="ps">能发现自己1个问题</td><td class="ps">能发现2个以上并提方案</td></tr></table>
+<div class="ph bp"><div class="pt">第四阶段/结课考核（第16课后）</div></div>
+<table class="ct2"><tr><th>维度</th><th>考核项</th><th>达标</th></tr><tr><td rowspan="5">技术</td><td>高远球</td><td class="ps">合格率≥70%</td></tr><tr><td>吊球+杀球</td><td class="ps">合格率≥50%</td></tr><tr><td>反手技术</td><td class="ps">反手挑球≥60%</td></tr><tr><td>网前技术</td><td class="ps">搓球过网贴网率≥60%</td></tr><tr><td>发球</td><td class="ps">落点合格率≥80%</td></tr><tr><td rowspan="3">体能</td><td>米字步</td><td class="ps">22秒以内</td></tr><tr><td>1分钟跳绳</td><td class="ps">120个以上</td></tr><tr><td>30米冲刺</td><td class="ps">5.5秒以内</td></tr><tr><td rowspan="4">战术</td><td>四角调动</td><td class="ps">比赛中有效运用3次以上</td></tr><tr><td>攻防转换</td><td class="ps">能完成杀球上网/接杀挡网</td></tr><tr><td>双打配合</td><td class="ps">能完成轮转和补位</td></tr><tr><td>比赛策略</td><td class="ps">能制定并执行个人策略</td></tr><tr><td rowspan="3">比赛</td><td>结课赛</td><td class="ps">能完成完整比赛</td></tr><tr><td>录像复盘</td><td class="ps">能分析自己2个问题</td></tr><tr><td>比赛心态</td><td class="ps">全程保持稳定</td></tr><tr><td rowspan="2">综合素质</td><td>出勤率</td><td class="ps">16课中出勤12课以上</td></tr><tr><td>训练态度</td><td class="ps">认真配合，有进步意愿</td></tr></table>
+<div class="hb"><div class="t">📋 高级班准入标准</div><div style="font-size:13px;"><b>以下5项必须达标：</b><br>1. 高远球合格率≥70%<br>2. 杀球合格率≥50%<br>3. 米字步22秒以内<br>4. 比赛中能运用2种以上战术<br>5. 能完成完整21分制比赛且心态稳定<br><br><b>加分项（5项）：</b>反手技术/双打配合/体能数据/录像分析能力/出勤率</div></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">💡</span> 提高班教学注意事项</div>
+<div class="hb"><div class="t">📊 数据驱动</div>每课记录数据（合格率/时间/回合数），让孩子看到自己的进步曲线。数据是最有力的反馈。</div>
+<div class="hb"><div class="t">🧠 启发式教学</div>不要只说"打那里"，要问"你觉得该打哪里？为什么？"培养孩子的战术思维。</div>
+<div class="hb"><div class="t">📹 录像回看</div>每课至少录1-2段对打，回看分析。孩子看到自己的动作比听教练说更有效。</div>
+<div class="hb"><div class="t">🏆 比赛化思维</div>技术练习要和比赛场景结合。"你领先15:10怎么打？"比"再打10个高远球"更有意义。</div>
+<div class="hb"><div class="t">💪 体能不能少</div>每课最后5-10分钟体能训练，不可省略。技术天花板取决于身体素质。</div>
+</div>
+</div>
+<div class="panel" id="sub-gaoji">
+<div class="card">
+<div class="ct"><span class="em">⭐</span> 高级班教学大纲</div>
+<div class="ig"><div class="ii"><div class="l">适合年龄</div><div class="v">10-14岁</div></div><div class="ii"><div class="l">课时时长</div><div class="v">120分钟</div></div><div class="ii"><div class="l">班级人数</div><div class="v">4-6人</div></div><div class="ii"><div class="l">授课教练</div><div class="v">主教练</div></div></div>
+<div class="hb"><div class="t">🎯 高级班定位：竞技方向</div><div style="font-size:13px;">由主教练亲自带，目标是培养能参加市级/省级青少年比赛的竞技选手。<br><b>核心区别：</b>不是"学会动作"，而是"在比赛中赢球"。每节课都是高强度、高标准、高要求。<br><b>主教练价值：</b>竞技经验、个性化训练方案、比赛战术指导、心理辅导——普通教练给不了的。</div></div>
+<div class="ph bp"><div class="pt">训练模块一：技术精进（持续）</div><div class="pm">目标：每个技术动作达到比赛可用水平</div><span class="tag tp">高远球精准</span><span class="tag tp">杀球力量+角度</span><span class="tag tp">吊球隐蔽性</span><span class="tag tp">反手稳定</span><span class="tag tp">网前细腻</span><span class="tag tp">被动球处理</span></div>
+<div class="ph bp"><div class="pt">训练模块二：战术体系（持续）</div><div class="pm">目标：建立个人打法风格，形成战术套路</div><span class="tag tp">个人打法定位</span><span class="tag tp">发接发战术</span><span class="tag tp">限制与反限制</span><span class="tag tp">关键分战术</span><span class="tag tp">对手分析</span></div>
+<div class="ph bp"><div class="pt">训练模块三：体能专项（持续）</div><div class="pm">目标：比赛级别的体能储备</div><span class="tag tp">步法速度</span><span class="tag tp">爆发力</span><span class="tag tp">耐力</span><span class="tag tp">敏捷性</span><span class="tag tp">核心力量</span></div>
+<div class="ph bp"><div class="pt">训练模块四：比赛实战（每月）</div><div class="pm">目标：以赛代练，在比赛中发现问题</div><span class="tag tp">队内对抗赛</span><span class="tag tp">模拟比赛</span><span class="tag tp">外部比赛</span><span class="tag tp">赛后复盘</span></div>
+<div class="ph bp"><div class="pt">训练模块五：心理素质（贯穿始终）</div><div class="pm">目标：比赛心态稳定，关键分能顶住</div><span class="tag tp">抗压训练</span><span class="tag tp">专注力训练</span><span class="tag tp">情绪管理</span><span class="tag tp">自信建立</span></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">📋</span> 单次训练课结构（120分钟）</div>
+<table class="ct2"><tr><th>时间</th><th>训练内容</th></tr>
+<tr><td><b>0-15min</b></td><td><b>专项热身</b>：跳绳300个 + 跑步5圈 + 动态拉伸 + 米字步2组</td></tr>
+<tr><td><b>15-30min</b></td><td><b>步法专项</b>：全场米字步计时 + 多方向启动训练 + 专项步法强化（按每人弱点定制）</td></tr>
+<tr><td><b>30-60min</b></td><td><b>技术训练</b>：多球训练（每人50-80球），主教练亲自喂球，每球给反馈</td></tr>
+<tr><td><b>60-75min</b></td><td><b>战术训练</b>：情景模拟——"比分18平，你发球，怎么打？"教练设场景，学生执行</td></tr>
+<tr><td><b>75-100min</b></td><td><b>实战对抗</b>：1v1或2v2比赛，主教练实时指导+暂停布置战术</td></tr>
+<tr><td><b>100-110min</b></td><td><b>体能强化</b>：间歇训练/力量训练/敏捷训练（轮换），高强度短间歇</td></tr>
+<tr><td><b>110-120min</b></td><td><b>放松+复盘</b>：拉伸 + 主教练点评每人表现 + 布置课后自主练习任务</td></tr>
+</table>
+</div>
+<div class="card">
+<div class="ct"><span class="em">📅</span> 月度训练周期安排</div>
+<table class="ct2"><tr><th>周次</th><th>主题</th><th>训练重点</th><th>周末安排</th></tr>
+<tr><td>第1周</td><td>技术诊断+基础强化</td><td>全面技术诊断，找出短板，制定个人训练计划</td><td>队内排名赛</td></tr>
+<tr><td>第2周</td><td>短板突破</td><td>针对每人最弱技术专项强化，多球量加大</td><td>战术模拟对抗</td></tr>
+<tr><td>第3周</td><td>战术整合</td><td>技术→战术转化，情景模拟，建立个人打法</td><td>录像分析+复盘</td></tr>
+<tr><td>第4周</td><td>比赛周</td><td>赛前调整+心理建设，模拟比赛环境</td><td>月度大赛+颁奖</td></tr>
+</table>
+</div>
+<div class="card">
+<div class="ct"><span class="em">🎖️</span> 学生进阶筛选条件（高级班准入标准）</div>
+<p style="font-size:13px;color:var(--tl);margin-bottom:10px;">从提高班升入高级班，需同时满足以下<b>技术标准</b>和<b>综合评估</b>，由主教练亲自评估。</p>
+<table class="ct2"><tr><th>评估维度</th><th>具体项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td rowspan="4"><b>技术达标</b></td><td>正手高远球</td><td class="ps">30球中20球到后场1/3</td><td class="ps">25球以上+落点集中</td></tr>
+<tr><td>正手吊球</td><td class="ps">20球中12球到前场区域</td><td class="ps">15球以上+动作隐蔽</td></tr>
+<tr><td>正手杀球</td><td class="ps">20球中10球过网下压</td><td class="ps">14球以上+有角度变化</td></tr>
+<tr><td>反手击球</td><td class="ps">能稳定用反手挑球过网</td><td class="ps">反手高远球能到中场</td></tr>
+<tr><td rowspan="3"><b>步法体能</b></td><td>米字步计时</td><td class="ps">20秒以内完成</td><td class="ps">16秒以内</td></tr>
+<tr><td>30米冲刺</td><td class="ps">5.5秒以内</td><td class="ps">5.0秒以内</td></tr>
+<tr><td>1分钟跳绳</td><td class="ps">120个以上</td><td class="ps">150个以上</td></tr>
+<tr><td rowspan="3"><b>比赛能力</b></td><td>结课赛成绩</td><td class="ps">进入前50%</td><td class="ps">前3名</td></tr>
+<tr><td>战术运用</td><td class="ps">比赛中能使用2种以上战术</td><td class="ps">能根据对手调整战术</td></tr>
+<tr><td>比赛心态</td><td class="ps">落后时不放弃，能继续比赛</td><td class="ps">关键分能稳定发挥</td></tr>
+<tr><td rowspan="3"><b>综合素质</b></td><td>出勤率</td><td class="ps">学期出勤率≥85%</td><td class="ps">≥95%</td></tr>
+<tr><td>训练态度</td><td class="ps">认真配合，能接受指导</td><td class="ps">主动加练，自我要求高</td></tr>
+<tr><td>家长支持度</td><td class="ps">家长支持竞技方向，能配合训练安排</td><td class="ps">家长能陪同参加外部比赛</td></tr>
+</table>
+<div class="hb" style="margin-top:12px;"><div class="t">📋 升级流程</div><div style="font-size:13px;"><b>1. 数据收集</b>：提高班教练在第12课出具完整评估报告<br><b>2. 主教练面试</b>：主教练与学生1对1试训课（60分钟），亲自评估技术水平<br><b>3. 家长沟通</b>：主教练与家长面谈，说明训练强度、时间投入、参赛计划，确认家长支持<br><b>4. 试训期</b>：进入高级班试训2周，观察适应情况<br><b>5. 正式入班</b>：试训通过后正式编入高级班，制定个人训练计划</div></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">🎤</span> 放大主教练优势话术</div>
+<p style="font-size:13px;color:var(--tl);margin-bottom:12px;">以下话术用于家长沟通、招生宣传、价值塑造，突出主教练核心竞争力。</p>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：高级班和普通班区别</span></div><div class="sb2">其实最大的区别就是谁来教。
+
+普通班是教练带，教的是基本功，
+孩子能学会打球、能对打、能比赛。
+
+高级班是主教练亲自带，教的是怎么赢球。
+主教练有XX年竞技经验，打过XX场比赛，
+知道比赛中什么技术真正有用，什么是花架子。
+
+同样的高远球：
+普通班教的是"打过去"
+高级班教的是"打到哪里、什么弧线、
+什么时机打、打完怎么连贯下一拍"
+
+这就是竞技训练和兴趣培养的本质区别。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：个性化训练</span></div><div class="sb2">高级班每个孩子，主教练都会做一份个人训练计划。
+
+不是所有人都练一样的东西。
+比如XX脚步快但杀球没力量，
+那他的计划就是力量强化+杀球技术精修；
+XX技术全面但比赛容易紧张，
+那他的重点就是心理训练+比赛实战。
+
+这个计划每月根据训练数据调整，
+主教练每周复盘，确保每个孩子都在进步。
+
+普通班是标准化教学，
+高级班是一人一方案的定制化训练。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：比赛指导价值</span></div><div class="sb2">参加比赛和训练是完全不同的两件事。
+
+很多孩子训练打得很好，一到比赛就打不出来。
+为什么？因为没有人教他怎么比赛。
+
+主教练的高级班，每个月都有模拟赛，
+主教练会在比赛中间叫暂停，给战术指导：
+"对方反手弱，多打他反手"
+"你领先了别急，稳住打高远球消耗他"
+"18平了，打你最有把握的那一拍"
+
+这些临场指导的经验，
+是书本上学不到、普通教练给不了的。
+只有真正打过比赛、带过比赛的教练才能教。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：未来发展路径</span></div><div class="sb2">高级班不是just练球，是有明确的上升通道的：
+
+第一步：队内月赛 → 积分排名
+第二步：参加九江市青少年比赛 → 拿名次
+第三步：参加省级青少年比赛 → 获得等级证书
+
+羽毛球等级证书在小升初、中考体育特长生
+都是有用的。
+就算不走专业路线，
+有比赛经历和证书的孩子，
+在升学面试时也是加分项。
+
+主教练会根据每个孩子的水平，
+推荐适合参加的比赛，
+不会盲目报也不会错过机会。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：心理素质训练</span></div><div class="sb2">很多家长不知道，竞技比赛50%看技术，50%看心理。
+
+孩子平时打得很好，比赛打不出来，
+不是技术问题，是心理问题：
+- 紧张导致动作变形
+- 怕输不敢进攻
+- 落后就放弃
+- 关键分手软
+
+高级班有专门的心理训练模块：
+- 模拟比赛压力环境训练
+- 关键分情景反复练习
+- 赛前心理建设流程
+- 赛后情绪调整方法
+
+这些是主教练亲身经历过来的经验，
+知道比赛中心态会怎么变化，
+知道每个阶段该说什么话帮助孩子调整。
+
+这不是普通教练能给的。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：小班精英制</span></div><div class="sb2">高级班最多6个人，主教练一个人带。
+
+这意味着什么？
+每节课120分钟，6个人，
+主教练平均花在每个孩子身上有20分钟。
+
+普通班8个人90分钟，
+教练平均每人不到12分钟。
+
+而且高级班是主教练全程盯着，
+每个球都给反馈，每个错误当场纠正。
+不存在"教练没看到"的情况。
+
+这就是为什么高级班要控制人数——
+主教练的精力是有限的，
+人多了就保证不了每个人都被照顾到。
+
+所以高级班的名额是有限的，
+不是想进就能进，要达到标准才行。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：觉得高级班贵/时间投入大</span></div><div class="sb2">我理解您的顾虑，但我想帮您算一笔账：
+
+高级班一周X次，每次120分钟，
+主教练亲自带，人均关注时间是普通班的2倍。
+
+如果您请私教，一对一60分钟至少XXX元，
+高级班相当于半私教的价格，但能得到
+主教练级别的指导。
+
+而且高级班有比赛通道、有等级证书路径，
+这些附加值是普通班没有的。
+
+最关键的是：
+孩子在关键成长期遇到一个好教练，
+可能改变他未来10年的运动轨迹。
+
+这个投入，不是花钱买课时，
+是给孩子一个往上走的机会。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">场景：朋友圈/宣传文案</span></div><div class="sb2">🏸 为什么有的孩子进步飞快，有的却总在原地？
+
+因为教练不一样。
+
+星羿羽毛球馆高级班
+主教练亲自带课，每班仅限4-6人
+
+✅ 主教练XX年竞技经验
+✅ 一人一方案个性化训练
+✅ 每月模拟赛+战术指导
+✅ 比赛通道+等级证书规划
+✅ 心理素质专项训练
+
+不是每个孩子都能进高级班
+需要通过技术评估+主教练试训
+但一旦进来，就是竞技赛道
+
+#九江羽毛球 #羽毛球培训 #竞技羽毛球</div></div>
+</div>
+<div class="card">
+<div class="ct"><span class="em">🔄</span> 高级班与启蒙班/提高班的联动机制</div>
+<div class="hb"><div class="t">📌 升级通道清晰可见</div><div style="font-size:13px;">启蒙班结业→提高班评估达标→高级班试训→正式入班。每阶段有明确标准，家长清楚知道孩子在哪一步、还差什么。</div></div>
+<div class="hb"><div class="t">📌 高级班学员当"小助教"</div><div style="font-size:13px;">高级班学员在启蒙班/提高班当小助教（帮忙捡球、示范动作），培养领导力，让低班孩子有榜样。</div></div>
+<div class="hb"><div class="t">📌 跨班比赛日</div><div style="font-size:13px;">每季度全馆比赛日，三个班一起参加（分组别），高级班学员做表演赛，营造全馆竞技氛围。</div></div>
+<div class="hb"><div class="t">📌 家长可见的进步路径</div><div style="font-size:13px;">每阶段都有评估报告+教练反馈，升级时主教练亲自通知，仪式感拉满。</div></div>
+</div>
+</div>
+<div class="panel" id="sub-fankui">
+<div class="card">
+<div class="ct"><span class="em">💬</span> 课后反馈模板库</div>
+<p style="font-size:13px;color:var(--tl);margin-bottom:12px;">课后反馈是家长续费的关键触点。每次课后发一条反馈，让家长看到孩子的进步和教练的专业。<b>复制模板→填入孩子信息→发送</b>，2分钟搞定。</p>
+<button class="xref" onclick="goScript('c')">📋 续费话术 →</button>
+<br><br>
+<h3 style="font-size:14px;margin:12px 0 8px;color:var(--p);">🌱 启蒙班课后反馈（5-7岁）</h3>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【课后反馈】XX小朋友今日课堂表现
+
+XX妈妈/爸爸好！今天XX在课堂上的表现非常棒：
+
+🌟 今天学了：握拍/颠球/步法（根据实际填写）
+🌟 表现亮点：XX今天颠球连续X个，比上次进步了！
+   而且在游戏环节特别积极，带动了其他小朋友
+🌟 需要练习：在家可以用拍子托球走路，
+   每天练习5分钟，帮助提升球感
+
+XX是个很有天赋的孩子，上课专注度也在提升，
+继续加油！下次课见🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【课后反馈】XX小朋友今日课堂表现
+
+XX妈妈/爸爸好！今天XX的课堂反馈：
+
+🌟 今天学了：正手挥拍/前后步法
+🌟 表现亮点：XX的挥拍动作很标准，
+   教练示范一次就能模仿出来，学习能力很强
+🌟 需要关注：今天后半段注意力有点分散，
+   这个年龄很正常，建议在家少看会儿手机，
+   多做做户外运动，对专注力有帮助
+
+不用担心，XX的底子很好，
+我们会在课上多用游戏方式帮他保持兴趣。
+继续加油！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【阶段评估】XX小朋友第一阶段总结
+
+XX妈妈/爸爸好！XX已完成启蒙班第一阶段（4节课）训练，
+以下是阶段评估：
+
+📊 技能评估：
+✅ 握拍姿势：正确（已达标）
+✅ 颠球：连续X个（达标标准3个）
+⭐ 挥拍轨迹：基本正确，还需加强
+⭐ 步法：初步掌握，待强化
+
+📈 综合评价：
+XX学习态度积极，动手能力强，
+和同学相处融洽。第一阶段表现优秀！
+
+🎯 下阶段重点：
+强化步法和击球，进入简单对打阶段
+
+💡 家庭配合建议：
+1. 每天托球练习5分钟
+2. 多鼓励，让孩子保持对羽毛球的兴趣
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【结课评估】XX小朋友启蒙班结业报告
+
+XX妈妈/爸爸好！XX已完成启蒙班全部12节课训练，
+结业评估如下：
+
+📊 12课综合评估：
+✅ 握拍：达标
+✅ 颠球：连续X个（优秀）
+✅ 正手高远球：能击过网（达标）
+✅ 发球：过网率X%（达标）
+✅ 步法：基本掌握
+✅ 比赛体验：积极参与
+
+📈 成长轨迹：
+第1课：第一次握拍 → 第12课：能参加小比赛
+进步非常明显！
+
+🏅 结业评定：优秀
+已达到提高班入学标准！
+
+🎯 下一步建议：
+建议进入提高班继续学习，
+提高班将系统学习吊球、杀球、反手等技术，
+并开始接触战术和比赛。
+
+关于提高班详情可以随时找我咨询，
+期待XX在提高班继续闪光！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<h3 style="font-size:14px;margin:16px 0 8px;color:var(--p);">⚡ 提高班课后反馈（8-12岁）</h3>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【课后反馈】XX今日训练报告
+
+XX妈妈/爸爸好！今天XX的训练数据：
+
+📊 今日训练数据：
+- 高远球：30球中X球到后场合格区（合格率X%）
+- 米字步：X秒完成
+- 对打回合：最高连续X回合
+
+🌟 今日亮点：
+XX的高远球合格率比上周提升了X%，
+击球点更准了，挥拍也更完整。
+
+🎯 需要改进：
+吊球的拍面切削还可以更细腻，
+建议多体会"切球托"的感觉。
+
+💡 课后任务：
+每天对墙颠球50个 × 3组，
+重点体会手指控制拍面角度
+
+XX的进步速度在班里名列前茅，继续保持！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【比赛反馈】XX今日模拟赛表现
+
+XX妈妈/爸爸好！今天课上进行了模拟赛，
+XX的表现反馈：
+
+📊 比赛数据：
+- 比分：XX:XX（胜/负）
+- 技术使用：高远球/吊球/杀球（记录使用情况）
+- 战术执行：四角调动使用X次
+
+🌟 亮点：
+XX在比赛中成功运用了四角调动战术，
+有一拍吊球质量很高，对方完全没反应过来。
+
+🎯 需要改进：
+1. 比分落后时有点急，开始盲目杀球
+   → 建议：落后时稳住打高远球，等机会
+2. 反手位还是偏弱，被对方针对
+   → 下阶段重点强化反手
+
+💪 心理表现：
+整体心态不错，但关键分（18平）时手有点紧，
+这个我们会在后续训练中专项突破。
+
+XX的竞技意识在快速成长，继续加油！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【阶段评估】XX提高班第二阶段验收报告
+
+XX妈妈/爸爸好！XX已完成提高班第二阶段（第5-8课）训练，
+以下是技术验收数据：
+
+📊 技术达标率：
+✅ 高远球：X%（达标标准60%）→ 达标/未达标
+✅ 吊球：X%（达标标准50%）→ 达标/未达标
+✅ 杀球：X%（达标标准40%）→ 达标/未达标
+⭐ 反手挑球：X%（达标标准50%）→ 达标/未达标
+✅ 发球：X%（达标标准70%）→ 达标/未达标
+
+📈 与第一阶段对比：
+高远球合格率提升X%
+吊球从0到X%
+整体进步明显
+
+🎯 下阶段重点（第三阶段）：
+1. 单打战术：四角调动、重复落点
+2. 双打配合：站位和轮转
+3. 比赛实战：模拟赛+心理训练
+
+💡 课后建议：
+XX的XX技术还需要加强，
+建议每周在家做X组XX练习。
+
+按目前进度，XX有很大希望在结课时
+达到高级班准入标准！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【结课评估】XX提高班结业报告 & 升级建议
+
+XX妈妈/爸爸好！XX已完成提高班全部12节课训练，
+结业评估如下：
+
+📊 12课综合技术数据：
+✅ 高远球合格率：X%（高级班标准：67%）
+✅ 吊球合格率：X%（标准：60%）
+✅ 杀球合格率：X%（标准：50%）
+✅ 反手命中率：X%（标准：50%）
+✅ 发球合格率：X%（标准：70%）
+
+📊 步法体能：
+✅ 米字步：X秒（标准：20秒）
+✅ 30米冲刺：X秒（标准：5.5秒）
+
+📊 比赛能力：
+✅ 结课赛成绩：第X名
+✅ 战术运用：能使用X种战术
+✅ 比赛心态：XX
+
+🏅 结业评定：优秀
+
+🎯 升级建议：
+XX的各项指标已达到/接近高级班准入标准！
+建议安排主教练试训课，
+进一步评估是否进入高级班。
+
+高级班由主教练亲自带，
+训练强度更大，但进步也会更快。
+如果家长有意向，我可以帮忙预约试训。
+
+无论是否升级，XX在提高班的表现都非常出色，
+是这批学员里进步最快的之一！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+<h3 style="font-size:14px;margin:16px 0 8px;color:var(--p);">🏆 高级班课后反馈（主教练发送）</h3>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【训练反馈】XX今日高级班训练报告
+
+XX妈妈/爸爸好！我是主教练XX，今天XX的训练反馈：
+
+📊 今日训练数据：
+- 多球训练：50球，合格率X%
+- 米字步：X秒（比上周快/慢X秒）
+- 模拟赛：XX:XX（胜/负），战术执行率X%
+
+🌟 今日亮点：
+XX的杀球落点控制有进步，
+今天10个杀球中有X个打到指定区域，
+比上周提升了X%。另外在18平的关键分上
+敢于打自己最有把握的高远球，心态在成熟。
+
+🎯 需要改进：
+1. 反手高远球还是不够稳定，
+   下周会加大反手多球量
+2. 体能方面，第三局后半段速度下降明显，
+   需要加强耐力训练
+
+💡 本周自主练习任务：
+1. 每天跳绳3分钟 × 3组（提升耐力）
+2. 对墙反手击球50个 × 3组（强化反手）
+3. 观看我发的比赛视频，分析对手打法
+
+XX正在往竞技方向发展，
+接下来的训练强度会逐步加大，
+我会持续跟进他的每项数据。🏸
+
+——星羿羽毛球馆 主教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【比赛复盘】XX月度大赛表现分析
+
+XX妈妈/爸爸好！今天月度大赛结束，
+XX的表现复盘：
+
+📊 比赛数据：
+- 小组赛：X胜X负，小组第X
+- 淘汰赛：XX:XX（胜/负）
+- 全场技术统计：高远球X次/吊球X次/杀球X次
+
+🌟 战术执行分析：
+✅ 亮点：第一局执行了四角调动战术，
+   对方跑动量大，失误增多
+⚠️ 问题：第二局对方适应后变线打XX的反手位，
+   XX应对不够好，连续失分
+
+🎯 复盘要点：
+1. 第一局打得聪明，战术执行到位
+2. 第二局被针对反手后应该及时调整，
+   比如多用正手侧身击球绕过反手
+3. 关键分（19平）选择杀球有些冒险，
+   这种情况建议打高远球更稳
+
+📈 月度进步对比：
+- 技术合格率提升X%
+- 米字步速度提升X秒
+- 比赛胜率提升X%
+
+XX的竞技水平在稳步提升，
+下个月重点解决反手位被针对的问题。
+继续加油！🏸
+
+——星羿羽毛球馆 主教练XX</pre></div>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【比赛通知】XX可参加的外部赛事推荐
+
+XX妈妈/爸爸好！根据XX目前的训练水平，
+我整理了近期适合他参加的比赛：
+
+📋 推荐赛事：
+1. 九江市青少年羽毛球积分赛（X月X日）
+   → 级别：市级，适合首次参赛
+   → 报名截止：X月X日
+   → 预计成绩目标：进入前8
+
+2. 江西省青少年羽毛球邀请赛（X月X日）
+   → 级别：省级，竞争激烈
+   → 建议先参加市级赛积累经验后再报名
+
+🎯 参赛建议：
+XX目前的技术水平参加市级比赛是合适的，
+主要目标是积累比赛经验，不用太在意名次。
+第一次参赛的孩子通常会紧张，
+这很正常，比赛经验多了就会好。
+
+💡 参赛准备：
+1. 赛前一周我会做专项赛前训练
+2. 比赛当天我会到场指导
+3. 赛后做详细复盘
+
+如果决定报名，请在本周内确认，
+我好安排赛前训练计划。🏸
+
+——星羿羽毛球馆 主教练XX</pre></div>
+<h3 style="font-size:14px;margin:16px 0 8px;color:var(--p);">🎯 续费/招生专用反馈</h3>
+<div class="fb"><button class="cbtn" onclick="copyTxt(this)">复制</button><pre>🏸 【体验课反馈】XX小朋友体验课评估
+
+XX妈妈/爸爸好！今天XX的体验课反馈来了：
+
+🌟 整体表现：
+XX今天表现非常棒！虽然是第一次正式接触羽毛球，
+但展现出了很好的运动天赋：
+- 手眼协调能力不错
+- 学习握拍很快，教一遍就会了
+- 性格开朗，和其他小朋友互动很好
+
+📊 能力评估：
+- 运动协调性：良好 ⭐⭐⭐⭐
+- 专注力：良好 ⭐⭐⭐⭐
+- 学习能力：优秀 ⭐⭐⭐⭐⭐
+- 身体素质：良好 ⭐⭐⭐⭐
+
+🎯 教练建议：
+XX很适合学习羽毛球，
+建议从启蒙班开始系统学习。
+我们启蒙班每周X次课，每次90分钟，
+XX这个年龄正是学球黄金期，
+现在开始打好基础，进步会很快。
+
+💡 课程推荐：
+- 次卡：1980元/24节（体验后报名可减100）
+- 年卡：4980元/年（寒暑假不限次数+每月送体能课）
+
+有任何问题随时问我，期待XX加入星羿大家庭！🏸
+
+——星羿羽毛球馆 教练XX</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ====== SCRIPT PANEL ====== -->
+<div class="panel" id="panel-script">
+<div class="snav">
+<button class="stab on" onclick="switchSub2('s-a')">🅰️ 招生获客</button>
+<button class="stab" onclick="switchSub2('s-b')">🅱️ 日常教学沟通</button>
+<button class="stab" onclick="switchSub2('s-c')">©️ 续费留存</button>
+<button class="stab" onclick="switchSub2('s-d')">🅳 活动运营</button>
+<button class="stab" onclick="switchSub2('s-e')">🅴 客诉与异常</button>
+<button class="stab" onclick="switchSub2('s-f')">🅵 散客转化</button>
+</div>
+<div class="ctn">
+<div class="panel on" id="sub-s-a">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">初次咨询</span><span class="chg">微信</span></div><h3>A1 · 家长初次咨询应答</h3><div class="sb2">您好呀～感谢关注我们球馆！😊
+
+请问小朋友多大了呀？之前有接触过羽毛球吗？
+
+我们星羿这边主要带5-12岁的孩子，教练都很有耐心，课堂氛围也比较轻松活泼，不是那种特别严肃的训练班，小朋友来上课都挺开心的～您看什么时候方便带孩子来体验一下？第一节课免费试听，让孩子先感受感受～</div><div class="tip"><strong>要点：</strong>先问孩子年龄和基础，再自然过渡到邀约试听。不要一上来就报价格，先建立信任。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">课程介绍</span><span class="chg">微信/电话</span></div><h3>A2 · 课程介绍与价格说明</h3><div class="sb2">我们的课程是这样安排的：
+
+【班型】
+• 启蒙班（5-7岁）：6人小班，重在培养兴趣和球感，每节课60分钟
+• 提高班（8-12岁）：6人小班，开始学技术动作和简单对打，每节课90分钟
+
+【上课时间】
+暑假/寒假（周一到周五）：
+• 上午 10:00-11:30
+• 下午 16:00-17:30
+• 傍晚 18:00-19:30
+学期（开学期间）：
+• 周二到周五 晚上 18:00-19:30
+• 周末 10:00-11:30 / 14:00-15:30 / 16:00-17:30 / 18:00-19:30
+每节课90分钟，家长可根据孩子时间选时段
+
+【次卡】
+🏸 1980元/24节课（发朋友圈+抖音各减100，最低1780元）
+🏸 3280元/45节课（发朋友圈+抖音各减100，最低3080元）
+
+【年卡】⭐推荐
+🏸 一周一次：5680元/年 → 报名发朋友圈享优惠价 4980元/年
+🏸 一周两次：6680元/年 → 报名发朋友圈享优惠价 5680元/年
+🏸 一周四次：10880元/年 → 报名发朋友圈享优惠价 6980元/年
+🎁 每月发一条抖音 → 领当月免费体能课（全年12节）
+
+🔥 年卡最大亮点：寒暑假周一到周五不限次数上课！
+学期期间按周固定课次（1次/2次/4次），寒暑假随便来，上多少都不额外收费。
+按常规出勤频率算，一年保底109-223节课，来得多的还能更多～
+
+💡 对比次卡：年卡单节课费最低才30多块，次卡最少也要70多/节。寒暑假多来几次，差价更大。
+💡 朋友圈+抖音都是帮我们宣传，家长也相当于用发条动态的钱换了优惠和体能课，双赢～
+
+首次报名送一套运动T恤+球拍使用～
+
+您看哪个班型和时间段比较合适？我帮您预留名额😊</div><div class="tip"><strong>要点：</strong>价格报完不要沉默，立刻引导到选班型/选时间。年卡性价比远高于次卡，重点推年卡。帮家长算一笔账比直接说"划算"更有说服力。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">试听邀约</span><span class="chg">微信</span></div><h3>A3 · 试听课邀约</h3><div class="sb2">XX妈妈/爸爸好呀～这周末有空带孩子来体验羽毛球课吗？
+
+暑假/寒假时段：上午10:00、下午4:00、傍晚6:00（周一到周五）
+学期时段：周末上午10:00、下午2:00、4:00、6:00，或周二到周五晚上6:00
+您看哪个方便？我帮您安排教练～
+
+孩子来了先跟教练打个招呼热热身，然后上一节体验课。课后教练会给孩子一些简单的建议，也会跟您聊聊孩子的情况～
+
+穿运动鞋和舒服的运动服就行，球拍我们这边有备用的，不用特意买。地址是：九江市开发区XXXX，到了联系我就行～</div><div class="tip"><strong>要点：</strong>给具体时间让家长选，不要问"您什么时候有空"。把需要准备的东西说清楚，降低决策成本。根据当前是假期还是学期，重点推对应时段。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">试听转化</span><span class="chg">微信</span></div><h3>A4 · 试听后转化跟进</h3><div class="sb2">XX妈妈/爸爸好～今天XX（孩子名）体验课表现很棒！👏
+
+教练反馈说孩子协调性不错/学动作很快/态度很积极（根据实际情况选），挺适合继续练的。
+
+羽毛球这项运动对孩子的视力保护、身高发育和专注力都有好处，现在这个年纪正好是打基础的黄金期。
+
+现在报名有优惠：报名时发条朋友圈帮我们宣传一下，次卡立减100（再发抖音再减100，最高省200），年卡直接享优惠价。年卡每月发一条抖音还能领免费体能课，全年送12节。您看要不要先报个次卡试试？名额我帮您留到这周X～有问题随时问哈😊</div><div class="tip"><strong>要点：</strong>试听后2小时内发，趁热打铁。先夸孩子（具体夸），再说运动的好处，最后给一个有期限的优惠促单。不要拖到第二天。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-a">朋友圈招生</span><span class="chg">朋友圈</span></div><h3>A5 · 朋友圈招生文案（3条轮换）</h3><div class="sb2">【文案1 · 运动好处向】
+别让孩子整个周末都对着屏幕📱
+来打羽毛球吧～跑跑跳跳出出汗
+保护视力 ✓ 促进长高 ✓ 锻炼专注力 ✓
+5-12岁正是运动启蒙的黄金期
+本周免费体验课还有3个名额👇
+评论区扣1我私你
+
+【文案2 · 氛围向】
+今天的课堂氛围也太好了吧🥹
+孩子们从不会握拍到能打两个回合
+只用了三节课！
+不卷不鸡娃，就是开开心心打球
+让孩子爱上运动才是最重要的～
+新班招生中，6人小班手慢无🏃
+
+【文案3 · 成长向】
+XX同学今天第一次完成正手发球🎉
+看他笑的那个样子，教练比他还开心
+每个孩子进步的节奏不一样
+我们要做的就是给他时间和鼓励
+少儿羽毛球培训 · 持续招生中
+体验课预约私信我～</div><div class="tip"><strong>要点：</strong>配图用孩子上课的实拍照片/视频（需家长同意）。每周轮换发，不要全部都是招生硬广，穿插日常课堂记录。</div></div>
+</div>
+<div class="panel" id="sub-s-b">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">上课提醒</span><span class="chg">微信</span></div><h3>B1 · 课前提醒</h3><div class="sb2">XX妈妈/爸爸好～明天（今天）XX:00有XX的羽毛球课，提醒一下别忘啦😊
+
+记得给孩子穿运动鞋和舒服的运动服，如果有事来不了提前跟我说，我帮安排补课～</div><div class="tip"><strong>要点：</strong>模板固定后可以批量发，替换名字和时间即可。建议前一天晚上8点前发，不要发太晚。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">表现反馈·正面</span><span class="chg">微信</span></div><h3>B2 · 课堂表现反馈（正面）</h3><div class="sb2">XX妈妈/爸爸～今天XX课堂表现特别好！👍
+
+今天学了正手高远球，他/她动作领悟很快，练习的时候特别认真，教练组都夸了。
+
+回家如果有空可以让孩子对着镜子练练挥拍动作，不用球，空挥就行，每天30个，巩固一下手感～
+
+下节课我们开始练步伐了，期待他的表现😊</div><div class="tip"><strong>要点：</strong>具体说学了什么、哪里好，不要只说"表现很好"。给一个简单的家庭练习建议，让家长感觉专业又贴心。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">表现反馈·需改进</span><span class="chg">微信</span></div><h3>B3 · 课堂表现反馈（需要改进时）</h3><div class="sb2">XX妈妈/爸爸好～跟您同步一下XX最近上课的情况😊
+
+今天练的是反手发球，XX动作上进步挺大的，不过专注力这块还有提升空间，中间有几次走神了，教练提醒之后能调整回来。
+
+这个年纪的孩子专注力本来就在发展中，很正常～我们这边上课会多关注他，也建议在家可以让他做一些需要集中注意力的小游戏，慢慢就养成了。
+
+有什么想法随时跟我沟通哈，咱们一起配合～</div><div class="tip"><strong>要点：</strong>先说进步再提问题，用"还有提升空间"代替"不好"。强调是正常现象，不要让家长焦虑。结尾强调配合。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">阶段汇报</span><span class="chg">微信</span></div><h3>B4 · 阶段性进度汇报</h3><div class="sb2">XX妈妈/爸爸好～这个月XX的羽毛球学习进度跟您汇报一下📝
+
+【已掌握】
+✅ 正手握拍、反手握拍
+✅ 正手高远球基本动作
+✅ 前场步伐（两步上网）
+
+【进步明显】
+✅ 发球成功率从30%提升到70%
+✅ 课堂专注度明显提升
+
+【下阶段重点】
+🔹 反手发球稳定性
+🔹 后场步伐移动
+🔹 简单多拍对打
+
+整体来说XX这个月进步挺大的，教练组对他的评价很高。有什么问题随时找我聊～💪</div><div class="tip"><strong>要点：</strong>用清单式呈现，一目了然。有数据的地方用数据说话（如成功率提升），家长看了会觉得专业。每月固定时间发一次。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">请假补课</span><span class="chg">微信</span></div><h3>B5 · 请假与补课安排</h3><div class="sb2">【家长请假时】
+好的没问题～XX这节课先请个假，注意身体/祝顺利！我帮您记一下，补课安排在X月X日（周X）XX:00可以吗？或者您看哪个时间方便，我协调一下😊
+
+【补课通知】
+XX妈妈/爸爸～XX的补课安排好了，X月X日（周X）XX:00，跟XX教练的班，到时候直接来就行～记得穿运动鞋哦</div><div class="tip"><strong>要点：</strong>请假第一时间回复，不要让家长等。补课时间主动给方案，不要让家长来找你。补课前一天再提醒一次。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-b">考勤异常</span><span class="chg">微信</span></div><h3>B6 · 连续缺课/考勤异常沟通</h3><div class="sb2">XX妈妈/爸爸好呀～最近两周没看到XX来上课了，一切还好吗？😊
+
+如果时间上有冲突可以跟我说，我帮看看能不能调一下时段。要是孩子有什么想法或者遇到什么情况，也方便跟我说说，咱们一起想办法～
+
+球馆这边随时等着XX回来哈💪</div><div class="tip"><strong>要点：</strong>语气关心不要质问。可能孩子在生病、时间冲突、或者不想学了，先了解原因再对症下药。连续缺课2次就该主动联系了。</div></div>
+</div>
+<div class="panel" id="sub-s-c">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-c">到期提醒</span><span class="chg">微信</span></div><h3>C1 · 课程到期提醒（提前2周）</h3><div class="sb2">XX妈妈/爸爸好～提醒一下，XX的羽毛球课还剩最后3节课啦📝
+
+这段时间XX进步挺大的（说一个具体的进步点），接下来要开始练XX了，继续练下去效果会更好～
+
+续费的话现在有优惠：续费时发条朋友圈帮我们宣传一下，次卡立减100（再发抖音再减100，最高省200），年卡直接享优惠价。年卡每月发一条抖音还能领免费体能课，全年送12节。年卡算下来单节课比次卡便宜一半，您看要不要帮XX续个年卡？有什么问题随时问我😊</div><div class="tip"><strong>要点：</strong>提前2周开始铺垫，不要等最后一节课才说。先讲孩子的进步和接下来的计划，让家长觉得"值得继续"，再提优惠。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-c">续费优惠</span><span class="chg">微信</span></div><h3>C2 · 续费优惠活动沟通</h3><div class="sb2">XX妈妈/爸爸～跟您说个好消息🎉
+
+XX这学期进步挺大的（说一个具体的进步），接下来可以继续往上练了～
+
+现在续费有优惠：
+🎁 续次卡（24节/45节）→ 发朋友圈减100，再发抖音减100，最高省200
+🎁 续年卡 → 报名发朋友圈享优惠价 + 每月发抖音领免费体能课（全年12节）
+   • 一周一次：4980元/年
+   • 一周两次：5680元/年
+   • 一周四次：6980元/年
+   🔥 寒暑假不限次数上课，学期按周固定课次！
+
+次卡最少也要70多块一节，年卡单节才30多，寒暑假多来几次差价更大。XX现在这个阶段坚持练效果最好，建议直接续年卡～
+
+需要的话我帮您锁名额，有什么问题随时问😊</div><div class="tip"><strong>要点：</strong>先夸孩子进步，再讲优惠。重点推年卡——算单节课费对比次卡，让家长看到差距。年卡优惠机制：朋友圈（一次性，享优惠价）+ 抖音（每月，领体能课），帮家长理清楚。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-c">续费跟进1</span><span class="chg">微信</span></div><h3>C3 · 续费跟进（第一次未回复，隔2天）</h3><div class="sb2">XX妈妈/爸爸好呀～前两天跟您说的续费活动的事，您考虑得怎么样啦？😊
+
+不着急的，有什么顾虑可以跟我说：
+• 时间安排上有变化？
+• 孩子那边有什么想法？
+• 费用方面想了解分期？
+
+不管续不续都可以聊，我就是想了解一下情况，方便给XX做后续的安排～</div><div class="tip"><strong>要点：</strong>不要催，给家长几个可能的顾虑方向让他选，降低回复门槛。家长不回复往往不是不想续，是还没想好怎么说。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-c">续费跟进2</span><span class="chg">电话</span></div><h3>C4 · 续费跟进（第二次未回复，打电话）</h3><div class="sb2">【电话话术】
+XX妈妈/爸爸您好，我是XX羽毛球馆的XX老师，给您打个电话没打扰吧？
+
+是这样的，XX的课程马上要结束了，之前微信给您发过续费的信息，不知道您看到没有，所以打个电话跟您聊聊～
+
+（听家长说，根据情况应对）
+
+如果续：太好了，我帮您把名额锁上，微信上发您缴费链接～
+如果不续：没关系的，XX在这边学得挺好的，后面要是想回来随时可以。孩子最近是不是有什么其他安排呀？
+如果犹豫：这样，您不用急着决定，名额我帮您留到这周末，活动优惠也给您保留着，您考虑好了跟我说就行～</div><div class="tip"><strong>要点：</strong>微信两次未回复就该打电话了。电话比微信更有温度，也更容易了解真实原因。态度松弛，不强推，给台阶。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-c">续费感谢</span><span class="chg">微信</span></div><h3>C5 · 续费后感谢与承诺</h3><div class="sb2">XX妈妈/爸爸～续费收到了，感谢信任！🙏
+
+XX下一阶段的课程安排是这样的：从X月X日开始，还是周X XX:00这个时段。教练不变，内容会开始进入XX（新阶段内容），难度会逐步提上来。
+
+放心，我们会继续好好带XX的。有什么问题随时找我，我的工作就是服务好你们😊💪</div><div class="tip"><strong>要点：</strong>续费后立刻发，让家长觉得钱花得值。同步下一阶段安排，给家长信心和期待感。这也在为下次续费埋伏笔。</div></div>
+</div>
+<div class="panel" id="sub-s-d">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-d">寒暑假班</span><span class="chg">微信/群发</span></div><h3>D1 · 暑假/寒假班推广</h3><div class="sb2">暑假班招生啦！🏖️🏸
+
+【暑假班信息】
+📅 时间：X月X日-X月X日（共XX天）
+⏰ 时段：上午10:00-11:30 / 下午16:00-17:30 / 傍晚18:00-19:30（可选）
+👥 班型：6人小班
+💰 费用：XX元/期（含XX节课）
+
+【课程内容】
+✅ 基本技术强化（高远球、发球、步伐）
+✅ 实战对打训练
+✅ 体能趣味游戏
+✅ 最后一天办小型比赛+颁奖📸
+
+暑假集中训练效果特别好，进步比平时快很多。老学员优先报名，X月X日前报名减XX元～
+
+名额有限，要报名的私我🙋</div><div class="tip"><strong>要点：</strong>突出"集中训练效果更好"这个卖点。老学员优先+早鸟优惠双管齐下。配图用往期暑假班的照片或视频。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-d">积分赛</span><span class="chg">微信群</span></div><h3>D2 · 积分赛通知</h3><div class="sb2">🏆 羽毛球馆积分赛来啦！
+
+【赛制】
+每月一赛，按月累计积分，年底总积分前三名有大奖🎁
+分两个组别：U9组（5-9岁）/ U12组（10-12岁）
+
+【本月赛】
+📅 时间：X月X日（周X）下午2:00-5:00
+📍 地点：球馆
+👥 名额：每组16人，报满即止
+💰 报名费：XX元（含场地+裁判+奖品）
+
+【积分规则】
+冠军10分｜亚军7分｜季军5分｜参赛即得2分
+
+不管水平怎么样，来打就是赚到，关键是让孩子体验比赛的感觉，锻炼心态～
+
+报名扣1，我拉进比赛群👇</div><div class="tip"><strong>要点：</strong>积分赛的核心是"参与感"和"长期粘性"。强调参赛就有分，降低参与门槛。每月固定时间办，形成期待。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-d">亲子活动</span><span class="chg">微信群</span></div><h3>D3 · 亲子羽毛球活动邀请</h3><div class="sb2">👨‍👩‍👧 亲子羽毛球日来啦！
+
+这周末不安排正式课，咱们搞个亲子活动～
+
+【活动内容】
+🏸 亲子双打趣味赛（家长+孩子）
+🎯 趣味挑战赛（颠球、发球入筐）
+🍕 茶歇时间（水果+零食）
+📸 合影留念
+
+📅 时间：X月X日（周日）下午2:00-4:30
+💰 费用：免费！（老学员福利）
+👥 名额：12组家庭
+
+平时都是孩子自己练，这次让家长也上场体验一下，孩子看到爸妈打球会特别兴奋😄
+
+要来的扣1，名额有限先到先得～</div><div class="tip"><strong>要点：</strong>亲子活动是做转介绍的利器——家长拍照发朋友圈就是最好的广告。活动免费但价值感要拉满。注意拍好照片素材。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-d">节日问候</span><span class="chg">微信</span></div><h3>D4 · 节日问候（通用模板）</h3><div class="sb2">XX妈妈/爸爸～XX节快乐！🎉
+
+祝您和家人节日愉快，开开心心～XX假期如果有来打球的需求随时联系我哈，球馆假期营业时间：X:00-X:00
+
+（如果是儿童节/暑假等跟孩子相关的节日，加一句）
+祝XXXX节快乐，健康快乐长大！🏸</div><div class="tip"><strong>要点：</strong>节日问候不要群发一样的内容，至少改一下名字。内容简短，带一句球馆的实用信息（假期营业时间等），让问候不只是问候。</div></div>
+</div>
+<div class="panel" id="sub-s-e">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-e">孩子不想学</span><span class="chg">微信/电话</span></div><h3>E1 · 家长说"孩子不想学了"</h3><div class="sb2">【先共情】
+XX妈妈/爸爸，理解您的感受，孩子不想学肯定是有原因的，咱们一起找找问题在哪～
+
+【了解原因（问这几个问题）】
+1. 孩子是突然不想学了，还是说了有一段时间了？
+2. 是上课的时候不开心，还是觉得累了/难了？
+3. 孩子有没有说具体是什么让他不舒服？
+
+【根据原因应对】
+• 如果是太难了/没成就感：可能是阶段不匹配，我帮调整一下训练内容，多给他一些正反馈，让孩子重新找到自信
+• 如果是跟同学/教练有摩擦：我了解一下情况，帮协调，放心
+• 如果是单纯累了想休息：可以先停两周，不用退课，休息好了再来
+• 如果是兴趣确实转移了：没关系的，这也很正常，您不用勉强孩子。课程我先帮您冻结，随时可以回来
+
+不管怎样，孩子的感受最重要，咱们商量一个对孩子最好的方案😊</div><div class="tip"><strong>要点：</strong>不要急着挽留，先了解原因。家长说"孩子不想学"往往只是一个结果，原因可能五花八门。能救的救，不能救的给台阶，保持关系，以后可能还会回来。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-e">觉得进步慢</span><span class="chg">微信/电话</span></div><h3>E2 · 家长说"感觉进步不大"</h3><div class="sb2">XX妈妈/爸爸～感谢您跟我反馈，这个问题很重要，我认真跟您说一下😊
+
+【用事实说话】
+其实XX的进步是有的，我给您列一下：
+• X月：刚来的时候发球成功率大概XX%，现在到了XX%
+• X月：刚开始学正手高远球，现在基本动作已经定型了
+• X月：开始能跟教练打3-4个回合了
+
+【解释规律】
+羽毛球的技术动作有个规律——前X节课在打基础，看起来变化不大，但这是在建立肌肉记忆。等基础打好之后，后面进步会越来越快，就像蓄水一样，前期在蓄，后面才会看到水流。
+
+【给方案】
+这样，接下来两周我让教练多给XX一些实战对练的时间，让您更直观地看到进步。您也可以每次课后多问问教练今天的情况，我们随时同步～
+
+（如果确实练了一段时间进步不明显）
+我重新评估一下XX的训练计划，看看是不是内容需要调整，或者要不要换个班型/教练试试。</div><div class="tip"><strong>要点：</strong>用数据回应感受，不要空喊"有进步"。解释羽毛球的学习规律帮家长建立合理预期。给具体的行动方案，让家长看到你在做事。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-e">排课冲突</span><span class="chg">微信</span></div><h3>E3 · 排课时间冲突</h3><div class="sb2">XX妈妈/爸爸好～您说的时间冲突我了解了，帮您看看怎么调😊
+
+目前可以选的时段有：
+暑假/寒假：周一到周五 10:00 / 16:00 / 18:00
+学期：周二到周五 18:00 / 周末 10:00 / 14:00 / 16:00 / 18:00
+
+具体哪个时段有名额我帮您查：
+• 周X XX:00（还有2个名额）
+• 周X XX:00（还有3个名额）
+
+您看哪个方便？我帮您调过去。如果这几个都不合适，您把方便的时间告诉我，我看看能不能协调开一个班～
+
+放心，时间的事包在我身上，不会让孩子没课上的💪</div><div class="tip"><strong>要点：</strong>排课冲突很常见，关键是快——给方案不要给问题。主动列出可选时段让家长选，而不是说"我看看"然后没下文。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-e">教练投诉</span><span class="chg">电话</span></div><h3>E4 · 家长对教练有意见</h3><div class="sb2">【电话话术】
+XX妈妈/爸爸您好，您反馈的情况我收到了，非常感谢您跟我说，这个问题我一定认真处理。
+
+（先听家长说完，不要急于辩解）
+
+我先了解一下具体情况，今天就跟教练沟通，然后给您一个回复。
+
+（处理完之后跟进）
+XX妈妈/爸爸，跟您同步一下处理结果：
+1. 我已经跟XX教练沟通过了，这个问题确实存在，已经做了调整/批评/培训
+2. 后续XX的课我会多关注，有问题随时找我
+3. 这节课算我们赠送一节，表示感谢您的理解和反馈
+
+您放心，把孩子交给我们，我们一定负责任。以后有任何问题直接找我，我是第一责任人。</div><div class="tip"><strong>要点：</strong>这类问题必须打电话，微信显不出重视程度。先听再说，不辩解。处理要有动作、有结果、有补偿。最后强调"找我就行"，让家长有安全感。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-e">退费处理</span><span class="chg">电话</span></div><h3>E5 · 退费沟通</h3><div class="sb2">【电话话术】
+XX妈妈/爸爸您好，退费的事我了解了。说实话有点舍不得XX走，他在这边学得挺好的（说一个孩子的优点），但我也完全尊重您的决定。
+
+（先尝试挽回，如果不行就顺利退费）
+这样，费用我帮您算一下：剩余XX节课，按XX元/节，总共退您XX元。我X月X日之前打给您。
+
+XX的档案我先保留着，后面要是想回来随时可以，课程随时接上。也希望XX不管在哪都继续坚持运动，这对孩子真的好～
+
+有什么需要配合的随时找我😊</div><div class="tip"><strong>要点：</strong>退费不要设障碍，顺畅办理反而留好感。轻挽留一句即可，不要纠缠。退费速度要快，别让家长催。留好后路——"档案保留，随时回来"。</div></div>
+</div>
+<div class="panel" id="sub-s-f">
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-f">散客引流</span><span class="chg">微信</span></div><h3>F1 · 散客加微信后破冰</h3><div class="sb2">哈喽～今天打得过瘾吗？😄欢迎来星羿打球！
+
+我是星羿这边的XX，以后来打球订场、穿线、有什么事直接找我就行，比小程序还快～
+
+对了，我们有个球友群，群里定期组织活动、约球、发优惠，要不拉您进去看看？不吵的，有需要的消息才发😊</div><div class="tip"><strong>要点：</strong>散客第一次接触就加微信，破冰要轻松自然。先提供价值（订场更快），再拉群。不要一上来就推销。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-f">会员卡</span><span class="chg">微信</span></div><h3>F2 · 会员卡推荐</h3><div class="sb2">XX哥/姐～看您经常来打球，跟您说个省钱的方案😄
+
+我们现在有会员卡：
+🏸 次卡：XX元/10次（单次省XX元，3个月有效）
+🏸 月卡：XX元/月（不限次，天天来都行，最划算）
+🏸 季卡：XX元/3个月（不限次+送2次穿线）
+
+您来的频率高的话办个月卡/季卡比每次单买划算多了，而且不用每次小程序预约，直接跟我说一声就留场了～
+
+您看看哪个合适？有问题随时问😊</div><div class="tip"><strong>要点：</strong>先算账让散客看到省钱，再强调便利性（直接微信订场）。观察散客来的频率再推对应的卡——每周来2次以上推月卡/季卡，偶尔来推次卡。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-f">穿线服务</span><span class="chg">微信</span></div><h3>F3 · 穿线服务推荐</h3><div class="sb2">XX哥/姐～我看您这把拍子线该换了吧？线已经起毛/断线了😊
+
+星羿这边可以穿线，常用的线都有：
+• 尤尼克斯BG65（耐打型）XX元
+• 尤尼克斯BG80（高弹型）XX元
+• 李宁1号线（耐打型）XX元
+• 李宁5号线（高弹型）XX元
+
+一般24-26磅比较适合业余球友。穿好了我微信通知您来取，一般当天/第二天就好～
+
+要穿的话拍子直接带过来或者放球馆这边都行</div><div class="tip"><strong>要点：</strong>散客打球时主动观察球拍状态，自然引出穿线需求。给几个选择但不要太复杂。穿线是高频刚需，做好了散客粘性会大幅提升。</div></div>
+<div class="sc"><button class="cbtn" onclick="copyTxt(this)">复制</button><div class="tr"><span class="stg tg2-f">散客活动</span><span class="chg">微信群</span></div><h3>F4 · 散客活动推广（群内）</h3><div class="sb2">🏸 周末球友赛来啦！
+
+【活动信息】
+📅 时间：X月X日（周六）晚上7:00-9:30
+👥 人数：16人（先到先得）
+💰 费用：XX元/人（含场地+水+奖品）
+📍 球馆
+
+【赛制】
+抽签分组双打，淘汰赛制，前两名有奖品🎁
+水平不限，重在参与和交朋友～
+
+上次大家打得超开心，这次名额多一点，没报上的赶紧啦😄
+
+报名扣1+转账，满人截止👇</div><div class="tip"><strong>要点：</strong>散客活动每月办1-2次，核心目的是增强粘性和促进办卡。双打赛制让不同水平的人都能参与。拍好照片/视频发群里和朋友圈，也是自媒体素材。</div></div>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板 ✓</div>
+
+<script>
+function switchMain(m){document.querySelectorAll('.mtab').forEach(function(e){e.classList.remove('on')});event.target.classList.add('on');document.getElementById('panel-course').classList.remove('on');document.getElementById('panel-script').classList.remove('on');document.getElementById('panel-'+m).classList.add('on')}
+function switchSub(s){document.querySelectorAll('#panel-course .stab').forEach(function(e){e.classList.remove('on')});event.target.classList.add('on');['qimeng','tigao','gaoji','fankui'].forEach(function(k){document.getElementById('sub-'+k).classList.remove('on')});document.getElementById('sub-'+s).classList.add('on')}
+function switchSub2(s){document.querySelectorAll('#panel-script .stab').forEach(function(e){e.classList.remove('on')});event.target.classList.add('on');['s-a','s-b','s-c','s-d','s-e','s-f'].forEach(function(k){document.getElementById('sub-'+k).classList.remove('on')});document.getElementById('sub-'+s).classList.add('on')}
+function goScript(cat){switchMain('script');var m={'a':'s-a','b':'s-b','c':'s-c','d':'s-d','e':'s-e','f':'s-f'};var target=m[cat]||'s-a';document.querySelectorAll('#panel-script .stab').forEach(function(e){e.classList.remove('on')});document.querySelectorAll('#panel-script .stab').forEach(function(e){if(e.getAttribute('onclick').indexOf(target)>-1)e.classList.add('on')});['s-a','s-b','s-c','s-d','s-e','s-f'].forEach(function(k){document.getElementById('sub-'+k).classList.remove('on')});document.getElementById('sub-'+target).classList.add('on');window.scrollTo(0,0)}
+function copyTxt(btn){var body=btn.parentElement.querySelector('.sb2,.fb pre');var text=body.innerText||body.textContent;var ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');btn.classList.add('cp');btn.innerText='已复制 ✓';showT();setTimeout(function(){btn.classList.remove('cp');btn.innerText='复制'},2000)}catch(e){alert('复制失败，请手动选择文本')}document.body.removeChild(ta)}
+function showT(){var t=document.getElementById('toast');t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+function doSearch(){var kw=document.getElementById('search').value.toLowerCase();document.querySelectorAll('.ls,.sc,.fb').forEach(function(el){if(!kw){el.style.display='';return}var tx=el.innerText.toLowerCase();el.style.display=tx.indexOf(kw)>-1?'':'none'})}
+</script>
+<footer class="xy-footer">🏸 星羿羽毛球馆 · 教学与话术系统<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿球馆 · 定级考核速查图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #fff; color: #1f2933; padding: 16px; max-width: 860px; margin: 0 auto; }
+  .head { text-align: center; border-bottom: 3px solid #0f766e; padding-bottom: 10px; margin-bottom: 12px; }
+  .head h1 { font-size: 20px; color: #0f766e; letter-spacing: 1px; }
+  .head p { font-size: 11.5px; color: #64748b; margin-top: 4px; }
+  .path { display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; margin: 10px 0 6px; font-size: 13px; font-weight: 600; }
+  .path span { padding: 5px 10px; border-radius: 8px; color: #fff; }
+  .p1 { background: #16a34a; } .p2 { background: #0d9488; } .p3 { background: #2563eb; } .p4 { background: #ca8a04; }
+  .path .arrow { color: #94a3b8; font-size: 16px; }
+  h2 { font-size: 15px; color: #0f766e; margin: 16px 0 8px; border-left: 4px solid #14b8a6; padding-left: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
+  th, td { border: 1px solid #d1d5db; padding: 6px 7px; text-align: left; vertical-align: top; }
+  th { background: #f1f5f9; font-weight: 600; color: #334155; }
+  .cls1 { background: #f0fdf4; } .cls2 { background: #ecfdf5; } .cls3 { background: #eff6ff; }
+  .pass { color: #16a34a; font-weight: 600; }
+  .exc { color: #ca8a04; font-weight: 600; }
+  .gate { background: #fffbeb; border: 1.5px solid #f59e0b; border-radius: 10px; padding: 12px 14px; margin: 8px 0; }
+  .gate h3 { font-size: 14px; color: #b45309; margin-bottom: 6px; }
+  .gate ul { padding-left: 18px; } .gate li { font-size: 12.5px; margin-bottom: 3px; color: #475569; }
+  .note { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 9px 11px; font-size: 12px; color: #b91c1c; margin-top: 10px; }
+  .score { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .score .box { flex: 1; min-width: 120px; border: 2px dashed #94a3b8; border-radius: 8px; padding: 8px; text-align: center; }
+  .score .box b { font-size: 12.5px; color: #334155; display: block; margin-bottom: 4px; }
+  .score .box .line { height: 22px; border-bottom: 1.5px solid #475569; }
+  .tag { font-size: 10.5px; background: #e2e8f0; color: #475569; padding: 1px 6px; border-radius: 6px; }
+  @media print { body { padding: 0; } }
+</style>
+<style>
+:root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{max-width:860px!important;margin:0 auto!important;padding:0 16px 40px!important;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--mint-50)!important;color:var(--ink);line-height:1.68;font-size:15px;}
+.xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 -16px 0;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+.head{text-align:center;border-bottom:3px solid var(--teal-700)!important;padding:20px 0 12px;margin:16px 0;}
+.head h1{font-size:20px;color:var(--teal-700)!important;letter-spacing:1px;}
+.head p{font-size:11.5px;color:var(--sub)!important;margin-top:4px;}
+.path{display:flex;justify-content:center;align-items:center;gap:5px;flex-wrap:wrap;margin:10px 0 6px;font-size:13px;font-weight:600;}
+.path span{padding:5px 10px;border-radius:8px;color:#fff;}
+.p1{background:var(--good)!important;} .p2{background:#0d9488!important;} .p3{background:#2563eb!important;} .p4{background:var(--gold)!important;}
+.path .arrow{color:var(--muted)!important;font-size:16px;}
+h2{font-size:15px;color:var(--teal-700)!important;margin:18px 0 8px;border-left:4px solid var(--coral)!important;padding-left:8px;}
+table{width:100%;border-collapse:collapse;font-size:12px;margin-top:4px;}
+th,td{border:1px solid var(--line)!important;padding:6px 7px;text-align:left;vertical-align:top;}
+th{background:var(--teal-100)!important;font-weight:700;color:var(--teal-900)!important;}
+.cls1{background:#f0fdf4!important;} .cls2{background:#ecfdf5!important;} .cls3{background:#eff6ff!important;}
+.pass{color:var(--good)!important;font-weight:700;} .exc{color:var(--gold)!important;font-weight:700;}
+.gate{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:12px 14px;margin:8px 0;}
+.gate h3{font-size:14px;color:#b45309;margin-bottom:6px;}
+.gate ul{padding-left:18px;} .gate li{font-size:12.5px;margin-bottom:3px;color:#475569;}
+.note{background:var(--coral-soft)!important;border:1px solid #f6d3c0!important;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28!important;margin-top:10px;}
+.score{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
+.score .box{flex:1;min-width:120px;border:2px dashed #94a3b8;border-radius:8px;padding:8px;text-align:center;}
+.score .box b{font-size:12.5px;color:#334155;display:block;margin-bottom:4px;}
+.score .box .line{height:22px;border-bottom:1.5px solid #475569;}
+.tag{font-size:10.5px;background:#e2e8f0;color:#475569;padding:1px 6px;border-radius:6px;}
+@media print{body{padding:0!important;}.xy-topbar{display:none!important;}}
+.xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin-top:26px;line-height:1.9;}
+.xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="head">
+  <h1>星羿球馆 · 定级考核速查图</h1>
+  <p>依据《课程培训体系》· 现场考核用 · 数据说话，不靠感觉</p>
+</div>
+
+<div class="path">
+  <span class="p1">启蒙班 5-7岁</span><span class="arrow">→</span>
+  <span class="p2">初级班 8-12岁</span><span class="arrow">→</span>
+  <span class="p3">中级班 10-14岁</span><span class="arrow">→</span>
+  <span class="p4">精英班</span>
+</div>
+
+<!-- 升学硬指标 -->
+<h2>一、升学硬指标（分班定级的核心门槛）</h2>
+
+<div class="gate">
+  <h3>🌱 启蒙班 → 初级班（20课结业后，须全部达标）</h3>
+  <ul>
+    <li>正手击球过网：10球中 <b>≥5球</b> 过网</li>
+    <li>正手发球：10球中 <b>≥6球</b> 过网</li>
+    <li>连续颠球：正手 <b>≥10个</b></li>
+    <li>架拍定型：听口令能摆出标准架拍</li>
+    <li>出勤率 <b>≥80%</b>（16/20课以上）</li>
+    <li class="note" style="list-style:none;margin-top:6px;">未达标：免费加练对应项目，或续报启蒙第二期，通常 2-4 周可达标</li>
+  </ul>
+</div>
+
+<div class="gate">
+  <h3>🌿 初级班 → 中级班（40课结业后，须全部达标）</h3>
+  <ul>
+    <li>高远球合格率 <b>≥60%</b>（30球中18球到后场）</li>
+    <li>米字步 <b>≤26秒</b></li>
+    <li>比赛能综合用技术（高远/吊/放网/挑球组合）</li>
+    <li>结课联赛积极参与、能打完整场</li>
+    <li>出勤率 <b>≥80%</b>（32/40课以上）</li>
+    <li class="note" style="list-style:none;margin-top:6px;">加分项：吊球隐蔽、双打配合好、步法快。未达标：续报初级第二期针对弱项，通常 1-2 月可达标</li>
+  </ul>
+</div>
+
+<!-- 启蒙班 -->
+<h2>二、启蒙班阶段考核速查</h2>
+<table>
+  <tr><th>阶段（课次）</th><th>考核项目</th><th class="pass">达标</th><th class="exc">优秀</th></tr>
+  <tr class="cls1"><td>一（第6课）</td><td>握拍/架拍/球感</td><td>正手握拍不换握；口令3秒摆架拍；原地颠球≥5；完成球感游戏</td><td>—</td></tr>
+  <tr class="cls1"><td>二（第12课）</td><td>步法/发球/切换</td><td>发球10中6过网；上网跨步+后退交叉步；正反手架拍切换；跑动中保持架拍</td><td>—</td></tr>
+  <tr class="cls1"><td>三（第16课）</td><td>击球过网/对打</td><td>正手击球10中5过网；半场对拉5回合；愿与同伴对打</td><td>—</td></tr>
+  <tr class="cls1"><td>结课（第20课）</td><td>综合基本功</td><td>颠球正10/反3；发球10中7；正手击球10中5；架拍空挥连贯；前后移动击球</td><td>颠球正20/反8；发球10中9；正手击球10中7；节奏流畅有力</td></tr>
+</table>
+
+<!-- 初级班 -->
+<h2>三、初级班阶段考核速查</h2>
+<table>
+  <tr><th>阶段（课次）</th><th>考核项目</th><th class="pass">达标</th><th class="exc">优秀</th></tr>
+  <tr class="cls2"><td>一（第10课）</td><td>基本功规范</td><td>高远30中15到后场1/3；米字步≤28s；发高远10中8；放网20中10；正反手切换</td><td>高远20+落点集中；米字≤22s；发高远10中9；放网15+</td></tr>
+  <tr class="cls2"><td>二（第20课）</td><td>吊/网前/双打</td><td>吊球20中10到前场；挑球20中10；接发球；双打站位补位；高吊结合</td><td>吊球15+隐蔽；挑球15+控向；基本轮转；难预判</td></tr>
+  <tr class="cls2"><td>三（第30课）</td><td>比赛/体能</td><td>班级赛打完整场；双打轮转；落后不放弃；落后不放弃；米字26s/跳绳80</td><td>进前50%；轮转流畅；关键分稳；米字22s/跳绳120</td></tr>
+  <tr class="cls2"><td>结课（第40课）</td><td>综合准入</td><td>高远30中18；吊球20中12；网前基本掌握；接发球有回球；高吊准备一致；米字≤26s；30米≤6.5s；跳绳≥80；联赛前50%；出勤≥80%</td><td>高远25+；吊球15+；贴网控向；隐蔽流畅；米字≤20s；30米≤5.8s；跳绳≥120；联赛前3；出勤≥90%</td></tr>
+</table>
+
+<!-- 中级班 -->
+<h2>四、中级班验收参考</h2>
+<table>
+  <tr><th>阶段（课次）</th><th>考核项目</th><th class="pass">目标线</th></tr>
+  <tr class="cls3"><td>一（第10课）</td><td>高远精准/米字/发球/正反手/多球</td><td>30球中20到后场；米字≤26s；发高远控三区+反手贴网；正反手切换流畅；连续20球15到后场；跳绳≥80</td></tr>
+  <tr class="cls3"><td>进阶内容</td><td>后场杀吊/反手挑高远/网前搓推勾/接杀平抽/双打轮转/基础战术</td><td>不要求极限体能（跳绳80、米字26s即可）；心理压力适中</td></tr>
+  <tr class="cls3"><td>结业</td><td>经评估进入精英班（主教练带）</td><td>—</td></tr>
+</table>
+
+<div class="note">⚠️ 精英班由主教练带，中级班结业评估后进入，本图不列具体大纲。技术不过关不能靠体能补级别，出勤率是硬指标。</div>
+
+<!-- 打分区 -->
+<h2>五、现场打分区</h2>
+<div class="score">
+  <div class="box"><b>学员姓名</b><div class="line"></div></div>
+  <div class="box"><b>年龄 / 性别</b><div class="line"></div></div>
+  <div class="box"><b>现班级</b><div class="line"></div></div>
+  <div class="box"><b>测试日期</b><div class="line"></div></div>
+</div>
+<div class="score">
+  <div class="box"><b>关键项1（如发球）</b><div class="line"></div></div>
+  <div class="box"><b>关键项2（如高远）</b><div class="line"></div></div>
+  <div class="box"><b>米字步 / 秒</b><div class="line"></div></div>
+  <div class="box"><b>跳绳 / 个</b><div class="line"></div></div>
+</div>
+<div class="score">
+  <div class="box" style="border-color:#0f766e;"><b>达标 / 优秀</b><div class="line"></div></div>
+  <div class="box" style="border-color:#0f766e;"><b>建议班级</b><div class="line"></div></div>
+  <div class="box" style="border-color:#0f766e;"><b>测试教练</b><div class="line"></div></div>
+</div>
+
+<div class="note" style="margin-top:14px;">📌 打印此页带去球场：对照上表记实测数字 → 查阶段/升学线 → 判定达标或优秀 → 报告给家长并引向9月分班与续费。</div>
+<div class="note" style="margin-top:6px;color:#0f766e;">⚡ 积分赛发球达标另看：10个发球进区 ≥8 个（详见《学员体测档案》"⑥积分赛加分判定"）。</div>
+
+<footer class="xy-footer">星羿羽毛球馆 · 定级考核速查图<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+
+</body>
+</html>

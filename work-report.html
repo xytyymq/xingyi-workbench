@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿球馆 · 工作汇报 & 学生动态</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f1faf7;color:#0f201d;line-height:1.65;padding-bottom:50px;}
+  :root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+  .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+  .xy-topbar .brand .em{margin-right:5px;}
+  .xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+  .hero{background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));color:#fff;padding:26px 18px 18px;position:relative;overflow:hidden;}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+  .hero>*{position:relative;z-index:1;}
+  .hero h1{font-size:20px;font-weight:800;}
+  .hero p{font-size:12.5px;opacity:.92;margin-top:5px;}
+  .container{max-width:680px;margin:0 auto;padding:14px 12px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px;margin-bottom:13px;box-shadow:0 2px 10px rgba(15,32,29,.06);}
+  .card h2{font-size:15px;color:var(--teal-700);margin:0 0 9px;display:flex;align-items:center;gap:7px;}
+  .card h2 .num{background:var(--teal-700);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  .entrance{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .entrance a{flex:1;min-width:140px;text-align:center;background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);text-decoration:none;padding:11px 8px;border-radius:11px;font-size:13px;font-weight:700;transition:.2s;}
+  .entrance a:active{background:var(--teal-500);color:#fff;}
+  .entrance a.coral{background:var(--coral-soft);color:#9a4a28;border-color:var(--coral);}
+  label{font-size:12.5px;color:#475569;display:block;margin:9px 0 3px;}
+  input,select,textarea{width:100%;padding:9px 10px;border:1px solid #cbd5db;border-radius:8px;font-size:13.5px;background:#fff;color:#1f2933;font-family:inherit;}
+  textarea{resize:vertical;min-height:54px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .btn{display:block;width:100%;padding:11px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:11px;font-family:inherit;}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:active{background:var(--teal-900);}
+  .btn-ghost{background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);}
+  .btn-sm{padding:8px;font-size:12.5px;margin-top:7px;border-radius:8px;display:inline-block;width:auto;}
+  .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
+  .chart-box{margin-top:12px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;}
+  .chart-box h3{font-size:13.5px;color:var(--teal-700);margin-bottom:8px;}
+  .csv-tools{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+  .csv-tools>div{flex:1;min-width:160px;}
+  input[type=file]{padding:7px 8px;font-size:12.5px;}
+  .xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:26px 14px 30px;line-height:1.9;}
+  .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>工作汇报 & 学生动态</h1>
+  <p>员工每天干了啥 · 每个小孩上课情况 · 一套学生动态管理图</p>
+</div>
+
+<div class="container">
+
+  <!-- 数据真源入口 -->
+  <div class="card">
+    <h2><span class="num">☁️</span>数据真源（腾讯文档）</h2>
+    <p class="note" style="margin:0 0 4px">员工 / 教练用手机填 → 自动进在线表 → 你电脑实时看（填完即同步）</p>
+    <div class="entrance">
+      <a href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">📝 员工工作日报 · 去填写/查看</a>
+      <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录 · 去填写/查看</a>
+    </div>
+  </div>
+
+  <!-- 模块A 员工工作日报 -->
+  <div class="card">
+    <h2><span class="num">①</span>员工工作日报（模板）</h2>
+    <p class="note">以下为填写参考模板，正式填写请在上方腾讯文档收集表完成（自动同步）。此模板可截图/打印作示例。</p>
+    <div class="grid2">
+      <div><label>日期</label><input type="date"></div>
+      <div><label>员工</label><input type="text" placeholder="如：前台小萍 / 教练王"></div>
+    </div>
+    <label>今日完成工作</label>
+    <textarea placeholder="如：接待新访客3组、续费跟进2人、场地消杀、器材盘点"></textarea>
+    <label>学员沟通 / 家长反馈</label>
+    <textarea placeholder="如：小明妈妈问暑期班、小红爸爸续费意向强"></textarea>
+    <div class="grid2">
+      <div><label>明日待办</label><textarea placeholder="如：电话回访3位试听家长"></textarea></div>
+      <div><label>需老板协调的问题</label><textarea placeholder="如：2号场灯光闪烁需维修"></textarea></div>
+    </div>
+  </div>
+
+  <!-- 模块B 学员上课记录 -->
+  <div class="card">
+    <h2><span class="num">②</span>学员上课记录（模板）</h2>
+    <p class="note">每节课记一笔。正式填写请在上方腾讯文档收集表完成（自动同步、形成趋势）。</p>
+    <div class="grid2">
+      <div><label>日期</label><input type="date"></div>
+      <div><label>学员姓名</label><input type="text" placeholder="如：小明"></div>
+    </div>
+    <div class="grid2">
+      <div><label>班级</label><select><option>启蒙班</option><option>初级班</option><option>中级班</option><option>精英班</option></select></div>
+      <div><label>教练</label><input type="text" placeholder="如：王教练"></div>
+    </div>
+    <div class="grid2">
+      <div><label>出勤</label><select><option>出勤</option><option>请假</option><option>迟到</option></select></div>
+      <div><label>技能评分（1-5）</label><input type="number" min="1" max="5" placeholder="如：4"></div>
+    </div>
+    <label>本次进步点</label>
+    <textarea placeholder="如：发球落点更准、网前小球稳定"></textarea>
+    <label>待加强</label>
+    <textarea placeholder="如：步伐移动、体能"></textarea>
+    <label>家长反馈</label>
+    <textarea placeholder="如：家长满意、希望加练体能"></textarea>
+  </div>
+
+  <!-- 模块C 学生动态管理图 -->
+  <div class="card">
+    <h2><span class="num">③</span>学生动态管理图</h2>
+    <p class="note">数据来自腾讯文档《学员上课记录表》。操作：腾讯文档 → 导出 CSV → 粘贴下方或上传文件 → 自动出图。</p>
+    <div class="csv-tools">
+      <div>
+        <label>粘贴 CSV（首行表头：日期,学员,班级,教练,出勤,技能评分,进步点,待加强,家长反馈）</label>
+        <textarea id="csvText" placeholder="把从腾讯文档导出的 CSV 内容粘贴到这里…"></textarea>
+      </div>
+      <div>
+        <label>或上传 CSV 文件</label>
+        <input type="file" id="csvFile" accept=".csv">
+        <button class="btn btn-ghost btn-sm" onclick="loadSample()">载入示例数据</button>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="renderCharts()">生成管理图</button>
+    <div class="tip">📌 折线图 = 每个学员「技能评分」随上课日期的成长趋势；柱状图 = 各学员累计上课次数（含请假也计入）。填完腾讯文档即同步进表，导出来这里就能看图。</div>
+
+    <div class="chart-box">
+      <h3>📈 学员技能成长趋势（按上课日期）</h3>
+      <canvas id="trendChart" height="180"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>📊 各学员上课次数</h3>
+      <canvas id="countChart" height="160"></canvas>
+    </div>
+  </div>
+
+  <footer class="xy-footer">
+    🏸 星羿羽毛球馆 · 工作汇报 & 学生动态<br>
+    数据真源：腾讯文档（手机填、电脑实时看）<br>
+    管理图：从腾讯文档导出 CSV 导入本页自动生成
+  </footer>
+</div>
+
+<script>
+const SAMPLE = `日期,学员,班级,教练,出勤,技能评分,进步点,待加强,家长反馈
+2026-08-01,小明,初级班,王教练,出勤,3,握拍更稳定,步伐移动,家长满意
+2026-08-04,小明,初级班,王教练,出勤,4,发球落点准,高远球,家长满意
+2026-08-08,小明,初级班,王教练,出勤,4,网前小球,体能,良好
+2026-08-02,小红,启蒙班,李教练,出勤,2,认识场地,握拍,需鼓励
+2026-08-05,小红,启蒙班,李教练,出勤,3,基本步法,力量,良好
+2026-08-09,小红,启蒙班,李教练,请假,3,无,无,请假一次
+2026-08-03,小刚,中级班,王教练,出勤,4,扣杀有力,防守,良好
+2026-08-07,小刚,中级班,王教练,出勤,5,全场调动,无,非常好`;
+
+let trendChart=null, countChart=null;
+
+function loadSample(){ document.getElementById('csvText').value = SAMPLE; }
+
+function getText(){
+  let t = document.getElementById('csvText').value.trim();
+  if(t) return t;
+  return SAMPLE;
+}
+
+function parseCSV(text){
+  const lines = text.trim().split(/\r?\n/).filter(l=>l.trim());
+  if(lines.length<2) return null;
+  const header = lines[0].split(',').map(s=>s.trim());
+  const idx = {};
+  header.forEach((h,i)=> idx[h]=i);
+  const dateI = idx['日期'] ?? 0;
+  const nameI = idx['学员'] ?? 1;
+  const scoreI = idx['技能评分'] ?? 5;
+  const rows = lines.slice(1).map(l=>l.split(',')).filter(r=>r[nameI] && r[nameI].trim());
+  return {rows, dateI, nameI, scoreI};
+}
+
+function renderCharts(){
+  const data = parseCSV(getText());
+  if(!data){ alert('没有可解析的数据，请先粘贴/上传 CSV 或点「载入示例数据」'); return; }
+  const {rows, dateI, nameI, scoreI} = data;
+
+  // 分组
+  const byStudent = {};   // 学员 -> {日期:评分}
+  const counts = {};       // 学员 -> 次数
+  const dateSet = new Set();
+  rows.forEach(r=>{
+    const name=r[nameI].trim(), date=r[dateI].trim(), sc=parseFloat(r[scoreI]);
+    if(!byStudent[name]) byStudent[name]={};
+    if(!isNaN(sc)) byStudent[name][date]=sc;
+    dateSet.add(date);
+    counts[name]=(counts[name]||0)+1;
+  });
+  const dates = [...dateSet].sort();
+
+  const palette = ['#0f766e','#ef7d4f','#e0a93b','#14b8a6','#6366f1','#dc2626','#16a34a'];
+  const datasets = Object.keys(byStudent).map((name,i)=>({
+    label:name,
+    data:dates.map(d=> byStudent[name][d] ?? null),
+    borderColor:palette[i%palette.length],
+    backgroundColor:palette[i%palette.length],
+    spanGaps:true, tension:.25, pointRadius:4
+  }));
+
+  if(trendChart) trendChart.destroy();
+  trendChart = new Chart(document.getElementById('trendChart'),{
+    type:'line',
+    data:{ labels:dates, datasets },
+    options:{ responsive:true, plugins:{ legend:{position:'top',labels:{font:{size:11}}} },
+      scales:{ y:{ min:1,max:5,title:{display:true,text:'技能评分'} } } }
+  });
+
+  if(countChart) countChart.destroy();
+  countChart = new Chart(document.getElementById('countChart'),{
+    type:'bar',
+    data:{ labels:Object.keys(counts),
+      datasets:[{ label:'上课次数', data:Object.values(counts),
+        backgroundColor:Object.keys(counts).map((_,i)=>palette[i%palette.length]) }] },
+    options:{ responsive:true, plugins:{ legend:{display:false} },
+      scales:{ y:{ beginAtZero:true, title:{display:true,text:'次数'} } } }
+  });
+}
+
+document.getElementById('csvFile').addEventListener('change', function(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ document.getElementById('csvText').value=r.result; renderCharts(); };
+  r.readAsText(f,'utf-8');
+});
+</script>
+</body>
+</html>

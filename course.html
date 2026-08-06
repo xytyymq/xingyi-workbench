@@ -1,0 +1,1142 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>星羿羽毛球馆 - 课程培训体系</title><style>
+:root {
+  --primary: #e85d2f; --primary-light: #ff8a5b;
+  --secondary: #1a8a52; --bg: #f8f6f4; --card-bg: #fff;
+  --text: #2c2c2c; --text-light: #666; --border: #e8e4e0;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06); --accent: #f5a623;
+  --purple: #7b4dff; --blue: #2196f3; --red: #e53e3e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; padding: 24px 20px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(232,93,47,0.25); }
+.header h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.header p { font-size: 13px; opacity: 0.9; }
+.search-bar { background: white; margin: 12px 20px; border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow); }
+.search-bar input { border: none; outline: none; flex: 1; font-size: 15px; background: transparent; }
+.search-bar .icon { font-size: 18px; opacity: 0.5; }
+.tab-nav { display: flex; background: white; overflow-x: auto; border-bottom: 2px solid var(--border); position: sticky; top: 92px; z-index: 99; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn { flex: 1; min-width: max-content; padding: 14px 8px; text-align: center; font-size: 14px; font-weight: 600; color: var(--text-light); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+.content { padding: 16px 20px 60px; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.card-title { font-size: 17px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+.card-title .emoji { font-size: 20px; }
+.phase { border-left: 4px solid var(--primary); padding-left: 16px; margin-bottom: 20px; }
+.phase-blue { border-left-color: var(--blue); }
+.phase-green { border-left-color: var(--secondary); }
+.phase-purple { border-left-color: var(--purple); }
+.phase-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+.phase-meta { font-size: 12px; color: var(--text-light); margin-bottom: 12px; }
+.lesson { background: #fafafa; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+.lesson-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.lesson-num { background: var(--primary); color: white; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+.lesson-num.blue { background: var(--blue); }
+.lesson-num.green { background: var(--secondary); }
+.lesson-num.purple { background: var(--purple); }
+.lesson-title { font-size: 15px; font-weight: 600; flex: 1; margin-left: 8px; }
+.lesson-duration { font-size: 12px; color: var(--text-light); }
+.lesson-section { margin-bottom: 10px; }
+.lesson-section:last-child { margin-bottom: 0; }
+.lesson-section-title { font-size: 13px; font-weight: 700; color: var(--text-light); margin-bottom: 4px; }
+.lesson-section ul { list-style: none; padding-left: 0; }
+.lesson-section li { font-size: 14px; padding: 3px 0; padding-left: 18px; position: relative; }
+.lesson-section li::before { content: '•'; position: absolute; left: 6px; color: var(--primary); }
+.time-block { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 6px; margin-right: 4px; margin-bottom: 4px; }
+.time-warm { background: #fff3e0; color: #e65100; }
+.time-main { background: #e3f2fd; color: #1565c0; }
+.time-game { background: #e8f5e9; color: #2e7d32; }
+.time-cool { background: #f3e5f5; color: #7b1fa2; }
+.feedback-template { background: #f5f5f5; border-radius: 12px; padding: 16px; margin-top: 8px; position: relative; border: 1px dashed var(--border); }
+.feedback-template .copy-btn, .script-card .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--primary); color: white; border: none; padding: 4px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
+.feedback-template pre, .script-card pre { font-family: inherit; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; margin-top: 8px; }
+.highlight-box { background: linear-gradient(135deg, #fff8e1, #fff3e0); border: 1px solid #ffe082; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.highlight-box .title { font-weight: 700; font-size: 15px; margin-bottom: 8px; color: #e65100; }
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.info-item { background: #f5f5f5; border-radius: 10px; padding: 12px; text-align: center; }
+.info-item .label { font-size: 12px; color: var(--text-light); margin-bottom: 4px; }
+.info-item .value { font-size: 16px; font-weight: 700; }
+.criteria-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 13px; }
+.criteria-table th { background: var(--secondary); color: white; padding: 10px; text-align: left; font-weight: 600; }
+.criteria-table td { padding: 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.criteria-table tr:nth-child(even) td { background: #f9f9f9; }
+.criteria-table .pass { color: var(--secondary); font-weight: 700; }
+.script-card { background: #f0f7ff; border-left: 4px solid var(--blue); border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; position: relative; }
+.script-card .copy-btn { background: var(--blue); }
+.script-card .scenario { font-size: 12px; font-weight: 700; color: var(--blue); margin-bottom: 6px; }
+.tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-right: 4px; margin-bottom: 4px; font-weight: 600; }
+.tag-orange { background: #ffe0b2; color: #e65100; }
+.tag-green { background: #c8e6c9; color: #2e7d32; }
+.tag-blue { background: #bbdefb; color: #1565c0; }
+.tag-purple { background: #e1bee7; color: #7b1fa2; }
+.tip-box { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; font-size: 14px; }
+.tip-box .tip-title { font-weight: 700; color: #2e7d32; margin-bottom: 4px; }
+.section-divider { text-align: center; margin: 24px 0 16px; position: relative; }
+.section-divider::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--border); }
+.section-divider span { background: var(--bg); padding: 0 16px; font-size: 14px; font-weight: 700; color: var(--text-light); position: relative; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 24px; border-radius: 24px; font-size: 14px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.ws-row { display: grid; grid-template-columns: 70px 1fr; gap: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 8px; font-size: 13px; }
+.ws-time { background: #f5f5f5; padding: 10px; font-weight: 700; text-align: center; border-right: 1px solid var(--border); color: var(--text-light); }
+.ws-content { padding: 10px 14px; }
+@media (max-width: 600px) {
+  .content { padding: 12px 12px 60px; }
+  .card { padding: 16px; }
+  .header { padding: 20px 16px 16px; }
+  .search-bar { margin: 10px 12px; }
+  .tab-nav { top: 84px; }
+  .info-grid { grid-template-columns: repeat(2, 1fr); }
+}
+</style><style>
+:root{--primary:#0f766e;--primary-light:#14b8a6;}
+.xy-topbar{position:static;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid #e3ece9;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:#0f766e;letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:#0f766e;text-decoration:none;font-weight:700;background:#d6f3ec;padding:5px 11px;border-radius:20px;}
+.xy-footer{text-align:center;font-size:11.5px;color:#8aa09a;margin:30px 14px 36px;line-height:1.9;}
+.xy-footer a{color:#0f766e;text-decoration:none;font-weight:700;}
+</style>
+</head><body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="header"><h1>🏸 星羿羽毛球馆 · 课程培训体系</h1><p>启蒙班(20课) · 初级班(40课) · 中级班(60课) 完整教学方案 + 阶段考核标准</p></div><div class="search-bar"><span class="icon">🔍</span><input type="text" id="searchInput" placeholder="搜索课程内容、动作名称、关键词..." oninput="searchContent()"></div><div class="tab-nav" id="tabNav"><button class="tab-btn active" onclick="switchTab('qimeng')">启蒙班 5-7岁</button><button class="tab-btn" onclick="switchTab('chuban')">初级班 8-12岁</button><button class="tab-btn" onclick="switchTab('zhongji')">中级班 10-14岁</button><button class="tab-btn" onclick="switchTab('huafei')">课后反馈</button></div><div class="content"><div class="tab-panel active" id="panel-qimeng"><div class="card">
+  <div class="card-title"><span class="emoji">🌱</span> 启蒙班教学大纲</div>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">适合年龄</div><div class="value">5-7岁</div></div>
+    <div class="info-item"><div class="label">课时时长</div><div class="value">90分钟</div></div>
+    <div class="info-item"><div class="label">班级人数</div><div class="value">6-8人</div></div>
+    <div class="info-item"><div class="label">师生比</div><div class="value">1:6-8</div></div>
+  </div>
+  <div class="highlight-box">
+    <div class="title">🎯 教学核心原则</div>
+    <div style="font-size:14px;">
+      <b>玩中学，不枯燥。</b>这个阶段最大目标是让孩子爱上羽毛球，不是练出多好的技术。<br>
+      每节课必须有游戏环节，技术练习控制在15分钟以内换一个项目。<br>
+      <b>架拍挥拍是地基。</b>启蒙班重点打磨<b>架拍定型</b>和<b>空挥拍连贯</b>——姿势对了，以后学什么技术都快；姿势歪了，后面越练越累。<br>
+      <b>多鼓励少批评。</b>5-7岁注意力短，用游戏和奖励维持兴趣，不追求动作完美。
+    </div>
+  </div>
+  <div class="phase">
+    <div class="phase-title">第一阶段：球感 · 握拍 · 架拍入门（第1-6课）</div>
+    <div class="phase-meta">目标：建立兴趣，学会握拍，掌握架拍定型与空挥拍，打好姿势地基</div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第1课 握拍 认识羽毛球">
+    <div class="lesson-header"><span class="lesson-num">第1课</span><span class="lesson-title">认识羽毛球 & 正确握拍</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">认知 15min</span><span class="time-block time-main">握拍 35min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：慢跑2圈 + 全身关节活动（头/肩/腰/膝/腕）</li><li><b>认识器材</b>：球拍各部位（拍头/拍杆/握把）、羽毛球结构，用看+摸建立认知</li><li><b>正手握拍教学</b>：「握手式」握拍——虎口对准拍柄宽面，像和人握手。每人反复做握-松-握</li><li><b>握拍游戏</b>：听口令换握法（握拍/休息），巩固肌肉记忆</li><li><b>球感初体验</b>：用手抛接羽毛球，感受球的重量和飞行</li><li><b>趣味</b>：地滚球接力（用拍面推球前进），先和球拍交朋友</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正确掌握正手握拍</li><li>认识羽毛球器材</li><li>不排斥球拍</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第2课 架拍 定型 准备姿势">
+    <div class="lesson-header"><span class="lesson-num">第2课</span><span class="lesson-title">原地架拍定型</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">架拍 35min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 20min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳80个 + 关节活动</li><li><b>什么是架拍</b>：侧身对网，非持拍手举高指方向，持拍手举到耳边、拍头朝上——「像打电话姿势」</li><li><b>架拍定型练习</b>：教练喊「架拍」，全体摆标准姿势，逐一纠正。每组保持10秒 × 5组</li><li><b>口诀记忆</b>：「拍子举耳边，非持拍手指前方」</li><li><b>镜面练习</b>：对着镜子看自己的架拍姿势，自己找问题</li><li><b>游戏</b>：架拍木头人——音乐停立刻架拍定型，保持不动者胜</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握标准架拍姿势</li><li>建立架拍意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第3课 空挥拍 挥拍 高远球">
+    <div class="lesson-header"><span class="lesson-num">第3课</span><span class="lesson-title">空挥拍练习 · 正手高远空挥</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">挥拍 35min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 20min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：慢跑 + 肩臂绕环</li><li><b>完整挥拍分解</b>：架拍→引拍（肘领先，拍头绕到脑后）→挥拍（前臂内旋，击球点在前上方）→收拍（收到非持拍侧腰）</li><li><b>无球空挥</b>：每人空挥30次，教练数「架拍-引拍-挥-收」带节奏</li><li><b>对镜空挥</b>：看动作是否流畅、引拍是否充分</li><li><b>挥拍游戏</b>：看谁空挥动作最标准（教练点评）</li><li><b>趣味</b>：空挥击气球——用完整挥拍动作打悬挂气球，体会击球点</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握正手高远球完整挥拍</li><li>建立击球点在前上方的意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第4课 颠球 球感">
+    <div class="lesson-header"><span class="lesson-num">第4课</span><span class="lesson-title">球感训练营 & 原地颠球入门</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">球感 35min</span><span class="time-block time-main">颠球 25min</span><span class="time-block time-cool">放松 20min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳80 + 手腕活动</li><li><b>球感练习</b>：用手掌/手背/手臂各部位颠球，感受球的弹跳</li><li><b>原地颠球教学</b>：拍面放平「托」球轻轻弹起，先求不掉、再求连续</li><li><b>颠球挑战</b>：1分钟连续颠球计数，记录最好成绩</li><li><b>游戏</b>：颠球走直线（边颠边走，不掉球）</li><li><b>复习</b>：每节课课前架拍定型1分钟</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>连续颠球5个以上</li><li>球感明显提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第5课 颠球 球感 反手">
+    <div class="lesson-header"><span class="lesson-num">第5课</span><span class="lesson-title">多种颠球 & 球感深化</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：专项球感操</li><li><b>正手颠球巩固</b>：连续颠球目标10个</li><li><b>反手颠球入门</b>：用反手拍面颠球，体会不同拍面</li><li><b>高低颠球</b>：控制拍面力量，让球高低变化</li><li><b>游戏</b>：对墙颠球（练习控球）</li><li><b>复习</b>：架拍 + 空挥各10次</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正手连续颠球10+</li><li>能尝试反手颠球</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第6课 架拍 空挥 复习">
+    <div class="lesson-header"><span class="lesson-num">第6课</span><span class="lesson-title">综合球感 + 架拍复习小挑战</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">复习 20min</span><span class="time-block time-game">挑战 40min</span><span class="time-block time-cool">放松 20min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 关节操</li><li><b>架拍定型挑战</b>：计时架拍保持，看谁最稳</li><li><b>空挥拍连贯</b>：架拍→引拍→挥→收，连续做不卡顿</li><li><b>综合球感游戏</b>：颠球 + 对墙 + 绕桩，轮换进行</li><li><b>小测验</b>：架拍姿势 + 空挥动作由教练打分</li><li><b>放松</b> + 记录</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>架拍/空挥动作定型</li><li>球感综合提升</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第二阶段：步法 · 发球 · 挥拍连贯</span></div>
+  <div class="phase phase-blue">
+    <div class="phase-title">第二阶段：步法 · 发球 · 挥拍连贯（第7-12课）</div>
+    <div class="phase-meta">目标：启动步法、正手发球过网、正反手架拍切换、移动中保持架拍</div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第7课 步法 启动 架拍">
+    <div class="lesson-header"><span class="lesson-num blue">第7课</span><span class="lesson-title">前后步法 & 架拍启动</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">步法 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 步法专项（小碎步/高抬腿）</li><li><b>启动小跳</b>：双脚微跳，听到口令瞬间启动——「启动先有小跳，像弹簧」</li><li><b>架拍启动</b>：启动的同时举起架拍，随时准备击球</li><li><b>前后步法</b>：上网跨步（右腿跨出）+ 后退交叉步，各10次</li><li><b>游戏</b>：听口令启动——教练喊方向，孩子跳起架拍 + 迈步</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握启动小跳 + 架拍同步</li><li>前后步法基本路线</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第8课 发球 正手发球">
+    <div class="lesson-header"><span class="lesson-num blue">第8课</span><span class="lesson-title">正手发球入门 · 握拍-架拍-挥拍-击球连贯</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">发球 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：手腕/前臂活动</li><li><b>发球动作分解</b>：架拍→抛球（持球手放球）→挥拍（由下往上）→击球（拍面斜切）</li><li><b>无球发球挥拍</b>：连贯做「架拍-抛-挥」，找节奏</li><li><b>发球过网练习</b>：隔网发球，先求过网、再求落点</li><li><b>游戏</b>：发球进圈（对面放目标圈，进圈得分）</li><li><b>复习</b>：架拍 + 空挥</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>发球能稳定过网</li><li>动作连贯顺畅</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第9课 反手 架拍 切换">
+    <div class="lesson-header"><span class="lesson-num blue">第9课</span><span class="lesson-title">正反手架拍切换</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">切换 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：前臂旋转操</li><li><b>正手架拍复习</b>：标准侧身架拍</li><li><b>反手架拍</b>：「按电梯按钮」——大拇指顶拍柄宽面，拍面朝前</li><li><b>正反手切换练习</b>：教练喊「正/反」，孩子快速切换架拍姿势，各10次</li><li><b>游戏</b>：正反对决——听口令切换架拍并小跳启动</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>快速完成正反手架拍切换</li><li>反手握拍正确</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第10课 抛接 移动 架拍">
+    <div class="lesson-header"><span class="lesson-num blue">第10课</span><span class="lesson-title">抛接球 & 移动中架拍</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">抛接 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：敏捷绳梯（或地面格子）</li><li><b>抛接球</b>：教练抛球，孩子移动中接住——练移动 + 手眼协调</li><li><b>移动中架拍</b>：跑动中保持架拍姿势，随时准备击球</li><li><b>抛接 + 回抛</b>：两人一组，抛接后回抛，要求回抛前先架拍</li><li><b>游戏</b>：移动接球赛</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>移动中保持架拍</li><li>手眼协调提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第11课 启动 反应 架拍">
+    <div class="lesson-header"><span class="lesson-num blue">第11课</span><span class="lesson-title">启动步 & 架拍反应游戏</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">反应 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：反应力游戏（听哨声摸对应颜色）</li><li><b>启动步强化</b>：小跳启动 + 第一步方向（并步/交叉步）</li><li><b>架拍反应</b>：教练手指方向，孩子小跳架拍 + 迈第一步</li><li><b>多球反应</b>：教练轻抛，孩子启动架拍接球</li><li><b>游戏</b>：抢球反应赛</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>启动快 + 架拍同步</li><li>反应速度提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第12课 步法 验收">
+    <div class="lesson-header"><span class="lesson-num blue">第12课</span><span class="lesson-title">步法综合 & 第二阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">步法 30min</span><span class="time-block time-main">验收 30min</span><span class="time-block time-game">游戏 10min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>前后步法 + 启动综合</b></li><li><b>米字步入门</b>：简化6方向慢速移动，先理解路线</li><li><b>验收</b>：架拍定型 + 空挥 + 发球过网 + 颠球，教练记录数据</li><li><b>游戏</b>：步法接力</li><li><b>放松</b> + 阶段小结</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>步法基本掌握</li><li>通过第二阶段验收</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第三阶段：趣味击球体验</span></div>
+  <div class="phase phase-green">
+    <div class="phase-title">第三阶段：趣味击球体验（第13-16课）</div>
+    <div class="phase-meta">目标：正手把球打过网、趣味对打、技术串联——不强调对抗与计分，先建立击球成就感</div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第13课 击球过网 高远球 趣味">
+    <div class="lesson-header"><span class="lesson-num green">第13课</span><span class="lesson-title">正手把球打过网 · 趣味高远球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>复习</b>：架拍 + 空挥（完整动作）</li><li><b>击球过网</b>：教练隔网轻抛高球，孩子架拍到位→在头顶正前方击球→球过网。口诀「拍面朝前上方，在头顶前面打」</li><li><b>多球练习</b>：教练喂球，每人15球过网</li><li><b>游戏</b>：把球打过网计数赛</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正手击球过网</li><li>击球点在前上方</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第14课 高远球 移动击球">
+    <div class="lesson-header"><span class="lesson-num green">第14课</span><span class="lesson-title">高远球强化 & 移动中击球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>高远球动作精修</b>：击球点、挥拍完整度</li><li><b>移动中击球</b>：教练喂球到不同点，孩子移动架拍击球过网</li><li><b>半场对打</b>：两人半场高远球对拉，最少5回合</li><li><b>游戏</b>：对拉计数</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>移动中击球过网</li><li>连续对拉5回合</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第15课 对打 合作 趣味">
+    <div class="lesson-header"><span class="lesson-num green">第15课</span><span class="lesson-title">趣味对打初体验（合作式）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-main">对打 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>复习</b>：击球过网 + 步法</li><li><b>合作对打</b>：两人隔网互相打高远球，目标「不落地」，是合作不是对抗</li><li><b>教练喂球辅助</b>：降低难度，帮孩子建立成功感</li><li><b>游戏</b>：最长不落地挑战</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能合作对打</li><li>享受击球乐趣</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第16课 技术串联 巩固">
+    <div class="lesson-header"><span class="lesson-num green">第16课</span><span class="lesson-title">阶段巩固 & 技术串联</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>技术串联</b>：架拍→移动→击球→回位，一气呵成</li><li><b>综合练习</b>：颠球 + 发球 + 击球过网组合</li><li><b>游戏</b>：技术闯关（每项完成得星）</li><li><b>复习</b>：架拍 + 空挥</li><li><b>放松</b> + 阶段记录</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>技术连贯</li><li>阶段内容巩固</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第四阶段：基本功巩固与结课</span></div>
+  <div class="phase phase-purple">
+    <div class="phase-title">第四阶段：基本功巩固与结课（第17-20课）</div>
+    <div class="phase-meta">目标：发球+击球巩固、花样颠球、全能闯关、结课展示——不教网前放网/挑球/吊球，留给初级班</div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第17课 发球 巩固">
+    <div class="lesson-header"><span class="lesson-num purple">第17课</span><span class="lesson-title">发球大挑战 & 基本功趣味巩固</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">发球 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>发球巩固</b>：正手发高远 + 发网前</li><li><b>发球落点挑战</b>：进圈得分</li><li><b>游戏</b>：发球大赛（计分排名）</li><li><b>基本功复习</b>：架拍/空挥/颠球</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>发球落点提升</li><li>基本功巩固</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第18课 击球 花样颠球">
+    <div class="lesson-header"><span class="lesson-num purple">第18课</span><span class="lesson-title">正手击球巩固 & 花样颠球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>正手击球巩固</b>：移动击球过网多球</li><li><b>花样颠球</b>：正手/反手/高低/绕拍颠球</li><li><b>游戏</b>：颠球花样秀</li><li><b>复习</b>：架拍 + 空挥</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>击球稳定</li><li>花样颠球熟练</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第19课 综合 闯关">
+    <div class="lesson-header"><span class="lesson-num purple">第19课</span><span class="lesson-title">全能趣味闯关（架拍/挥拍/发球/击球综合）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">闯关 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>闯关1 架拍定型</b>：保持10秒</li><li><b>闯关2 空挥连贯</b>：10次不卡顿</li><li><b>闯关3 发球过网</b>：5球过3</li><li><b>闯关4 击球过网</b>：多球5过</li><li><b>闯关5 颠球</b>：连续10</li><li><b>游戏</b>：积分排行榜 + 放松</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>四项基本功综合达标</li><li>自信提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="启蒙班 第20课 结课 展示 颁奖">
+    <div class="lesson-header"><span class="lesson-num purple">第20课</span><span class="lesson-title">结课展示 & 颁奖典礼</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 40min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-game">颁奖 20min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>技能展示</b>：架拍/空挥/颠球/发球/击球过网，家长可观摩</li><li><b>趣味赛</b>：分组合作式对抗</li><li><b>颁奖</b>：最佳进步 / 最佳球感 / 全能小明星</li><li><b>结课寄语</b> + 下阶段建议（进初级班）</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>展示20课成果</li><li>顺利衔接初级班</li></ul></div>
+  </div>
+  <div class="card-title" style="margin-top:20px;"><span class="emoji">📊</span> 启蒙班阶段考核标准</div>
+  <div class="phase"><div class="phase-title">第一阶段考核（第6课后）</div><div class="phase-meta">考核目标：确认握拍、架拍、球感建立</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th></tr>
+<tr><td>正手握拍</td><td>能正确握拍，不换握</td></tr>
+<tr><td>架拍定型</td><td>听到口令3秒内摆出标准架拍</td></tr>
+<tr><td>原地颠球</td><td>连续颠球5个以上</td></tr>
+<tr><td>球感游戏</td><td>能完成抛接/对墙等球感练习</td></tr>
+</table>
+  <div class="phase phase-blue"><div class="phase-title">第二阶段考核（第12课后）</div><div class="phase-meta">考核目标：确认步法、发球、架拍切换掌握</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th></tr>
+<tr><td>正手发球</td><td>10球中6球过网</td></tr>
+<tr><td>前后步法</td><td>能完成上网跨步+后退交叉步</td></tr>
+<tr><td>正反手架拍切换</td><td>听口令快速切换</td></tr>
+<tr><td>移动中架拍</td><td>跑动中能保持架拍姿势</td></tr>
+</table>
+  <div class="phase phase-green"><div class="phase-title">第三阶段考核（第16课后）</div><div class="phase-meta">考核目标：确认击球过网与对打能力</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th></tr>
+<tr><td>正手击球过网</td><td>多球10球中5球过网</td></tr>
+<tr><td>半场对拉</td><td>连续5回合不落地</td></tr>
+<tr><td>趣味对打意愿</td><td>愿意和同伴合作对打</td></tr>
+</table>
+  <div class="phase phase-purple"><div class="phase-title">第四阶段 / 结课考核（第20课后）</div><div class="phase-meta">考核目标：综合基本功评估 + 初级班入学建议</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td>颠球（正/反手）</td><td>正手连续10 / 反手3</td><td>正手20 / 反手8</td></tr>
+<tr><td>发球过网</td><td>10球中7球过网</td><td>10球中9球</td></tr>
+<tr><td>正手击球过网</td><td>10球中5球过网</td><td>10球中7球</td></tr>
+<tr><td>架拍+空挥</td><td>动作标准连贯</td><td>节奏流畅有力</td></tr>
+<tr><td>步法移动</td><td>能完成前后移动击球</td><td>移动到位率高</td></tr>
+</table>
+  <div class="highlight-box" style="margin-top:16px;">
+    <div class="title">📋 初级班入学标准</div>
+    <div style="font-size:14px;">
+      启蒙班20课结业后，满足以下<b>全部达标项</b>即可进入初级班：<br><br>
+      1. 正手击球过网：10球中5球以上过网<br>
+      2. 正手发球：10球中6球以上过网<br>
+      3. 连续颠球：正手10个以上<br>
+      4. 架拍定型：听到口令能摆出标准架拍<br>
+      5. 出勤率 ≥ 80%（16/20课以上）<br><br>
+      <b>未达标处理</b>：免费加练对应项目，或续报启蒙班第二期巩固，通常2-4周可达标。
+    </div>
+  </div>
+</div></div><div class="tab-panel" id="panel-chuban"><div class="card">
+  <div class="card-title"><span class="emoji">🏸</span> 初级班教学大纲</div>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">适合年龄</div><div class="value">8-12岁</div></div>
+    <div class="info-item"><div class="label">课时时长</div><div class="value">90分钟</div></div>
+    <div class="info-item"><div class="label">班级人数</div><div class="value">6-8人</div></div>
+    <div class="info-item"><div class="label">师生比</div><div class="value">1:6-8</div></div>
+  </div>
+  <div class="highlight-box">
+    <div class="title">🎯 教学核心原则</div>
+    <div style="font-size:14px;">
+      <b>技术精细化 + 实战化。</b>在启蒙班姿势地基上，把高远球、步法、发球做稳，再学最容易上手的网前放网/挑球、正手吊球。<br>
+      <b>基本功优先：</b>高远球稳定、步法到位率、发球落点是硬指标，不达标不急着上更有难度的技术。<br>
+      <b>不抢跑：</b>杀球、反手体系、战术深度留给中级班，初级班先把「能打、能比赛、能配合」练扎实，避免拔苗助长。<br>
+      <b>量化标准</b>：每个技术有明确达标线，孩子知道「好」是什么样。
+    </div>
+  </div>
+  <div class="phase"><div class="phase-title">第一阶段：基本功精细化（第1-10课）</div><div class="phase-meta">目标：高远球稳定、全场步法、发球落点、网前放网、正反手切换</div></div>
+  <div class="lesson" data-search="初级班 第1课 高远球 稳定 多球">
+    <div class="lesson-header"><span class="lesson-num">第1课</span><span class="lesson-title">高远球稳定性强化</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳80个 + 跑步 + 肩臂活动</li><li><b>基本功诊断</b>：每人正手高远球10个，记录击球点、挥拍完整度、落点</li><li><b>动作精修</b>：纠正击球点偏后、挥拍不完整、重心没转移</li><li><b>多球强化</b>：教练连续喂球，每人30球，10球到后场1/3为合格</li><li><b>稳定性挑战</b>：连续击球不间断，看连续多少个到后场合格区</li><li><b>半场对打</b>：两人对拉高远球，最少10回合</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>30球中至少15球到后场</li><li>连续对拉10回合</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第2课 步法 米字步">
+    <div class="lesson-header"><span class="lesson-num">第2课</span><span class="lesson-title">全场步法 & 移动速度</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 步法专项（小碎步/高抬腿/侧滑步）</li><li><b>复习前后步法</b>：上网跨步 + 后退交叉步</li><li><b>左右步法</b>：向左/右侧移动——蹬地 + 交叉步/并步</li><li><b>米字步</b>：从中心向6方向移动，先慢速理解路线再加速</li><li><b>米字步计时</b>：6方向依次移动击球，记录时间</li><li><b>游戏</b>：四角跑动赛（中心向四角放/取标志物）</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握6方向全场步法</li><li>米字步28秒以内</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第3课 发球 落点 反手">
+    <div class="lesson-header"><span class="lesson-num">第3课</span><span class="lesson-title">发球精修 & 落点控制</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 手腕/前臂活动</li><li><b>正手发球精修</b>：发高远（到后场）+ 发网前（拍面斜切），各15球</li><li><b>反手发球教学</b>：反手握拍→球放拍前→轻推过网，动作小速度快</li><li><b>落点挑战</b>：对面放4个目标圈，进圈得分</li><li><b>发球+接发球配合</b>：两人一组轮流发接</li><li><b>游戏</b>：发球精准赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正手发高远10中8到后场</li><li>初步掌握反手发球</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第4课 网前 放网 正反手">
+    <div class="lesson-header"><span class="lesson-num">第4课</span><span class="lesson-title">网前放网入门 & 正反手切换</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 手腕/手指活动</li><li><b>网前放网教学</b>：上网跨步→拍面斜对球→轻触过网。口诀「拍面斜，轻一碰，球就贴网过」</li><li><b>多球放网</b>：教练隔网抛网前球，孩子上网放网，每人20球</li><li><b>正反手切换</b>：放网后快速回位切换正反手架拍</li><li><b>半场网前对抗</b>：两人只打前场</li><li><b>游戏</b>：放网贴网赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握正手放网基本动作</li><li>能根据球位切换握拍</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第5课 网前 挑球 组合">
+    <div class="lesson-header"><span class="lesson-num">第5课</span><span class="lesson-title">网前挑球 & 放网组合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 步法</li><li><b>挑球教学</b>：网前被动球用挑球过渡回后场，拍面向上「捞」起</li><li><b>放网+挑球对比</b>：球近网放、球远/被动挑</li><li><b>组合练习</b>：教练随机抛近远球，孩子判断放或挑</li><li><b>半场对抗</b>：放网与挑球结合对打</li><li><b>游戏</b>：网前判断赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能放网也能挑球过渡</li><li>判断放/挑时机</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第6课 吊球 高吊结合">
+    <div class="lesson-header"><span class="lesson-num">第6课</span><span class="lesson-title">正手吊球入门 & 高吊结合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 肩臂</li><li><b>吊球教学</b>：准备同高远，击球瞬间拍面切削，球斜飞前场。口诀「准备一样，最后切一下」</li><li><b>多球吊球</b>：教练喂高球，退步到位→吊前场，每人20球</li><li><b>高吊结合</b>：交替打高远和吊球，准备动作一致</li><li><b>定点挑战</b>：后场/前场目标各打5球</li><li><b>游戏</b>：高吊调动赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>吊球20中10到前场</li><li>高吊准备动作一致</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第7课 技术串联 组合">
+    <div class="lesson-header"><span class="lesson-num">第7课</span><span class="lesson-title">技术串联 & 组合运用</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>高远+吊球串联</b>：后场高吊组合连贯打</li><li><b>网前+后场串联</b>：挑球上网放网组合</li><li><b>全场组合</b>：教练喂不同点，孩子用合适技术回球</li><li><b>半场对打</b>：鼓励用组合技术</li><li><b>游戏</b>：技术串联积分赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能连贯使用2种以上技术</li><li>技术运用更灵活</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第8课 步法 移动击球">
+    <div class="lesson-header"><span class="lesson-num">第8课</span><span class="lesson-title">步法+击球组合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>移动击球</b>：教练指方向，孩子启动→移动→击球→回位</li><li><b>六点移动</b>：中心向6方向各击球一次，循环</li><li><b>步法+吊球</b>：移动中完成吊球</li><li><b>实战</b>：半场对打看移动到位率</li><li><b>游戏</b>：移动击球计时赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>移动中稳定击球</li><li>回位意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第9课 半场 对打 综合">
+    <div class="lesson-header"><span class="lesson-num">第9课</span><span class="lesson-title">半场综合对打</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>复习</b>：高远/吊球/网前/挑球</li><li><b>半场对打</b>：两人半场综合运用技术，11分制</li><li><b>教练点评</b>：每人技术运用情况</li><li><b>多球补充</b>：弱项专项</li><li><b>游戏</b>：半场对抗赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>半场能综合用技术</li><li>对打回合数提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第10课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num">第10课</span><span class="lesson-title">第一阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收1 高远球</b>：30球记录合格率</li><li><b>验收2 米字步</b>：计时</li><li><b>验收3 发球</b>：落点合格率</li><li><b>验收4 网前</b>：放网/挑球</li><li><b>教练出具第一阶段评估</b> + 放松</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第一阶段验收</li><li>明确下一阶段重点</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第二阶段：技术拓展</span></div>
+  <div class="phase phase-blue"><div class="phase-title">第二阶段：技术拓展（第11-20课）</div><div class="phase-meta">目标：吊球深化、网前综合、接发球、双打基础、步法提速</div></div>
+  <div class="lesson" data-search="初级班 第11课 吊球 深化">
+    <div class="lesson-header"><span class="lesson-num blue">第11课</span><span class="lesson-title">吊球深化 & 落点控制</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>吊球精修</b>：切拍角度控制，球更贴网</li><li><b>吊球落点</b>：吊左/中/右前场，指定区域</li><li><b>高吊杀？不</b>：本阶段只高吊，不急于杀球</li><li><b>多球练习</b>：每人20球吊不同点</li><li><b>游戏</b>：吊球精准赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>吊球落点更精准</li><li>动作更隐蔽</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第12课 网前 综合">
+    <div class="lesson-header"><span class="lesson-num blue">第12课</span><span class="lesson-title">网前技术综合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>放网+挑球综合</b>：近网放、远网挑连贯</li><li><b>网前步法</b>：蹬跨上网 + 回位</li><li><b>网前对抗</b>：两人前场对打</li><li><b>网前+后场</b>：挑球后衔接后场</li><li><b>游戏</b>：网前技术秀</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>网前技术连贯</li><li>步法到位</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第13课 接发球 基础">
+    <div class="lesson-header"><span class="lesson-num blue">第13课</span><span class="lesson-title">接发球基础 & 回球选择</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>接发球站位</b>：站在发球区后，重心前倾，拍举起</li><li><b>接高远</b>：压后场或吊网前</li><li><b>接网前</b>：放/挑选择</li><li><b>多球接发</b>：教练发不同类型，孩子接，每人20球</li><li><b>游戏</b>：发接发对抗</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能接不同类型发球</li><li>回球有基本选择</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第14课 高吊 实战">
+    <div class="lesson-header"><span class="lesson-num blue">第14课</span><span class="lesson-title">高远+吊球实战组合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>高吊实战</b>：对打中交替高吊调动</li><li><b>落点控制</b>：吊球贴网、高远压后场</li><li><b>半场对抗</b>：鼓励高吊组合</li><li><b>教练点评</b>：调动意识</li><li><b>游戏</b>：高吊挑战赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>实战中能用高吊组合</li><li>有调动意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第15课 步法 提速">
+    <div class="lesson-header"><span class="lesson-num blue">第15课</span><span class="lesson-title">步法提速 & 米字步挑战</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>米字步强化</b>：计时2轮取最佳</li><li><b>多方向移动</b>：6方向随机击球</li><li><b>前后场连贯</b>：后场高远→上网放网循环</li><li><b>灵敏训练</b>：绳梯/标志盘</li><li><b>游戏</b>：步法速度赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>米字步突破个人最好</li><li>移动到位率提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第16课 双打 基础 配合">
+    <div class="lesson-header"><span class="lesson-num blue">第16课</span><span class="lesson-title">双打基础配合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>双打站位</b>：进攻前后、防守左右</li><li><b>补位意识</b>：同伴击球后自己补空当</li><li><b>双打多球</b>：两人配合完成进攻/防御</li><li><b>网前封网</b>：前场封堵练习</li><li><b>游戏</b>：2v2趣味赛（11分）</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>理解双打基本站位</li><li>有补位意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第17课 网前 封网">
+    <div class="lesson-header"><span class="lesson-num blue">第17课</span><span class="lesson-title">网前对抗 & 封网意识</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>网前封网</b>：拍举网前，对方回球即封</li><li><b>网前对抗</b>：两人前场快速对打</li><li><b>封网+后场</b>：前后配合</li><li><b>实战</b>：双打中练习封网</li><li><b>游戏</b>：网前快攻赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>网前反应快</li><li>封网意识建立</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第18课 全场 移动 多球">
+    <div class="lesson-header"><span class="lesson-num blue">第18课</span><span class="lesson-title">全场移动击球 & 多球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>全场多球</b>：教练6点喂球，孩子全场上步击球</li><li><b>移动到位率</b>：记录每球到位情况</li><li><b>高吊结合</b>：移动中完成</li><li><b>实战</b>：半场综合对打</li><li><b>游戏</b>：全场跑动赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>全场移动击球稳定</li><li>到位率提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第19课 单打 对抗 四角调动">
+    <div class="lesson-header"><span class="lesson-num blue">第19课</span><span class="lesson-title">单打趣味对抗（四角调动基础）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>四角调动讲解</b>：把球打到四个角让对方跑（基础版）</li><li><b>趣味对抗</b>：两人单打，鼓励用四角调动</li><li><b>教练点评</b>：每人至少用1次调动</li><li><b>赛后</b>：分享心得</li><li><b>游戏</b>：单打积分赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>体验单打对抗</li><li>初步有调动意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第20课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num blue">第20课</span><span class="lesson-title">第二阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：吊球 + 网前 + 接发球 + 步法综合</li><li><b>半场对打</b>：观察技术运用</li><li><b>教练评估</b>：出具第二阶段报告</li><li><b>游戏</b>：技术大比拼</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第二阶段验收</li><li>明确个人突破点</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第三阶段：实战体验</span></div>
+  <div class="phase phase-green"><div class="phase-title">第三阶段：实战体验（第21-30课）</div><div class="phase-meta">目标：接发球实战、单打趣味赛、双打配合、班级赛、弱点强化</div></div>
+  <div class="lesson" data-search="初级班 第21课 接发球 第三拍">
+    <div class="lesson-header"><span class="lesson-num green">第21课</span><span class="lesson-title">接发球实战 & 第三拍</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>接发球强化</b>：不同发球对应回球</li><li><b>第三拍抢攻</b>：接发后主动连接下一拍</li><li><b>实战</b>：发接发3拍对抗</li><li><b>教练点评</b></li><li><b>游戏</b>：发接发接力</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>接发球稳定</li><li>有第三拍意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第22课 单打 比赛 21分">
+    <div class="lesson-header"><span class="lesson-num green">第22课</span><span class="lesson-title">单打趣味赛（21分制体验）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 15min</span><span class="time-block time-game">实战 50min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：完整赛前热身</li><li><b>规则讲解</b>：21分制基本规则</li><li><b>趣味赛</b>：分组循环，11分制降低压力</li><li><b>赛中指导</b>：教练场边提示</li><li><b>赛后</b>：每人说一个收获</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>体验正式比赛节奏</li><li>能打完整场</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第23课 双打 轮转">
+    <div class="lesson-header"><span class="lesson-num green">第23课</span><span class="lesson-title">双打进阶配合（轮转基础）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>轮转讲解</b>：防守（左右）转进攻（前后）</li><li><b>轮转练习</b>：挑高球后→平行→一人上网一人退</li><li><b>双打对抗</b>：2v2，11分制</li><li><b>教练点评</b>：站位与轮转</li><li><b>游戏</b>：双打配合赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能完成基本轮转</li><li>配合更默契</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第24课 技术串联 挑战">
+    <div class="lesson-header"><span class="lesson-num green">第24课</span><span class="lesson-title">技术串联挑战赛</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>挑战设置</b>：每局要求用指定技术组合</li><li><b>综合对打</b>：自由对打，至少3种技术</li><li><b>教练评分</b>：技术多样性+连贯</li><li><b>赛后复盘</b></li><li><b>游戏</b>：技术串联王</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>技术串联流畅</li><li>综合运用能力强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第25课 步法 灵敏 体能">
+    <div class="lesson-header"><span class="lesson-num green">第25课</span><span class="lesson-title">步法速度 & 灵敏训练</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-main">体能 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>灵敏训练</b>：绳梯/标志盘变向</li><li><b>米字步冲刺</b>：计时挑战</li><li><b>反应移动</b>：听口令多方向启动</li><li><b>核心力量</b>：平板支撑/弓步蹲</li><li><b>游戏</b>：灵敏接力</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>步法更快更灵</li><li>体能提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第26课 规则 礼仪">
+    <div class="lesson-header"><span class="lesson-num green">第26课</span><span class="lesson-title">比赛规则 & 礼仪</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">讲解 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>规则讲解</b>：计分、换边、违例（过手/过腰/触网）</li><li><b>礼仪</b>：赛前握手、赛后致谢、尊重裁判</li><li><b>实战</b>：用正式规则打一局</li><li><b>教练纠正</b>：违例动作</li><li><b>游戏</b>：规则问答赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>懂基本比赛规则</li><li>有赛场礼仪</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第27课 班级赛 上">
+    <div class="lesson-header"><span class="lesson-num green">第27课</span><span class="lesson-title">趣味班级赛（上）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 15min</span><span class="time-block time-game">比赛 50min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：完整热身</li><li><b>分组</b>：按水平分组，单打循环</li><li><b>比赛（上）</b>：前半程循环赛</li><li><b>教练记录</b>：技术运用+心态</li><li><b>赛中指导</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>投入班级赛</li><li>稳定发挥</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第28课 班级赛 下">
+    <div class="lesson-header"><span class="lesson-num green">第28课</span><span class="lesson-title">趣味班级赛（下）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>比赛（下）</b>：循环赛收尾 + 排名</li><li><b>颁奖预告</b></li><li><b>赛后分析</b>：亮点+改进</li><li><b>教练点评</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>完成班级赛</li><li>看到自己排名</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第29课 弱点 强化">
+    <div class="lesson-header"><span class="lesson-num green">第29课</span><span class="lesson-title">个人弱点强化专项</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">专项 55min</span><span class="time-block time-game">游戏 10min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>个人计划</b>：教练根据前测给每人1个弱项</li><li><b>专项多球</b>：针对弱项加练</li><li><b>一对一纠正</b></li><li><b>弱项小测</b>：看进步</li><li><b>游戏</b>：弱项突破奖</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>弱项明显进步</li><li>建立突破信心</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第30课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num green">第30课</span><span class="lesson-title">第三阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：接发球 + 单打 + 双打 + 步法综合</li><li><b>比赛能力</b>：观察班级赛表现</li><li><b>教练评估</b>：第三阶段报告</li><li><b>游戏</b>：综合挑战</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第三阶段验收</li><li>具备比赛能力</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第四阶段：巩固展示</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第四阶段：巩固展示（第31-40课）</div><div class="phase-meta">目标：技术综合巩固、联赛、结课展示颁奖、升级评估、家长开放</div></div>
+  <div class="lesson" data-search="初级班 第31课 技术 巩固">
+    <div class="lesson-header"><span class="lesson-num purple">第31课</span><span class="lesson-title">技术综合巩固</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>全技术复习</b>：高远/吊球/网前/挑球/接发</li><li><b>多球轮练</b>：每项15球</li><li><b>连贯练习</b>：技术串联</li><li><b>弱项再练</b></li><li><b>游戏</b>：技术大阅兵</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>技术全面巩固</li><li>无明显短板</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第32课 实战 战术启蒙">
+    <div class="lesson-header"><span class="lesson-num purple">第32课</span><span class="lesson-title">综合实战 & 战术意识启蒙</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 25min</span><span class="time-block time-game">实战 40min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>战术启蒙</b>：为什么打这里（基础版，不深讲）</li><li><b>实战</b>：对打中教练问「打哪里？为什么？」</li><li><b>四角调动</b>：鼓励用</li><li><b>赛后</b>：分享思路</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>实战中思考落点</li><li>初步战术意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第33课 联赛 循环">
+    <div class="lesson-header"><span class="lesson-num purple">第33课</span><span class="lesson-title">班级联赛（小组循环）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>小组循环</b>：分组单打循环</li><li><b>积分排名</b></li><li><b>教练记录</b></li><li><b>赛中指导</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>联赛投入</li><li>稳定发挥</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第34课 联赛 淘汰">
+    <div class="lesson-header"><span class="lesson-num purple">第34课</span><span class="lesson-title">班级联赛（淘汰）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>淘汰赛</b>：小组前名交叉淘汰</li><li><b>名次产生</b></li><li><b>教练点评</b>：每人表现</li><li><b>赛后</b>：心态小结</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>完成联赛</li><li>接受胜负</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第35课 结课 准备">
+    <div class="lesson-header"><span class="lesson-num purple">第35课</span><span class="lesson-title">结课准备 & 技能梳理</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">复习 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>技能梳理</b>：回顾40课全部技术</li><li><b>展示预演</b>：每项练一遍</li><li><b>个人总结</b>：自己最擅长/最想练</li><li><b>弱项补练</b></li><li><b>游戏</b>：技能树点亮</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>清晰自己的技能树</li><li>结课准备就绪</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第36课 展示 彩排">
+    <div class="lesson-header"><span class="lesson-num purple">第36课</span><span class="lesson-title">个人技能展示彩排</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">彩排 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>展示彩排</b>：高远/吊球/网前/发球逐项演示</li><li><b>教练打磨</b>：展示动作细节</li><li><b>模拟家长</b>：在「观众」前展示</li><li><b>信心建立</b></li><li><b>游戏</b>：展示之星</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>展示流畅自信</li><li>动作标准</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第37课 结课 大赛">
+    <div class="lesson-header"><span class="lesson-num purple">第37课</span><span class="lesson-title">结课大赛</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：自主热身（教练检查）</li><li><b>技能展示</b>：每人展示核心动作</li><li><b>结课大赛</b>：单打淘汰 + 双打表演，家长可观摩</li><li><b>多奖项</b>：冠军/亚军/最佳进步/最佳技术</li><li><b>教练记录</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>完整展示40课水平</li><li>享受比赛</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第38课 颁奖 结业">
+    <div class="lesson-header"><span class="lesson-num purple">第38课</span><span class="lesson-title">颁奖典礼 & 结业证书</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 10min</span><span class="time-block time-game">颁奖 60min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>颁奖</b>：各奖项 + 结业证书</li><li><b>教练寄语</b>：每人专属评价</li><li><b>家长交流</b></li><li><b>合影</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>获得结业认可</li><li>有仪式感</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第39课 升级 评估">
+    <div class="lesson-header"><span class="lesson-num purple">第39课</span><span class="lesson-title">升级评估 & 一对一反馈</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">评估 55min</span><span class="time-block time-main">沟通 15min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>综合评估</b>：技术+体能+比赛+出勤</li><li><b>一对一反馈</b>：教练和孩子/家长沟通短板与方向</li><li><b>升级建议</b>：是否进中级班</li><li><b>个人计划</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>拿到升级评估报告</li><li>明确下一阶段</li></ul></div>
+  </div>
+  <div class="lesson" data-search="初级班 第40课 家长开放日 总结">
+    <div class="lesson-header"><span class="lesson-num purple">第40课</span><span class="lesson-title">家长开放日 & 总结</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 30min</span><span class="time-block time-main">交流 35min</span><span class="time-block time-main">总结 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>开放日</b>：家长观摩一节综合训练</li><li><b>成果展示</b>：孩子演示所学</li><li><b>家长沟通</b>：续报/升级说明</li><li><b>总结</b>：40课成长回顾</li><li><b>合影留念</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>家长看到成长</li><li>完成初级班全程</li></ul></div>
+  </div>
+  <div class="card-title" style="margin-top:20px;"><span class="emoji">📊</span> 初级班阶段考核标准</div>
+  <div class="phase"><div class="phase-title">第一阶段考核（第10课后）</div><div class="phase-meta">考核目标：基本功达标，技术动作规范</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td>正手高远球</td><td>30球中15球到后场1/3</td><td>20球以上+落点集中</td></tr>
+<tr><td>米字步</td><td>28秒以内</td><td>22秒以内</td></tr>
+<tr><td>正手发高远</td><td>10球中8球到后场</td><td>10球中9球</td></tr>
+<tr><td>网前放网</td><td>20球中10球贴网过网</td><td>15球以上</td></tr>
+<tr><td>正反手切换</td><td>快速切换不卡顿</td><td>切换流畅</td></tr>
+</table>
+  <div class="phase phase-blue"><div class="phase-title">第二阶段考核（第20课后）</div><div class="phase-meta">考核目标：吊球+网前+接发球+双打基础达标</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td>正手吊球</td><td>20球中10球到前场</td><td>15球以上+隐蔽</td></tr>
+<tr><td>网前挑球</td><td>20球中10球过网</td><td>15球以上+控向</td></tr>
+<tr><td>接发球</td><td>能接不同类型发球</td><td>回球有选择</td></tr>
+<tr><td>双打配合</td><td>理解站位+补位</td><td>基本轮转</td></tr>
+<tr><td>高吊结合</td><td>准备动作一致</td><td>对方难预判</td></tr>
+</table>
+  <div class="phase phase-green"><div class="phase-title">第三阶段考核（第30课后）</div><div class="phase-meta">考核目标：能比赛、能双打、步法体能达标</div></div>
+<table class="criteria-table">
+<tr><th>考核项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td>班级赛表现</td><td>能打完整场</td><td>进入前50%</td></tr>
+<tr><td>双打轮转</td><td>基本完成切换</td><td>流畅+补位</td></tr>
+<tr><td>比赛心态</td><td>落后不放弃</td><td>关键分稳定</td></tr>
+<tr><td>步法体能</td><td>米字步26秒/跳绳80</td><td>22秒/120</td></tr>
+</table>
+  <div class="phase phase-purple"><div class="phase-title">第四阶段 / 结课考核（第40课后）</div><div class="phase-meta">考核目标：综合技术+体能+比赛能力评估，中级班准入对照</div></div>
+<table class="criteria-table">
+<tr><th>考核维度</th><th>具体项目</th><th>达标标准</th><th>优秀标准</th></tr>
+<tr><td>技术达标</td><td>正手高远球</td><td>30球中18球到后场</td><td>25球以上</td></tr>
+<tr><td>技术达标</td><td>正手吊球</td><td>20球中12球到前场</td><td>15球以上</td></tr>
+<tr><td>技术达标</td><td>网前放网/挑球</td><td>基本掌握</td><td>贴网+控向</td></tr>
+<tr><td>技术达标</td><td>接发球</td><td>能接并回球</td><td>有战术选择</td></tr>
+<tr><td>技术达标</td><td>高吊结合</td><td>准备一致</td><td>隐蔽流畅</td></tr>
+<tr><td>步法体能</td><td>米字步</td><td>26秒以内</td><td>20秒以内</td></tr>
+<tr><td>步法体能</td><td>30米冲刺</td><td>6.5秒以内</td><td>5.8秒以内</td></tr>
+<tr><td>步法体能</td><td>1分钟跳绳</td><td>80个以上</td><td>120个以上</td></tr>
+<tr><td>比赛能力</td><td>结课赛成绩</td><td>进入前50%</td><td>前3名</td></tr>
+<tr><td>比赛能力</td><td>比赛心态</td><td>落后不放弃</td><td>关键分稳定</td></tr>
+<tr><td>综合素质</td><td>出勤率</td><td>40课中32课以上</td><td>36课以上</td></tr>
+<tr><td>综合素质</td><td>训练态度</td><td>认真配合</td><td>主动加练</td></tr>
+</table>
+  <div class="highlight-box" style="margin-top:16px;">
+    <div class="title">📋 中级班入学标准（结课升级条件）</div>
+    <div style="font-size:14px;">
+      初级班40课结业后，需同时满足以下<b>全部达标项</b>方可推荐进入中级班：<br><br>
+      1. 高远球合格率 ≥ 60%（30球中18球到后场）<br>
+      2. 米字步 ≤ 26秒<br>
+      3. 比赛中能综合运用所学技术（高远/吊/放网/挑球组合）<br>
+      4. 结课联赛积极参与、能打完整场<br>
+      5. 出勤率 ≥ 80%（32/40课以上）<br><br>
+      <b>加分项</b>：吊球隐蔽、双打配合好、步法快。<br>
+      <b>未达标处理</b>：续报初级班第二期针对弱项突破，通常1-2个月可达标。
+    </div>
+  </div>
+</div></div><div class="tab-panel" id="panel-zhongji"><div class="card">
+  <div class="card-title"><span class="emoji">⭐</span> 中级班教学大纲</div>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">适合年龄</div><div class="value">10-14岁</div></div>
+    <div class="info-item"><div class="label">课时时长</div><div class="value">90分钟</div></div>
+    <div class="info-item"><div class="label">班级人数</div><div class="value">4-8人</div></div>
+    <div class="info-item"><div class="label">授课教练</div><div class="value">资深教练/主教练</div></div>
+  </div>
+  <div class="highlight-box">
+    <div class="title">🎯 中级班定位：进阶竞技方向（难度适中、循序渐进）</div>
+    <div style="font-size:14px;">
+      在初级班「能打、能比赛、能配合」的基础之上，中级班系统攻克<b>后场杀球/吊球、反手挑球与高远基础、网前放/搓/推/勾、接杀与平抽、双打轮转、基础战术</b>——这些是中级班的进阶内容。<br>
+      <b>与初级班的关系：</b>初级班打稳基本功 + 网前放网/挑球 + 正手吊球；中级班在此之上逐步加难度，但<b>不急于求成</b>：杀球强调动作和下压角度而非暴力，反手只到挑球+高远基础，战术只讲四角调动基础版。<br>
+      <b>降难度说明：</b>相比竞技精英班，中级班不要求极限体能（跳绳1分钟80个、米字步26秒即可）、不深挖个人打法体系、心理压力适中。目标是「技术全面、能打比赛、享受进阶」。<br>
+      <b>想走专业竞技</b>的孩子，中级班结业后经评估可进入主教练带的精英班。
+    </div>
+  </div>
+  <div class="phase phase-purple"><div class="phase-title">第一阶段：进阶基本功（第1-10课）</div><div class="phase-meta">目标：高远精准、全场步法提速、发球落点、正反手连贯、多球稳定</div></div>
+  <div class="lesson" data-search="中级班 第1课 高远球 精准">
+    <div class="lesson-header"><span class="lesson-num purple">第1课</span><span class="lesson-title">高远球精准 & 落点控制</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳80 + 跑步 + 肩臂</li><li><b>精准训练</b>：高远球打到后场指定区域（左/中/右），记录落点</li><li><b>动作精修</b>：击球点、挥拍完整度、重心转移</li><li><b>多球</b>：每人30球，目标20球到后场1/3</li><li><b>半场对拉</b>：连续15回合</li><li><b>游戏</b>：落点精准赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>30球中20球到后场</li><li>落点可控</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第2课 步法 米字步">
+    <div class="lesson-header"><span class="lesson-num purple">第2课</span><span class="lesson-title">全场步法提速 & 米字步</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：跳绳 + 步法专项</li><li><b>米字步强化</b>：6方向计时，目标26秒</li><li><b>多方向启动</b>：听口令6方向随机移动</li><li><b>前后场连贯</b>：后场→上网→后退循环</li><li><b>灵敏</b>：绳梯/标志盘</li><li><b>游戏</b>：步法速度赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>米字步26秒以内</li><li>移动到位率提升</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第3课 发球 落点">
+    <div class="lesson-header"><span class="lesson-num purple">第3课</span><span class="lesson-title">发球落点精修（正反手）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：手腕/前臂</li><li><b>正手发球</b>：高远落点（后场三区）+ 网前贴网</li><li><b>反手发球</b>：贴网短球 + 平快球</li><li><b>落点挑战</b>：对面放目标圈，进圈计分</li><li><b>实战</b>：发球后接第三拍</li><li><b>游戏</b>：发球大师赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正手发高远控三区</li><li>反手发球贴网</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第4课 正反手 连贯">
+    <div class="lesson-header"><span class="lesson-num purple">第4课</span><span class="lesson-title">正反手连贯击球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>正反手切换</b>：教练随机喂正/反手位，快速切换</li><li><b>反手挑球</b>：网前/左侧用反手挑起过网</li><li><b>正手连贯</b>：连续正手击球不脱节</li><li><b>组合</b>：正反手交替多球</li><li><b>游戏</b>：正反手挑战</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>正反手切换流畅</li><li>反手挑球稳定过网</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第5课 多球 稳定">
+    <div class="lesson-header"><span class="lesson-num purple">第5课</span><span class="lesson-title">多球稳定性训练</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>连续高远</b>：每人连续击球，记录不间断个数</li><li><b>目标</b>：连续20球高远，15球到后场</li><li><b>节奏控制</b>：不因快而变形</li><li><b>弱项补练</b></li><li><b>游戏</b>：稳定王</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>连续20球15到后场</li><li>动作不变形</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第6课 六点 移动">
+    <div class="lesson-header"><span class="lesson-num purple">第6课</span><span class="lesson-title">步法+击球组合（六点移动）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>六点移动</b>：中心向6方向各击球一次循环</li><li><b>步法+吊球</b>：移动中完成吊球</li><li><b>步法+放网</b>：上网放网回位</li><li><b>实战</b>：半场看到位率</li><li><b>游戏</b>：移动击球赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>六点移动击球稳</li><li>回位意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第7课 控球 精度">
+    <div class="lesson-header"><span class="lesson-num purple">第7课</span><span class="lesson-title">控球精度 & 目标击打</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>目标击打</b>：对面挂目标圈，指定落点打</li><li><b>高吊精准</b>：后场/前场指定区域</li><li><b>网前精准</b>：放网贴网</li><li><b>多球</b>：每人20球指定落点</li><li><b>游戏</b>：神射手</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>落点精度提升</li><li>控球感强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第8课 诊断 计划">
+    <div class="lesson-header"><span class="lesson-num purple">第8课</span><span class="lesson-title">个人弱项诊断 & 改进计划</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">诊断 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>技术诊断</b>：逐项测试，找出个人最弱项</li><li><b>改进计划</b>：教练与孩子定1-2个突破目标</li><li><b>弱项多球</b>：针对性加练</li><li><b>记录</b>：建立个人档案</li><li><b>游戏</b>：突破目标卡</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>明确个人弱项</li><li>有改进计划</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第9课 体能 步法">
+    <div class="lesson-header"><span class="lesson-num purple">第9课</span><span class="lesson-title">体能与步法基础</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 25min</span><span class="time-block time-main">体能 40min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>步法体能</b>：米字步+间歇跑</li><li><b>核心力量</b>：平板支撑/俄罗斯转体</li><li><b>灵敏</b>：绳梯变向</li><li><b>跳绳</b>：1分钟80个目标</li><li><b>游戏</b>：体能挑战</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>体能达标</li><li>步法更快</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第10课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num purple">第10课</span><span class="lesson-title">第一阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：高远精准 + 米字步 + 发球 + 正反手 + 多球</li><li><b>数据记录</b></li><li><b>教练评估</b>：第一阶段报告</li><li><b>游戏</b>：综合挑战</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第一阶段验收</li><li>明确下一阶段</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第二阶段：后场技术</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第二阶段：后场技术（第11-20课）</div><div class="phase-meta">目标：吊球精准、杀球入门(下压非暴力)、高吊杀结合、反手挑球与高远基础</div></div>
+  <div class="lesson" data-search="中级班 第11课 吊球 精准">
+    <div class="lesson-header"><span class="lesson-num purple">第11课</span><span class="lesson-title">吊球精准 & 贴网控制</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>吊球精修</b>：切拍角度，球更贴网</li><li><b>吊球落点</b>：左/中/右前场指定</li><li><b>多球</b>：每人20球，目标15球贴网前场</li><li><b>高吊结合</b>：准备动作一致</li><li><b>游戏</b>：吊球贴网赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>吊球精准贴网</li><li>动作隐蔽</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第12课 杀球 入门">
+    <div class="lesson-header"><span class="lesson-num purple">第12课</span><span class="lesson-title">杀球入门（动作+下压角度）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：肩/腰/腹活动（杀球需核心）</li><li><b>杀球动作</b>：准备同高远，击球点更靠前、拍面下压。口诀「高远往前上打，杀球往前下压」</li><li><b>空挥强化</b>：体会下压，不追求力量</li><li><b>多球杀球</b>：教练喂高球，杀球过网下压，每人20球</li><li><b>落点控制</b>：左/中/右区域</li><li><b>游戏</b>：下压挑战赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>杀球过网下压</li><li>能控方向</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第13课 高吊杀 结合">
+    <div class="lesson-header"><span class="lesson-num purple">第13课</span><span class="lesson-title">高吊杀结合 & 准备动作一致</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>高吊杀组合</b>：交替打高/吊/杀，准备一致</li><li><b>隐蔽性</b>：让对方看不出你要打哪种</li><li><b>多球</b>：教练喂球，孩子自选高/吊/杀</li><li><b>半场对抗</b>：鼓励组合</li><li><b>游戏</b>：组合多变赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>高吊杀准备一致</li><li>能灵活选择</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第14课 反手 挑球 发球">
+    <div class="lesson-header"><span class="lesson-num purple">第14课</span><span class="lesson-title">反手挑球 & 反手发球强化</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：前臂旋转</li><li><b>反手挑球</b>：网前/左侧用反手挑起，转体→引拍→拇指顶击</li><li><b>反手发球</b>：贴网短球 + 平快</li><li><b>多球</b>：反手挑球每人20球过网</li><li><b>组合</b>：反手挑球后接正手</li><li><b>游戏</b>：反手挑战</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>反手挑球稳定过网</li><li>反手发球精准</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第15课 反手 高远 基础">
+    <div class="lesson-header"><span class="lesson-num purple">第15课</span><span class="lesson-title">反手高远球基础（转身击球）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>反手高远教学</b>：判断来球到反手位→转身背对网→反手引拍→击球。先分解</li><li><b>多球</b>：教练喂反手位，孩子击球，先求打到</li><li><b>步法配合</b>：移动到位再击球</li><li><b>组合</b>：反手高远接正手</li><li><b>游戏</b>：反手高远赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>反手高远能击到球</li><li>步法配合</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第16课 后场 综合">
+    <div class="lesson-header"><span class="lesson-num purple">第16课</span><span class="lesson-title">后场技术综合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>后场综合</b>：高远/吊/杀/反手连贯</li><li><b>多球轮练</b>：每项15球</li><li><b>半场对抗</b>：后场技术运用</li><li><b>教练点评</b></li><li><b>游戏</b>：后场全能</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>后场技术全面</li><li>连贯运用</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第17课 吊杀 结合">
+    <div class="lesson-header"><span class="lesson-num purple">第17课</span><span class="lesson-title">吊杀结合 & 落点变化</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>吊杀结合</b>：吊球调动 + 杀球下压</li><li><b>落点变化</b>：吊左杀右、吊右杀左</li><li><b>多球</b>：教练喂球，孩子变线</li><li><b>实战</b>：半场对抗</li><li><b>游戏</b>：变线大师</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>吊杀结合流畅</li><li>落点有变化</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第18课 后场 步法">
+    <div class="lesson-header"><span class="lesson-num purple">第18课</span><span class="lesson-title">步法衔接后场击球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>后场步法</b>：侧身后退交叉步 + 跳步</li><li><b>衔接</b>：移动到位→击球→回位</li><li><b>多球</b>：教练6点喂，重点后场</li><li><b>实战</b>：看后场到位率</li><li><b>游戏</b>：后场步法赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>后场移动到位</li><li>击球稳定</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第19课 后场 实战">
+    <div class="lesson-header"><span class="lesson-num purple">第19课</span><span class="lesson-title">后场实战对抗</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>后场对抗</b>：半场后场技术对打</li><li><b>教练指导</b>：落点/下压</li><li><b>赛后复盘</b></li><li><b>弱项补练</b></li><li><b>游戏</b>：后场王者</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>实战用后场技术</li><li>落点意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第20课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num purple">第20课</span><span class="lesson-title">第二阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：吊球 + 杀球 + 反手 + 后场综合</li><li><b>数据记录</b></li><li><b>教练评估</b>：第二阶段报告</li><li><b>游戏</b>：后场大比拼</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第二阶段验收</li><li>后场技术达标</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第三阶段：网前技术</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第三阶段：网前技术（第21-30课）</div><div class="phase-meta">目标：放网精准、搓球、推球、勾对角、网前综合与对抗</div></div>
+  <div class="lesson" data-search="中级班 第21课 放网 精准">
+    <div class="lesson-header"><span class="lesson-num purple">第21课</span><span class="lesson-title">放网精准 & 贴网</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：手腕/手指</li><li><b>放网精修</b>：拍面斜对，轻触贴网过</li><li><b>多球</b>：每人20球，目标15球贴网</li><li><b>落点</b>：左/右前场</li><li><b>半场网前</b>：两人对放</li><li><b>游戏</b>：贴网赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>放网贴网精准</li><li>落点可控</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第22课 搓球 入门">
+    <div class="lesson-header"><span class="lesson-num purple">第22课</span><span class="lesson-title">搓球入门（手指捻转）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：手指活动</li><li><b>搓球教学</b>：上网跨步→拍面斜对→手指轻捻旋转→球翻滚过网。口诀「拍面斜，手指转，球滚着过」</li><li><b>多球搓球</b>：每人20球，记过网+贴网率</li><li><b>搓vs放</b>：近网搓、稍远放</li><li><b>半场</b>：网前对抗</li><li><b>游戏</b>：搓球秀</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>掌握搓球动作</li><li>球翻滚过网</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第23课 推球 平快">
+    <div class="lesson-header"><span class="lesson-num purple">第23课</span><span class="lesson-title">推球 & 平快球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>推球教学</b>：拍面平推，球快速平飞向对方后场/中线</li><li><b>落点</b>：推左/右后场、推腰</li><li><b>多球</b>：每人20球</li><li><b>组合</b>：搓后推</li><li><b>游戏</b>：推球精准赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>推球过网快准</li><li>落点可控</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第24课 勾对角">
+    <div class="lesson-header"><span class="lesson-num purple">第24课</span><span class="lesson-title">勾对角（线路变化）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>勾对角教学</b>：网前将球勾到对方对角，拍面侧切</li><li><b>多球</b>：每人20球勾对角</li><li><b>搓/推/勾对比</b>：根据球位选</li><li><b>半场</b>：网前综合</li><li><b>游戏</b>：勾球挑战</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>勾对角能完成</li><li>线路有变化</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第25课 网前 综合">
+    <div class="lesson-header"><span class="lesson-num purple">第25课</span><span class="lesson-title">网前技术综合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>综合</b>：放/搓/推/勾连贯</li><li><b>多球</b>：教练随机抛，孩子选技术</li><li><b>半场对抗</b>：网前运用</li><li><b>教练点评</b></li><li><b>游戏</b>：网前全能</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>网前技术全面</li><li>选择合理</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第26课 网前 封网">
+    <div class="lesson-header"><span class="lesson-num purple">第26课</span><span class="lesson-title">网前对抗 & 封网</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>网前封网</b>：拍举网前，对方回球即封</li><li><b>网前快斗</b>：两人前场快速对打</li><li><b>实战</b>：双打中封网</li><li><b>教练点评</b></li><li><b>游戏</b>：网前快攻</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>网前反应快</li><li>封网意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第27课 网前 组合">
+    <div class="lesson-header"><span class="lesson-num purple">第27课</span><span class="lesson-title">放/搓/推组合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>组合练习</b>：放后接搓、搓后接推</li><li><b>连贯</b>：一拍接一拍不脱节</li><li><b>多球</b>：教练喂，孩子连打3拍网前</li><li><b>半场</b>：网前对抗</li><li><b>游戏</b>：组合连贯赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>网前组合连贯</li><li>技术转换快</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第28课 网前 步法">
+    <div class="lesson-header"><span class="lesson-num purple">第28课</span><span class="lesson-title">网前步法 & 蹬跨</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>蹬跨上网</b>：最后一步蹬跨，重心降</li><li><b>回位</b>：网前打完快速回中心</li><li><b>多球</b>：教练抛网前，孩子蹬跨放网</li><li><b>实战</b>：看步法到位</li><li><b>游戏</b>：网前步法赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>蹬跨上网稳</li><li>回位快</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第29课 网前 实战">
+    <div class="lesson-header"><span class="lesson-num purple">第29课</span><span class="lesson-title">网前实战</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>网前实战</b>：半场网前技术对打</li><li><b>教练指导</b></li><li><b>赛后复盘</b></li><li><b>弱项补练</b></li><li><b>游戏</b>：网前王者</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>实战用网前技术</li><li>运用合理</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第30课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num purple">第30课</span><span class="lesson-title">第三阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：放网 + 搓球 + 推球 + 勾对角 + 网前综合</li><li><b>数据记录</b></li><li><b>教练评估</b>：第三阶段报告</li><li><b>游戏</b>：网前大比拼</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第三阶段验收</li><li>网前技术达标</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第四阶段：中场与防守</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第四阶段：中场与防守（第31-40课）</div><div class="phase-meta">目标：平抽快挡、接杀挡网、防守挑球、攻防转换</div></div>
+  <div class="lesson" data-search="中级班 第31课 平抽 快挡">
+    <div class="lesson-header"><span class="lesson-num purple">第31课</span><span class="lesson-title">平抽快挡 & 中场对抗</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>平抽快挡</b>：中场拍面对拍快速平抽，连贯不僵</li><li><b>多球</b>：教练中场喂，孩子平抽</li><li><b>快挡变线</b>：挡向不同方向</li><li><b>对抗</b>：两人中场平抽</li><li><b>游戏</b>：平抽赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>平抽连贯</li><li>快挡变线</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第32课 接杀 挡网">
+    <div class="lesson-header"><span class="lesson-num purple">第32课</span><span class="lesson-title">接杀挡网（拍面放平）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>接杀教学</b>：对方杀球，拍面放平轻挡网前。口诀「对方杀球别慌，挡网一碰就过去」</li><li><b>多球接杀</b>：教练杀，孩子挡，每人20球</li><li><b>挡网落点</b>：挡左/右网前</li><li><b>对抗</b>：半场接杀</li><li><b>游戏</b>：救球王</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>接杀能挡网</li><li>拍面放平</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第33课 防守 挑球">
+    <div class="lesson-header"><span class="lesson-num purple">第33课</span><span class="lesson-title">防守挑球 & 过渡</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>防守挑球</b>：被动球挑高球回后场过渡</li><li><b>多球</b>：教练杀/压，孩子挑球</li><li><b>挑球落点</b>：挑后场两角</li><li><b>组合</b>：挑球后回位反击</li><li><b>游戏</b>：防守反击赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>防守挑球稳</li><li>过渡到位</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第34课 防守 反击">
+    <div class="lesson-header"><span class="lesson-num purple">第34课</span><span class="lesson-title">防守反击 & 挑高球抢攻</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>挑球抢攻</b>：挑高球后对方回球，自己上前抢攻</li><li><b>组合</b>：挑→回位→攻</li><li><b>多球</b>：教练压制，孩子挑后抢</li><li><b>实战</b>：半场</li><li><b>游戏</b>：反击秀</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>防守能转攻</li><li>抢攻意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第35课 中场 综合">
+    <div class="lesson-header"><span class="lesson-num purple">第35课</span><span class="lesson-title">中场技术综合</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>综合</b>：平抽 + 接杀 + 挑球连贯</li><li><b>多球</b>：教练混合喂</li><li><b>实战</b>：中场对抗</li><li><b>教练点评</b></li><li><b>游戏</b>：中场全能</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>中场技术全面</li><li>连贯运用</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第36课 被动球 处理">
+    <div class="lesson-header"><span class="lesson-num purple">第36课</span><span class="lesson-title">被动球处理 & 化解</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>被动球</b>：低手球/身后球如何化解</li><li><b>挑球过渡</b>：争取回位时间</li><li><b>多球</b>：教练喂被动球</li><li><b>实战</b>：看化解能力</li><li><b>游戏</b>：化解大师</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>被动球能化解</li><li>不轻易丢分</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第37课 防守 步法">
+    <div class="lesson-header"><span class="lesson-num purple">第37课</span><span class="lesson-title">防守步法 & 接杀移动</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">游戏 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>防守步法</b>：平行站位，向两侧移动接杀</li><li><b>接杀移动</b>：小碎步调整 + 跨步</li><li><b>多球</b>：教练杀不同角，孩子移动接</li><li><b>实战</b>：看移动</li><li><b>游戏</b>：防守步法赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>防守移动快</li><li>接杀到位</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第38课 攻防 转换">
+    <div class="lesson-header"><span class="lesson-num purple">第38课</span><span class="lesson-title">攻防转换训练</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 40min</span><span class="time-block time-game">实战 25min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>攻防转换</b>：进攻3拍→转防守3拍→再攻</li><li><b>多球</b>：教练控制节奏</li><li><b>实战</b>：半场攻防</li><li><b>教练点评</b></li><li><b>游戏</b>：转换王</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>攻防切换快</li><li>意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第39课 防守 实战">
+    <div class="lesson-header"><span class="lesson-num purple">第39课</span><span class="lesson-title">防守实战</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>防守实战</b>：半场防守对抗</li><li><b>教练指导</b></li><li><b>赛后复盘</b></li><li><b>弱项补练</b></li><li><b>游戏</b>：铁壁防守</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>防守实战稳</li><li>少丢分</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第40课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num purple">第40课</span><span class="lesson-title">第四阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：平抽 + 接杀 + 防守挑球 + 攻防转换</li><li><b>数据记录</b></li><li><b>教练评估</b>：第四阶段报告</li><li><b>游戏</b>：防守大比拼</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第四阶段验收</li><li>防守技术达标</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第五阶段：双打与战术</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第五阶段：双打与战术（第41-50课）</div><div class="phase-meta">目标：双打站位/轮转/封网、发球抢攻、接发战术、四角调动基础版</div></div>
+  <div class="lesson" data-search="中级班 第41课 双打 站位">
+    <div class="lesson-header"><span class="lesson-num purple">第41课</span><span class="lesson-title">双打站位 & 进攻/防守</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>站位</b>：进攻前后、防守左右</li><li><b>切换时机</b>：何时转</li><li><b>双打多球</b>：两人配合</li><li><b>实战</b>：2v2，11分</li><li><b>游戏</b>：站位赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>理解双打站位</li><li>切换时机懂</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第42课 双打 轮转">
+    <div class="lesson-header"><span class="lesson-num purple">第42课</span><span class="lesson-title">轮转基础（攻防切换）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>轮转</b>：防守转进攻的跑位</li><li><b>练习</b>：挑高球后→平行→一人上网一人退</li><li><b>实战</b>：2v2</li><li><b>教练点评</b></li><li><b>游戏</b>：轮转配合赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能基本轮转</li><li>配合默契</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第43课 封网 压制">
+    <div class="lesson-header"><span class="lesson-num purple">第43课</span><span class="lesson-title">网前封网 & 中场压制</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>封网</b>：前场封堵</li><li><b>中场压制</b>：平抽快挡压对方</li><li><b>前后配合</b></li><li><b>实战</b>：2v2</li><li><b>游戏</b>：压制赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>封网准</li><li>中场压制强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第44课 发球 抢攻">
+    <div class="lesson-header"><span class="lesson-num purple">第44课</span><span class="lesson-title">发球抢攻 & 第三拍</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>发球抢攻</b>：发球后第三拍主动攻</li><li><b>练习</b>：发→第三拍连贯</li><li><b>实战</b>：双打体会</li><li><b>教练点评</b></li><li><b>游戏</b>：抢攻赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>有抢攻意识</li><li>第三拍连贯</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第45课 接发球 战术">
+    <div class="lesson-header"><span class="lesson-num purple">第45课</span><span class="lesson-title">接发球战术（回球选择）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 35min</span><span class="time-block time-game">实战 30min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>接发战术</b>：接高球压后场/吊网前；接网前放/挑；接平快挡/抽</li><li><b>练习</b>：教练发，孩子选回球</li><li><b>实战</b>：双打</li><li><b>教练点评</b></li><li><b>游戏</b>：接发战术赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>接发有战术</li><li>回球合理</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第46课 四角 调动">
+    <div class="lesson-header"><span class="lesson-num purple">第46课</span><span class="lesson-title">简单战术：四角调动</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>四角调动</b>：把球打到四角让对方跑（基础版）</li><li><b>实战</b>：单打鼓励用</li><li><b>教练点评</b>：每人至少1次</li><li><b>赛后</b>：分享</li><li><b>游戏</b>：调动赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>会用四角调动</li><li>有战术意识</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第47课 双打 配合">
+    <div class="lesson-header"><span class="lesson-num purple">第47课</span><span class="lesson-title">双打配合 & 沟通</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>沟通</b>：和搭档喊「我的/你的」</li><li><b>补位</b>：同伴击球后补空当</li><li><b>实战</b>：2v2</li><li><b>教练点评</b></li><li><b>游戏</b>：最佳搭档</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>配合沟通好</li><li>补位意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第48课 战术 读球">
+    <div class="lesson-header"><span class="lesson-num purple">第48课</span><span class="lesson-title">战术意识 & 读球</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>读球</b>：看对方拍面预判落点</li><li><b>战术意识</b>：为什么打这里</li><li><b>实战</b>：教练追问思路</li><li><b>赛后</b>：复盘</li><li><b>游戏</b>：读球王</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能读球预判</li><li>战术意识强</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第49课 双打 实战">
+    <div class="lesson-header"><span class="lesson-num purple">第49课</span><span class="lesson-title">实战双打对抗</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 25min</span><span class="time-block time-game">实战 40min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>双打对抗</b>：2v2实战，11分</li><li><b>教练指导</b>：站位/轮转/战术</li><li><b>赛后复盘</b></li><li><b>弱项补练</b></li><li><b>游戏</b>：双打联赛</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>双打实战强</li><li>运用技术</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第50课 阶段验收">
+    <div class="lesson-header"><span class="lesson-num purple">第50课</span><span class="lesson-title">第五阶段验收</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">验收 45min</span><span class="time-block time-game">游戏 20min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>验收</b>：双打站位/轮转/封网/接发战术/四角调动</li><li><b>数据记录</b></li><li><b>教练评估</b>：第五阶段报告</li><li><b>游戏</b>：双打大比拼</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>通过第五阶段验收</li><li>双打战术达标</li></ul></div>
+  </div>
+  <div class="section-divider"><span>第六阶段：实战与结课</span></div>
+  <div class="phase phase-purple"><div class="phase-title">第六阶段：实战与结课（第51-60课）</div><div class="phase-meta">目标：模拟赛、比赛心理、综合强化、班级联赛、结课展示颁奖、升级评估</div></div>
+  <div class="lesson" data-search="中级班 第51课 模拟赛 上">
+    <div class="lesson-header"><span class="lesson-num purple">第51课</span><span class="lesson-title">综合模拟赛（上）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：完整赛前热身</li><li><b>模拟赛（上）</b>：单打循环前半</li><li><b>教练记录</b>：技术/战术/心态</li><li><b>赛中指导</b></li><li><b>赛后</b>：简短复盘</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>投入模拟赛</li><li>稳定发挥</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第52课 模拟赛 下">
+    <div class="lesson-header"><span class="lesson-num purple">第52课</span><span class="lesson-title">综合模拟赛（下）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>模拟赛（下）</b>：循环收尾+排名</li><li><b>教练记录</b></li><li><b>赛中指导</b></li><li><b>赛后</b>：复盘</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>完成模拟赛</li><li>看到排名</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第53课 比赛 心理">
+    <div class="lesson-header"><span class="lesson-num purple">第53课</span><span class="lesson-title">比赛心理 & 关键分</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">讲解 30min</span><span class="time-block time-game">实战 35min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>心理讲解</b>：落后不慌「一分一分追」；领先不松「没到21不算赢」；关键分打最有把握的球</li><li><b>实战</b>：模拟关键分</li><li><b>教练引导</b></li><li><b>赛后</b>：心态小结</li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>关键分稳</li><li>心态稳</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第54课 复盘 改进">
+    <div class="lesson-header"><span class="lesson-num purple">第54课</span><span class="lesson-title">技术复盘 & 改进</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">复盘 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>录像/回顾</b>：回看模拟赛片段，找问题</li><li><b>个人改进</b>：每人定1个改进点</li><li><b>弱项补练</b></li><li><b>教练反馈</b></li><li><b>游戏</b>：改进之星</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>能发现自身问题</li><li>有明确改进</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第55课 技术 强化">
+    <div class="lesson-header"><span class="lesson-num purple">第55课</span><span class="lesson-title">综合技术强化</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 50min</span><span class="time-block time-game">游戏 15min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>全技术</b>：后场/网前/中场/双打轮练</li><li><b>多球</b>：每项15球</li><li><b>弱项加练</b></li><li><b>教练打磨</b></li><li><b>游戏</b>：技术阅兵</li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>技术全面提升</li><li>无短板</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第56课 联赛 循环">
+    <div class="lesson-header"><span class="lesson-num purple">第56课</span><span class="lesson-title">班级联赛（循环）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">技术 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>小组循环</b>：分组单打/双打循环</li><li><b>积分排名</b></li><li><b>教练记录</b></li><li><b>赛中指导</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>联赛投入</li><li>稳定发挥</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第57课 结课 大赛">
+    <div class="lesson-header"><span class="lesson-num purple">第57课</span><span class="lesson-title">结课大赛（淘汰）</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 10min</span><span class="time-block time-game">比赛 55min</span><span class="time-block time-cool">放松 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b>：自主热身（教练检查）</li><li><b>技能展示</b>：核心动作演示</li><li><b>结课大赛</b>：单打淘汰 + 双打表演，家长可观摩</li><li><b>多奖项</b>：冠军/亚军/最佳进步/最佳技术/体育精神</li><li><b>教练记录</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>展示60课水平</li><li>享受比赛</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第58课 颁奖 结业">
+    <div class="lesson-header"><span class="lesson-num purple">第58课</span><span class="lesson-title">颁奖典礼 & 结业</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 10min</span><span class="time-block time-game">颁奖 60min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>颁奖</b>：各奖项 + 结业证书</li><li><b>教练寄语</b>：每人专属评价+下阶段建议</li><li><b>家长交流</b></li><li><b>合影</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>获得结业认可</li><li>有仪式感</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第59课 升级 评估">
+    <div class="lesson-header"><span class="lesson-num purple">第59课</span><span class="lesson-title">升级评估 & 建议</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-main">评估 55min</span><span class="time-block time-main">沟通 15min</span><span class="time-block time-cool">放松 10min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>综合评估</b>：技术+体能+比赛+出勤+战术</li><li><b>一对一反馈</b>：短板与方向</li><li><b>升级建议</b>：是否走竞技方向（高级/精英班）</li><li><b>个人计划</b></li><li><b>放松</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>拿到评估报告</li><li>明确方向</li></ul></div>
+  </div>
+  <div class="lesson" data-search="中级班 第60课 家长开放日 总结">
+    <div class="lesson-header"><span class="lesson-num purple">第60课</span><span class="lesson-title">结业总结 & 家长交流</span><span class="lesson-duration">90min</span></div>
+    <div class="lesson-section"><div class="lesson-section-title">⏱️ 课程流程</div><div><span class="time-block time-warm">热身 10min</span><span class="time-block time-game">展示 30min</span><span class="time-block time-main">交流 35min</span><span class="time-block time-main">总结 15min</span></div></div>
+    <div class="lesson-section"><div class="lesson-section-title">详细内容</div><ul><li><b>热身</b></li><li><b>开放日</b>：家长观摩综合训练</li><li><b>成果展示</b>：孩子演示所学</li><li><b>家长沟通</b>：续报/竞技方向说明</li><li><b>总结</b>：60课成长回顾</li><li><b>合影留念</b></li></ul></div>
+    <div class="lesson-section"><div class="lesson-section-title">✅ 本课目标</div><ul><li>家长看到成长</li><li>完成中级班全程</li></ul></div>
+  </div>
+  <div class="card-title" style="margin-top:20px;"><span class="emoji">📋</span> 单次训练课结构（90分钟）</div>
+  <div class="ws-row"><div class="ws-time">0-10<br>min</div><div class="ws-content"><b>专项热身</b>：跳绳80个 + 跑步 + 动态拉伸 + 米字步1组</div></div>
+  <div class="ws-row"><div class="ws-time">10-25<br>min</div><div class="ws-content"><b>步法专项</b>：全场米字步 + 多方向启动（按弱点定制）</div></div>
+  <div class="ws-row"><div class="ws-time">25-55<br>min</div><div class="ws-content"><b>技术训练</b>：多球训练（每人30-50球），教练喂球给反馈</div></div>
+  <div class="ws-row"><div class="ws-time">55-70<br>min</div><div class="ws-content"><b>战术启蒙</b>：情景模拟（基础版）——「比分落后怎么打？」教练设场景</div></div>
+  <div class="ws-row"><div class="ws-time">70-80<br>min</div><div class="ws-content"><b>实战对抗</b>：1v1或2v2，教练实时指导</div></div>
+  <div class="ws-row"><div class="ws-time">80-90<br>min</div><div class="ws-content"><b>放松+复盘</b>：拉伸 + 教练点评 + 布置课后练习</div></div>
+  <div class="card-title" style="margin-top:20px;"><span class="emoji">📅</span> 月度训练周期安排</div>
+<table class="criteria-table">
+<tr><th>周次</th><th>主题</th><th>训练重点</th><th>周末安排</th></tr>
+<tr><td>第1周</td><td>技术诊断+基础强化</td><td>全面技术诊断，找短板，定个人计划</td><td>队内排名赛</td></tr>
+<tr><td>第2周</td><td>短板突破</td><td>针对最弱技术专项强化，多球量加大</td><td>战术模拟对抗</td></tr>
+<tr><td>第3周</td><td>技术整合</td><td>技术→实战转化，建立基础战术意识</td><td>录像分析+复盘</td></tr>
+<tr><td>第4周</td><td>比赛周</td><td>赛前调整+心理建设</td><td>月度大赛+颁奖</td></tr>
+</table>
+  <div class="highlight-box" style="margin-top:16px;">
+    <div class="title">📋 中级班进阶筛选条件（60课结业升级标准）</div>
+    <div style="font-size:14px;">
+      中级班60课结业后，想走竞技方向需满足以下<b>技术标准</b>，由主教练评估：<br><br>
+      <b>技术达标</b>：正手高远球30球中20球到后场；正手吊球20球中12球到前场；杀球能下压过网；反手挑球稳定过网；网前放/搓/推/勾基本掌握。<br>
+      <b>步法体能</b>：米字步 ≤ 26秒；30米冲刺 ≤ 6.5秒；1分钟跳绳 ≥ 80个。<br>
+      <b>比赛能力</b>：结课赛进入前50%；能运用四角调动基础战术；落后不放弃。<br>
+      <b>综合素质</b>：出勤率 ≥ 80%；训练态度认真；家长支持竞技方向。<br><br>
+      <b>升级流程</b>：数据收集 → 主教练试训课（60分钟）→ 家长沟通 → 试训2周 → 正式进入精英班。
+    </div>
+  </div>
+  <div class="card-title" style="margin-top:20px;"><span class="emoji">🎤</span> 中级班价值话术（家长沟通/招生）</div>
+  <div class="script-card" data-search="中级班 价值 区别 家长沟通">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+    <div class="scenario">场景：家长问「中级班和初级班有什么区别？」</div>
+<pre>初级班孩子能打、能对打、能配合，算是「会打球」了。
+
+中级班是在这个基础上，把技术练得更全面、更细：
+- 后场会杀球、吊球，能高吊杀组合
+- 网前会放、搓、推、勾，球路更丰富
+- 中场能平抽、能接杀防守
+- 双打会轮转、懂基本战术
+
+简单说：初级班是把地基打牢，
+中级班是把房子盖起来、能住人也能比赛。
+
+而且中级班开始接触比赛战术和心理，
+孩子会真正理解「怎么赢球」，
+不只是把球打过去。</pre>
+  </div>
+  <div class="script-card" data-search="中级班 朋友圈 宣传 招生文案">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+    <div class="scenario">场景：朋友圈/宣传文案</div>
+<pre>🏸 孩子会打球了，下一步怎么进阶？
+
+星羿羽毛球馆 中级班（10-14岁）
+60课系统进阶，每课90分钟
+
+✅ 后场杀球/吊球，高吊杀组合
+✅ 网前放/搓/推/勾，球路丰富
+✅ 中场平抽+接杀防守
+✅ 双打轮转+基础战术
+✅ 比赛心理与实战模拟
+
+不急于求成，难度循序渐进，
+让孩子在「会打」到「打得好」之间稳稳跨步。
+
+#九江羽毛球 #羽毛球培训 #少儿进阶</pre>
+  </div>
+  <div class="card">
+  <div class="card-title"><span class="emoji">🔄</span> 三级联动机制</div>
+  <div class="tip-box"><div class="tip-title">📌 升级通道清晰</div>启蒙班(20)结业→初级班(40)评估达标→中级班(60)结业→精英班试训。每阶段有明确标准。</div>
+  <div class="tip-box"><div class="tip-title">📌 小助教</div>中级班学员在启蒙/初级班当小助教（捡球、示范），培养领导力，给低班孩子做榜样。</div>
+  <div class="tip-box"><div class="tip-title">📌 跨班比赛日</div>每季度全馆比赛日，三个班一起参加（分组别），中级班做表演赛，营造全馆氛围。</div>
+  <div class="tip-box"><div class="tip-title">📌 进步可见</div>每阶段评估报告+教练反馈，升级时教练亲自通知，仪式感拉满。</div>
+  </div>
+</div></div><div class="tab-panel" id="panel-huafei"><div class="card">
+  <div class="card-title"><span class="emoji">💬</span> 课后反馈模板库</div>
+  <p style="font-size:14px; color:var(--text-light); margin-bottom:16px;">课后反馈是家长续费的关键触点。每次课后发一条，让家长看到进步和教练专业。<b>复制模板→填孩子信息→发送</b>，2分钟搞定。</p>
+  <div class="section-divider"><span>启蒙班课后反馈（5-7岁）</span></div>
+  <div class="feedback-template">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+<pre>XX妈妈/爸爸好！XX今天完成启蒙班第X课，表现很棒🌟
+
+今天重点：（架拍定型 / 空挥拍 / 颠球 / 发球 / 击球过网——按实际课填）
+
+📊 小进步：连续颠球X个 / 发球过网X个 / 击球过网X个
+💡 回家小任务：每天拿球拍空挥10次（架拍→引拍→挥→收），培养肌肉记忆
+
+下一课我们会继续XXX，期待XX更棒！</pre>
+  </div>
+  <div class="section-divider"><span>初级班课后反馈（8-12岁）</span></div>
+  <div class="feedback-template">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+<pre>XX家长好！XX今天完成初级班第X课，状态不错💪
+
+今天重点：（高远球 / 吊球 / 网前放网挑球 / 步法 / 实战——按实际课填）
+
+📊 数据：高远球30球中X球到后场；米字步X秒；发球落点合格率X%
+✅ 亮点：XXX
+💡 建议（弱项）：XXX
+
+回家可以多练：XXX，下节课我们重点突破。</pre>
+  </div>
+  <div class="section-divider"><span>中级班课后反馈（10-14岁）</span></div>
+  <div class="feedback-template">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+<pre>XX家长好！XX今天完成中级班第X课，技术进步明显🔥
+
+今天重点：（后场杀球/吊球 / 网前搓推勾 / 中场接杀 / 双打轮转 / 战术——按实际课填）
+
+📊 数据：高远球X%；吊球X%；杀球下压X%；米字步X秒
+✅ 亮点：XXX
+💡 建议：XXX
+
+下周重点：XXX，继续稳扎稳打。</pre>
+  </div>
+  <div class="section-divider"><span>续费/招生专用反馈</span></div>
+  <div class="feedback-template">
+    <button class="copy-btn" onclick="copyText(this)">复制</button>
+<pre>XX家长好！XX在星羿已经学习了X课，从最初的XXX到现在的XXX，进步特别明显✨
+
+我们的课程是分阶递进的：
+启蒙班打基础 → 初级班练技术 → 中级班攻进阶，
+孩子现在正处在XXX阶段，建议继续巩固，下一阶段目标是XXX。
+
+这周有名额/优惠，您看要不要先给孩子把接下来的课锁定上？</pre>
+  </div>
+</div></div></div><script>function switchTab(id){  document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});  document.getElementById("panel-"+id).classList.add("active");  document.querySelectorAll(".tab-btn").forEach(function(b){    b.classList.toggle("active", (b.getAttribute("onclick")||"").indexOf(id)>-1);  });  window.scrollTo(0,0);}function searchContent(){  var q=document.getElementById("searchInput").value.trim().toLowerCase();  document.querySelectorAll(".lesson,.script-card").forEach(function(b){    var txt=(b.textContent||"").toLowerCase();    var ds=(b.getAttribute("data-search")||"").toLowerCase();    b.style.display=(!q||txt.indexOf(q)>-1||ds.indexOf(q)>-1)?"":"none";  });}function copyText(btn){  var pre=btn.parentElement.querySelector("pre");  if(pre && navigator.clipboard){ navigator.clipboard.writeText(pre.innerText); }  var t=document.createElement("div"); t.className="toast show"; t.textContent="已复制";  document.body.appendChild(t); setTimeout(function(){t.remove();},1500);}</script><footer class="xy-footer">🏸 星羿羽毛球馆 · 课程培训体系<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+</body></html>

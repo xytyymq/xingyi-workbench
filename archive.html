@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿球馆 · 学员体测档案</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6f8; color: #1f2933; line-height: 1.6; padding-bottom: 50px; }
+  .hero { background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); color: #fff; padding: 22px 18px 16px; }
+  .hero h1 { font-size: 19px; font-weight: 700; }
+  .hero p { font-size: 12px; opacity: .9; margin-top: 4px; }
+  .container { padding: 14px 12px; }
+  .card { background: #fff; border-radius: 14px; padding: 14px 13px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+  .card h2 { font-size: 15px; color: #0f766e; margin-bottom: 9px; display: flex; align-items: center; gap: 7px; }
+  .card h2 .num { background: #0f766e; color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; }
+  label { font-size: 12.5px; color: #475569; display: block; margin: 7px 0 3px; }
+  input, select, textarea { width: 100%; padding: 9px 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13.5px; background: #fff; color: #1f2933; }
+  textarea { resize: vertical; min-height: 52px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .btn { display: block; width: 100%; padding: 11px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .btn-primary { background: #0f766e; color: #fff; }
+  .btn-teal { background: #14b8a6; color: #fff; }
+  .btn-ghost { background: #ecfdf5; color: #0f766e; border: 1px solid #99f6e4; }
+  .btn-sm { padding: 7px; font-size: 12.5px; margin-top: 6px; border-radius: 7px; }
+  .student { display: flex; align-items: center; justify-content: space-between; padding: 11px 12px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; margin-bottom: 7px; cursor: pointer; }
+  .student.active { background: #ecfdf5; border-color: #14b8a6; }
+  .student .nm { font-size: 14px; font-weight: 600; color: #1f2933; }
+  .student .meta { font-size: 11.5px; color: #64748b; }
+  .student .del { color: #dc2626; font-size: 12px; background: none; border: none; padding: 4px 6px; }
+  .metric-row { background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 11px; margin-bottom: 9px; }
+  .metric-row .top { display: flex; justify-content: space-between; align-items: baseline; }
+  .metric-row .nm2 { font-size: 13.5px; font-weight: 600; color: #334155; }
+  .metric-row .chg { font-size: 13px; font-weight: 700; }
+  .up { color: #16a34a; } .down { color: #dc2626; } .flat { color: #94a3b8; }
+  .metric-row .sub { font-size: 11.5px; color: #64748b; margin-top: 2px; }
+  .arrow-good::before { content: "▲ "; } .arrow-bad::before { content: "▼ "; } .arrow-flat::before { content: "＝ "; }
+  .tip { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 8px 10px; font-size: 12px; color: #92400e; margin-top: 8px; }
+  .note { font-size: 11.5px; color: #94a3b8; margin-top: 6px; }
+  svg { width: 100%; height: auto; display: block; }
+  .hidden { display: none; }
+  .report { background: #f0fdfa; border-left: 4px solid #14b8a6; border-radius: 8px; padding: 12px 14px; font-size: 13px; white-space: pre-line; line-height: 1.8; }
+  .pill { display:inline-block; color:#fff; font-size:11px; padding:2px 8px; border-radius:20px; margin-left:6px; }
+  .grp-title { font-size:12.5px; font-weight:700; color:#0f766e; margin:10px 0 4px; border-left:3px solid #14b8a6; padding-left:7px; }
+
+  /* 体测卡片预览层 */
+  #cardMask { position: fixed; inset: 0; background: rgba(0,0,0,.82); z-index: 99; display: flex; align-items: center; justify-content: center; padding: 14px; overflow: auto; }
+  .card-hidden { display: none !important; }
+  .card-preview { width: 100%; max-width: 370px; }
+  #cardHolder svg { width: 100%; height: auto; display: block; border-radius: 10px; background: #fff; box-shadow: 0 6px 24px rgba(0,0,0,.35); }
+  .card-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .card-actions .btn { margin-top: 0; }
+  .card-hint { color: #cbd5e1; text-align: center; margin-top: 8px; font-size: 12px; }
+</style>
+<style>
+:root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--mint-50)!important;color:var(--ink);line-height:1.65;padding-bottom:50px!important;}
+.xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+.hero{background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500))!important;color:#fff;padding:26px 18px 18px!important;position:relative;overflow:hidden;}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+.hero>*{position:relative;z-index:1;}
+.hero h1{font-size:19px!important;font-weight:800!important;}
+.hero p{font-size:12px!important;opacity:.9;margin-top:4px;}
+.container{max-width:680px;margin:0 auto;padding:14px 12px!important;}
+.card{background:var(--card);border:1px solid var(--line)!important;border-radius:16px!important;padding:14px 13px!important;margin-bottom:12px!important;box-shadow:0 2px 10px rgba(15,32,29,.06)!important;}
+.card h2{font-size:15px;color:var(--teal-700)!important;margin:0 0 9px;display:flex;align-items:center;gap:7px;}
+.card h2 .num{background:var(--teal-700)!important;color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+label{font-size:12.5px;color:#475569;display:block;margin:7px 0 3px;}
+input,select,textarea{width:100%;padding:9px 10px;border:1px solid #cbd5db!important;border-radius:8px!important;font-size:13.5px;background:#fff;color:#1f2933;font-family:inherit;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;} .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;}
+.btn{display:block;width:100%;padding:11px;border:none;border-radius:9px!important;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px;font-family:inherit;}
+.btn-primary{background:var(--teal-700)!important;color:#fff;}
+.btn-primary:active{background:var(--teal-900)!important;}
+.btn-teal{background:var(--teal-500)!important;color:#fff;}
+.btn-ghost{background:var(--teal-100)!important;color:var(--teal-700)!important;border:1px solid var(--teal-500)!important;}
+.btn-sm{padding:7px!important;font-size:12.5px;margin-top:6px;border-radius:7px!important;}
+.student{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:#f8fafc!important;border:1px solid var(--line)!important;border-radius:10px;margin-bottom:7px;cursor:pointer;}
+.student.active{background:var(--teal-100)!important;border-color:var(--teal-500)!important;}
+.student .nm{font-size:14px;font-weight:600;color:#1f2933;}
+.student .meta{font-size:11.5px;color:#64748b;}
+.student .del{color:var(--bad);font-size:12px;background:none;border:none;padding:4px 6px;cursor:pointer;}
+.metric-row{background:#f8fafc!important;border:1px solid var(--line)!important;border-radius:10px;padding:10px 11px;margin-bottom:9px;}
+.metric-row .top{display:flex;justify-content:space-between;align-items:baseline;}
+.metric-row .nm2{font-size:13.5px;font-weight:600;color:#334155;}
+.metric-row .chg{font-size:13px;font-weight:700;}
+.up{color:var(--good)!important;} .down{color:var(--bad)!important;} .flat{color:#94a3b8!important;}
+.metric-row .sub{font-size:11.5px;color:#64748b;margin-top:2px;}
+.arrow-good::before{content:"▲ ";} .arrow-bad::before{content:"▼ ";} .arrow-flat::before{content:"＝ ";}
+.tip{background:var(--coral-soft)!important;border:1px solid #f6d3c0!important;border-radius:8px;padding:8px 10px;font-size:12px;color:#9a4a28!important;margin-top:8px;}
+.note{font-size:11.5px;color:var(--muted)!important;margin-top:6px;}
+svg{width:100%;height:auto;display:block;}
+.hidden{display:none;}
+.report{background:var(--teal-100)!important;border-left:4px solid var(--teal-500)!important;border-radius:8px;padding:12px 14px;font-size:13px;white-space:pre-line;line-height:1.8;}
+.pill{display:inline-block;color:#fff;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px;}
+.grp-title{font-size:12.5px;font-weight:700;color:var(--teal-700)!important;margin:10px 0 4px;border-left:3px solid var(--teal-500)!important;padding-left:7px;}
+#cardMask{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:99;display:flex;align-items:center;justify-content:center;padding:14px;overflow:auto;}
+.card-hidden{display:none!important;}
+.card-preview{width:100%;max-width:370px;}
+#cardHolder svg{width:100%;height:auto;display:block;border-radius:10px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.35);}
+.card-actions{display:flex;gap:10px;margin-top:14px;}
+.card-actions .btn{margin-top:0;}
+.card-hint{color:#cbd5e1;text-align:center;margin-top:8px;font-size:12px;}
+.xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:30px 14px 36px;line-height:1.9;}
+.xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>星羿球馆 · 学员体测档案</h1>
+  <p>每次体测记一笔，进步一眼可见 · 手机电脑都能用</p>
+</div>
+
+<div class="container">
+
+  <!-- 学员管理 -->
+  <div class="card">
+    <h2><span class="num">①</span>学员档案</h2>
+    <div id="studentList"></div>
+    <div class="grid2">
+      <input id="sName" placeholder="学员姓名">
+      <input id="sAge" placeholder="年龄" type="number" inputmode="numeric">
+    </div>
+    <div class="grid2">
+      <select id="sGender"><option value="男">男</option><option value="女">女</option></select>
+      <select id="sClass">
+        <option value="启蒙班">启蒙班</option>
+        <option value="初级班">初级班</option>
+        <option value="中级班">中级班</option>
+        <option value="精英班">精英班</option>
+      </select>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="addStudent()">+ 新建学员档案</button>
+  </div>
+
+  <!-- 录入体测 -->
+  <div class="card">
+    <h2><span class="num">②</span>录入一次体测</h2>
+    <div id="noStudent" class="tip">请先在上方选择或新建一位学员。</div>
+    <div id="entryArea" class="hidden">
+      <label>测试日期</label>
+      <input id="tDate" type="date">
+      <div id="metricInputs"></div>
+      <label>备注（可选）</label>
+      <textarea id="tNote" placeholder="例如：今天状态不错 / 感冒刚恢复"></textarea>
+      <button class="btn btn-teal" onclick="saveTest()">保存这次体测</button>
+    </div>
+  </div>
+
+  <!-- 成长概览 + 趋势 -->
+  <div class="card hidden" id="overviewCard">
+    <h2><span class="num">③</span>成长概览 <span class="pill" id="ovName" style="background:#0f766e;"></span></h2>
+    <div id="overview"></div>
+    <h2 style="margin-top:14px;"><span class="num">④</span>进步趋势图</h2>
+    <div id="charts"></div>
+    <div class="note">动态项含双参考线：青线=达标、绿线=优秀（按年龄自动选 5-6 / 7-9 / 10-12 档）。技术项含达标线。点色：绿=超优秀、青=超达标、橙=未达标。静态项无参考线。每次来数据自动连成线。</div>
+  </div>
+
+  <!-- 家长成长报告 -->
+  <div class="card hidden" id="reportCard">
+    <h2><span class="num">⑤</span>家长成长报告</h2>
+    <div class="report" id="reportText"></div>
+    <button class="btn btn-primary" onclick="openCardPreview()">📸 生成体测卡片图片（发给家长）</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨️ 打印 / 存为图片</button>
+  </div>
+
+  <!-- 数据管理 -->
+  <div class="card">
+    <h2><span class="num">⚙</span>数据管理</h2>
+    <p style="font-size:12.5px;color:#475569;">数据默认存在本机浏览器。换设备前先导出备份，到新设备点"导入"即可。</p>
+    <button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇️ 导出备份(JSON)</button>
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ 导出表格(CSV，可粘进腾讯文档)</button>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 导入备份(JSON)</button>
+    <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importJSON(event)">
+    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">📤 导出并推送到腾讯文档</button>
+    <div class="tip" id="syncTip">☁️ <b>云端主档已建好（腾讯文档）：</b><br>
+      <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 打开《星羿·学员体测档案》</a><br>
+      手机电脑都能直接看。在球馆录完数据后，点上方"导出并推送到腾讯文档"，把下载的文件发给我（星星），我帮你更新这张表，全校验实时共享。</div>
+  </div>
+
+  <div class="note" style="text-align:center;">星羿羽毛球馆 · 体测档案 · 数据本地保存，注意备份</div>
+</div>
+
+<!-- 体测卡片预览层 -->
+<div id="cardMask" class="card-hidden" onclick="if(event.target===this)closeCard()">
+  <div class="card-preview">
+    <div id="cardHolder"></div>
+    <div class="card-actions">
+      <button class="btn btn-primary" onclick="saveCardPNG()">💾 保存图片</button>
+      <button class="btn btn-ghost" onclick="closeCard()">关闭</button>
+    </div>
+    <div class="card-hint">手机端可长按上方图片保存到相册</div>
+  </div>
+</div>
+
+<script>
+const LS_KEY = "xingyi_profiles_v2";
+const FF = 'font-family="PingFang SC, Microsoft YaHei, sans-serif"';
+
+// 年龄分组：0=5-6岁 1=7-9岁 2=10-12岁
+function ageGroup(age){
+  const a = parseInt(age); if(isNaN(a) || a<=0) return 1;
+  if(a<=6) return 0; if(a<=9) return 1; return 2;
+}
+const AGE_LABEL = ["5-6岁","7-9岁","10-12岁"];
+
+// 指标体系：静态(基础) + 动态(训练效果,分龄达标/优秀) + 技术专项
+const METRICS = [
+  {key:"height",  name:"身高", unit:"cm", group:"static", type:"num", better:"high", desc:"仪器测量"},
+  {key:"weight",  name:"体重", unit:"kg", group:"static", type:"num", better:"high", desc:"仪器测量"},
+  {key:"bmi",     name:"BMI",  unit:"",   group:"static", type:"bmi", better:"flat", desc:"自动按身高/体重计算，仅看发育趋势"},
+  {key:"sitReach",name:"坐位体前屈", unit:"cm", group:"static", type:"num", better:"high", desc:"推刻度，柔韧度，越大越好"},
+  {key:"singleStand", name:"单脚闭眼站立", unit:"秒", group:"static", type:"num", better:"high", desc:"计时，静态平衡"},
+  {key:"wallSquat", name:"靠墙静蹲", unit:"秒", group:"static", type:"num", better:"high", desc:"计时，静力腿力"},
+  {key:"posture", name:"姿态评估", unit:"", group:"static", type:"posture", better:"flat",
+     desc:"目测：高低肩 / 足弓 / 脊柱", postureItems:["高低肩","足弓","脊柱"]},
+
+  {key:"run50",   name:"50米跑",   unit:"秒", group:"dynamic", type:"num", better:"low",  ref:[[13,11],[11,9.5],[10,8.5]]},
+  {key:"standingJump", name:"立定跳远", unit:"cm", group:"dynamic", type:"num", better:"high", ref:[[90,110],[120,145],[150,175]]},
+  {key:"verticalJump", name:"纵跳摸高", unit:"cm", group:"dynamic", type:"num", better:"high", ref:[[15,22],[22,30],[30,38]]},
+  {key:"rope",    name:"跳绳(1分钟)", unit:"个", group:"dynamic", type:"num", better:"high", ref:[[40,60],[80,110],[110,140]]},
+  {key:"swing15", name:"15秒挥拍", unit:"次", group:"dynamic", type:"num", better:"high", ref:[[15,22],[22,30],[30,38]]},
+  {key:"footwork",name:"米字步计时", unit:"秒", group:"dynamic", type:"num", better:"low",  ref:[[25,20],[20,16],[16,13]]},
+  {key:"reaction",name:"反应启动", unit:"m",  group:"dynamic", type:"num", better:"low",  ref:[[1.2,0.9],[1.0,0.7],[0.8,0.6]]},
+
+  {key:"serve",   name:"发球进区", unit:"个/10", group:"tech", type:"num", better:"high", target:8, desc:"10个发球落进目标区几个，达标≥8"},
+  {key:"rally",   name:"连续颠球", unit:"个", group:"tech", type:"num", better:"high", target:10, desc:"连续颠球个数（参考：启蒙→初级≥10）"},
+  {key:"clear",   name:"正手高远球击球过网", unit:"个", group:"tech", type:"num", better:"high", target:5, desc:"正手高远球10个中过网几个（参考：启蒙→初级≥5）"},
+];
+
+let data = load();
+let current = null;
+
+function load(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e){ return []; } }
+function save(){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+
+function addStudent(){
+  const name = sName.value.trim();
+  if(!name){ alert("请填学员姓名"); return; }
+  const st = { id: "S"+Date.now(), name, age: sAge.value||"", gender: sGender.value,
+    cls: sClass.value, createdAt: new Date().toISOString().slice(0,10), tests: [] };
+  data.push(st); save(); current = st.id;
+  sName.value=""; sAge.value="";
+  renderStudents(); renderEntry(); renderOverview();
+}
+function delStudent(id){
+  if(!confirm("确定删除该学员及全部体测记录？")) return;
+  data = data.filter(s=>s.id!==id); save();
+  if(current===id) current=null;
+  renderStudents(); renderEntry(); renderOverview();
+}
+function selectStudent(id){ current=id; renderStudents(); renderEntry(); renderOverview(); }
+function curStudent(){ return data.find(s=>s.id===current); }
+
+function renderStudents(){
+  const box = studentList;
+  if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; return; }
+  box.innerHTML = data.map(s=>`
+    <div class="student ${s.id===current?'active':''}" onclick="selectStudent('${s.id}')">
+      <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测</div></div>
+      <button class="del" onclick="event.stopPropagation();delStudent('${s.id}')">删除</button>
+    </div>`).join("");
+}
+
+function renderEntry(){
+  const st = curStudent();
+  if(!st){ noStudent.classList.remove("hidden"); entryArea.classList.add("hidden"); return; }
+  noStudent.classList.add("hidden"); entryArea.classList.remove("hidden");
+  tDate.value = new Date().toISOString().slice(0,10);
+  const groups = [
+    {title:"一、静态体测（基础）", g:"static"},
+    {title:"二、动态体测（训练效果）", g:"dynamic"},
+    {title:"三、羽毛球技术专项", g:"tech"},
+  ];
+  let html = "";
+  groups.forEach(grp=>{
+    html += `<div class="grp-title">${grp.title}</div>`;
+    METRICS.filter(m=>m.group===grp.g).forEach(m=>{
+      if(m.type==="bmi"){
+        html += `<label>${m.name}</label><div class="note" id="bmiPreview">自动按身高/体重计算</div>`;
+      } else if(m.type==="posture"){
+        html += `<label>${m.name}（目测）</label>
+          <div class="grid3">` + m.postureItems.map((it,i)=>`<select id="m_${m.key}_${i}"><option>正常</option><option>需关注</option><option>异常</option></select>`).join("") + `</div>
+          <div class="note" style="margin-top:2px;">${m.postureItems.join(" / ")}</div>`;
+      } else {
+        html += `<label>${m.name}（${m.unit}）</label>
+          <input id="m_${m.key}" type="number" inputmode="decimal" placeholder="实测 ${m.better==='low'?'越小越好':'越大越好'}">
+          ${m.desc?`<div class="note" style="margin-top:2px;">${m.desc}</div>`:''}`;
+      }
+    });
+  });
+  metricInputs.innerHTML = html;
+  const he=document.getElementById("m_height"), we=document.getElementById("m_weight");
+  if(he&&we){ const upd=()=>{ const h=+he.value, w=+we.value; const pv=document.getElementById("bmiPreview");
+    if(h>0&&w>0){ pv.textContent="BMI ≈ "+(w/(h/100*h/100)).toFixed(1); } else { pv.textContent="自动按身高/体重计算"; } };
+    he.oninput=upd; we.oninput=upd; }
+}
+
+function saveTest(){
+  const st = curStudent();
+  if(!st){ alert("请先选择学员"); return; }
+  const rec = { date: tDate.value || new Date().toISOString().slice(0,10), m:{}, note: tNote.value.trim() };
+  let any=false;
+  METRICS.forEach(m=>{
+    if(m.type==="bmi") return;
+    if(m.type==="posture"){
+      const vals = m.postureItems.map((_,i)=>{ const s=document.getElementById("m_"+m.key+"_"+i); return s?s.value:""; });
+      if(vals.some(v=>v)){ rec.m[m.key]=vals.join("/"); any=true; }
+    } else {
+      const v=parseFloat(document.getElementById("m_"+m.key).value);
+      if(!isNaN(v)){ rec.m[m.key]=v; any=true; }
+    }
+  });
+  if(!any){ alert("至少填一项实测数据"); return; }
+  st.tests.push(rec); st.tests.sort((a,b)=>a.date.localeCompare(b.date)); save();
+  renderOverview();
+  alert("已保存！成长概览和趋势图已更新。");
+}
+
+function valAt(st, key){
+  if(key==="bmi"){
+    return st.tests.filter(t=>t.m.height&&t.m.weight)
+      .map(t=>({date:t.date, v:+(t.m.weight/(t.m.height/100*t.m.height/100)).toFixed(1)}));
+  }
+  return st.tests.map(t=>({date:t.date, v:t.m[key]})).filter(x=>x.v!=null);
+}
+
+function statusOf(m, st, last){
+  if(m.group==="dynamic" && m.ref){
+    const [tg,ex]=m.ref[ageGroup(st.age)];
+    if(m.better==="high"){ if(last>=ex) return "优秀"; if(last>=tg) return "达标"; return "未达标"; }
+    else { if(last<=ex) return "优秀"; if(last<=tg) return "达标"; return "未达标"; }
+  }
+  if(m.group==="tech" && m.target!=null){
+    const reach = m.better==="high"? last>=m.target : last<=m.target; return reach?"达标":"未达标";
+  }
+  return null;
+}
+const STATUS_COLOR = {"优秀":"#16a34a","达标":"#0d9488","未达标":"#94a3b8"};
+
+function metricSummary(st){
+  let total=0, imp=0;
+  METRICS.forEach(m=>{
+    if(m.type==="posture") return;
+    const arr=valAt(st,m.key); if(!arr.length) return; total++;
+    const f=arr[0].v, l=arr[arr.length-1].v;
+    const im = m.better==="high" ? l>f : l<f;
+    if(im) imp++;
+  });
+  return {total, imp};
+}
+
+function renderOverview(){
+  const st = curStudent();
+  if(!st || !st.tests.length){ overviewCard.classList.add("hidden"); reportCard.classList.add("hidden"); return; }
+  overviewCard.classList.remove("hidden"); reportCard.classList.remove("hidden");
+  ovName.textContent = st.name+" · "+st.cls+" · "+AGE_LABEL[ageGroup(st.age)];
+
+  const groups = [
+    {title:"一、静态体测", g:"static"},
+    {title:"二、动态体测", g:"dynamic"},
+    {title:"三、技术专项", g:"tech"},
+  ];
+
+  let ov = "";
+  groups.forEach(grp=>{
+    ov += `<div class="grp-title">${grp.title}</div>`;
+    METRICS.filter(m=>m.group===grp.g).forEach(m=>{
+      if(m.type==="posture"){
+        const arr = valAt(st,m.key); if(!arr.length) return;
+        const last = arr[arr.length-1].v;
+        ov += `<div class="metric-row"><div class="top"><span class="nm2">${m.name}</span></div>
+          <div class="sub">最新：${last}（${m.postureItems.join(" / ")}）</div></div>`;
+        return;
+      }
+      const arr = valAt(st,m.key); if(!arr.length) return;
+      const first=arr[0].v, last=arr[arr.length-1].v, d=+(last-first).toFixed(1);
+      let cls="flat", arrow="arrow-flat", txt="持平";
+      const improved = m.better==="high" ? last>first : last<first;
+      if(arr.length>1 && improved){ cls="up"; arrow="arrow-good"; txt=(m.better==="high"?"+":"")+d+" "+m.unit+" ↑"; }
+      else if(arr.length>1 && d!==0){ cls="down"; arrow="arrow-bad"; txt=(m.better==="low"?"":"")+d+" "+m.unit+" ↓"; }
+      const stt = statusOf(m, st, last);
+      const tag = stt ? `<span class="pill" style="background:${STATUS_COLOR[stt]};">${stt}</span>` : "";
+      ov += `<div class="metric-row"><div class="top"><span class="nm2">${m.name}</span>
+        <span class="chg ${cls} ${arrow}">${txt}</span></div>
+        <div class="sub">首次 ${first}${m.unit} → 最新 ${last}${m.unit}（共${arr.length}次）${tag}</div></div>`;
+    });
+  });
+  overview.innerHTML = ov;
+
+  let ch = "";
+  groups.forEach(grp=>{
+    ch += `<div class="grp-title">${grp.title}</div>`;
+    METRICS.filter(m=>m.group===grp.g).forEach(m=>{
+      if(m.type==="posture"){ ch += `<div class="metric-row"><div class="sub">${m.name}为定性目测，不绘制趋势图，见上方概览。</div></div>`; return; }
+      const arr = valAt(st,m.key); if(!arr.length) return;
+      ch += `<div class="metric-row"><div class="nm2" style="margin-bottom:4px;">${m.name}（${m.unit}）</div>${trendSVG(arr, m, st)}</div>`;
+    });
+  });
+  charts.innerHTML = ch;
+
+  let lines = `${st.name}小朋友 体测成长报告\n班级：${st.cls}　年龄分组：${AGE_LABEL[ageGroup(st.age)]}　记录次数：${st.tests.length}次\n测试区间：${st.tests[0].date} ~ ${st.tests[st.tests.length-1].date}\n\n`;
+  let improvedCount=0, total=0;
+  METRICS.forEach(m=>{
+    if(m.type==="posture") return;
+    const arr=valAt(st,m.key); if(!arr.length) return; total++;
+    const first=arr[0].v, last=arr[arr.length-1].v, d=+(last-first).toFixed(1);
+    const improved = m.better==="high" ? last>first : last<first;
+    if(improved) improvedCount++;
+    const verb = m.better==="high" ? "提升" : "提速";
+    const stt = statusOf(m, st, last);
+    const sttTxt = stt ? `【${stt}】` : "";
+    lines += `· ${m.name}${sttTxt}：${first}${m.unit} → ${last}${m.unit}（${improved?verb:"变化"} ${improved?(d>0?"+":"")+d:""}${m.unit}）\n`;
+  });
+  lines += `\n教练寄语：本次记录 ${total} 项指标中，${improvedCount} 项明显进步。汗水不会辜负每一个认真的小孩，继续保持，下个级别就在眼前！`;
+  reportText.textContent = lines;
+}
+
+function trendSVG(arr, m, st){
+  const W=320,H=120,pl=30,pr=10,pt=12,pb=22;
+  const reflines=[];
+  if(m.group==="dynamic" && m.ref){ const [tg,ex]=m.ref[ageGroup(st.age)];
+    reflines.push({v:tg,c:"#0d9488",t:"达标"}); if(ex!=null) reflines.push({v:ex,c:"#16a34a",t:"优秀"}); }
+  else if(m.group==="tech" && m.target!=null){ reflines.push({v:m.target,c:"#16a34a",t:"达标"}); }
+
+  const xs=arr.map(a=>a.v).slice();
+  reflines.forEach(r=>xs.push(r.v));
+  let lo=Math.min(...xs), hi=Math.max(...xs);
+  if(lo===hi){ lo-=1; hi+=1; }
+  const pad=(hi-lo)*0.15; lo-=pad; hi+=pad;
+  const n=arr.length;
+  const X=i=> pl + (W-pl-pr)*(n===1?0.5:i/(n-1));
+  const Y=v=> pt + (H-pt-pb)*(1-(v-lo)/(hi-lo));
+
+  const dotColor = (v)=>{
+    if(m.group==="dynamic" && m.ref){ const [tg,ex]=m.ref[ageGroup(st.age)];
+      if(m.better==="high"){ if(v>=ex) return "#16a34a"; if(v>=tg) return "#0d9488"; return "#f59e0b"; }
+      else { if(v<=ex) return "#16a34a"; if(v<=tg) return "#0d9488"; return "#f59e0b"; } }
+    if(m.group==="tech" && m.target!=null){ const reach = m.better==="high"? v>=m.target : v<=m.target; return reach?"#16a34a":"#f59e0b"; }
+    return "#0d9488";
+  };
+
+  let pts = arr.map((a,i)=>`${X(i).toFixed(1)},${Y(a.v).toFixed(1)}`).join(" ");
+  let dots = arr.map((a,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(a.v).toFixed(1)}" r="3.5" fill="${dotColor(a.v)}"/>`).join("");
+  let refs = reflines.map(r=>{ const ty=Y(r.v).toFixed(1); return `<line x1="${pl}" y1="${ty}" x2="${W-pr}" y2="${ty}" stroke="${r.c}" stroke-width="1" stroke-dasharray="4 3"/><text x="${W-pr-2}" y="${(+ty-3)}" font-size="9" fill="${r.c}" text-anchor="end" ${FF}>${r.t}${r.v}</text>`; }).join("");
+  const labels = arr.map((a,i)=> i===0||i===n-1 ? `<text x="${X(i).toFixed(1)}" y="${H-6}" font-size="8.5" fill="#64748b" text-anchor="middle" ${FF}>${a.date.slice(5)}</text>`:"").join("");
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    <line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="#e5e7eb"/><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="#e5e7eb"/>
+    ${refs}<polyline points="${pts}" fill="none" stroke="#0d9488" stroke-width="2"/>${dots}${labels}</svg>`;
+}
+
+// ===== 体测卡片图片生成（纯前端 / 零依赖）=====
+function escapeXml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function colorForStatus(stt){ return stt==="优秀"?"#16a34a":stt==="达标"?"#0d9488":"#94a3b8"; }
+
+function cardBadge(stt, x, y){
+  const c = colorForStatus(stt);
+  const w = stt.length*16 + 22, h = 26;
+  return `<rect x="${(x-w/2).toFixed(1)}" y="${(y-h/2).toFixed(1)}" width="${w}" height="${h}" rx="13" fill="${c}"/>
+    <text x="${x.toFixed(1)}" y="${(y+5).toFixed(1)}" font-size="14" fill="#fff" text-anchor="middle" font-weight="600" ${FF}>${stt}</text>`;
+}
+
+function cardMiniTrend(arr, m, st, cx, cy, w, h){
+  if(!arr.length) return "";
+  const W=w,H=h,pl=8,pr=8,pt=8,pb=14;
+  const reflines=[];
+  if(m.group==="dynamic" && m.ref){ const [tg,ex]=m.ref[ageGroup(st.age)];
+    reflines.push({v:tg,c:"#0d9488"}); if(ex!=null) reflines.push({v:ex,c:"#16a34a"}); }
+  else if(m.group==="tech" && m.target!=null){ reflines.push({v:m.target,c:"#16a34a"}); }
+  const xs=arr.map(a=>a.v).slice(); reflines.forEach(r=>xs.push(r.v));
+  let lo=Math.min(...xs), hi=Math.max(...xs);
+  if(lo===hi){ lo-=1; hi+=1; }
+  const pad=(hi-lo)*0.15; lo-=pad; hi+=pad;
+  const n=arr.length;
+  const X=i=> pl + (W-pl-pr)*(n===1?0.5:i/(n-1));
+  const Y=v=> pt + (H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const dc=(v)=>{
+    if(m.group==="dynamic" && m.ref){ const [tg,ex]=m.ref[ageGroup(st.age)];
+      if(m.better==="high"){ if(v>=ex) return "#16a34a"; if(v>=tg) return "#0d9488"; return "#f59e0b"; }
+      else { if(v<=ex) return "#16a34a"; if(v<=tg) return "#0d9488"; return "#f59e0b"; } }
+    if(m.group==="tech" && m.target!=null){ const r= m.better==="high"? v>=m.target : v<=m.target; return r?"#16a34a":"#f59e0b"; }
+    return "#0d9488";
+  };
+  let pts=arr.map((a,i)=>`${X(i).toFixed(1)},${Y(a.v).toFixed(1)}`).join(" ");
+  let dots=arr.map((a,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(a.v).toFixed(1)}" r="2.5" fill="${dc(a.v)}"/>`).join("");
+  let refs=reflines.map(r=>{ const ty=Y(r.v).toFixed(1); return `<line x1="${pl}" y1="${ty}" x2="${W-pr}" y2="${ty}" stroke="${r.c}" stroke-width="0.8" stroke-dasharray="3 2"/>`; }).join("");
+  return `<svg x="${cx}" y="${cy}" width="${w}" height="${h}" viewBox="0 0 ${W} ${H}">
+    <rect x="0" y="0" width="${W}" height="${H}" rx="6" fill="#f8fafc"/>
+    ${refs}<polyline points="${pts}" fill="none" stroke="#0d9488" stroke-width="1.5"/>${dots}
+    <text x="${W/2}" y="${H-2}" font-size="9" fill="#64748b" text-anchor="middle" ${FF}>${escapeXml(m.name)}</text></svg>`;
+}
+
+// ===== 综合成长曲线：归一化综合得分（0-100）=====
+// 动态体测(分龄达标/优秀) + 技术专项(target/优秀) 归一化；静态项不计入
+function metricScore(val, m, g){
+  if(val==null || val==="") return null;
+  const v=+val; if(isNaN(v)) return null;
+  if(m.group==="dynamic" && m.ref){
+    const [lo,hi]=m.ref[g];
+    if(lo===hi) return v>=lo?100:0;
+    if(m.better==="high"){
+      if(v>=hi) return 100;
+      if(v<=lo) return Math.max(0, 60-(lo-v)/(lo*0.6)*40);
+      return 60+(v-lo)/(hi-lo)*40;
+    } else {
+      if(v<=hi) return 100;
+      if(v>=lo) return Math.max(0, 60-(v-lo)/(lo*0.6)*40);
+      return 60+(lo-v)/(lo-hi)*40;
+    }
+  }
+  if(m.group==="tech" && m.target!=null){
+    const lo=m.target, hi=m.excellent!=null?m.excellent:lo*1.5;
+    if(v>=hi) return 100;
+    if(v>=lo) return 60+(v-lo)/(hi-lo)*40;
+    return Math.max(0, v/lo*60);
+  }
+  return null; // static 不计入综合分
+}
+
+// 返回 [{i:原测试序号, score:0-100}, ...]
+function overallSeries(st){
+  const g=ageGroup(st.age); const out=[];
+  st.tests.forEach((t,idx)=>{
+    let sum=0,n=0;
+    METRICS.forEach(m=>{
+      if(m.group!=="dynamic" && m.group!=="tech") return;
+      const s=metricScore(t.m[m.key], m, g);
+      if(s!=null){ sum+=s; n++; }
+    });
+    if(n) out.push({i:idx, score:+(sum/n).toFixed(1)});
+  });
+  return out;
+}
+
+function overallTrendSVG(st, oy){
+  const series=overallSeries(st);
+  if(series.length<1) return "";
+  const W=702,H=172,padL=40,padR=14,padT=16,padB=28;
+  const cw=W-padL-padR, ch=H-padT-padB;
+  const n=series.length;
+  const xs=i=> padL + (n===1?cw/2 : cw*i/(n-1));
+  const yOf=v=> padT + ch*(1-v/100);
+  const pts=series.map((o,i)=>[xs(i), yOf(o.score)]);
+  const line=pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+  const area=`M${pts[0][0].toFixed(1)} ${(padT+ch).toFixed(1)} `+pts.map(p=>"L"+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ")+` L${pts[n-1][0].toFixed(1)} ${(padT+ch).toFixed(1)} Z`;
+  let s=`<g transform="translate(24,${oy})">`;
+  s+=`<defs><linearGradient id="og" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14b8a6" stop-opacity=".35"/><stop offset="1" stop-color="#14b8a6" stop-opacity="0"/></linearGradient></defs>`;
+  [["100","#16a34a","优秀"],["60","#0d9488","达标"]].forEach(([vv,c,lab])=>{
+    const yy=yOf(+vv);
+    s+=`<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${W-padR}" y2="${yy.toFixed(1)}" stroke="${c}" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/>`;
+    s+=`<text x="${W-padR}" y="${(yy-4).toFixed(1)}" font-size="10" fill="${c}" text-anchor="end" ${FF}>${lab}线</text>`;
+  });
+  s+=`<line x1="${padL}" y1="${(padT+ch).toFixed(1)}" x2="${W-padR}" y2="${(padT+ch).toFixed(1)}" stroke="#e2e8f0" stroke-width="1"/>`;
+  s+=`<path d="${area}" fill="url(#og)"/>`;
+  s+=`<path d="${line}" fill="none" stroke="#0f766e" stroke-width="2.5" stroke-linejoin="round"/>`;
+  pts.forEach((p,i)=>{
+    const sc=series[i].score;
+    const col= sc>=100?"#16a34a": sc>=60?"#0f766e":"#94a3b8";
+    s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="#fff" stroke="${col}" stroke-width="2.5"/>`;
+    const d=st.tests[series[i].i].date;
+    s+=`<text x="${p[0].toFixed(1)}" y="${(padT+ch+16).toFixed(1)}" font-size="10" fill="#64748b" text-anchor="middle" ${FF}>${escapeXml(d.slice(5))}</text>`;
+    s+=`<text x="${p[0].toFixed(1)}" y="${(p[1]-9).toFixed(1)}" font-size="11" fill="${col}" text-anchor="middle" font-weight="700" ${FF}>${sc}</text>`;
+  });
+  s+=`</g>`;
+  return s;
+}
+
+function buildCardSVG(st){
+  const W = 750;
+  const parts = [];
+  const grpLabel = AGE_LABEL[ageGroup(st.age)];
+  const lastDate = st.tests[st.tests.length-1].date;
+  const last = st.tests[st.tests.length-1];
+
+  // 顶栏
+  parts.push(`<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f766e"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs>`);
+  parts.push(`<rect x="0" y="0" width="${W}" height="104" fill="url(#hg)"/>`);
+  parts.push(`<text x="${W/2}" y="52" font-size="34" fill="#ffffff" text-anchor="middle" font-weight="700" ${FF}>星羿羽毛球馆</text>`);
+  parts.push(`<text x="${W/2}" y="84" font-size="16" fill="#e6fffb" text-anchor="middle" ${FF}>学员体测成长卡</text>`);
+
+  // 学员条
+  parts.push(`<rect x="24" y="120" width="${W-48}" height="64" rx="12" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1"/>`);
+  parts.push(`<text x="44" y="156" font-size="28" fill="#0f766e" font-weight="700" ${FF}>${escapeXml(st.name)}</text>`);
+  parts.push(`<text x="44" y="176" font-size="13" fill="#475569" ${FF}>${escapeXml(st.cls)} · ${grpLabel}</text>`);
+  parts.push(`<text x="${W-44}" y="158" font-size="13" fill="#64748b" text-anchor="end" ${FF}>测试日期</text>`);
+  parts.push(`<text x="${W-44}" y="178" font-size="16" fill="#0f766e" text-anchor="end" font-weight="600" ${FF}>${lastDate}</text>`);
+
+  let y = 212;
+  const groups = [
+    {title:"一、静态体测", g:"static"},
+    {title:"二、动态体测", g:"dynamic"},
+    {title:"三、羽毛球技术专项", g:"tech"},
+  ];
+  groups.forEach(grp=>{
+    y += 34;
+    parts.push(`<rect x="24" y="${y-18}" width="4" height="16" rx="2" fill="#14b8a6"/>`);
+    parts.push(`<text x="38" y="${y-3}" font-size="16" fill="#0f766e" font-weight="700" ${FF}>${grp.title}</text>`);
+    METRICS.filter(m=>m.group===grp.g).forEach(m=>{
+      if(m.type==="posture"){
+        const arr=valAt(st,m.key); if(!arr.length) return;
+        y += 34;
+        parts.push(`<text x="40" y="${y}" font-size="13" fill="#64748b" ${FF}>${escapeXml(m.name)}：${escapeXml(arr[arr.length-1].v)}</text>`);
+        return;
+      }
+      const arr=valAt(st,m.key); if(!arr.length) return;
+      const first=arr[0].v, lastv=arr[arr.length-1].v, d=+(lastv-first).toFixed(1);
+      const improved = m.better==="high" ? lastv>first : lastv<first;
+      y += 42; const cy = y-14;
+      parts.push(`<text x="40" y="${cy+4}" font-size="15" fill="#334155" ${FF}>${escapeXml(m.name)}</text>`);
+      let midTxt = `${first}${m.unit} → ${lastv}${m.unit}`;
+      let acolor = "#64748b";
+      if(m.type!=="bmi" && arr.length>1 && d!==0){
+        if(improved){ midTxt += ` (${d>0?"+":""}${d}${m.unit} ↑)`; acolor="#16a34a"; }
+        else { midTxt += ` (${d}${m.unit} ↓)`; acolor="#dc2626"; }
+      }
+      parts.push(`<text x="232" y="${cy+4}" font-size="15" fill="${acolor}" ${FF}>${midTxt}</text>`);
+      const stt = statusOf(m, st, lastv);
+      if(stt){ parts.push(cardBadge(stt, W-70, cy+2)); }
+      else if(m.type==="bmi"){ parts.push(`<text x="${W-44}" y="${cy+4}" font-size="13" fill="#94a3b8" text-anchor="end" ${FF}>趋势参考</text>`); }
+    });
+  });
+
+  // 综合成长曲线（归一化综合得分 0-100）
+  y += 42;
+  parts.push(`<rect x="24" y="${y-18}" width="4" height="16" rx="2" fill="#14b8a6"/>`);
+  parts.push(`<text x="38" y="${y-3}" font-size="16" fill="#0f766e" font-weight="700" ${FF}>综合成长曲线</text>`);
+  const osAll = overallSeries(st);
+  if(osAll.length){
+    const fS=osAll[0].score, lS=osAll[osAll.length-1].score, dS2=+(lS-fS).toFixed(1);
+    parts.push(`<text x="${W-44}" y="${y-3}" font-size="13" fill="#16a34a" text-anchor="end" font-weight="700" ${FF}>${fS} → ${lS} 分（${dS2>0?"+":""}${dS2}）</text>`);
+  }
+  y += 8;
+  parts.push(overallTrendSVG(st, y+4));
+  y = y + 4 + 172 + 18;
+
+  // 进步趋势小图
+  y += 44;
+  parts.push(`<rect x="24" y="${y-18}" width="4" height="16" rx="2" fill="#14b8a6"/>`);
+  parts.push(`<text x="38" y="${y-3}" font-size="16" fill="#0f766e" font-weight="700" ${FF}>进步趋势</text>`);
+  const miniY = y, miniW = 210, miniH = 120, gap = 12;
+  [["rope","跳绳"],["footwork","米字步"],["serve","发球进区"]].forEach((kv,i)=>{
+    const k=kv[0]; const m=METRICS.find(x=>x.key===k); const arr=valAt(st,k);
+    const cx = 24 + i*(miniW+gap);
+    if(arr.length){ parts.push(cardMiniTrend(arr, m, st, cx, miniY, miniW, miniH)); }
+    else { parts.push(`<rect x="${cx}" y="${miniY}" width="${miniW}" height="${miniH}" rx="6" fill="#f8fafc"/><text x="${cx+miniW/2}" y="${miniY+miniH/2}" font-size="12" fill="#94a3b8" text-anchor="middle" ${FF}>${kv[1]}暂无数据</text>`); }
+  });
+  y = miniY + miniH + 24;
+
+  // 底部：教练寄语 + 印章
+  const sum = metricSummary(st);
+  const msg = `本次共记录 ${sum.total} 项指标，其中 ${sum.imp} 项明显进步。汗水不会辜负每一个认真的小孩，继续保持，下个级别就在眼前！`;
+  parts.push(`<rect x="0" y="${y}" width="${W}" height="120" fill="#f0fdfa"/>`);
+  parts.push(`<text x="40" y="${y+28}" font-size="15" fill="#0f766e" font-weight="700" ${FF}>教练寄语</text>`);
+  const lines = wrapText(msg, 20);
+  lines.forEach((ln,i)=> parts.push(`<text x="40" y="${y+54+i*22}" font-size="13.5" fill="#475569" ${FF}>${escapeXml(ln)}</text>`));
+  const sx=W-92, sy=y+58, r=34;
+  parts.push(`<circle cx="${sx}" cy="${sy}" r="${r}" fill="none" stroke="#dc2626" stroke-width="3"/>`);
+  parts.push(`<circle cx="${sx}" cy="${sy}" r="${r-5}" fill="none" stroke="#dc2626" stroke-width="1"/>`);
+  parts.push(`<text x="${sx}" y="${sy-2}" font-size="15" fill="#dc2626" text-anchor="middle" font-weight="700" ${FF}>星羿</text>`);
+  parts.push(`<text x="${sx}" y="${sy+16}" font-size="11" fill="#dc2626" text-anchor="middle" ${FF}>体育</text>`);
+
+  const H = y + 120;
+  const bg = `<rect x="0" y="0" width="${W}" height="${H}" fill="#ffffff"/>`;
+  return { svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${bg}${parts.join("")}</svg>`, W, H };
+}
+
+function wrapText(t, n){
+  const out=[]; for(let i=0;i<t.length;i+=n) out.push(t.slice(i,i+n)); return out;
+}
+
+function openCardPreview(){
+  const st = curStudent();
+  if(!st || !st.tests.length){ alert("请先选择有体测记录的学员"); return; }
+  const { svg } = buildCardSVG(st);
+  document.getElementById("cardHolder").innerHTML = svg;
+  document.getElementById("cardMask").classList.remove("card-hidden");
+}
+function closeCard(){ document.getElementById("cardMask").classList.add("card-hidden"); }
+
+function saveCardPNG(){
+  const st = curStudent(); if(!st || !st.tests.length){ alert("请先选择有体测记录的学员"); return; }
+  const { svg, W, H } = buildCardSVG(st);
+  const scale = 2;
+  const blob = new Blob([svg], {type:"image/svg+xml;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+  img.onload = ()=>{
+    const cv = document.createElement("canvas");
+    cv.width = W*scale; cv.height = H*scale;
+    const ctx = cv.getContext("2d");
+    ctx.fillStyle = "#ffffff"; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img, 0, 0, cv.width, cv.height);
+    URL.revokeObjectURL(url);
+    cv.toBlob(b=>{
+      if(!b){ alert("自动保存失败，请长按上方图片保存到相册"); return; }
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(b);
+      a.download = `${st.name}_体测成长卡_${st.tests[st.tests.length-1].date}.png`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }, "image/png");
+  };
+  img.onerror = ()=>{ alert("图片生成出错，请长按上方预览图保存到相册"); };
+  img.src = url;
+}
+
+function download(filename, content, type){
+  const blob = new Blob([content], {type}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download=filename; a.click(); URL.revokeObjectURL(a.href);
+}
+function exportJSON(){ download("星羿体测档案_备份.json", JSON.stringify(data,null,2), "application/json"); }
+function exportCSV(){
+  const head = ["学员","班级","性别","年龄","测试日期", ...METRICS.map(m=>m.name+(m.unit?`(${m.unit})`:"")), "备注"];
+  let rows = [head.join(",")];
+  data.forEach(st=> st.tests.forEach(t=>{
+    const r=[st.name,st.cls,st.gender,st.age,t.date, ...METRICS.map(m=>t.m[m.key]??""), (t.note||"").replace(/,/g, "，")];
+    rows.push(r.join(","));
+  }));
+  download("星羿体测档案.csv", "\uFEFF"+rows.join("\n"), "text/csv");
+}
+function importJSON(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=()=>{ try{ const arr=JSON.parse(r.result); if(Array.isArray(arr)){ data=arr; save(); renderStudents(); renderEntry(); renderOverview(); alert("导入成功！"); } }catch(err){ alert("文件格式不对"); } };
+  r.readAsText(f);
+}
+function pushToCloud(){
+  if(!data.length){ alert("还没有任何数据可同步"); return; }
+  exportJSON();
+  alert("备份已导出。把下载的 JSON 文件发给我（星星），我立刻帮你更新腾讯文档云端主档，手机电脑实时共享。");
+}
+
+renderStudents(); renderEntry(); renderOverview();
+</script>
+<footer class="xy-footer">🏸 星羿羽毛球馆 · 学员体测档案<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+</body>
+</html>
