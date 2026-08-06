@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>星羿羽毛球馆 · 赛事</title>
+<style>
+:root {
+  --primary: #FF6B35;
+  --primary-light: #FFE8E0;
+  --gold: #F59E0B;
+  --gold-light: #FEF3C7;
+  --green: #10B981;
+  --green-light: #D1FAE5;
+  --blue: #2563EB;
+  --blue-light: #DBEAFE;
+  --purple: #8B5CF6;
+  --purple-light: #EDE9FE;
+  --bg: #F8F9FA;
+  --card: #FFFFFF;
+  --text: #1F2937;
+  --text-light: #6B7280;
+  --border: #E5E7EB;
+  --red: #EF4444;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+.header {
+  background: linear-gradient(135deg, #FF6B35 0%, #F59E0B 100%);
+  color: white;
+  padding: 20px 16px;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(255,107,53,0.3);
+}
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+.tabs {
+  display: flex;
+  background: var(--card);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 64px;
+  z-index: 99;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  white-space: nowrap;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.tab:active { background: var(--primary-light); }
+.content { padding: 16px; padding-bottom: 80px; }
+.panel { display: none; }
+.panel.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-title .icon { font-size: 18px; }
+.highlight {
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+  border-left: 4px solid var(--gold);
+}
+.highlight h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #92400E; }
+.highlight p { font-size: 13px; color: #92400E; line-height: 1.6; }
+.info-row {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-row .label { width: 90px; font-weight: 700; color: var(--text-light); flex-shrink: 0; }
+.info-row .value { flex: 1; }
+.mini-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 10px; }
+.mini-table th { background: var(--primary); color: white; padding: 8px; text-align: left; font-weight: 600; }
+.mini-table td { padding: 8px; border-bottom: 1px solid var(--border); }
+.mini-table tr:nth-child(even) td { background: #F9FAFB; }
+.points-table th { background: var(--gold); }
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.tag-gold { background: #FEF3C7; color: #92400E; }
+.tag-green { background: #D1FAE5; color: #065F46; }
+.tag-blue { background: #DBEAFE; color: #1E40AF; }
+.tag-red { background: #FEE2E2; color: #991B1B; }
+.tag-purple { background: #EDE9FE; color: #5B21B6; }
+.division-card {
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  color: white;
+}
+.div-u8 { background: linear-gradient(135deg, #10B981, #34D399); }
+.div-u10 { background: linear-gradient(135deg, #2563EB, #3B82F6); }
+.div-u12 { background: linear-gradient(135deg, #8B5CF6, #A78BFA); }
+.div-adult { background: linear-gradient(135deg, #FF6B35, #F59E0B); }
+.division-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.division-card .d-row { font-size: 12px; margin-bottom: 4px; opacity: 0.95; }
+.step-list { counter-reset: step; }
+.step-item { position: relative; padding-left: 36px; margin-bottom: 16px; }
+.step-item::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute; left: 0; top: 0;
+  width: 26px; height: 26px;
+  background: var(--primary); color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+}
+.step-item .step-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.step-item .step-desc { font-size: 13px; color: var(--text-light); line-height: 1.6; }
+.step-item .step-tip {
+  font-size: 12px; background: var(--primary-light);
+  border-radius: 6px; padding: 6px 10px; margin-top: 6px; color: var(--primary);
+}
+.reward-card {
+  background: var(--card);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border-left: 4px solid;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.reward-monthly { border-left-color: var(--green); }
+.reward-quarterly { border-left-color: var(--blue); }
+.reward-annual { border-left-color: var(--gold); }
+.reward-card .r-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.reward-card .r-list { font-size: 13px; color: var(--text); line-height: 1.8; }
+.leaderboard {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.lb-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.lb-row:last-child { border-bottom: none; }
+.lb-rank {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+.lb-rank.gold { background: #FEF3C7; color: #92400E; }
+.lb-rank.silver { background: #E5E7EB; color: #4B5563; }
+.lb-rank.bronze { background: #FED7AA; color: #9A3412; }
+.lb-rank.normal { background: #F3F4F6; color: var(--text-light); }
+.lb-name { flex: 1; font-size: 13px; font-weight: 600; }
+.lb-points { font-size: 16px; font-weight: 700; color: var(--primary); }
+.lb-points span { font-size: 11px; color: var(--text-light); font-weight: 400; }
+.checklist-item {
+  display: flex; align-items: flex-start;
+  padding: 8px 0;
+  font-size: 13px;
+}
+.checklist-item .box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  margin-right: 10px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+</style>
+<style>
+:root{--primary:#0f766e;--primary-light:#14b8a6;}
+.header{background:linear-gradient(135deg,#0f766e,#14b8a6)!important;}
+.xy-topbar{position:static;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid #e3ece9;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:#0f766e;letter-spacing:.3px;}
+.xy-topbar .brand .em{margin-right:5px;}
+.xy-topbar a.back{font-size:12.5px;color:#0f766e;text-decoration:none;font-weight:700;background:#d6f3ec;padding:5px 11px;border-radius:20px;}
+.xy-footer{text-align:center;font-size:11.5px;color:#8aa09a;margin:30px 14px 36px;line-height:1.9;}
+.xy-footer a{color:#0f766e;text-decoration:none;font-weight:700;}
+
+  /* ===== 瑞小羽杯赛事面板补充样式 ===== */
+  .copy-btn{display:inline-block;background:var(--primary);color:#fff;border:none;border-radius:8px;padding:6px 14px;font-size:12.5px;font-weight:700;cursor:pointer;margin-top:8px;margin-right:8px;font-family:inherit;}
+  .copy-btn:active{filter:brightness(.92);}
+  .register-box{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px rgba(15,118,110,.25);}
+  .register-box h4{font-size:15px;font-weight:800;margin:0 0 8px;}
+  .register-box .phone{font-size:24px;font-weight:800;letter-spacing:1.5px;}
+  .register-box .sub{font-size:12.5px;opacity:.92;margin-top:6px;}
+  .score-sheet{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+  .score-sheet th,.score-sheet td{border:1px solid var(--border);padding:8px 6px;text-align:center;}
+  .score-sheet th{background:var(--primary);color:#fff;font-weight:700;}
+  .score-sheet input,.score-sheet td{font-size:12px;}
+  .bracket{font-size:13px;line-height:1.95;color:var(--text);}
+  .bracket .round{font-weight:800;color:var(--primary);margin:10px 0 4px;}
+  .bracket .round:first-child{margin-top:0;}
+  .legend{font-size:12px;color:var(--text-light);background:var(--primary-light);border-radius:8px;padding:10px 12px;margin-top:8px;line-height:1.7;}
+  @media print{
+    .xy-topbar,.tabs,.header,.xy-footer{display:none!important;}
+    .panel{display:block!important;animation:none!important;}
+    body{background:#fff;}
+  }
+
+  /* ===== 瑞小羽杯系列赛 · 三项目嵌套标签与对阵表 ===== */
+  .evt-tabs{display:flex;background:#fff;border-radius:12px;overflow:hidden;margin:4px 0 14px;box-shadow:0 1px 4px rgba(0,0,0,.06);position:sticky;top:108px;z-index:98;}
+  .evt-tab{flex:1;text-align:center;padding:12px 6px;font-size:14px;font-weight:700;color:var(--text-light);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;}
+  .evt-tab.active{color:var(--primary);border-bottom-color:var(--primary);background:var(--primary-light);}
+  .evt-tab:active{filter:brightness(.97);}
+  .evt-panel{display:none;}
+  .evt-panel.active{display:block;animation:fadeIn .3s;}
+  .ab-toggle{display:flex;gap:8px;margin-bottom:4px;}
+  .ab-btn{flex:1;padding:10px 6px;border:1px solid var(--border);border-radius:10px;text-align:center;font-size:13px;font-weight:700;color:var(--text-light);background:#fff;cursor:pointer;transition:all .2s;}
+  .ab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  .group-sheet{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+  .group-sheet th,.group-sheet td{border:1px solid var(--border);padding:7px 6px;text-align:left;}
+  .group-sheet th{background:var(--primary);color:#fff;font-weight:700;}
+  .group-sheet tr:nth-child(even) td{background:#F9FAFB;}
+
+.editable{ outline:1px dashed #cbd5e1; border-radius:4px; padding:1px 3px; }
+.editable:hover{ background:#f1f5f9; }
+.editable:focus{ outline:2px solid #2563eb; background:#eff6ff; }
+.edit-flag{ font-size:11px; color:#2563eb; font-weight:normal; margin-left:6px; }
+.edit-toolbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:10px 12px; margin:8px 0 14px; }
+.edit-toolbar .tbtn{ font-size:13px; padding:6px 12px; border:1px solid #2563eb; background:#fff; color:#1d4ed8; border-radius:8px; cursor:pointer; }
+.edit-toolbar .tbtn:hover{ background:#2563eb; color:#fff; }
+.edit-toolbar .hint{ font-size:12px; color:#475569; max-width:520px; line-height:1.6; }
+#cfg-toast{ position:fixed; right:18px; bottom:18px; background:#0f172a; color:#fff; padding:10px 16px; border-radius:10px; font-size:14px; opacity:0; transition:opacity .3s; z-index:99; }
+
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="header">
+  <h1>🏆 星羿羽毛球馆 · 赛事</h1>
+  <p>长期积分制 · 简单可执行 · 家长看得见进步</p>
+</div>
+
+<div class="card" style="margin:16px;">
+  <div class="card-title"><span class="icon">🏸</span> 比赛现场管理平台</div>
+  <p style="font-size:13px;color:var(--text-light);margin-bottom:12px;">现场记分 · 对阵编排 · 成绩看板，直接在页面里用，数据存在本机浏览器。</p>
+  <iframe src="match-platform/index.html" style="width:100%;min-height:86vh;border:0;border-radius:12px;background:#fff;" title="羽毛球比赛现场管理平台"></iframe>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')">总览</div>
+  <div class="tab" onclick="switchTab('points')">积分规则</div>
+  <div class="tab" onclick="switchTab('division')">分组设计</div>
+  <div class="tab" onclick="switchTab('season')">赛季周期</div>
+  <div class="tab" onclick="switchTab('rewards')">奖励机制</div>
+  <div class="tab" onclick="switchTab('sop')">执行流程</div>
+  <div class="tab" onclick="switchTab('marketing')">宣传联动</div>
+  <div class="tab" onclick="switchTab('event')">瑞小羽杯</div>
+</div>
+
+<div class="content">
+
+<!-- ===== 总览 ===== -->
+<div class="panel active" id="panel-overview">
+
+  <div class="highlight">
+    <h4>🎯 一句话概括</h4>
+    <p>学员每次上课、比赛、进步都能攒积分，月度/季度/年度排名发奖。不需要额外时间，全部融入日常课堂，家长能看到孩子成长轨迹。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🧩</span> 设计原则</div>
+    <div style="font-size:13px;line-height:2;color:var(--text);">
+      ✅ <b>不额外占时间</b>— 比赛在正常课堂里打，不单独办赛<br>
+      ✅ <b>不只看输赢</b>— 出勤、进步、态度都能积分<br>
+      ✅ <b>家长看得见</b>— 每月发排行榜，让家长感受价值<br>
+      ✅ <b>简单好执行</b>— 手机记个分就行，不用复杂系统<br>
+      ✅ <b>能产内容</b>— 比赛精彩片段直接变抖音素材
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📊</span> 方案全貌</div>
+    <table class="mini-table">
+      <tr><th>模块</th><th>说明</th></tr>
+      <tr><td>两条赛道</td><td>学员赛道（少儿）+ 散客赛道（成人）</td></tr>
+      <tr><td>积分来源</td><td>比赛分 + 出勤分 + 进步分 + 奖励分</td></tr>
+      <tr><td>分组</td><td>U8 / U10 / U12 / 散客组</td></tr>
+      <tr><td>赛季</td><td>月赛→季赛→年总决赛</td></tr>
+      <tr><td>奖励</td><td>月度小奖→季度中奖→年度大奖</td></tr>
+      <tr><td>排行榜</td><td>球馆墙贴 + 家长群发送</td></tr>
+      <tr><td>宣传</td><td>比赛集锦发抖音/小红书</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💡</span> 为什么搞积分赛</div>
+    <table class="mini-table">
+      <tr><th>痛点</th><th>积分赛怎么解决</th></tr>
+      <tr><td>学员流失</td><td>有积分目标→舍不得走</td></tr>
+      <tr><td>出勤不稳定</td><td>出勤有积分→来得更勤</td></tr>
+      <tr><td>家长看不到效果</td><td>排行榜=可视化进步</td></tr>
+      <tr><td>自媒体没内容</td><td>比赛天然产出素材</td></tr>
+      <tr><td>散客没粘性</td><td>散客赛道→变成常客</td></tr>
+      <tr><td>转介绍难</td><td>带孩子看排名→口碑传播</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 启动时间建议</div>
+    <div class="info-row"><div class="label">最佳时机</div><div class="value">暑假班开班时（学员最齐、家长关注度最高）</div></div>
+    <div class="info-row"><div class="label">预热期</div><div class="value">提前1周在家长群发预告+规则海报</div></div>
+    <div class="info-row"><div class="label">首赛季</div><div class="value">1个月（完整的月赛周期）</div></div>
+    <div class="info-row"><div class="label">长期</div><div class="value">月赛循环→季度总结→年度总决赛</div></div>
+  </div>
+
+</div>
+
+<!-- ===== 积分规则 ===== -->
+<div class="panel" id="panel-points">
+
+  <div class="highlight">
+    <h4>⚡ 积分四大来源</h4>
+    <p>比赛分（赢球）+ 出勤分（来上课）+ 进步分（技能提升）+ 奖励分（额外贡献）。不只看输赢，让每个孩子都有机会攒分。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏸</span> 一、比赛积分</div>
+    <table class="mini-table points-table">
+      <tr><th>结果</th><th>积分</th><th>说明</th></tr>
+      <tr><td>赢一场</td><td>+3分</td><td>课堂内对抗赛赢球</td></tr>
+      <tr><td>平局</td><td>+2分</td><td>规定时间内平局</td></tr>
+      <tr><td>输一场</td><td>+1分</td><td>输了也有分！参与即积分</td></tr>
+      <tr><td>月赛冠军</td><td>+10分</td><td>月度排名赛各组第一</td></tr>
+      <tr><td>月赛亚军</td><td>+6分</td><td>月度排名赛各组第二</td></tr>
+      <tr><td>月赛季军</td><td>+4分</td><td>月度排名赛各组第三</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 课堂对抗赛每周安排1-2次，每次10-15分钟。月赛每月最后一周课堂时间打。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 二、出勤积分</div>
+    <table class="mini-table">
+      <tr><th>行为</th><th>积分</th><th>说明</th></tr>
+      <tr><td>正常上课</td><td>+2分/次</td><td>按时签到</td></tr>
+      <tr><td>全勤（月）</td><td>+5分</td><td>当月无缺勤</td></tr>
+      <tr><td>寒暑假全勤周</td><td>+3分/周</td><td>暑假连续一周每天都来</td></tr>
+      <tr><td>请假</td><td>0分</td><td>提前请假不扣分</td></tr>
+      <tr><td>无故缺席</td><td>-1分</td><td>不请假没来，倒扣</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 出勤分是基础分，让家长意识到"来上课本身就有价值"。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📈</span> 三、进步积分</div>
+    <table class="mini-table">
+      <tr><th>里程碑</th><th>积分</th><th>判定标准</th></tr>
+      <tr><td>学会新动作</td><td>+5分</td><td>教练确认掌握（如正手高远球）</td></tr>
+      <tr><td>对打回合突破</td><td>+5分</td><td>连续对打达到新台阶（5/10/20回合）</td></tr>
+      <tr><td>发球达标</td><td>+3分</td><td>10个发球进区8个以上</td></tr>
+      <tr><td>步法测试达标</td><td>+3分</td><td>米字步测试通过</td></tr>
+      <tr><td>体测进步</td><td>+3分</td><td>每月体测数据提升</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 进步分是最重要的！让水平一般的孩子也有动力，不是只有打得好的才能拿分。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎁</span> 四、奖励积分</div>
+    <table class="mini-table">
+      <tr><th>行为</th><th>积分</th><th>说明</th></tr>
+      <tr><td>发抖音打卡</td><td>+3分/月</td><td>家长每月发抖音@球馆（和体能课机制联动）</td></tr>
+      <tr><td>带朋友试听</td><td>+5分/人</td><td>带新同学来体验课</td></tr>
+      <tr><td>朋友试听转报名</td><td>+10分/人</td><td>试听后报名成功</td></tr>
+      <tr><td>课堂表现优秀</td><td>+1分/次</td><td>教练认定（认真/帮助同学/进步明显）</td></tr>
+      <tr><td>比赛体育精神</td><td>+2分/次</td><td>输了不哭、赢了不傲、主动捡球等</td></tr>
+      <tr><td>穿球馆队服上课</td><td>+1分/次</td><td>培养归属感（如果有队服）</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span> 积分扣减规则</div>
+    <table class="mini-table">
+      <tr><th>行为</th><th>扣分</th><th>说明</th></tr>
+      <tr><td>无故缺席</td><td>-1分</td><td>不请假没来</td></tr>
+      <tr><td>课堂违纪</td><td>-1分</td><td>不守规矩、影响他人</td></tr>
+      <tr><td>比赛摔拍/发脾气</td><td>-2分</td><td>不尊重对手或器材</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 扣分要少用，主要是约束作用。扣分后及时跟家长沟通原因。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💯</span> 每月预期积分参考</div>
+    <table class="mini-table">
+      <tr><th>学员类型</th><th>月预计积分</th><th>来源拆解</th></tr>
+      <tr><td>一周1次年卡</td><td>约20-30分</td><td>出勤8+比赛3-6+进步5-10+奖励2-6</td></tr>
+      <tr><td>一周2次年卡</td><td>约35-50分</td><td>出勤16+比赛6-12+进步5-10+奖励2-6</td></tr>
+      <tr><td>一周4次年卡</td><td>约60-80分</td><td>出勤32+比赛12-20+进步5-10+奖励2-6</td></tr>
+      <tr><td>次卡学员</td><td>约15-25分</td><td>取决于上课频率</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 一周多次的年卡学员积分天然更高，这也是年卡的隐形价值——给家长算账用。
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 分组设计 ===== -->
+<div class="panel" id="panel-division">
+
+  <div class="card">
+    <div class="card-title"><span class="icon">👶</span> 学员赛道 · 按年龄分组</div>
+    
+    <div class="division-card div-u8">
+      <h3>🟢 U8组（5-7岁）</h3>
+      <div class="d-row">▸ 比赛形式：发球进区 + 对打计数（不计胜负）</div>
+      <div class="d-row">▸ 比赛用球：软球/塑料球</div>
+      <div class="d-row">▸ 计分重点：能打几个回合、发球成功率</div>
+      <div class="d-row">▸ 核心目标：培养兴趣，不强调输赢</div>
+      <div class="d-row">▸ 月赛：趣味挑战赛（如"谁打得多""发球打靶"）</div>
+    </div>
+
+    <div class="division-card div-u10">
+      <h3>🔵 U10组（8-9岁）</h3>
+      <div class="d-row">▸ 比赛形式：11分制单打（让分制）</div>
+      <div class="d-row">▸ 比赛用球：正规羽毛球</div>
+      <div class="d-row">▸ 计分重点：胜负 + 技术动作评分</div>
+      <div class="d-row">▸ 核心目标：开始体验竞争，学习比赛礼仪</div>
+      <div class="d-row">▸ 月赛：分组循环赛（每组4人循环）</div>
+    </div>
+
+    <div class="division-card div-u12">
+      <h3>🟣 U12组（10-12岁）</h3>
+      <div class="d-row">▸ 比赛形式：15分制单打 + 双打</div>
+      <div class="d-row">▸ 比赛用球：正规羽毛球</div>
+      <div class="d-row">▸ 计分重点：胜负 + 战术意识 + 体育精神</div>
+      <div class="d-row">▸ 核心目标：竞技提升，为比赛做准备</div>
+      <div class="d-row">▸ 月赛：淘汰赛 + 季军赛</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏸</span> 散客赛道 · 按水平分组</div>
+    
+    <div class="division-card div-adult">
+      <h3>🟠 散客组（15-50岁）</h3>
+      <div class="d-row">▸ 比赛形式：双打为主（社交属性强）</div>
+      <div class="d-row">▸ 分级：新手组 / 进阶组 / 高手组</div>
+      <div class="d-row">▸ 计分重点：胜负 + 出场次数 + 约球活跃度</div>
+      <div class="d-row">▸ 核心目标：增加散客粘性，把散客变常客</div>
+      <div class="d-row">▸ 月赛：周末双打赛（2小时完赛）</div>
+      <div class="d-row">▸ 报名费：免费（年卡学员家长）/ 10元（普通散客）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚖️</span> 让分制说明</div>
+    <p style="font-size:13px;line-height:1.8;color:var(--text);">
+      为了让比赛更有趣，水平差距大的对局使用<b>让分制</b>：<br><br>
+      🔹 同水平对战：正常计分<br>
+      🔹 高一级打低一级：高手让3-5分<br>
+      🔹 男生打女生（U10以上）：男生让3分<br>
+      🔹 教练打学员：教练让到只能用反手/只能站后场<br><br>
+      <span style="color:var(--primary);font-weight:700;">让分的目的是让每场比赛都有悬念，孩子才愿意打。</span>
+    </p>
+  </div>
+
+</div>
+
+<!-- ===== 赛季周期 ===== -->
+<div class="panel" id="panel-season">
+
+  <div class="highlight">
+    <h4>🗓️ 三级赛季结构</h4>
+    <p>月赛（每月一次）→ 季赛（每季度一次）→ 年总决赛（年底一次）。层层递进，短期有目标、长期有盼头。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📅</span> 月赛（每月最后一周）</div>
+    <table class="mini-table">
+      <tr><th>项目</th><th>说明</th></tr>
+      <tr><td>时间</td><td>每月最后一周的课堂时间内</td></tr>
+      <tr><td>时长</td><td>占用1次正常课时（90分钟）</td></tr>
+      <tr><td>形式</td><td>按分组进行（U8趣味赛/U10循环赛/U12淘汰赛）</td></tr>
+      <tr><td>参赛</td><td>当月出勤≥2次的学员自动参赛</td></tr>
+      <tr><td>散客赛</td><td>周末单独安排2小时双打赛</td></tr>
+      <tr><td>出积分</td><td>月赛结束后更新排行榜</td></tr>
+      <tr><td>发奖</td><td>各组前3名月度奖励</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🗓️</span> 季赛（每季度一次）</div>
+    <table class="mini-table">
+      <tr><th>项目</th><th>说明</th></tr>
+      <tr><td>时间</td><td>3月/6月/9月/12月 各一次</td></tr>
+      <tr><td>时长</td><td>周末半天（2-3小时）</td></tr>
+      <tr><td>形式</td><td>季度积分前8名晋级季后赛</td></tr>
+      <tr><td>特色</td><td>邀请家长观赛，增加仪式感</td></tr>
+      <tr><td>出积分</td><td>季赛成绩额外计入年度积分</td></tr>
+      <tr><td>发奖</td><td>季冠军/亚军/季军 + 进步最大奖</td></tr>
+      <tr><td>内容</td><td>拍摄比赛集锦 → 抖音/小红书素材</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏆</span> 年总决赛（年底/寒假）</div>
+    <table class="mini-table">
+      <tr><th>项目</th><th>说明</th></tr>
+      <tr><td>时间</td><td>寒假前（1月左右），半天活动</td></tr>
+      <tr><td>形式</td><td>年度积分前8名 + 外卡（教练推荐）</td></tr>
+      <tr><td>规模</td><td>所有学员+家长参加，做成颁奖盛典</td></tr>
+      <tr><td>内容</td><td>比赛 + 颁奖 + 表演赛（教练vs冠军）</td></tr>
+      <tr><td>发奖</td><td>年度冠军大奖 + 各单项奖</td></tr>
+      <tr><td>宣传</td><td>全程拍摄 → 年度宣传片 → 招生利器</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📆</span> 年度日历参考</div>
+    <table class="mini-table">
+      <tr><th>月份</th><th>重点</th><th>特色赛事</th></tr>
+      <tr><td>1月</td><td>年总决赛 + 寒假班</td><td>🏆 年度总决赛</td></tr>
+      <tr><td>2月</td><td>寒假班月赛</td><td>寒假全勤挑战</td></tr>
+      <tr><td>3月</td><td>Q1季赛 + 新学期</td><td>春季季赛</td></tr>
+      <tr><td>4月</td><td>常规月赛</td><td>—</td></tr>
+      <tr><td>5月</td><td>常规月赛</td><td>亲子双打赛</td></tr>
+      <tr><td>6月</td><td>Q2季赛 + 暑假预热</td><td>夏季季赛</td></tr>
+      <tr><td>7月</td><td>暑假班月赛</td><td>暑假全勤挑战</td></tr>
+      <tr><td>8月</td><td>暑假班月赛</td><td>暑假积分冲刺赛</td></tr>
+      <tr><td>9月</td><td>Q3季赛 + 新学期</td><td>秋季季赛</td></tr>
+      <tr><td>10月</td><td>常规月赛</td><td>万圣节趣味赛</td></tr>
+      <tr><td>11月</td><td>常规月赛</td><td>感恩节亲子赛</td></tr>
+      <tr><td>12月</td><td>Q4季赛 + 年终预热</td><td>冬季季赛 + 年总决赛预热</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<!-- ===== 奖励机制 ===== -->
+<div class="panel" id="panel-rewards">
+
+  <div class="highlight">
+    <h4>🎁 奖励设计原则</h4>
+    <p>月度小奖（让每个人都有期待）→ 季度中奖（有质感、值得秀）→ 年度大奖（有分量、能锁住全年续费）。不全是钱，而是荣誉感+实用+社交货币。</p>
+  </div>
+
+  <div class="reward-card reward-monthly">
+    <div class="r-title">🥉 月度奖励（每月各组前3名）</div>
+    <div class="r-list">
+      🥇 <b>第一名：</b>球馆手胶1个 + "月度之星"称号 + 家长群表扬<br>
+      🥈 <b>第二名：</b>羽毛球钥匙扣 + 家长群表扬<br>
+      🥉 <b>第三名：</b>球馆贴纸 + 家长群表扬<br><br>
+      📌 <b>进步最大奖（1名）：</b>额外体能课1节<br>
+      📌 <b>全勤奖：</b>小零食/饮料一份<br>
+      📌 <b>体育精神奖（1名）：</b>教练手写表扬卡
+    </div>
+  </div>
+
+  <div class="reward-card reward-quarterly">
+    <div class="r-title">🏅 季度奖励（每季度各组前3名）</div>
+    <div class="r-list">
+      🥇 <b>季冠军：</b>定制奖牌 + 球拍手胶2个 + 季冠军照片上球馆荣誉墙<br>
+      🥈 <b>亚军：</b>定制奖牌 + 羽毛球1筒<br>
+      🥉 <b>季军：</b>定制奖牌 + 球馆周边<br><br>
+      📌 <b>季度进步最大奖：</b>额外体能课2节<br>
+      📌 <b>季度全勤奖：</b>定制水杯<br>
+      📌 <b>季度MVP（教练选出）：</b>定制毛巾 + 朋友圈表彰
+    </div>
+  </div>
+
+  <div class="reward-card reward-annual">
+    <div class="r-title">🏆 年度大奖（年终总决赛）</div>
+    <div class="r-list">
+      🥇 <b>年度冠军（各组1名）：</b><br>
+      &nbsp;&nbsp;&nbsp;定制大奖杯 + 免费体能课5节 + 年度冠军视频 + 获奖证书<br><br>
+      🥈 <b>年度亚军：</b>奖杯 + 免费体能课3节 + 获奖证书<br>
+      🥉 <b>年度季军：</b>奖杯 + 免费体能课2节 + 获奖证书<br><br>
+      📌 <b>年度进步最大奖：</b>奖杯 + 免费体能课3节<br>
+      📌 <b>年度全勤奖：</b>定制队服 + 奖杯<br>
+      📌 <b>年度体育精神奖：</b>奖杯 + 球拍1把<br>
+      📌 <b>散客年度MVP：</b>年卡代金券500元（可转赠）
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💰</span> 奖品预算参考</div>
+    <table class="mini-table">
+      <tr><th>周期</th><th>单次预算</th><th>年总预算</th><th>主要支出</th></tr>
+      <tr><td>月赛</td><td>50-80元</td><td>600-960元</td><td>手胶/贴纸/零食</td></tr>
+      <tr><td>季赛</td><td>200-300元</td><td>800-1200元</td><td>定制奖牌/羽毛球</td></tr>
+      <tr><td>年赛</td><td>500-800元</td><td>500-800元</td><td>奖杯/证书/队服</td></tr>
+      <tr><td><b>合计</b></td><td>—</td><td><b>约2000-3000元/年</b></td><td>—</td></tr>
+    </table>
+    <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+      💡 一年2000-3000元的奖品预算，换来的是学员粘性、家长满意度、自媒体素材、转介绍。ROI非常高。
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎁</span> 体能课作为奖励的妙用</div>
+    <p style="font-size:13px;line-height:1.8;color:var(--text);">
+      注意到没有？很多奖励是"免费体能课"——这对你来说<b>成本几乎为零</b>（就是多上几节课的事），但对家长来说是<b>真金白银的价值</b>（一节课值好几十）。<br><br>
+      <span style="color:var(--primary);font-weight:700;">用体能课当奖励 = 零成本高感知价值，完美。</span>
+    </p>
+  </div>
+
+</div>
+
+<!-- ===== 执行流程 ===== -->
+<div class="panel" id="panel-sop">
+
+  <div class="highlight">
+    <h4>⚡ 核心原则：融入日常，不额外加活</h4>
+    <p>所有比赛都在正常上课时间打。你只需要多做一个动作：手机记分。每月花30分钟汇总发榜。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> 每周执行流程</div>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-title">上课时：安排对抗（0额外时间）</div>
+        <div class="step-desc">每节课最后15分钟安排对抗赛，按分组打。你本来就在上课，这部分不增加工作量。</div>
+        <div class="step-tip">💡 可以让水平高的孩子当"小裁判"，培养责任感</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">下课时：手机记分（2分钟）</div>
+        <div class="step-desc">用手机备忘录或金山文档表格记下当天比赛结果和出勤。格式：日期|姓名|胜负|积分。</div>
+        <div class="step-tip">💡 在金山文档数据管理表里加一个"积分赛"Sheet就行</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">每周：累计积分（5分钟）</div>
+        <div class="step-desc">周末花5分钟把本周积分汇总。可以用Excel公式自动加总。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">每月最后一周：月赛（课堂内）</div>
+        <div class="step-desc">把当月最后一节课变成月赛形式，打循环赛或淘汰赛。拍视频！</div>
+        <div class="step-tip">💡 月赛就是最好的抖音素材，一鱼多吃</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">每月最后一天：发榜（30分钟）</div>
+        <div class="step-desc">汇总月度积分，做排行榜图片，发到家长群+贴到球馆墙上。给前3名发奖。</div>
+        <div class="step-tip">💡 排行榜模板我帮你做好，填名字分数就行</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📱</span> 记分方式</div>
+    <p style="font-size:13px;line-height:1.8;color:var(--text);">
+      <b>最简方案（推荐先这样开始）：</b><br>
+      在金山文档的数据管理表里加一个「积分赛记录」Sheet<br>
+      列：日期 | 学员姓名 | 分组 | 比赛结果 | 获得积分 | 备注<br>
+      每天下课花2分钟填一下，公式自动加总。<br><br>
+      <b>进阶方案（以后再做）：</b><br>
+      用小程序/问卷星让学员自助签到，比赛结果教练手机录入。
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏆</span> 月赛执行SOP</div>
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-title">赛前1周：预告</div>
+        <div class="step-desc">家长群发月赛预告+当前积分排名，营造期待感。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">赛前1天：排对阵</div>
+        <div class="step-desc">根据当月积分排名排对阵表。U8趣味赛/U10循环赛/U12淘汰赛。</div>
+        <div class="step-tip">💡 对阵表模板做好，填名字就行</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">比赛日：执行+拍摄</div>
+        <div class="step-desc">课堂时间打完所有比赛。手机支架架好全程录像，重点拍精彩回合和孩子表情。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">赛后当天：出结果</div>
+        <div class="step-desc">统计月赛成绩，叠加月度总积分，出排行榜。发家长群+贴球馆墙。</div>
+      </div>
+      <div class="step-item">
+        <div class="step-title">赛后2天内：发奖品+剪视频</div>
+        <div class="step-desc">给前3名发奖品（上课时发）。把比赛精彩片段剪成15-30秒抖音视频发布。</div>
+        <div class="step-tip">💡 "月赛精彩集锦"是固定栏目，每月一条抖音</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">✅</span> 启动前准备清单</div>
+    <div class="checklist-item"><div class="box"></div>在金山文档加「积分赛记录」Sheet</div>
+    <div class="checklist-item"><div class="box"></div>制作月赛对阵表模板（纸上或电子）</div>
+    <div class="checklist-item"><div class="box"></div>购买第一批月度奖品（手胶/贴纸/钥匙扣）</div>
+    <div class="checklist-item"><div class="box"></div>制作排行榜海报模板（填名字分数就行）</div>
+    <div class="checklist-item"><div class="box"></div>球馆墙上腾出一块空间贴排行榜</div>
+    <div class="checklist-item"><div class="box"></div>家长群发积分赛预告+规则说明</div>
+    <div class="checklist-item"><div class="box"></div>手机支架准备好（比赛录制用）</div>
+  </div>
+
+</div>
+
+<!-- ===== 宣传联动 ===== -->
+<div class="panel" id="panel-marketing">
+
+  <div class="highlight">
+    <h4>📱 积分赛 = 自媒体内容金矿</h4>
+    <p>每个月赛都天然产出视频素材：精彩回合、孩子表情、颁奖时刻、排行榜公布。不用额外想内容，比赛打完素材就有了。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎬</span> 积分赛内容产出计划</div>
+    <table class="mini-table">
+      <tr><th>内容</th><th>平台</th><th>频率</th></tr>
+      <tr><td>月赛精彩集锦</td><td>抖音</td><td>每月1条</td></tr>
+      <tr><td>月度排行榜公布</td><td>家长群</td><td>每月1次</td></tr>
+      <tr><td>冠军采访/展示</td><td>抖音+小红书</td><td>每月1条</td></tr>
+      <tr><td>进步最大学员故事</td><td>小红书</td><td>每月1条</td></tr>
+      <tr><td>季赛+颁奖全程</td><td>抖音</td><td>每季度1条</td></tr>
+      <tr><td>年总决赛宣传片</td><td>全平台</td><td>每年1条</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">💬</span> 家长群发布模板</div>
+    <div style="background:#F3F4F6;border-radius:8px;padding:14px;margin-bottom:10px;position:relative;">
+      <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">月度排行榜发布模板</div>
+      <div style="font-size:13px;line-height:1.7;white-space:pre-wrap;">各位家长好！X月积分赛排行榜出炉啦🏆
+
+🥇 U8组第一名：XXX（XX分）
+🥈 U8组第二名：XXX（XX分）
+🥉 U8组第三名：XXX（XX分）
+
+🥇 U10组第一名：XXX（XX分）
+🥈 U10组第二名：XXX（XX分）
+🥉 U10组第三名：XXX（XX分）
+
+🥇 U12组第一名：XXX（XX分）
+🥈 U12组第二名：XXX（XX分）
+🥉 U12组第三名：XXX（XX分）
+
+📈 本月进步最大：XXX（学会正手高远球！）
+✅ 本月全勤奖：XXX、XXX、XXX
+
+下个月赛加油！每节课都能攒积分哦💪
+（附排行榜图片）</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎯</span> 积分赛的商业价值</div>
+    <table class="mini-table">
+      <tr><th>目标</th><th>积分赛怎么帮你</th></tr>
+      <tr><td>续费留存</td><td>积分积累=沉没成本，家长舍不得走</td></tr>
+      <tr><td>年卡转化</td><td>"一周多次积分更多"→推年卡</td></tr>
+      <tr><td>转介绍</td><td>带朋友试听+5分→转报名+10分</td></tr>
+      <tr><td>出勤提升</td><td>出勤积分+全勤奖→减少请假</td></tr>
+      <tr><td>抖音传播</td><td>家长发抖音@球馆+3分→内容矩阵</td></tr>
+      <tr><td>品牌建设</td><td>荣誉墙+奖牌+排行榜→专业感</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🔗</span> 和现有系统的联动</div>
+    <div style="font-size:13px;line-height:2;color:var(--text);">
+      📊 <b>数据管理表</b> → 加一个「积分赛记录」Sheet，日常记分<br>
+      ⏰ <b>提醒系统</b> → 每月最后一周自动提醒"月赛周"<br>
+      📱 <b>自媒体规划</b> → 月赛集锦=固定抖音栏目<br>
+      💬 <b>话术库</b> → 加"积分赛邀约"话术<br>
+      🤝 <b>年卡机制</b> → 家长发抖音+3分，和体能课机制联动
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🚀</span> 冷启动建议</div>
+    <div style="font-size:13px;line-height:2;color:var(--text);">
+      <b>第一个月别搞太复杂：</b><br>
+      1. 先只做学员赛道（散客赛道第二个月再加）<br>
+      2. 先只记录出勤分+比赛分（进步分第二个月再加）<br>
+      3. 月赛就用课堂最后15分钟打几场<br>
+      4. 排行榜手写在纸上贴墙上就行（不用做精美海报）<br>
+      5. 奖品先用手胶和零食（几十块钱搞定）<br><br>
+      <span style="color:var(--primary);font-weight:700;">先跑起来，再优化。60分启动 > 100分搁置。</span>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- ===== 瑞小羽杯系列赛（女双/混双/男双） ===== -->
+<div class="panel" id="panel-event">
+  <div class="edit-toolbar">
+    <span class="hint">✏️ 主办单位 / 赛程 / 奖项 可直接点击修改，每届比赛不同随时改；改完点“保存修改”即可留存</span>
+    <button class="tbtn" id="cfg-save">💾 保存修改</button>
+    <button class="tbtn" id="cfg-reset">↺ 恢复默认</button>
+    <button class="tbtn" id="cfg-export">⬇️ 导出配置</button>
+    <button class="tbtn" id="cfg-import">⬆️ 导入配置</button>
+    <input type="file" id="cfg-file" accept="application/json" style="display:none">
+  </div>
+  <div id="cfg-toast"></div>
+
+  <div class="highlight">
+    <h4>🏸 九江"瑞小羽杯"羽毛球系列赛</h4>
+    <p>主办：瑞昌市羽翔体育（"瑞小羽"羽毛球厂）｜协办：星羿体育<br>比赛时间：2026年8月23日（周日）18:30 ｜ 地点：九江市星羿羽毛球馆<br>项目：女双 / 混双 / 男双（三项同期举办）</p>
+  </div>
+
+  <div class="register-box">
+    <h4>📲 微信报名</h4>
+    <div class="phone" id="wxnum">15107920066</div>
+    <div class="sub">报名时间：2026年8月5日 – 8月21日（额满即止）</div>
+    <button class="copy-btn" style="background:#fff;color:#0f766e;" onclick="copyText(this,'15107920066')">复制微信号</button>
+    <button class="copy-btn" style="background:rgba(255,255,255,.2);color:#fff;" onclick="window.print()">打印规程</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> 赛事信息<span class="edit-flag">✏️ 可改</span></div>
+    <div class="info-row"><div class="label">主办单位</div><div class="value editable" contenteditable="true" data-key="主办单位">瑞昌市羽翔体育发展有限公司（"瑞小羽"羽毛球厂）</div></div>
+    <div class="info-row"><div class="label">协办单位</div><div class="value editable" contenteditable="true" data-key="协办单位">星羿体育</div></div>
+    <div class="info-row"><div class="label">竞赛项目</div><div class="value editable" contenteditable="true" data-key="竞赛项目">女双 / 混双 / 男双（三个项目，规则统一）</div></div>
+    <div class="info-row"><div class="label">比赛时间</div><div class="value editable" contenteditable="true" data-key="比赛时间">2026年8月23日（周日）晚上 18:30</div></div>
+    <div class="info-row"><div class="label">比赛地点</div><div class="value editable" contenteditable="true" data-key="比赛地点">九江市星羿羽毛球馆（经开区杭州路百星文体产业园内）</div></div>
+    <div class="info-row"><div class="label">报名费用</div><div class="value editable" contenteditable="true" data-key="报名费用">每人 30 元（含球和场地）</div></div>
+    <div class="info-row"><div class="label">比赛用球</div><div class="value editable" contenteditable="true" data-key="比赛用球">瑞小羽 X-05</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🗓️</span> 赛程时间线<span class="edit-flag">✏️ 可改</span></div>
+    <div class="step-list">
+      <div class="step-item"><div class="step-title editable" contenteditable="true" data-key="赛程-1-标题">报名期（8/5 – 8/21）</div><div class="step-desc editable" contenteditable="true" data-key="赛程-1-描述">微信添加 15107920066 报名。协办方有权在报名人数达标后提前截止报名。</div></div>
+      <div class="step-item"><div class="step-title editable" contenteditable="true" data-key="赛程-2-标题">线上抽签（8/22）</div><div class="step-desc editable" contenteditable="true" data-key="赛程-2-描述">采用线上抽签方式分组、安排赛程。抽签完成后弃赛，报名费不可退。</div></div>
+      <div class="step-item"><div class="step-title editable" contenteditable="true" data-key="赛程-3-标题">比赛日（8/23 18:30）</div><div class="step-desc editable" contenteditable="true" data-key="赛程-3-描述">小组赛取前两名出线 → 淘汰赛决出前三名。各队须提前 10 分钟到场检录。</div></div>
+      <div class="step-item"><div class="step-title editable" contenteditable="true" data-key="赛程-4-标题">颁奖（赛后）</div><div class="step-desc editable" contenteditable="true" data-key="赛程-4-描述">甲组前八名现场发奖：前3名发羽毛球+证书，4-8名发场地代金券。</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚖️</span> 甲乙分组原则（可选项）</div>
+    <div class="division-card" style="background:linear-gradient(135deg,#ef4444,#f97316);">
+      <h3>🔴 甲组（高水平组）</h3>
+      <div class="d-row">▸ 近两年参加过同等级双打比赛前四名者</div>
+      <div class="d-row">▸ 持有国家二级及以上运动员证书者</div>
+      <div class="d-row">▸ 上述人员仅限报甲组</div>
+    </div>
+    <div class="division-card div-u10">
+      <h3>🔵 乙组（中等水平组）</h3>
+      <div class="d-row">▸ 其他符合业余选手资格者</div>
+      <div class="d-row">▸ 未在"三大网"注册</div>
+    </div>
+    <div class="legend">📌 甲乙为可选项：报名水平接近时可不分甲乙（见各项目「不分甲乙 · 6 组」）；差距大时按各项目「分甲乙」分别办赛。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🏆</span> 赛制与计分（三项统一）</div>
+    <table class="mini-table">
+      <tr><th>环节</th><th>规则</th></tr>
+      <tr><td>竞赛结构</td><td>小组赛取前两名出线 → 淘汰赛决出前三名</td></tr>
+      <tr><td>计分方式</td><td>31 分单局淘汰制</td></tr>
+      <tr><td>换边</td><td>一方先到 16 分时，双方交换场地</td></tr>
+      <tr><td>胜负</td><td>先到 31 分的一方获胜</td></tr>
+      <tr><td>比赛用球</td><td>瑞小羽 X-05</td></tr>
+    </table>
+    <div class="legend">💡 单局 31 分制节奏快、容错低，适合晚间单场赛事；16 分换边保证公平。</div>
+  </div>
+
+  <div class="evt-tabs">
+    <div class="evt-tab active" onclick="switchEvent('mx')">混双</div>
+    <div class="evt-tab" onclick="switchEvent('nx')">女双</div>
+    <div class="evt-tab" onclick="switchEvent('nan')">男双</div>
+  </div>
+
+  <div class="evt-panel" id="evt-mx">
+
+    <div class="highlight">
+      <h4>🏸 混双 · 分组与晋级对阵表（模板）</h4>
+      <p>甲乙分组为可选项。默认按「不分甲乙 · 6 组」办赛；若报名水平差距大，切到「分甲乙」分别打。</p>
+    </div>
+
+    <div class="ab-toggle">
+      <div class="ab-btn active" data-ab="mx" onclick="switchAB('mx','noab')">不分甲乙 · 6 组</div>
+      <div class="ab-btn" data-ab="mx" onclick="switchAB('mx','ab')">分甲乙 · 各组 2 组</div>
+    </div>
+
+    <div id="ab-mx-noab" style="display:block;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（6 组 · 每组最多 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组</th><th>席位1（队名）</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>A</td><td></td><td></td><td></td><td></td></tr><tr><td>B</td><td></td><td></td><td></td><td></td></tr><tr><td>C</td><td></td><td></td><td></td><td></td></tr><tr><td>D</td><td></td><td></td><td></td><td></td></tr><tr><td>E</td><td></td><td></td><td></td><td></td></tr><tr><td>F</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">每组 3–4 对皆可，不足 4 席留空。线上抽签（8/22）后填入队名。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔁</span> 组内循环赛程（以 A 组 4 对为例）</div>
+      <div class="bracket">
+        <p class="round">A 组单循环（每两队 1 场，共 6 场）</p>
+        R1：A1 vs A4 ｜ A2 vs A3<br>
+        R2：A1 vs A3 ｜ A2 vs A4<br>
+        R3：A1 vs A2 ｜ A3 vs A4<br>
+        <span style="color:var(--text-light);">（B~F 组同理，各组取前 2 名出线）</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 晋级对阵表（6 组前 2 → 12 队）</div>
+      <div class="bracket">
+        <p class="round">① 首轮（附加赛）— 8 队参赛，4 队轮空直接进八强</p>
+        附加赛1：____ vs ____ → 胜进八强<br>
+        附加赛2：____ vs ____ → 胜进八强<br>
+        附加赛3：____ vs ____ → 胜进八强<br>
+        附加赛4：____ vs ____ → 胜进八强<br>
+        轮空直接进八强：____ / ____ / ____ / ____<br><br>
+        <p class="round">② 八强（1/4 决赛）— 8 队决 4</p>
+        QF1：附胜1 vs 轮空1<br>
+        QF2：附胜2 vs 轮空2<br>
+        QF3：附胜3 vs 轮空3<br>
+        QF4：附胜4 vs 轮空4<br><br>
+        <p class="round">③ 四强（半决赛）— 4 队决 2</p>
+        SF1：QF胜1 vs QF胜2<br>
+        SF2：QF胜3 vs QF胜4<br><br>
+        <p class="round">④ 决赛</p>
+        F：SF胜1 vs SF胜2 → 🏆 冠军：____<br><br>
+        <p class="round">⑤ 三四名</p>
+        3rd：SF负1 vs SF负2 → 🥉 季军：____
+      </div>
+      <div class="legend">💡 单局 31 分制、16 分换边。6 组前 2 共 12 队；首轮 4 场附加赛 + 4 轮空凑成 8 强，避免轮空浪费。</div>
+    </div>
+
+    </div>
+    <div id="ab-mx-ab" style="display:none;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（甲组 A/B · 乙组 C/D，各 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组别</th><th>席位1</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>甲组 A</td><td></td><td></td><td></td><td></td></tr><tr><td>甲组 B</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 C</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 D</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">甲组 = 高水平（近两年同等级前四 / 国家二级及以上）；乙组 = 中等水平业余选手。各组前 2 出线。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 甲组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">甲组半决赛</p>
+        半决1：A1 vs B2<br>
+        半决2：A2 vs B1<br><br>
+        <p class="round">甲组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 甲组冠军：____<br><br>
+        <p class="round">甲组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 甲组季军：____
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 乙组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">乙组半决赛</p>
+        半决1：C1 vs D2<br>
+        半决2：C2 vs D1<br><br>
+        <p class="round">乙组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 乙组冠军：____<br><br>
+        <p class="round">乙组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 乙组季军：____
+      </div>
+    </div>
+    <div class="legend">📌 12 队 / 4 组版本：将每组扩为 4 组（甲 A/B/C/D、乙 E/F/G/H），各取前 2，八强交叉同理（A1vsB2…）。</div>
+
+    </div>
+
+  </div>
+
+
+  <div class="evt-panel" id="evt-nx">
+
+    <div class="highlight">
+      <h4>🏸 女双 · 分组与晋级对阵表（模板）</h4>
+      <p>甲乙分组为可选项。默认按「不分甲乙 · 6 组」办赛；若报名水平差距大，切到「分甲乙」分别打。</p>
+    </div>
+
+    <div class="ab-toggle">
+      <div class="ab-btn active" data-ab="nx" onclick="switchAB('nx','noab')">不分甲乙 · 6 组</div>
+      <div class="ab-btn" data-ab="nx" onclick="switchAB('nx','ab')">分甲乙 · 各组 2 组</div>
+    </div>
+
+    <div id="ab-nx-noab" style="display:block;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（6 组 · 每组最多 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组</th><th>席位1（队名）</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>A</td><td></td><td></td><td></td><td></td></tr><tr><td>B</td><td></td><td></td><td></td><td></td></tr><tr><td>C</td><td></td><td></td><td></td><td></td></tr><tr><td>D</td><td></td><td></td><td></td><td></td></tr><tr><td>E</td><td></td><td></td><td></td><td></td></tr><tr><td>F</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">每组 3–4 对皆可，不足 4 席留空。线上抽签（8/22）后填入队名。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔁</span> 组内循环赛程（以 A 组 4 对为例）</div>
+      <div class="bracket">
+        <p class="round">A 组单循环（每两队 1 场，共 6 场）</p>
+        R1：A1 vs A4 ｜ A2 vs A3<br>
+        R2：A1 vs A3 ｜ A2 vs A4<br>
+        R3：A1 vs A2 ｜ A3 vs A4<br>
+        <span style="color:var(--text-light);">（B~F 组同理，各组取前 2 名出线）</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 晋级对阵表（6 组前 2 → 12 队）</div>
+      <div class="bracket">
+        <p class="round">① 首轮（附加赛）— 8 队参赛，4 队轮空直接进八强</p>
+        附加赛1：____ vs ____ → 胜进八强<br>
+        附加赛2：____ vs ____ → 胜进八强<br>
+        附加赛3：____ vs ____ → 胜进八强<br>
+        附加赛4：____ vs ____ → 胜进八强<br>
+        轮空直接进八强：____ / ____ / ____ / ____<br><br>
+        <p class="round">② 八强（1/4 决赛）— 8 队决 4</p>
+        QF1：附胜1 vs 轮空1<br>
+        QF2：附胜2 vs 轮空2<br>
+        QF3：附胜3 vs 轮空3<br>
+        QF4：附胜4 vs 轮空4<br><br>
+        <p class="round">③ 四强（半决赛）— 4 队决 2</p>
+        SF1：QF胜1 vs QF胜2<br>
+        SF2：QF胜3 vs QF胜4<br><br>
+        <p class="round">④ 决赛</p>
+        F：SF胜1 vs SF胜2 → 🏆 冠军：____<br><br>
+        <p class="round">⑤ 三四名</p>
+        3rd：SF负1 vs SF负2 → 🥉 季军：____
+      </div>
+      <div class="legend">💡 单局 31 分制、16 分换边。6 组前 2 共 12 队；首轮 4 场附加赛 + 4 轮空凑成 8 强，避免轮空浪费。</div>
+    </div>
+
+    </div>
+    <div id="ab-nx-ab" style="display:none;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（甲组 A/B · 乙组 C/D，各 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组别</th><th>席位1</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>甲组 A</td><td></td><td></td><td></td><td></td></tr><tr><td>甲组 B</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 C</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 D</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">甲组 = 高水平（近两年同等级前四 / 国家二级及以上）；乙组 = 中等水平业余选手。各组前 2 出线。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 甲组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">甲组半决赛</p>
+        半决1：A1 vs B2<br>
+        半决2：A2 vs B1<br><br>
+        <p class="round">甲组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 甲组冠军：____<br><br>
+        <p class="round">甲组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 甲组季军：____
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 乙组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">乙组半决赛</p>
+        半决1：C1 vs D2<br>
+        半决2：C2 vs D1<br><br>
+        <p class="round">乙组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 乙组冠军：____<br><br>
+        <p class="round">乙组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 乙组季军：____
+      </div>
+    </div>
+    <div class="legend">📌 12 队 / 4 组版本：将每组扩为 4 组（甲 A/B/C/D、乙 E/F/G/H），各取前 2，八强交叉同理（A1vsB2…）。</div>
+
+    </div>
+
+  </div>
+
+
+  <div class="evt-panel" id="evt-nan">
+
+    <div class="highlight">
+      <h4>🏸 男双 · 分组与晋级对阵表（模板）</h4>
+      <p>甲乙分组为可选项。默认按「不分甲乙 · 6 组」办赛；若报名水平差距大，切到「分甲乙」分别打。</p>
+    </div>
+
+    <div class="ab-toggle">
+      <div class="ab-btn active" data-ab="nan" onclick="switchAB('nan','noab')">不分甲乙 · 6 组</div>
+      <div class="ab-btn" data-ab="nan" onclick="switchAB('nan','ab')">分甲乙 · 各组 2 组</div>
+    </div>
+
+    <div id="ab-nan-noab" style="display:block;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（6 组 · 每组最多 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组</th><th>席位1（队名）</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>A</td><td></td><td></td><td></td><td></td></tr><tr><td>B</td><td></td><td></td><td></td><td></td></tr><tr><td>C</td><td></td><td></td><td></td><td></td></tr><tr><td>D</td><td></td><td></td><td></td><td></td></tr><tr><td>E</td><td></td><td></td><td></td><td></td></tr><tr><td>F</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">每组 3–4 对皆可，不足 4 席留空。线上抽签（8/22）后填入队名。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🔁</span> 组内循环赛程（以 A 组 4 对为例）</div>
+      <div class="bracket">
+        <p class="round">A 组单循环（每两队 1 场，共 6 场）</p>
+        R1：A1 vs A4 ｜ A2 vs A3<br>
+        R2：A1 vs A3 ｜ A2 vs A4<br>
+        R3：A1 vs A2 ｜ A3 vs A4<br>
+        <span style="color:var(--text-light);">（B~F 组同理，各组取前 2 名出线）</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 晋级对阵表（6 组前 2 → 12 队）</div>
+      <div class="bracket">
+        <p class="round">① 首轮（附加赛）— 8 队参赛，4 队轮空直接进八强</p>
+        附加赛1：____ vs ____ → 胜进八强<br>
+        附加赛2：____ vs ____ → 胜进八强<br>
+        附加赛3：____ vs ____ → 胜进八强<br>
+        附加赛4：____ vs ____ → 胜进八强<br>
+        轮空直接进八强：____ / ____ / ____ / ____<br><br>
+        <p class="round">② 八强（1/4 决赛）— 8 队决 4</p>
+        QF1：附胜1 vs 轮空1<br>
+        QF2：附胜2 vs 轮空2<br>
+        QF3：附胜3 vs 轮空3<br>
+        QF4：附胜4 vs 轮空4<br><br>
+        <p class="round">③ 四强（半决赛）— 4 队决 2</p>
+        SF1：QF胜1 vs QF胜2<br>
+        SF2：QF胜3 vs QF胜4<br><br>
+        <p class="round">④ 决赛</p>
+        F：SF胜1 vs SF胜2 → 🏆 冠军：____<br><br>
+        <p class="round">⑤ 三四名</p>
+        3rd：SF负1 vs SF负2 → 🥉 季军：____
+      </div>
+      <div class="legend">💡 单局 31 分制、16 分换边。6 组前 2 共 12 队；首轮 4 场附加赛 + 4 轮空凑成 8 强，避免轮空浪费。</div>
+    </div>
+
+    </div>
+    <div id="ab-nan-ab" style="display:none;">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🗂️</span> 分组表（甲组 A/B · 乙组 C/D，各 4 对）</div>
+      <table class="group-sheet">
+        <tr><th>组别</th><th>席位1</th><th>席位2</th><th>席位3</th><th>席位4</th></tr>
+        <tr><td>甲组 A</td><td></td><td></td><td></td><td></td></tr><tr><td>甲组 B</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 C</td><td></td><td></td><td></td><td></td></tr><tr><td>乙组 D</td><td></td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="legend">甲组 = 高水平（近两年同等级前四 / 国家二级及以上）；乙组 = 中等水平业余选手。各组前 2 出线。</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 甲组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">甲组半决赛</p>
+        半决1：A1 vs B2<br>
+        半决2：A2 vs B1<br><br>
+        <p class="round">甲组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 甲组冠军：____<br><br>
+        <p class="round">甲组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 甲组季军：____
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">🧮</span> 乙组晋级对阵（4 强 → 决赛）</div>
+      <div class="bracket">
+        <p class="round">乙组半决赛</p>
+        半决1：C1 vs D2<br>
+        半决2：C2 vs D1<br><br>
+        <p class="round">乙组决赛</p>
+        决赛：半决胜1 vs 半决胜2 → 🏆 乙组冠军：____<br><br>
+        <p class="round">乙组三四名</p>
+        3rd：半决负1 vs 半决负2 → 🥉 乙组季军：____
+      </div>
+    </div>
+    <div class="legend">📌 12 队 / 4 组版本：将每组扩为 4 组（甲 A/B/C/D、乙 E/F/G/H），各取前 2，八强交叉同理（A1vsB2…）。</div>
+
+    </div>
+
+  </div>
+
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📝</span> 计分表模板（每场填写）</div>
+    <table class="score-sheet">
+      <tr><th>轮次</th><th>对阵（A vs B）</th><th>比分</th><th>胜方</th><th>备注</th></tr>
+      <tr><td>小组赛 R1</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+      <tr><td>小组赛 R2</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+      <tr><td>小组赛 R3</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+      <tr><td>1/4 决赛</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+      <tr><td>半决赛</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+      <tr><td>决赛</td><td>&nbsp;vs&nbsp;</td><td>&nbsp;:&nbsp;</td><td></td><td></td></tr>
+    </table>
+    <div class="legend">📌 换边提示：当任一方到达 16 分，裁判鸣哨换边后继续，先到 31 分者胜。</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📋</span> 报名 / 签到表模板</div>
+    <table class="mini-table">
+      <tr><th>序号</th><th>姓名</th><th>性别</th><th>报项</th><th>联系电话</th><th>已缴费</th><th>签到</th></tr>
+      <tr><td>1</td><td></td><td></td><td>女双/混双/男双</td><td></td><td>□</td><td>□</td></tr>
+      <tr><td>2</td><td></td><td></td><td>女双/混双/男双</td><td></td><td>□</td><td>□</td></tr>
+      <tr><td>3</td><td></td><td></td><td>女双/混双/男双</td><td></td><td>□</td><td>□</td></tr>
+      <tr><td>4</td><td></td><td></td><td>女双/混双/男双</td><td></td><td>□</td><td>□</td></tr>
+      <tr><td>5</td><td></td><td></td><td>女双/混双/男双</td><td></td><td>□</td><td>□</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">⚠️</span> 弃权与纪律</div>
+    <div class="checklist-item"><div class="box"></div>各队须提前 10 分钟到达场地检录，逾时视为弃权</div>
+    <div class="checklist-item"><div class="box"></div>比赛开始后 2 分钟不能到场，按弃权处理</div>
+    <div class="checklist-item"><div class="box"></div>赛中因伤病 / 其他原因不能继续，按本场弃权</div>
+    <div class="checklist-item"><div class="box"></div>一旦弃权，取消该队成绩，无法继续参赛</div>
+    <div class="checklist-item"><div class="box"></div>比赛中断 2 分钟（经调解后计）及以上，按弃权并取消资格</div>
+    <div class="checklist-item"><div class="box"></div>抽签完成后弃赛，报名费不可退</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">🎁</span> 奖项设置（甲组）<span class="edit-flag">✏️ 可改</span></div>
+    <table class="mini-table">
+      <tr><th>名次</th><th>奖励</th></tr>
+      <tr><td class="editable" contenteditable="true" data-key="奖项-1-名次">第一名</td><td class="editable" contenteditable="true" data-key="奖项-1-奖励">每人 3 桶"瑞小羽X-05"羽毛球 + 证书</td></tr>
+      <tr><td class="editable" contenteditable="true" data-key="奖项-2-名次">第二名</td><td class="editable" contenteditable="true" data-key="奖项-2-奖励">每人 2 桶"瑞小羽X-05"羽毛球 + 证书</td></tr>
+      <tr><td class="editable" contenteditable="true" data-key="奖项-3-名次">第三名</td><td class="editable" contenteditable="true" data-key="奖项-3-奖励">每人 1 桶"瑞小羽X-05"羽毛球 + 证书</td></tr>
+      <tr><td class="editable" contenteditable="true" data-key="奖项-4-名次">第四～八名</td><td class="editable" contenteditable="true" data-key="奖项-4-奖励">星羿体育任意 3 小时场地代金券</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📜</span> 活动说明</div>
+    <div style="font-size:12.5px;line-height:1.95;color:var(--text);">
+      1️⃣ 运动员须身体健康、适宜参赛；赛中意外事故自行负责、费用自理，缴费时需签《免责书》。<br>
+      2️⃣ 为赛事 / 品牌宣传，主办方有权在与赛事相关前提下拍照、使用、展示照片，报名即视为同意。<br>
+      3️⃣ 遇连场可休息 5 分钟；裁判有权根据进程调整场序。<br>
+      4️⃣ 须注重体育道德、服从裁判。对判罚有异议，应在下一个发球前提出，由裁判长裁定为最终判决。
+    </div>
+  </div>
+
+</div>
+</div>
+
+
+<script>
+
+// ===== 瑞小羽杯 可编辑配置（主办/赛程/奖项） =====
+(function(){
+  var LS_KEY='xy_event_cfg_v1';
+  var DEFAULT_KEY='xy_event_cfg_default_v1';
+  function panel(){ return document.getElementById('panel-event'); }
+  function editableEls(){ return panel().querySelectorAll('[contenteditable]'); }
+  function collectCfg(){
+    var o={};
+    editableEls().forEach(function(el){ o[el.dataset.key]=el.innerHTML; });
+    return o;
+  }
+  function applyCfg(obj){
+    editableEls().forEach(function(el){
+      if(Object.prototype.hasOwnProperty.call(obj, el.dataset.key)) el.innerHTML=obj[el.dataset.key];
+    });
+  }
+  function saveCfg(){
+    if(!localStorage.getItem(DEFAULT_KEY)){ localStorage.setItem(DEFAULT_KEY, JSON.stringify(collectCfg())); }
+    localStorage.setItem(LS_KEY, JSON.stringify(collectCfg()));
+    flash('已保存');
+  }
+  function loadCfg(){
+    if(!localStorage.getItem(DEFAULT_KEY)){ localStorage.setItem(DEFAULT_KEY, JSON.stringify(collectCfg())); }
+    var s=localStorage.getItem(LS_KEY);
+    if(s){ try{ applyCfg(JSON.parse(s)); }catch(e){} }
+  }
+  function resetCfg(){
+    var d=localStorage.getItem(DEFAULT_KEY);
+    if(d){ try{ applyCfg(JSON.parse(d)); }catch(e){} }
+    localStorage.removeItem(LS_KEY);
+    flash('已恢复默认');
+  }
+  function exportCfg(){
+    var data=collectCfg();
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var a=document.createElement('a');
+    var dt=new Date().toISOString().slice(0,10);
+    a.href=URL.createObjectURL(blob);
+    a.download='瑞小羽杯配置-'+dt+'.json';
+    a.click();
+  }
+  function importCfg(file){
+    var r=new FileReader();
+    r.onload=function(){
+      try{
+        var obj=JSON.parse(r.result);
+        applyCfg(obj);
+        localStorage.setItem(LS_KEY, JSON.stringify(collectCfg()));
+        flash('已导入');
+      }catch(e){ alert('配置文件格式错误'); }
+    };
+    r.readAsText(file);
+  }
+  function flash(msg){
+    var t=document.getElementById('cfg-toast');
+    if(!t) return;
+    t.textContent=msg; t.style.opacity='1';
+    setTimeout(function(){ t.style.opacity='0'; }, 1500);
+  }
+  loadCfg();
+  var bSave=document.getElementById('cfg-save'); if(bSave) bSave.onclick=saveCfg;
+  var bReset=document.getElementById('cfg-reset'); if(bReset) bReset.onclick=resetCfg;
+  var bExp=document.getElementById('cfg-export'); if(bExp) bExp.onclick=exportCfg;
+  var bImp=document.getElementById('cfg-import'); var fileIn=document.getElementById('cfg-file');
+  if(bImp && fileIn){ bImp.onclick=function(){ fileIn.click(); };
+    fileIn.onchange=function(){ if(fileIn.files[0]) importCfg(fileIn.files[0]); fileIn.value=''; }; }
+})();
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function copyText(btn, text){
+  function done(){ var o=btn.textContent; btn.textContent='✅ 已复制'; setTimeout(function(){btn.textContent=o;},1500); }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done, function(){ btn.textContent='请长按复制'; });
+  } else {
+    var t=document.createElement('textarea'); t.value=text; document.body.appendChild(t); t.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ btn.textContent='请长按复制'; }
+    document.body.removeChild(t);
+  }
+}
+
+function switchEvent(name) {
+  document.querySelectorAll('.evt-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.evt-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('evt-' + name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function switchAB(disc, mode) {
+  document.getElementById('ab-' + disc + '-noab').style.display = (mode === 'noab') ? 'block' : 'none';
+  document.getElementById('ab-' + disc + '-ab').style.display    = (mode === 'ab')    ? 'block' : 'none';
+  document.querySelectorAll('[data-ab="' + disc + '"]').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+<footer class="xy-footer">🏸 星羿羽毛球馆 · 赛事<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+</body>
+</html>
