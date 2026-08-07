@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>星羿工作台 · 使用手册</title><style>
+:root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--mint-50);color:var(--ink);line-height:1.7;font-size:15px;max-width:680px;margin:0 auto;padding-bottom:40px;}
+
+.xy-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;}
+.xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);}
+.xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+
+.toc{position:sticky;top:48px;z-index:9;background:rgba(255,255,255,.95);padding:10px 16px;border-bottom:1px solid var(--line);display:flex;gap:8px;overflow-x:auto;}
+.toc a{flex-shrink:0;font-size:12px;color:var(--teal-700);text-decoration:none;padding:4px 10px;border:1px solid var(--teal-500);border-radius:12px;font-weight:600;white-space:nowrap;}
+.toc a:active{background:var(--teal-100);}
+
+.s{padding:24px 16px 0;}
+.s h2{font-size:16px;color:var(--teal-700);border-left:4px solid var(--coral);padding-left:10px;margin:0 0 12px;}
+.s h3{font-size:14px;color:var(--ink);margin:16px 0 8px;}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{background:var(--teal-100);color:var(--teal-700);padding:8px 10px;text-align:left;font-weight:700;border:1px solid var(--line);}
+td{padding:8px 10px;border:1px solid var(--line);vertical-align:top;}
+
+.step{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.step .sn{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--teal-700);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.step .sc{flex:1;}
+.step .st{font-weight:800;font-size:13.5px;margin-bottom:2px;}
+.step .sd{font-size:12px;color:var(--sub);}
+
+.link-block{display:block;background:var(--teal-100);color:var(--teal-700);text-decoration:none;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--teal-500);margin-bottom:8px;}
+.link-block:active{background:var(--teal-500);color:#fff;}
+.link-block.alt{background:var(--coral-soft);color:var(--coral);border-color:var(--coral);}
+
+.tag{font-size:10.5px;padding:2px 8px;border-radius:8px;font-weight:700;}
+.t-on{background:var(--teal-100);color:var(--teal-700);}
+.t-auto{background:var(--coral-soft);color:var(--coral);}
+.t-time{font-size:11px;color:var(--muted);}
+
+.xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:34px 14px 20px;line-height:1.9;}
+.xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style></head><body>
+
+<div class="xy-topbar">
+  <span class="brand">🏸 星羿 · 招生工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="toc">
+  <a href="#what">这是什么</a><a href="#nav">导航说明</a><a href="#coach">教练每天</a><a href="#admin">教务每天</a><a href="#tables">表格清单</a><a href="#auto">自动化</a><a href="#faq">常见问题</a>
+</div>
+
+<!-- 这是什么 -->
+<div class="s" id="what"><h2>一、工作台是什么</h2>
+<div class="card">
+<p style="margin:0 0 8px;"><b>星羿工作台</b> 是球馆的线上操作中心。所有人通过一个首页入口使用所有功能——从邀约、考核、体测，到排课、续费、库存、教练考核，全部打通。</p>
+<p style="margin:0;"><b>永久地址</b>：<code style="background:var(--teal-100);padding:2px 6px;border-radius:4px;font-size:13px;">xytyymq.github.io/xingyi-workbench</code>，可添加到手机主屏幕当 App 用。</p>
+</div>
+</div>
+
+<!-- 导航说明 -->
+<div class="s" id="nav"><h2>二、首页 6 个区</h2>
+<div class="card">
+<table>
+<tr><th>区</th><th>谁用</th><th>里面有什么</th></tr>
+<tr><td>今日关注</td><td>馆长</td><td>课前提醒/续费预警/收支的快捷入口，每天早上看一眼</td></tr>
+<tr><td>招生转化流程</td><td>馆长/教练</td><td>邀约→考核→体测→证书→续费，5步走完一个学员的一生</td></tr>
+<tr><td>自媒体 & 增长</td><td>馆长</td><td>自媒体规划、AI文案库、赛事、证书——拉新增长的素材全在这</td></tr>
+<tr><td>教学运营</td><td>教练</td><td>话术系统、课程体系、考核速查、教练工作台——教练日常全在这</td></tr>
+<tr><td>数据 & 报表</td><td>全员</td><td>7张腾讯文档表 + 自动化产出，所有数据的真源</td></tr>
+<tr><td>财务管理</td><td>馆长</td><td>收支记账、库存管理——钱的进出一眼看清</td></tr>
+</table>
+</div>
+</div>
+
+<!-- 教练每天 -->
+<div class="s" id="coach"><h2>三、教练每天做什么</h2>
+
+<div class="step"><div class="sn">1</div><div class="sc">
+<div class="st">到馆看工作台</div>
+<div class="sd">打开「教学运营 → 教练工作台」，确认课程价格、促出勤话术、自评标准。</div>
+<a class="link-block" href="coach.html" target="_blank" rel="noopener">打开 · 教练工作台</a>
+</div></div>
+
+<div class="step"><div class="sn">2</div><div class="sc">
+<div class="st">上课前：欢迎每一个学员</div>
+<div class="sd">蹲下来，叫名字，击掌或碰拳。"浩然来啦！今天穿新鞋啊！" 每个小孩都要被看到。</div>
+</div></div>
+
+<div class="step"><div class="sn">3</div><div class="sc">
+<div class="st">课中：夸具体动作</div>
+<div class="sd">对每个学员至少 1 次具体夸奖——不说"不错"，说"刚才那个转身比上周快了一截"。</div>
+</div></div>
+
+<div class="step"><div class="sn">4</div><div class="sc">
+<div class="st">下课后：填上课记录（60秒）</div>
+<div class="sd">打开上课记录表 → 日期 → 下拉选学员 → 出勤 → 技能评分 → 5个自评各点一下 → 末尾「今日其他工作」填一句。<b>只填这一张表。</b></div>
+<a class="link-block" href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">打开 · 学员上课记录</a>
+</div></div>
+
+<div class="step"><div class="sn">5</div><div class="sc">
+<div class="st">有人缺课：2小时内微信追回</div>
+<div class="sd"><b>文字给家长</b>："浩然妈妈，今天没看到浩然啊？"<br><b>语音给孩子</b>："小张他们练杀球都在问你呢，下周来了给你补上～"</div>
+</div></div>
+</div>
+
+<!-- 教务每天 -->
+<div class="s" id="admin"><h2>四、馆长 / 教务每天做什么</h2>
+
+<table>
+<tr><th>时间</th><th>做什么</th><th>在哪</th></tr>
+<tr><td>7:30 后</td><td>看课前提醒，复制文案发家长群<span class="tag t-auto">自动生成</span></td><td><a href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank">排课表→课前提醒-输出</a></td></tr>
+<tr><td>8:00 后</td><td>看续费预警名单，决定要不要主动跟进<span class="tag t-auto">自动生成</span></td><td><a href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank">续费台账→到期预警-输出</a></td></tr>
+<tr><td>8:30 后</td><td>看库存有没有标红需补货的<span class="tag t-auto">自动统计</span></td><td><a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank">库存管理→库存总览</a></td></tr>
+<tr><td>收钱时</td><td>填收支记账：金额/项目/付款方式</td><td><a href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank">收支记账表</a></td></tr>
+<tr><td>进货/消耗时</td><td>下拉选物品→填数量（进货记进货、消耗记销货）</td><td><a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank">库存管理→进货/销货</a></td></tr>
+<tr><td>巡课时</td><td>5项勾选（热身/纠错/反馈/红线/拉伸）30秒</td><td><a href="https://docs.qq.com/sheet/DQnVaQ250ZmpTREN4" target="_blank">巡课记录表</a></td></tr>
+<tr><td>每月1号</td><td>看教练月报，了解评分和评级<span class="tag t-auto">自动生成</span></td><td>教练月报表</td></tr>
+</table>
+</div>
+
+<!-- 表格清单 -->
+<div class="s" id="tables"><h2>五、所有表格一览</h2>
+
+<table>
+<tr><th>表</th><th>谁填</th><th>怎么用</th></tr>
+<tr><td>排课表</td><td>馆长</td><td>排好这周谁上什么班，自动化7:30读它产出提醒</td></tr>
+<tr><td>续费台账</td><td>馆长发名单</td><td>80个学员已导入，自动化8:00读上课记录→扣课时→出预警</td></tr>
+<tr><td>上课记录</td><td>教练每节课</td><td>填学生+自评，自动化8:00读它扣课时、8:05同步到体测档案</td></tr>
+<tr><td>体测档案</td><td>馆长/体测</td><td>学员体能数据真源，附带自动同步的上课明细</td></tr>
+<tr><td>自媒体文案库</td><td>自动化</td><td>每15天AI自动生成新文案，你挑着发</td></tr>
+<tr><td>收支记账</td><td>馆长</td><td>收钱/花钱记一笔，月底看盈亏</td></tr>
+<tr><td>库存管理</td><td>馆长</td><td>进货/销货各记一笔，自动化每天8:30算库存、低库存标红</td></tr>
+<tr><td>巡课记录</td><td>馆长巡课</td><td>5项勾选，月报会统计红线次数</td></tr>
+<tr><td>员工日报</td><td>备选</td><td>已合并到上课记录「今日其他工作」列，教练无需单独填</td></tr>
+</table>
+</div>
+
+<!-- 自动化时刻表 -->
+<div class="s" id="auto"><h2>六、自动化时刻表</h2>
+
+<table>
+<tr><th>时间</th><th>名称</th><th>做什么</th></tr>
+<tr><td>7:30</td><td>课前5小时提醒</td><td>读排课表 → 生成提醒文案 → 写入「课前提醒-输出」</td></tr>
+<tr><td>8:00</td><td>续费预警 + 扣课时</td><td>读上课记录(出勤=1) → 扣续费台账「剩余课时」→ 列临期学员 → 写入「到期预警-输出」</td></tr>
+<tr><td>8:05</td><td>上课记录同步体测</td><td>读上课记录 → 匹配学员ID → 追加到体测档案「上课明细」</td></tr>
+<tr><td>8:30</td><td>库存自动统计</td><td>读进货+销货 → 汇总物品 → 写入库存总览 → 低于警戒线标红</td></tr>
+<tr><td>9:00</td><td>自媒体文案库</td><td>每15天一次 → AI生成新文案追加到文案库</td></tr>
+<tr><td>每月1号 9:00</td><td>教练月报</td><td>读上月上课记录+巡课记录 → 算出每位教练评分/评级</td></tr>
+</table>
+</div>
+
+<!-- 常见问题 -->
+<div class="s" id="faq"><h2>七、常见问题</h2>
+
+<div class="card"><h3 style="margin:0 0 6px;">教练填的上课记录会自动扣课时吗？</h3><p style="margin:0;font-size:13px;color:var(--sub);">会。每天8:00自动化读上课记录，只要是出勤=1的学员，续费台账里的「剩余课时」自动减1。教练只需确保学员名字选对（下拉选，不要手打）。</p></div>
+
+<div class="card"><h3 style="margin:0 0 6px;">缓存了旧版页面怎么办？</h3><p style="margin:0;font-size:13px;color:var(--sub);">刷新即可。手机端可以下拉刷新，或者在浏览器设置中清除缓存。</p></div>
+
+<div class="card"><h3 style="margin:0 0 6px;">怎么加到手机主屏幕？</h3><p style="margin:0;font-size:13px;color:var(--sub);">iPhone：Safari打开 → 底部「分享」→「添加到主屏幕」。安卓：Chrome打开 → 右上角「⋮」→「添加到主屏幕」。</p></div>
+
+<div class="card"><h3 style="margin:0 0 6px;">表格里某个下拉选项没有我要的人/物品怎么办？</h3><p style="margin:0;font-size:13px;color:var(--sub);">学员名单在续费台账里管理，物品清单在库存总览里管理。先在对应的主表里加一条，下拉就会自动更新。如果不会操作，找馆长处理。</p></div>
+
+<div class="card"><h3 style="margin:0 0 6px;">价格有变动怎么更新？</h3><p style="margin:0;font-size:13px;color:var(--sub);">找馆长（老板）。价格的源头在「教练工作台」页面和「话术系统」页面两处，改了之后需要同步更新并重新部署。</p></div>
+</div>
+
+<div class="xy-footer">
+  🏸 星羿羽毛球馆 · 工作台使用手册<br>
+  <a href="index.html" target="_blank" rel="noopener">返回工作台首页</a>
+</div>
+
+</body></html>
