@@ -18,14 +18,12 @@
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
     background:var(--mint-50);color:var(--ink);line-height:1.65;font-size:15px;}
 
-  /* 顶栏 */
   .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
     padding:10px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
   .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
   .xy-topbar .brand .em{margin-right:5px;}
   .xy-topbar .tag{font-size:11px;color:var(--teal-700);background:var(--teal-100);padding:4px 10px;border-radius:20px;font-weight:700;}
 
-  /* 页头 */
   .xy-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));
     color:#fff;padding:32px 20px 28px;}
   .xy-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;
@@ -34,20 +32,35 @@
   .xy-hero h1{margin:0;font-size:clamp(21px,5.6vw,27px);font-weight:800;letter-spacing:.5px;animation:fadeUp .5s ease-out both;}
   .xy-hero p{margin:9px 0 0;font-size:13px;opacity:.92;animation:fadeUp .5s .08s ease-out both;}
   .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px;animation:fadeUp .5s .16s ease-out both;}
-  .quick a{flex:1;min-width:110px;text-align:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
+  .quick a{flex:1;min-width:90px;text-align:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
     color:#fff;text-decoration:none;padding:9px 8px;border-radius:12px;font-size:12.5px;font-weight:700;backdrop-filter:blur(4px);transition:.2s;}
   .quick a:active{background:rgba(255,255,255,.3);}
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
   .xy-wrap{max-width:680px;margin:0 auto;}
 
-  /* 区块 */
   .xy-sec{margin:26px 16px 0;}
   .xy-sec-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--teal-700);margin:0 0 12px;}
   .xy-sec-title .bar{width:4px;height:18px;background:var(--coral);border-radius:3px;}
   .xy-sec-title .hint{font-size:11.5px;font-weight:600;color:var(--muted);margin-left:auto;}
 
-  /* 流程时间线 */
+  /* today zone */
+  .today-strip{display:flex;gap:10px;flex-wrap:wrap;}
+  .today-badge{flex:1;min-width:100px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:12px 10px;text-align:center;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s;}
+  .today-badge:active{transform:translateY(-1px);}
+  .today-badge .tb-num{font-size:13px;font-weight:800;color:var(--sub);line-height:1.3;}
+  .today-badge .tb-label{font-size:11px;color:var(--muted);margin-top:2px;}
+  .today-badge.warn{border-color:var(--coral);background:var(--coral-soft);}
+  .today-badge.warn .tb-num{color:var(--coral);}
+  .today-badge.good{border-color:var(--good);background:#f0fdf4;}
+  .today-badge.good .tb-num{color:var(--good);}
+  .auto-bar{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:8px 12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--sub);}
+  .auto-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+  .auto-dot.on{background:var(--good);}
+
+  /* flow */
   .flow{position:relative;padding-left:30px;}
   .flow::before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--teal-500),var(--line));}
   .step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
@@ -69,7 +82,7 @@
   .open-btn.accent{background:var(--coral);}
   .open-btn.accent:active{filter:brightness(.94);}
 
-  /* 工具网格 */
+  /* grid tools */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .tool{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:15px 13px;
     box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .15s ease-out,box-shadow .15s ease-out;}
@@ -82,14 +95,22 @@
     text-decoration:none;padding:9px;border-radius:10px;font-size:13px;font-weight:700;transition:.2s;}
   .tool a.go:active{background:var(--teal-500);color:#fff;}
 
-  /* 数据中枢 */
+  /* hub for data cards */
   .hub{background:linear-gradient(135deg,var(--teal-900),#115e59);color:#fff;border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow);}
   .hub h3{margin:0 0 4px;font-size:15px;}
+  .hub h3.sub{margin-top:14px;font-size:13px;opacity:.85;}
   .hub p{margin:0 0 12px;font-size:12.5px;opacity:.9;}
   .hub a{display:block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
     color:#fff;text-decoration:none;padding:11px;border-radius:11px;font-weight:700;font-size:13.5px;margin-bottom:9px;transition:.2s;}
   .hub a:last-child{margin-bottom:0;}
   .hub a:active{background:rgba(255,255,255,.26);}
+  .hub hr{border:none;border-top:1px solid rgba(255,255,255,.18);margin:12px 0 10px;}
+
+  /* finance card */
+  .fin-card{background:var(--card);border:1px solid var(--gold);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+  .fin-card h3{font-size:14px;color:var(--ink);margin:0 0 4px;}
+  .fin-card p{font-size:12px;color:var(--sub);margin:0 0 10px;}
+  .fin-card a{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:700;}
 
   .xy-footer{margin:34px 16px 42px;text-align:center;color:var(--muted);font-size:11.5px;line-height:1.95;}
   .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
@@ -105,21 +126,44 @@
 </div>
 
 <header class="xy-hero">
-  <h1>招生 · 教学 · 自媒体 · 活动</h1>
+  <h1>招生 · 教学 · 自媒体 · 经营</h1>
   <p>从邀约到续费，一套流程走完 · 一个工作台管全馆</p>
   <div class="quick">
     <a href="#flow">📋 招生流程</a>
+    <a href="#growth">📈 自媒体增长</a>
     <a href="#teach">🎓 教学运营</a>
-    <a href="#media">📣 自媒体活动</a>
-    <a href="#data">☁️ 数据中枢</a>
-    <a href="#report">📊 工作汇报</a>
-    <a href="#auto">🤖 自动化</a>
+    <a href="#data">📊 数据报表</a>
+    <a href="#finance">💰 财务</a>
   </div>
 </header>
 
 <div class="xy-wrap">
 
-  <!-- 核心流程 -->
+  <!-- 1. 今日关注 -->
+  <section class="xy-sec" id="today">
+    <div class="xy-sec-title"><span class="bar"></span>今日关注<span class="hint">自动化每日刷新</span></div>
+    <div class="today-strip">
+      <a class="today-badge" href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank" rel="noopener">
+        <div class="tb-num">课前提醒</div>
+        <div class="tb-label">切到「课前提醒-输出」查看</div>
+      </a>
+      <a class="today-badge warn" href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank" rel="noopener">
+        <div class="tb-num">续费预警</div>
+        <div class="tb-label">切到「到期预警-输出」查看</div>
+      </a>
+      <a class="today-badge good" href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank" rel="noopener">
+        <div class="tb-num">本月收支</div>
+        <div class="tb-label">去《收支记账》查看</div>
+      </a>
+    </div>
+    <div class="auto-bar">
+      自动化状态：<span><span class="auto-dot on"></span>课前提醒 7:30</span>
+      <span><span class="auto-dot on"></span>续费预警 8:00</span>
+      <span><span class="auto-dot on"></span>文案库 每15天</span>
+    </div>
+  </section>
+
+  <!-- 2. 招生转化流程 -->
   <section class="xy-sec" id="flow">
     <div class="xy-sec-title"><span class="bar"></span>招生转化流程<span class="hint">按顺序点</span></div>
     <div class="flow">
@@ -151,107 +195,109 @@
     </div>
   </section>
 
-  <!-- 教学 & 运营系统 -->
+  <!-- 3. 自媒体 & 增长 -->
+  <section class="xy-sec" id="growth">
+    <div class="xy-sec-title"><span class="bar"></span>自媒体 & 增长<span class="hint">拉新 · 转化 · 裂变</span></div>
+    <div class="grid">
+      <div class="tool">
+        <div class="ico">📱</div>
+        <div class="t-name">自媒体内容规划</div>
+        <div class="t-use">抖音/小红书定位 · 选题库 · 脚本模板 · 发布排期</div>
+        <div class="t-when">拍视频/排内容前翻</div>
+        <a class="go" href="media.html" target="_blank" rel="noopener">打开</a>
+      </div>
+      <div class="tool">
+        <div class="ico">📚</div>
+        <div class="t-name">AI 文案库</div>
+        <div class="t-use">每 15 天自动生成新文案 · 朋友圈/小红书/抖音直接取用</div>
+        <div class="t-when">需要文案时打开</div>
+        <a class="go" href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">打开</a>
+      </div>
+      <div class="tool">
+        <div class="ico">🏅</div>
+        <div class="t-name">赛事</div>
+        <div class="t-use">馆内赛事规则 · 积分机制 · 现场管理 · 活动素材</div>
+        <div class="t-when">策划/执行赛事时</div>
+        <a class="go" href="saishi.html" target="_blank" rel="noopener">打开</a>
+      </div>
+      <div class="tool">
+        <div class="ico">🎖️</div>
+        <div class="t-name">荣誉证书</div>
+        <div class="t-use">给孩子发定级证书 · 促发家长朋友圈转发</div>
+        <div class="t-when">考核完/开班时</div>
+        <a class="go" href="cert.html" target="_blank" rel="noopener">打开</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. 教学运营 -->
   <section class="xy-sec" id="teach">
-    <div class="xy-sec-title"><span class="bar"></span>教学 & 运营系统</div>
+    <div class="xy-sec-title"><span class="bar"></span>教学运营<span class="hint">教练 · 教务日常</span></div>
     <div class="grid">
       <div class="tool">
         <div class="ico">🗣️</div>
         <div class="t-name">教学话术系统</div>
         <div class="t-use">教练/沟通话术：邀约 · 续费 · 投诉 · 进步反馈</div>
-        <div class="t-when">⏱ 跟家长沟通前查一句</div>
+        <div class="t-when">跟家长沟通前查一句</div>
         <a class="go" href="scripts.html" target="_blank" rel="noopener">打开</a>
       </div>
       <div class="tool">
         <div class="ico">📚</div>
         <div class="t-name">课程培训体系</div>
         <div class="t-use">启蒙/初级/中级/精英分级标准原文与升学硬指标</div>
-        <div class="t-when">⏱ 查分级标准、定班依据</div>
+        <div class="t-when">查分级标准、定班依据</div>
         <a class="go" href="course.html" target="_blank" rel="noopener">打开</a>
       </div>
-    </div>
-  </section>
-
-  <!-- 自媒体 & 活动 -->
-  <section class="xy-sec" id="media">
-    <div class="xy-sec-title"><span class="bar"></span>自媒体 & 活动</div>
-    <div class="grid">
       <div class="tool">
-        <div class="ico">📱</div>
-        <div class="t-name">自媒体内容规划</div>
-        <div class="t-use">抖音/小红书定位 · 选题库 · 脚本模板 · 发布排期</div>
-        <div class="t-when">⏱ 拍视频/排内容前翻</div>
-        <a class="go" href="media.html" target="_blank" rel="noopener">打开</a>
-      </div>
-      <div class="tool">
-        <div class="ico">🏅</div>
-        <div class="t-name">赛事</div>
-        <div class="t-use">馆内赛事规则 · 加分机制 · 现场管理平台</div>
-        <div class="t-when">⏱ 策划/执行赛事时</div>
-        <a class="go" href="saishi.html" target="_blank" rel="noopener">打开</a>
+        <div class="ico">📐</div>
+        <div class="t-name">考核速查图</div>
+        <div class="t-use">四级技术指标 · 现场打分对照 · 升学门槛</div>
+        <div class="t-when">现场考核时</div>
+        <a class="go" href="chart.html" target="_blank" rel="noopener">打开</a>
       </div>
     </div>
   </section>
 
-  <!-- 数据中枢 -->
+  <!-- 5. 数据 & 报表 -->
   <section class="xy-sec" id="data">
-    <div class="xy-sec-title"><span class="bar"></span>数据中枢</div>
+    <div class="xy-sec-title"><span class="bar"></span>数据 & 报表<span class="hint">6 张表 · 每日自动产出</span></div>
     <div class="hub">
-      <h3>☁️ 学员体测云端主档</h3>
-      <p>腾讯文档在线表 · 手机电脑实时共享，所有体测数据真源</p>
-      <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" rel="noopener">📊 打开《星羿·学员体测档案》</a>
+      <h3>核心数据表</h3>
+      <p>所有业务数据真源，手机电脑实时共享</p>
+      <a href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank" rel="noopener">🗓️ 排课表（切标签看「课前提醒-输出」）</a>
+      <a href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank" rel="noopener">💰 续费台账（切标签看「到期预警-输出」）</a>
+      <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" rel="noopener">📊 学员体测档案</a>
+      <a href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank" rel="noopener">💳 收支记账</a>
+
+      <hr>
+
+      <h3 class="sub">运营记录</h3>
+      <a href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">📝 员工工作日报</a>
+      <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录</a>
+      <a href="work-report.html" target="_blank" rel="noopener">📈 学生动态管理图</a>
+
+      <hr>
+
+      <h3 class="sub">自动化产出（每日更新）</h3>
+      <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📱 自媒体文案库</a>
     </div>
   </section>
 
-  <!-- 排课·续费·自动化产出 -->
-  <section class="xy-sec" id="auto">
-    <div class="xy-sec-title"><span class="bar"></span>排课 · 续费 · 自动化产出<span class="hint">每日自动更新</span></div>
-    <div class="hub">
-      <h3>🗓️ 排课 & 课前提醒</h3>
-      <p>填排课表 → 每天 7:30 自动生成「课前提醒-输出」文案，你复制转发家长群</p>
-      <a href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank" rel="noopener">📋 打开《排课表》（切到「课前提醒-输出」标签看产出）</a>
-      <h3 style="margin-top:14px;">💰 续费 & 到期预警</h3>
-      <p>填续费台账 → 每天 8:00 自动列出临期学员，你跟进续费</p>
-      <a href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank" rel="noopener">📋 打开《续费台账》（切到「到期预警-输出」标签看名单）</a>
-      <h3 style="margin-top:14px;">📚 自媒体文案库</h3>
-      <p>每 15 天自动追加新文案，抖音/小红书/朋友圈直接取用</p>
-      <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📝 打开《自媒体文案库》</a>
-    </div>
-  </section>
-
-  <!-- 工作汇报 & 学生动态 -->
-  <section class="xy-sec" id="report">
-    <div class="xy-sec-title"><span class="bar"></span>工作汇报 & 学生动态<span class="hint">员工日报 · 上课记录 · 管理图</span></div>
-    <div class="grid">
-      <div class="tool">
-        <div class="ico">📝</div>
-        <div class="t-name">员工工作日报</div>
-        <div class="t-use">员工每天干了啥 · 腾讯文档实时同步</div>
-        <div class="t-when">⏱ 下班前填一笔</div>
-        <a class="go" href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">去填写 / 查看</a>
-      </div>
-      <div class="tool">
-        <div class="ico">🧒</div>
-        <div class="t-name">学员上课记录</div>
-        <div class="t-use">每个小孩每节课情况 · 形成成长趋势</div>
-        <div class="t-when">⏱ 每节课后填一笔</div>
-        <a class="go" href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">去填写 / 查看</a>
-      </div>
-      <div class="tool">
-        <div class="ico">📊</div>
-        <div class="t-name">学生动态管理图</div>
-        <div class="t-use">技能成长趋势 + 上课量，导入 CSV 自动出图</div>
-        <div class="t-when">⏱ 想看整体时打开</div>
-        <a class="go" href="work-report.html" target="_blank" rel="noopener">打开管理图</a>
-      </div>
+  <!-- 6. 财务管理 -->
+  <section class="xy-sec" id="finance">
+    <div class="xy-sec-title"><span class="bar"></span>财务管理</div>
+    <div class="fin-card">
+      <h3>💳 收支记账</h3>
+      <p>每笔收入/支出随手记，月底自动汇总，球馆盈亏一目了然</p>
+      <a href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank" rel="noopener">打开 · 星羿收支记账</a>
     </div>
   </section>
 
   <footer class="xy-footer">
     🏸 星羿羽毛球馆 · AI 招生工作台（全馆唯一总入口）<br>
     可添加到手机主屏幕，像 App 一样随时打开<br>
-    旧版聚合门户已并入本页，可作废<br>
-    <b>设置 - 数据管理 - 我发布的应用</b> 可管理这些已发布应用
+    已上线页面：招生流程 / 自媒体增长 / 教学运营 / 数据报表 / 财务管理<br>
+    <b>站点永久链接：https://xytyymq.github.io/xingyi-workbench/</b>
   </footer>
 </div>
 </body>
