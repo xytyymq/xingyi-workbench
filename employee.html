@@ -12,59 +12,58 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
     background:var(--bg);color:var(--ink);line-height:1.5;padding:16px}
-  .wrap{max-width:520px;margin:0 auto}
+  .wrap{max-width:720px;margin:0 auto}
   header{background:linear-gradient(135deg,var(--teal-600),var(--teal-700));
-    color:#fff;border-radius:16px;padding:20px;margin-bottom:16px}
+    color:#fff;border-radius:16px;padding:20px;margin-bottom:14px}
   header h1{font-size:20px;font-weight:700;display:flex;align-items:center;gap:8px}
   header p{font-size:13px;opacity:.9;margin-top:6px}
   .tip{background:var(--teal-100);color:var(--teal-700);border-radius:12px;
-    padding:10px 14px;font-size:13px;margin-bottom:16px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:14px;
-    padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px}
-  .card .ico{font-size:30px;flex:0 0 auto}
-  .card .body{flex:1}
-  .card h3{font-size:15px;margin-bottom:2px}
-  .card p{font-size:12px;color:var(--muted)}
+    padding:10px 14px;font-size:13px;margin-bottom:14px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:14px;
+    padding:14px;margin-bottom:14px}
+  .panel .head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .panel .ico{font-size:26px}
+  .panel h3{font-size:16px;flex:1}
+  .panel p{font-size:12px;color:var(--muted);margin-bottom:10px}
   .btn{display:inline-block;background:var(--teal-600);color:#fff;text-decoration:none;
     font-size:13px;font-weight:600;padding:8px 16px;border-radius:10px;white-space:nowrap}
   .btn:active{transform:scale(.97)}
-  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}
+  .frame{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  .frame iframe{display:block;width:100%;height:520px;border:0}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:18px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>🏸 星羿员工工作台</h1>
-    <p>每日填报中心 · 点对应按钮去填写，提交自动汇总</p>
+    <p>每日填报中心 · 下方为两张实时表格，直接填写即可</p>
   </header>
 
-  <div class="tip">💡 以下表格用微信/QQ 直接打开即可填写，无需反复登录。每天填一次就好。</div>
+  <div class="tip">💡 表格用微信/QQ 内打开即可填写，无需反复登录。若表格区域显示登录页，说明老板还没在腾讯文档把该表设为「获得链接可编辑」。</div>
 
-  <div class="card">
-    <div class="ico">📝</div>
-    <div class="body">
+  <div class="panel">
+    <div class="head">
+      <div class="ico">📝</div>
       <h3>工作日报</h3>
-      <p>下班前填写当日工作完成情况</p>
+      <a class="btn" href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">新窗口打开</a>
     </div>
-    <a class="btn" href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">去填写</a>
+    <p>下班前填写当日工作完成情况</p>
+    <div class="frame">
+      <iframe src="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO?from=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="ico">🧒</div>
-    <div class="body">
+  <div class="panel">
+    <div class="head">
+      <div class="ico">🧒</div>
       <h3>学员上课记录</h3>
-      <p>每节课后填写学员出勤与表现</p>
+      <a class="btn" href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">新窗口打开</a>
     </div>
-    <a class="btn" href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">去填写</a>
-  </div>
-
-  <div class="card">
-    <div class="ico">⏱️</div>
-    <div class="body">
-      <h3>本人考勤</h3>
-      <p>上下班打卡记录（即将上线）</p>
+    <p>每节课后填写学员出勤与表现</p>
+    <div class="frame">
+      <iframe src="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R?from=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
     </div>
-    <a class="btn" href="#" style="background:#cbd5e1;pointer-events:none">待开通</a>
   </div>
 
   <footer>星羿羽毛球馆 · 内部工具</footer>
