@@ -146,6 +146,23 @@
   .kpi-actions .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
   .kpi-actions .btn.btn-primary{background:var(--teal-700);color:#fff;}
   .kpi-actions .btn.btn-ghost{background:var(--teal-100);color:var(--teal-700);}
+
+  /* 数据分组折叠 */
+  .data-group{margin-bottom:8px;}
+  .data-group-head{display:flex;align-items:center;justify-content:space-between;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+    color:#fff;padding:11px 14px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;user-select:none;transition:.15s;}
+  .data-group-head:active{background:rgba(255,255,255,.22);}
+  .data-group-head .dg-icon{transition:transform .2s;font-size:10px;margin-left:8px;}
+  .data-group-body{display:none;padding-top:5px;}
+  .data-group.open .data-group-body{display:block;}
+  .data-group.open .data-group-head .dg-icon{transform:rotate(180deg);}
+  .data-group-body a{display:block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+    color:#fff;text-decoration:none;padding:10px 14px;border-radius:9px;font-weight:600;font-size:12.5px;margin-bottom:5px;transition:.15s;}
+  .data-group-body a:active{background:rgba(255,255,255,.22);}
+  .data-group-body a:last-child{margin-bottom:0;}
+  .data-group-count{font-size:10.5px;opacity:.7;font-weight:400;}
+
 </style>
 </head>
 <body>
@@ -302,13 +319,6 @@
         <div class="t-when">策划/执行赛事时</div>
         <a class="go" href="saishi.html" target="_blank" rel="noopener">打开</a>
       </div>
-      <div class="tool">
-        <div class="ico">🎖️</div>
-        <div class="t-name">荣誉证书</div>
-        <div class="t-use">给孩子发定级证书 · 促发家长朋友圈转发</div>
-        <div class="t-when">考核完/开班时</div>
-        <a class="go" href="cert.html" target="_blank" rel="noopener">打开</a>
-      </div>
     </div>
   </section>
 
@@ -349,31 +359,46 @@
 
   <!-- 5. 数据 & 报表 -->
   <section class="xy-sec" id="data">
-    <div class="xy-sec-title"><span class="bar"></span>数据 & 报表<span class="hint">7 张表 · 每日自动产出</span></div>
+    <div class="xy-sec-title"><span class="bar"></span>数据 & 报表<span class="hint">点击展开</span></div>
     <div class="hub">
-      <h3>核心数据表</h3>
-      <p>所有业务数据真源，手机电脑实时共享</p>
-      <a href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank" rel="noopener">🗓️ 排课表（切标签看「课前提醒-输出」）</a>
-      <a href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank" rel="noopener">💰 续费台账（切标签看「到期预警-输出」）</a>
-      <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" rel="noopener">📊 学员体测档案</a>
-      <a href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank" rel="noopener">💳 收支记账</a>
-      <a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank" rel="noopener">📦 库存管理</a>
+      <h3>所有业务数据真源，手机电脑实时共享</h3>
 
-      <hr>
+      <div class="data-group open">
+        <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+          核心数据表 <span class="data-group-count">5 张</span>
+          <span class="dg-icon">▼</span>
+        </div>
+        <div class="data-group-body">
+          <a href="https://docs.qq.com/sheet/DQmVkaXhFYW5BbGpt" target="_blank" rel="noopener">🗓️ 排课表</a>
+          <a href="https://docs.qq.com/sheet/DQmhzUndtdE9ueXpt" target="_blank" rel="noopener">💰 续费台账</a>
+          <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" rel="noopener">📊 学员体测档案</a>
+          <a href="https://docs.qq.com/sheet/DQnFBdUxzWk54QVZX" target="_blank" rel="noopener">💳 收支记账</a>
+          <a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank" rel="noopener">📦 库存管理</a>
+        </div>
+      </div>
 
-      <h3 class="sub">运营记录</h3>
-      <a href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">📝 员工工作日报</a>
-      <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录</a>
-      <a href="work-report.html" target="_blank" rel="noopener">📈 学生动态管理图</a>
+      <div class="data-group">
+        <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+          运营记录 <span class="data-group-count">4 项</span>
+          <span class="dg-icon">▼</span>
+        </div>
+        <div class="data-group-body">
+          <a href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">📝 员工工作日报</a>
+          <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录</a>
+          <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📱 自媒体文案库（自动生成）</a>
+          <a href="work-report.html" target="_blank" rel="noopener">📈 学生动态管理图</a>
+        </div>
+      </div>
 
-      <hr>
-
-      <h3 class="sub">自动化产出（每日更新）</h3>
-      <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📱 自媒体文案库</a>
-
-      <h3 class="sub boss-only">系统管理</h3>
-      <a class="boss-only" href="https://xingyi-auth-logger-q7tyq9xg.edgeone.cool?eo_token=4ca2b11aff5758056e0cb19b14f77aee&eo_time=1786193438" target="_blank" rel="noopener">🔐 授权日志 · 查看已授权设备</a>
-      <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📱 自媒体文案库</a>
+      <div class="data-group boss-only">
+        <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+          系统管理 <span class="data-group-count">老板</span>
+          <span class="dg-icon">▼</span>
+        </div>
+        <div class="data-group-body">
+          <a href="https://xingyi-auth-logger-q7tyq9xg.edgeone.cool?eo_token=4ca2b11aff5758056e0cb19b14f77aee&eo_time=1786193438" target="_blank" rel="noopener">🔐 授权日志</a>
+        </div>
+      </div>
     </div>
   </section>
 
