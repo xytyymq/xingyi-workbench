@@ -34,13 +34,25 @@
                      .replace(/\s+/g, '');
       return b64urlDecodeBytes(b64);
     }
+    function readCookie(n) {
+      var m = document.cookie.match('(^|;)\\s*' + n + '=([^;]*)');
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    function writeCookie(n, v, days) {
+      var exp = new Date(Date.now() + days * 86400000).toUTCString();
+      document.cookie = n + '=' + encodeURIComponent(v) + ';expires=' + exp + ';path=/;SameSite=Lax';
+    }
+    // devId 双重持久：localStorage 优先，回退 cookie。
+    // 移动端(微信/iOS)清缓存或会话隔离时 localStorage 易丢，cookie 兜底可避免 devId 每次重生 -> 设备令牌不再无故失效弹门。
     function devId() {
-      let d = localStorage.getItem(LS_D);
+      var d = localStorage.getItem(LS_D);
+      if (!d) d = readCookie('xy_dev');
       if (!d) {
         d = (crypto.randomUUID ? crypto.randomUUID()
           : ('' + Math.random()).slice(2) + Date.now().toString(36));
-        localStorage.setItem(LS_D, d);
       }
+      localStorage.setItem(LS_D, d);
+      writeCookie('xy_dev', d, 400);
       return d;
     }
     function token() { return localStorage.getItem(LS_T) || ''; }
