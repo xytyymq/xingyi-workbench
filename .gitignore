@@ -1,0 +1,10 @@
+# 私密密钥与本地工具（含私钥，绝不进仓库）
+functions/api/_secrets.js
+xy-token-gen.html
+xy-private-key.pem
+xy-public-key.pem
+xy-keys.txt
+# 本地测试产物
+test_gate.mjs
+# EdgeOne 部署缓存
+.edgeone/
