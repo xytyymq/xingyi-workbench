@@ -128,20 +128,18 @@
   <!-- 模块C 学生动态管理图 -->
   <div class="card">
     <h2><span class="num">③</span>学生动态管理图</h2>
-    <p class="note">数据来自腾讯文档《学员上课记录表》。操作：腾讯文档 → 导出 CSV → 粘贴下方或上传文件 → 自动出图。</p>
+    <p class="note" id="statusNote">正在从云端加载最新数据…</p>
     <div class="csv-tools">
       <div>
-        <label>粘贴 CSV（首行表头：日期,学员,班级,教练,出勤,技能评分,进步点,待加强,家长反馈）</label>
-        <textarea id="csvText" placeholder="把从腾讯文档导出的 CSV 内容粘贴到这里…"></textarea>
+        <label>或粘贴 CSV 更新</label>
+        <textarea id="csvText" placeholder="把从腾讯文档导出的 CSV 内容粘贴到这里…" style="max-height:60px"></textarea>
       </div>
       <div>
         <label>或上传 CSV 文件</label>
-        <input type="file" id="csvFile" accept=".csv">
-        <button class="btn btn-ghost btn-sm" onclick="loadSample()">载入示例数据</button>
+        <input type="file" id="csvFile" accept=".csv" style="padding:6px 4px;font-size:12px">
       </div>
     </div>
-    <button class="btn btn-primary" onclick="renderCharts()">生成管理图</button>
-    <div class="tip">📌 折线图 = 每个学员「技能评分」随上课日期的成长趋势；柱状图 = 各学员累计上课次数（含请假也计入）。填完腾讯文档即同步进表，导出来这里就能看图。</div>
+    <button class="btn btn-primary" onclick="renderCharts()">刷新图表</button>
 
     <div class="chart-box">
       <h3>📈 学员技能成长趋势（按上课日期）</h3>
@@ -161,70 +159,74 @@
 </div>
 
 <script>
-const SAMPLE = `日期,学员,班级,教练,出勤,技能评分,进步点,待加强,家长反馈
-2026-08-01,小明,初级班,王教练,出勤,3,握拍更稳定,步伐移动,家长满意
-2026-08-04,小明,初级班,王教练,出勤,4,发球落点准,高远球,家长满意
-2026-08-08,小明,初级班,王教练,出勤,4,网前小球,体能,良好
-2026-08-02,小红,启蒙班,李教练,出勤,2,认识场地,握拍,需鼓励
-2026-08-05,小红,启蒙班,李教练,出勤,3,基本步法,力量,良好
-2026-08-09,小红,启蒙班,李教练,请假,3,无,无,请假一次
-2026-08-03,小刚,中级班,王教练,出勤,4,扣杀有力,防守,良好
-2026-08-07,小刚,中级班,王教练,出勤,5,全场调动,无,非常好`;
+const DATA_URL = 'https://xytyymq.github.io/xingyi-workbench/data/student-records.csv';
+const SCORE_MAP = {'优秀':5,'很好':4.5,'良好':4,'一般':3,'及格':2,'待提高':1,'好':4};
 
 let trendChart=null, countChart=null;
+let autoData = null;
 
-function loadSample(){ document.getElementById('csvText').value = SAMPLE; }
+// 文字评分转数值
+function scoreToNum(s){
+  s = (s||'').trim();
+  if(!s) return null;
+  var n = parseFloat(s);
+  if(!isNaN(n)) return n;
+  return SCORE_MAP[s] || null;
+}
 
+// 从 URL 或缓存读取数据
 function getText(){
-  let t = document.getElementById('csvText').value.trim();
+  var t = document.getElementById('csvText').value.trim();
   if(t) return t;
-  return SAMPLE;
+  if(autoData) return autoData;
+  return '';
 }
 
 function parseCSV(text){
-  const lines = text.trim().split(/\r?\n/).filter(l=>l.trim());
+  var lines = text.trim().split(/\r?\n/).filter(function(l){ return l.trim(); });
   if(lines.length<2) return null;
-  const header = lines[0].split(',').map(s=>s.trim());
-  const idx = {};
-  header.forEach((h,i)=> idx[h]=i);
-  const dateI = idx['日期'] ?? 0;
-  const nameI = idx['学员'] ?? 1;
-  const scoreI = idx['技能评分'] ?? 5;
-  const rows = lines.slice(1).map(l=>l.split(',')).filter(r=>r[nameI] && r[nameI].trim());
-  return {rows, dateI, nameI, scoreI};
+  var header = lines[0].split(',').map(function(s){ return s.trim(); });
+  var idx = {};
+  header.forEach(function(h,i){ idx[h]=i; });
+  var dateI = idx['日期'] ?? 0;
+  var nameI = idx['学员'] ?? 1;
+  var scoreI = idx['技能评分'] ?? 5;
+  var rows = lines.slice(1).map(function(l){ return l.split(','); }).filter(function(r){ return r[nameI] && r[nameI].trim(); });
+  return {rows:rows, dateI:dateI, nameI:nameI, scoreI:scoreI};
 }
 
 function renderCharts(){
-  const data = parseCSV(getText());
-  if(!data){ alert('没有可解析的数据，请先粘贴/上传 CSV 或点「载入示例数据」'); return; }
-  const {rows, dateI, nameI, scoreI} = data;
+  var text = getText();
+  if(!text){ return; }
+  var data = parseCSV(text);
+  if(!data) return;
+  var rows = data.rows, dateI = data.dateI, nameI = data.nameI, scoreI = data.scoreI;
 
-  // 分组
-  const byStudent = {};   // 学员 -> {日期:评分}
-  const counts = {};       // 学员 -> 次数
-  const dateSet = new Set();
-  rows.forEach(r=>{
-    const name=r[nameI].trim(), date=r[dateI].trim(), sc=parseFloat(r[scoreI]);
+  var byStudent = {};
+  var counts = {};
+  var dateSet = new Set();
+  rows.forEach(function(r){
+    var name=r[nameI].trim(), date=r[dateI].trim(), sc=scoreToNum(r[scoreI]);
     if(!byStudent[name]) byStudent[name]={};
-    if(!isNaN(sc)) byStudent[name][date]=sc;
+    if(sc!==null) byStudent[name][date]=sc;
     dateSet.add(date);
     counts[name]=(counts[name]||0)+1;
   });
-  const dates = [...dateSet].sort();
+  var dates = Array.from(dateSet).sort();
 
-  const palette = ['#0f766e','#ef7d4f','#e0a93b','#14b8a6','#6366f1','#dc2626','#16a34a'];
-  const datasets = Object.keys(byStudent).map((name,i)=>({
+  var palette = ['#0f766e','#ef7d4f','#e0a93b','#14b8a6','#6366f1','#dc2626','#16a34a'];
+  var datasets = Object.keys(byStudent).map(function(name,i){ return {
     label:name,
-    data:dates.map(d=> byStudent[name][d] ?? null),
+    data:dates.map(function(d){ return byStudent[name][d] !== undefined ? byStudent[name][d] : null; }),
     borderColor:palette[i%palette.length],
     backgroundColor:palette[i%palette.length],
     spanGaps:true, tension:.25, pointRadius:4
-  }));
+  };});
 
   if(trendChart) trendChart.destroy();
   trendChart = new Chart(document.getElementById('trendChart'),{
     type:'line',
-    data:{ labels:dates, datasets },
+    data:{ labels:dates, datasets:datasets },
     options:{ responsive:true, plugins:{ legend:{position:'top',labels:{font:{size:11}}} },
       scales:{ y:{ min:1,max:5,title:{display:true,text:'技能评分'} } } }
   });
@@ -234,16 +236,41 @@ function renderCharts(){
     type:'bar',
     data:{ labels:Object.keys(counts),
       datasets:[{ label:'上课次数', data:Object.values(counts),
-        backgroundColor:Object.keys(counts).map((_,i)=>palette[i%palette.length]) }] },
+        backgroundColor:Object.keys(counts).map(function(_,i){ return palette[i%palette.length]; }) }] },
     options:{ responsive:true, plugins:{ legend:{display:false} },
       scales:{ y:{ beginAtZero:true, title:{display:true,text:'次数'} } } }
   });
+
+  document.getElementById('statusNote').textContent = '✅ 已加载 '+Object.keys(byStudent).length+' 位学员，共 '+rows.length+' 条记录';
 }
 
+// 自动从云端加载
+(function autoLoad(){
+  var statusEl = document.getElementById('statusNote');
+  fetch(DATA_URL + '?t=' + Date.now())
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(function(csv){
+      autoData = csv;
+      document.getElementById('csvText').value = csv;
+      statusEl.textContent = '📡 云端数据已加载，正在生成图表…';
+      renderCharts();
+    })
+    .catch(function(e){
+      statusEl.textContent = '⚠️ 云端数据加载失败：'+e.message+'。可粘贴 CSV 或上传文件手动出图。';
+      var sample = '日期,学员,班级,教练,出勤,技能评分,进步点,待加强,家长反馈\n8.1,小明,初级班,王教练,出勤,3,握拍更稳定,步伐移动,家长满意\n8.4,小明,初级班,王教练,出勤,4,发球落点准,高远球,良好\n8.2,小红,启蒙班,李教练,出勤,2,认识场地,握拍,需鼓励\n8.5,小红,启蒙班,李教练,出勤,3,基本步法,力量,良好';
+      document.getElementById('csvText').value = sample;
+      autoData = sample;
+      renderCharts();
+    });
+})();
+
 document.getElementById('csvFile').addEventListener('change', function(e){
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=()=>{ document.getElementById('csvText').value=r.result; renderCharts(); };
+  var f=e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){ autoData=r.result; document.getElementById('csvText').value=r.result; renderCharts(); };
   r.readAsText(f,'utf-8');
 });
 </script>
