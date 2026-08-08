@@ -132,24 +132,22 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 </div>
 
 <div class="tip" style="margin:0 16px;">
-  提交的数据先存在本机，联网后自动同步到后台（腾讯文档）。清缓存或更换手机会丢失未同步数据，请务必在提交后保持网络。
+  提交的数据会自动同步到后台（腾讯文档）。联网即可提交，无需反复授权。
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// 真实同步端点：部署 EdgeOne 云函数后生效（β方案：云函数写GitHub CSV -> 自动化同步腾讯文档）。
-// GitHub Pages 下该端点 404，自动降级为本地存储，不丢数据。
-var API = location.origin + '/api/submit';
+// 提交后端：EdgeOne 函数（持有 GitHub token，前端不含任何密钥）。
+// 函数部署于 xingyi-employee-api 项目，需将该项目访问保护关闭后员工页方可直连。
+var API = 'https://xingyi-employee-api-l7ryyhya.edgeone.cool/api/submit';
 var QKEY = 'xy_emp_queue';
 
 function today(){ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},1800); }
 
-// 身份标识
 try { document.getElementById('who').textContent = '身份：' + (window.XYGate ? XYGate.roleName() : '员工'); } catch(e){}
 
-// 默认日期
 document.querySelectorAll('input[type=date]').forEach(function(el){ if(!el.value) el.value = today(); });
 
 function loadQueue(){ try { return JSON.parse(localStorage.getItem(QKEY)||'[]'); } catch(e){ return []; } }
@@ -182,14 +180,12 @@ function submitForm(type, form){
   flush();
   form.reset();
   document.querySelectorAll('input[type=date]').forEach(function(el){ if(!el.value) el.value = today(); });
-  toast('已提交 ✓（本机已存）');
+  toast('已提交 ✓（本机已存，联网即同步）');
   return false;
 }
 
 updateQueueBar();
-// 进入页面即尝试上报一次积压
 flush();
-// 网络恢复时补报
 window.addEventListener('online', flush);
 </script>
 </body>
