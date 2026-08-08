@@ -1,10 +1,12 @@
-// 星羿工作台 · 访问门（纯静态 · 非对称签名版）
+// 星羿工作台 · 访问门（纯静态 · 非对称签名版 + 临时绑定模式）
 // 设计：老板持私钥(本机)签发授权令牌，前端持公钥验签。
-// 令牌绑定设备 + 有过期时间，转发他人/换设备均无效。
+// 两种令牌：
+//   ① 设备令牌  { d:设备码, e:过期, p:用途 }           —— 绑设备，转发/换设备无效
+//   ② 绑定令牌  { bind:true, e:限时, fe:最终过期, p }  —— 不绑设备，对方点一次自动绑其本机
 // 无需任何后端，GitHub Pages 静态托管即可运行。
 (function () {
   const XYGate = (function () {
-    const LS_T = 'xy_token', LS_D = 'xy_dev';
+    const LS_T = 'xy_token', LS_D = 'xy_dev', LS_B = 'xy_bind';
     // 内联公钥 (SPKI PEM, ECDSA P-256)。公钥公开无害，无法用于伪造签名。
     const PUB_PEM = [
       '-----BEGIN PUBLIC KEY-----',
@@ -43,13 +45,22 @@
     }
     function token() { return localStorage.getItem(LS_T) || ''; }
     function authed() { return !!token(); }
-    function logout() { localStorage.removeItem(LS_T); }
+    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); }
 
-    // 验证令牌：签名有效 + 未过期 + 设备匹配
-    function verify(tokenStr) {
+    function parsePayload(t) {
+      try {
+        const parts = (t || '').split('.');
+        if (parts.length !== 2) return null;
+        const dataBytes = b64urlDecodeBytes(parts[0]);
+        return JSON.parse(new TextDecoder().decode(dataBytes));
+      } catch (e) { return null; }
+    }
+
+    // 仅验签 + 过期。ignoreDevice=true 时跳过设备码比对（绑定令牌用）
+    function verifySig(t, ignoreDevice) {
       return new Promise(function (resolve) {
         try {
-          const parts = (tokenStr || '').split('.');
+          const parts = (t || '').split('.');
           if (parts.length !== 2) return resolve(false);
           const dataBytes = b64urlDecodeBytes(parts[0]);
           const sigBytes = b64urlDecodeBytes(parts[1]);
@@ -57,7 +68,7 @@
           try { payload = JSON.parse(new TextDecoder().decode(dataBytes)); }
           catch (e) { return resolve(false); }
           if (!payload.e || payload.e < Date.now()) return resolve(false); // 过期
-          if (payload.d !== devId()) return resolve(false); // 设备不匹配
+          if (!ignoreDevice && payload.d !== devId()) return resolve(false); // 设备不匹配
           const keyBuf = pemToBuf(PUB_PEM);
           crypto.subtle.importKey('spki', keyBuf,
             { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])
@@ -70,14 +81,67 @@
         } catch (e) { resolve(false); }
       });
     }
+
+    // —— 本地绑定授权（绑定令牌消费后固化在本机）——
+    function localBind() {
+      try { return JSON.parse(localStorage.getItem(LS_B) || 'null'); } catch (e) { return null; }
+    }
+    // 用本机设备码对授权内容做完整性校验，清缓存/换设备即失效
+    function makeMac(obj) {
+      const str = JSON.stringify({ d: obj.d, e: obj.e, p: obj.p, from: obj.from });
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(devId() + ':' + str))
+        .then(function (h) { return b64urlEncodeBytes(new Uint8Array(h)); });
+    }
+    function verifyLocal() {
+      const obj = localBind();
+      if (!obj) return Promise.resolve(false);
+      if (obj.e < Date.now()) return Promise.resolve(false);   // 最终过期
+      if (obj.d !== devId()) return Promise.resolve(false);     // 设备变了
+      return makeMac(obj).then(function (mac) { return mac === obj.mac; });
+    }
+
+    // 消费令牌：签名令牌直接存；绑定令牌转为本地授权
     function consume(t) {
-      return verify(t).then(function (ok) {
+      const payload = parsePayload(t);
+      if (!payload) return Promise.resolve(false);
+      if (payload.bind === true) {
+        return verifySig(t, true).then(function (ok) {
+          if (!ok) return false;
+          const finalE = payload.fe || (Date.now() + 365 * 86400000);
+          const obj = { d: devId(), e: finalE, p: payload.p || '', from: 'bind' };
+          return makeMac(obj).then(function (mac) {
+            obj.mac = mac;
+            localStorage.setItem(LS_B, JSON.stringify(obj));
+            return true;
+          });
+        });
+      }
+      return verifySig(t, false).then(function (ok) {
         if (ok) localStorage.setItem(LS_T, t);
         return ok;
       });
     }
+
+    // 综合是否已授权（签名令牌 或 本地绑定授权）
+    function authorized() {
+      if (authed()) {
+        return verifySig(token(), false).then(function (ok) {
+          if (ok) return true;
+          localStorage.removeItem(LS_T);
+          return verifyLocalThenClear();
+        });
+      }
+      return verifyLocalThenClear();
+      function verifyLocalThenClear() {
+        return verifyLocal().then(function (ok) {
+          if (!ok) localStorage.removeItem(LS_B);
+          return ok;
+        });
+      }
+    }
+
     return { devId: devId, token: token, authed: authed, logout: logout,
-             verify: verify, consume: consume };
+             parsePayload: parsePayload, consume: consume, authorized: authorized };
   })();
   window.XYGate = XYGate;
 
@@ -106,12 +170,8 @@
     XYGate.consume(params.get('token')).then(function () {});
     return;
   }
-  // 已存令牌则异步复核（过期/换设备会被拦），无令牌直接跳授权页
-  if (XYGate.authed()) {
-    XYGate.verify(XYGate.token()).then(function (ok) {
-      if (!ok) { XYGate.logout(); location.replace(gateUrl + '?from=' + encodeURIComponent(path)); }
-    });
-  } else {
-    location.replace(gateUrl + '?from=' + encodeURIComponent(path));
-  }
+  // 已存令牌则异步复核（过期/换设备会被拦），无授权直接跳授权页
+  XYGate.authorized().then(function (ok) {
+    if (!ok) location.replace(gateUrl + '?from=' + encodeURIComponent(path));
+  });
 })();
