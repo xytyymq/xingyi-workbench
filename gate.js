@@ -107,6 +107,21 @@
       const payload = parsePayload(t);
       if (!payload) return Promise.resolve(false);
       function setRole(r) { if (r) localStorage.setItem(LS_R, r); }
+      function report(it) {
+        try {
+          // 上报到授权日志服务
+          var eut = 'https://xingyi-auth-logger-q7tyq9xg.edgeone.cool';
+          var eop = 'eo_token=4ca2b11aff5758056e0cb19b14f77aee&eo_time=1786193438';
+          fetch(eut + '/?' + eop, { method: 'HEAD', mode: 'no-cors' }).then(function () {
+            return fetch(eut + '/api/auth-log?' + eop, {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ device: it.dev, role: it.role, purpose: it.purpose,
+                time: new Date().toISOString(), ua: navigator.userAgent.substring(0, 200) })
+            });
+          }).catch(function () {});
+        } catch (e) {}
+      }
       if (payload.bind === true) {
         return verifySig(t, true).then(function (ok) {
           if (!ok) return false;
@@ -116,12 +131,17 @@
             obj.mac = mac;
             localStorage.setItem(LS_B, JSON.stringify(obj));
             setRole(payload.r);
+            report({ dev: devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
             return true;
           });
         });
       }
       return verifySig(t, false).then(function (ok) {
-        if (ok) { localStorage.setItem(LS_T, t); setRole(payload.r); }
+        if (ok) {
+          localStorage.setItem(LS_T, t);
+          setRole(payload.r);
+          report({ dev: payload.d || devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
+        }
         return ok;
       });
     }
