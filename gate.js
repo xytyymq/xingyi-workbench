@@ -6,7 +6,7 @@
 // 无需任何后端，GitHub Pages 静态托管即可运行。
 (function () {
   const XYGate = (function () {
-    const LS_T = 'xy_token', LS_D = 'xy_dev', LS_B = 'xy_bind';
+    const LS_T = 'xy_token', LS_D = 'xy_dev', LS_B = 'xy_bind', LS_R = 'xy_role';
     // 内联公钥 (SPKI PEM, ECDSA P-256)。公钥公开无害，无法用于伪造签名。
     const PUB_PEM = [
       '-----BEGIN PUBLIC KEY-----',
@@ -45,7 +45,9 @@
     }
     function token() { return localStorage.getItem(LS_T) || ''; }
     function authed() { return !!token(); }
-    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); }
+    function role() { return localStorage.getItem(LS_R) || 'boss'; }
+    function roleName() { var m={boss:'老板',coach:'教练',admin:'教务'}; return m[role()] || '老板'; }
+    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); localStorage.removeItem(LS_R); }
 
     function parsePayload(t) {
       try {
@@ -104,6 +106,7 @@
     function consume(t) {
       const payload = parsePayload(t);
       if (!payload) return Promise.resolve(false);
+      function setRole(r) { if (r) localStorage.setItem(LS_R, r); }
       if (payload.bind === true) {
         return verifySig(t, true).then(function (ok) {
           if (!ok) return false;
@@ -112,12 +115,13 @@
           return makeMac(obj).then(function (mac) {
             obj.mac = mac;
             localStorage.setItem(LS_B, JSON.stringify(obj));
+            setRole(payload.r);
             return true;
           });
         });
       }
       return verifySig(t, false).then(function (ok) {
-        if (ok) localStorage.setItem(LS_T, t);
+        if (ok) { localStorage.setItem(LS_T, t); setRole(payload.r); }
         return ok;
       });
     }
@@ -126,21 +130,27 @@
     function authorized() {
       if (authed()) {
         return verifySig(token(), false).then(function (ok) {
-          if (ok) return true;
+          if (ok) {
+            // 回顾时恢复角色
+            var p = parsePayload(token());
+            if (p && p.r) localStorage.setItem(LS_R, p.r);
+            return true;
+          }
           localStorage.removeItem(LS_T);
+          localStorage.removeItem(LS_R);
           return verifyLocalThenClear();
         });
       }
       return verifyLocalThenClear();
       function verifyLocalThenClear() {
         return verifyLocal().then(function (ok) {
-          if (!ok) localStorage.removeItem(LS_B);
+          if (!ok) { localStorage.removeItem(LS_B); localStorage.removeItem(LS_R); }
           return ok;
         });
       }
     }
 
-    return { devId: devId, token: token, authed: authed, logout: logout,
+    return { devId: devId, token: token, authed: authed, logout: logout, role: role, roleName: roleName,
              parsePayload: parsePayload, consume: consume, authorized: authorized };
   })();
   window.XYGate = XYGate;
@@ -173,5 +183,9 @@
   // 已存令牌则异步复核（过期/换设备会被拦），无授权直接跳授权页
   XYGate.authorized().then(function (ok) {
     if (!ok) location.replace(gateUrl + '?from=' + encodeURIComponent(path));
+    else {
+      // 注入角色标识到 body，页面可通过 CSS/JS 控制可见内容
+      document.body.classList.add('xy-role-' + XYGate.role());
+    }
   });
 })();
