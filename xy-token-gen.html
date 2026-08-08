@@ -63,6 +63,18 @@
     </div>
   </div>
 
+  <div class="row" style="margin-top:0">
+    <div>
+      <label>角色权限</label>
+      <select id="role" style="width:100%;padding:11px 12px;border:1.5px solid #d6e6e4;border-radius:10px;font-size:14px;outline:none;font-family:inherit;background:#fff">
+        <option value="boss">老板（全量）</option>
+        <option value="coach">教练</option>
+        <option value="admin">教务</option>
+      </select>
+    </div>
+    <div style="flex:0"></div>
+  </div>
+
   <div class="row" id="bindRow" style="display:none;margin-top:0">
     <div>
       <label>链接有效期（小时，默认24）</label>
@@ -132,8 +144,9 @@
     err.textContent='';
     var privPem = document.getElementById('priv').value.trim();
     var dev = document.getElementById('dev').value.trim();
-    var purpose = document.getElementById('purpose').value.trim();
-    var days = parseInt(document.getElementById('days').value,10) || 365;
+      var purpose = document.getElementById('purpose').value.trim();
+      var role = document.getElementById('role').value;
+      var days = parseInt(document.getElementById('days').value,10) || 365;
     var base = document.getElementById('base').value.trim().replace(/\/+$/,'') + '/';
     if(!privPem){ err.textContent='请粘贴私钥'; return; }
     if(!bindMode.checked && !dev){ err.textContent='请填写员工设备授权码'; return; }
@@ -146,9 +159,9 @@
       if (bindMode.checked){
         var hours = parseInt(document.getElementById('hours').value,10) || 24;
         var bindDays = parseInt(document.getElementById('bindDays').value,10) || 365;
-        payload = { bind:true, e: Date.now() + hours*3600000, fe: Date.now() + bindDays*86400000, p: purpose };
+        payload = { bind:true, e: Date.now() + hours*3600000, fe: Date.now() + bindDays*86400000, r: role, p: purpose };
       } else {
-        payload = { d: dev, e: Date.now() + days*86400000, p: purpose };
+        payload = { d: dev, e: Date.now() + days*86400000, r: role, p: purpose };
       }
       var data = new TextEncoder().encode(JSON.stringify(payload));
       var sig = await crypto.subtle.sign({name:'ECDSA', hash:'SHA-256'}, priv, data);
