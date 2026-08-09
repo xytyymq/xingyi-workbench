@@ -179,17 +179,19 @@ svg{width:100%;height:auto;display:block;}
   <!-- 数据管理 -->
   <div class="card">
     <h2><span class="num">⚙</span>数据管理</h2>
-    <p style="font-size:12.5px;color:#475569;">数据默认存在本机浏览器。换设备前先导出备份，到新设备点"导入"即可。</p>
-    <button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇️ 导出备份(JSON)</button>
-    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ 导出表格(CSV，可粘进腾讯文档)</button>
-    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 导入备份(JSON)</button>
-    <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importJSON(event)">
-    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">📤 手动导出备份(JSON)</button>
-    <div id="syncStatus" class="tip">☁️ 同步状态：初始化…</div>
-    <button class="btn btn-ghost btn-sm" onclick="syncUpstream()">🔄 立即同步到云端</button>
-    <div class="tip" id="syncTip">☁️ <b>云端主档（GitHub Pages，公开永久）：</b><br>
-      带「GitHub写凭证」的授权链接进来的教练/教务，录完体测<b>自动写回云端</b>，所有人打开即看到统一数据。<br>
-      <a href="https://xytyymq.github.io/xingyi-workbench/data/profiles.json" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 查看云端主档</a> ｜ 若没写凭证则只存本机，点上方按钮可手动同步。</div>
+    <div id="syncStatus" style="font-size:14px;font-weight:700;color:#0f766e;padding:10px 12px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;margin:2px 0 10px;">⏳ 正在检查云端…</div>
+    <button class="btn btn-primary btn-sm" id="syncRetry" style="display:none;" onclick="syncUpstream()">🔄 立即重试</button>
+    <p style="font-size:12.5px;color:#475569;margin:0 0 10px;">录入的数据会<b>自动上传云端</b>，不用点任何同步按钮。断网也不怕：先存本机，联网后自动补传，所有人打开看到的都是同一份。</p>
+    <details style="font-size:12.5px;color:#64748b;">
+      <summary style="cursor:pointer;color:#0f766e;font-weight:600;">备份与导出（一般用不到）</summary>
+      <div style="padding-top:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇️ 导出备份(JSON)</button>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ 导出表格(CSV)</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 导入备份(JSON)</button>
+        <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importJSON(event)">
+        <div style="margin-top:6px;"><a href="https://xytyymq.github.io/xingyi-workbench/data/profiles.json" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 查看云端主档原始数据</a></div>
+      </div>
+    </details>
   </div>
 
   <div class="note" style="text-align:center;">星羿羽毛球馆 · 体测档案 · 数据本地保存，注意备份</div>
@@ -246,7 +248,8 @@ let data = load();
 let current = null;
 
 function load(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } catch(e){ return []; } }
-function save(){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
+// 保存即自动同步：除非显式传 noSync（启动合并/同步内部回写时用）
+function save(noSync){ localStorage.setItem(LS_KEY, JSON.stringify(data)); if(!noSync && window.scheduleSync) scheduleSync(); }
 
 function addStudent(){
   const name = sName.value.trim();
@@ -328,8 +331,7 @@ function saveTest(){
   if(!any){ alert("至少填一项实测数据"); return; }
   st.tests.push(rec); st.tests.sort((a,b)=>a.date.localeCompare(b.date)); save();
   renderOverview();
-  alert("已保存！成长概览和趋势图已更新。");
-  syncUpstream();
+  alert("已保存！成长概览和趋势图已更新，数据会自动上传云端，无需其他操作。");
 }
 
 function valAt(st, key){
@@ -772,45 +774,122 @@ function b64utf8(str){
 function decodeB64(str){
   return decodeURIComponent(escape(atob(str.replace(/\s/g,''))));
 }
-async function getCloud(){
-  const r = await fetch('data/profiles.json?t=' + Date.now());
-  if(!r.ok) return null;
-  try { return await r.json(); } catch(e){ return null; }
-}
-// 启动：拉公开主档（所有人统一视图），本机优先合并
-(async function bootCloud(){
-  const cloud = await getCloud();
-  if(cloud){ data = mergeLocalFirst(data, cloud); save(); }
-  renderStudents(); renderEntry(); renderOverview();
-})();
+// ========== 自动同步引擎（无需任何手动操作）==========
+const LS_DIRTY = 'xy_arch_dirty';       // 本机有未上传改动
+const LS_LASTOK = 'xy_arch_lastok';     // 上次成功同步时间
+let _syncTimer = null, _syncing = false, _retryN = 0, _booted = false;
 
-async function syncUpstream(){
-  const gt = (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : '';
-  if(!gt){ setSync('⚠️ 未配置写凭证：仅存本机。让老板重发带「GitHub写凭证」的授权链接即可自动同步'); return; }
-  try {
-    const gr = await fetch(GH_API, { headers: { 'Authorization':'token '+gt, 'Accept':'application/vnd.github+json' } });
-    if(!gr.ok){ setSync('⚠️ 云端读取失败（写凭证无效或无权限）'); return; }
-    const gj = await gr.json();
-    const cloud = JSON.parse(decodeB64(gj.content));
-    const merged = mergeLocalFirst(data, cloud);
-    const putBody = JSON.stringify({
-      message: '体测同步 ' + new Date().toISOString().slice(0,19).replace('T',' '),
+function _dirty(v){ try{ v ? localStorage.setItem(LS_DIRTY,'1') : localStorage.removeItem(LS_DIRTY); }catch(e){} }
+function _isDirty(){ try{ return localStorage.getItem(LS_DIRTY)==='1'; }catch(e){ return false; } }
+function _hhmm(){ const d=new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+
+// 数据一变就排队上传（防抖），页面上不需要点任何按钮
+function scheduleSync(delay){
+  _dirty(true);
+  if(_booted) setSync('pending');
+  clearTimeout(_syncTimer);
+  _syncTimer = setTimeout(runSync, typeof delay==='number' ? delay : 1500);
+}
+window.scheduleSync = scheduleSync;
+
+async function runSync(){
+  if(_syncing || !_isDirty()) return;
+  if(!navigator.onLine){ setSync('offline'); return; }
+  if(!_gt()){ setSync('nogt'); return; }
+  _syncing = true; setSync('syncing');
+  let ok = false;
+  try { ok = await pushOnce(_gt()); } catch(e){ ok = false; }
+  _syncing = false;
+  if(ok){ _retryN = 0; _dirty(false); try{ localStorage.setItem(LS_LASTOK, Date.now()+''); }catch(e){} setSync('ok'); return; }
+  // 失败：自动退避重试，用户不用管
+  const waits = [5000, 15000, 60000, 180000, 600000];
+  if(_retryN < waits.length){
+    const w = waits[_retryN++];
+    setSync('retry');
+    clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(runSync, w);
+  } else { setSync('fail'); }
+}
+
+async function pushOnce(gt){
+  const H = { 'Authorization':'token '+gt, 'Accept':'application/vnd.github+json' };
+  const gr = await fetch(GH_API, { headers: H, cache: 'no-store' });
+  if(!gr.ok) return false;
+  const gj = await gr.json();
+  let cloud = [];
+  try { cloud = JSON.parse(decodeB64(gj.content)); } catch(e){ cloud = []; }
+  const merged = mergeLocalFirst(data, cloud);
+  const put = await fetch(GH_API, {
+    method: 'PUT',
+    headers: Object.assign({ 'Content-Type':'application/json' }, H),
+    body: JSON.stringify({
+      message: '体测自动同步 ' + new Date().toISOString().slice(0,19).replace('T',' '),
       content: b64utf8(JSON.stringify(merged, null, 2)),
       sha: gj.sha
-    });
-    let pr = await fetch(GH_API, { method:'PUT', headers: { 'Authorization':'token '+gt, 'Content-Type':'application/json', 'Accept':'application/vnd.github+json' }, body: putBody });
-    if(pr.ok){ data = merged; save(); setSync('✅ 已同步云端（'+merged.length+'位学员）'); return; }
-    if(pr.status === 409){ // 并发冲突，重新拉取再写一次
-      const g2 = await (await fetch(GH_API, { headers:{ 'Authorization':'token '+gt, 'Accept':'application/vnd.github+json' } })).json();
-      const c2 = JSON.parse(decodeB64(g2.content));
-      const m2 = mergeLocalFirst(data, c2);
-      const pr2 = await fetch(GH_API, { method:'PUT', headers:{ 'Authorization':'token '+gt, 'Content-Type':'application/json', 'Accept':'application/vnd.github+json' }, body: JSON.stringify({ message:'体测同步(重试) '+new Date().toISOString().slice(0,19).replace('T',' '), content:b64utf8(JSON.stringify(m2,null,2)), sha:g2.sha }) });
-      if(pr2.ok){ data = m2; save(); setSync('✅ 已同步云端（重试成功）'); return; }
-    }
-    setSync('⚠️ 云端写入失败，已存本机（稍后点「立即同步」重试）');
-  } catch(e){ setSync('⚠️ 同步失败（网络/凭证），已存本机'); }
+    })
+  });
+  if(put.ok){ data = merged; save(1); renderStudents(); renderOverview(); return true; }
+  return false;   // 409/422 冲突：下一轮会重新取 sha，自然解决
 }
-function setSync(msg){ const el=document.getElementById('syncStatus'); if(el) el.textContent='☁️ 同步状态：'+msg; }
+
+// 兼容旧调用（页面上已无手动按钮）
+function syncUpstream(){ _dirty(true); _retryN = 0; runSync(); }
+
+function setSync(state){
+  const el = document.getElementById('syncStatus');
+  const btn = document.getElementById('syncRetry');
+  if(!el) return;
+  const last = (function(){ try{ const t=+localStorage.getItem(LS_LASTOK); return t? new Date(t):null; }catch(e){ return null; } })();
+  const lastTxt = last ? ('（上次成功 ' + ('0'+last.getHours()).slice(-2)+':'+('0'+last.getMinutes()).slice(-2) + '）') : '';
+  const M = {
+    ok:      ['✅ 已自动同步云端 · ' + _hhmm(), '#0f766e'],
+    syncing: ['⏳ 正在自动同步…', '#0369a1'],
+    pending: ['⏳ 有新数据，马上自动上传…', '#0369a1'],
+    retry:   ['⏳ 网络不太稳，正在自动重试…' + lastTxt, '#b45309'],
+    offline: ['📴 当前无网络，联网后会自动补传' + lastTxt, '#b45309'],
+    nogt:    ['📱 本机仅存本地：找老板要一次授权链接，点开后永久自动同步', '#b45309'],
+    fail:    ['⚠️ 自动同步暂时失败，数据已安全存在本机' + lastTxt, '#b91c1c'],
+    idle:    ['✅ 数据已是最新' + lastTxt, '#0f766e']
+  };
+  const m = M[state] || M.idle;
+  el.textContent = m[0];
+  el.style.color = m[1];
+  if(btn) btn.style.display = (state==='fail') ? 'inline-block' : 'none';
+}
+
+async function getCloud(){
+  try {
+    const r = await fetch('data/profiles.json?t=' + Date.now(), { cache:'no-store' });
+    if(!r.ok) return null;
+    return await r.json();
+  } catch(e){ return null; }
+}
+
+// 启动：拉公开主档统一视图 + 自动补传上次没传完的
+(async function bootCloud(){
+  const cloud = await getCloud();
+  let needPush = false;
+  if(cloud){
+    const cmap = {}; cloud.forEach(s => cmap[s.id] = s);
+    needPush = data.some(s => {
+      const cs = cmap[s.id];
+      if(!cs) return true;
+      const cd = {}; (cs.tests||[]).forEach(t => cd[t.date] = 1);
+      return (s.tests||[]).some(t => !cd[t.date]);
+    });
+    data = mergeLocalFirst(data, cloud); save(1);
+  }
+  renderStudents(); renderEntry(); renderOverview();
+  _booted = true;
+  if(needPush || _isDirty()) scheduleSync(1200);
+  else setSync(_gt() ? 'idle' : 'nogt');
+})();
+
+// 网络恢复 / 回到前台 / 定时兜底：自动补传，用户无感
+window.addEventListener('online', function(){ if(_isDirty()){ _retryN=0; scheduleSync(800); } });
+document.addEventListener('visibilitychange', function(){ if(!document.hidden && _isDirty()){ _retryN=0; scheduleSync(800); } });
+setInterval(function(){ if(_isDirty() && !_syncing) runSync(); }, 180000);
 </script>
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 学员体测档案<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
 </body>
