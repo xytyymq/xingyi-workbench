@@ -1,0 +1,56 @@
+[
+  {
+    "id": "SDEMO",
+    "name": "示例学员(可删)",
+    "age": "8",
+    "gender": "男",
+    "cls": "初级班",
+    "createdAt": "2026-08-05",
+    "tests": [
+      {
+        "date": "2026-07-10",
+        "m": {
+          "height": 120,
+          "weight": 24,
+          "sitReach": 8,
+          "singleStand": 30,
+          "wallSquat": 40,
+          "posture": "正常/正常/正常",
+          "run50": 11,
+          "standingJump": 125,
+          "verticalJump": 24,
+          "rope": 85,
+          "swing15": 24,
+          "footwork": 19,
+          "reaction": 0.9,
+          "serve": 6,
+          "rally": 12,
+          "clear": 6
+        },
+        "note": "基线测试"
+      },
+      {
+        "date": "2026-08-05",
+        "m": {
+          "height": 121,
+          "weight": 24.5,
+          "sitReach": 11,
+          "singleStand": 45,
+          "wallSquat": 55,
+          "posture": "正常/正常/正常",
+          "run50": 9.8,
+          "standingJump": 140,
+          "verticalJump": 28,
+          "rope": 105,
+          "swing15": 29,
+          "footwork": 16,
+          "reaction": 0.75,
+          "serve": 8,
+          "rally": 18,
+          "clear": 9
+        },
+        "note": "一个月后进步明显"
+      }
+    ]
+  }
+]
