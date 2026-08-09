@@ -1,0 +1,5 @@
+{
+  "baseUrl": "https://xingyi-profile-sync-s103h5dx.edgeone.cool/api/profile",
+  "token": "eo_token=2b568effdaa6d0b906b2c550abf20a26&eo_time=1786276528",
+  "note": "eo_token 为 EdgeOne 预览保护临时凭证，需要 SSO 登录且会过期。在 EdgeOne 控制台关闭该项目的「访问密码/预览保护」后，可清空 token 字段，写入侧即永久自动可用。"
+}
