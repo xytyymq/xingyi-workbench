@@ -184,12 +184,12 @@ svg{width:100%;height:auto;display:block;}
     <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ 导出表格(CSV，可粘进腾讯文档)</button>
     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 导入备份(JSON)</button>
     <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importJSON(event)">
-    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">📤 导出并推送到腾讯文档</button>
+    <button class="btn btn-primary btn-sm" onclick="pushToCloud()">📤 手动导出备份(JSON)</button>
     <div id="syncStatus" class="tip">☁️ 同步状态：初始化…</div>
     <button class="btn btn-ghost btn-sm" onclick="syncUpstream()">🔄 立即同步到云端</button>
-    <div class="tip" id="syncTip">☁️ <b>云端主档已建好（腾讯文档）：</b><br>
-      <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 打开《星羿·学员体测档案》</a><br>
-      手机电脑都能直接看。在球馆录完数据后，点上方"导出并推送到腾讯文档"，把下载的文件发给我（星星），我帮你更新这张表，全校验实时共享。</div>
+    <div class="tip" id="syncTip">☁️ <b>云端主档（GitHub Pages，公开永久）：</b><br>
+      带「GitHub写凭证」的授权链接进来的教练/教务，录完体测<b>自动写回云端</b>，所有人打开即看到统一数据。<br>
+      <a href="https://xytyymq.github.io/xingyi-workbench/data/profiles.json" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 查看云端主档</a> ｜ 若没写凭证则只存本机，点上方按钮可手动同步。</div>
   </div>
 
   <div class="note" style="text-align:center;">星羿羽毛球馆 · 体测档案 · 数据本地保存，注意备份</div>
@@ -744,43 +744,71 @@ function pushToCloud(){
   alert("备份已导出。把下载的 JSON 文件发给我（星星），我立刻帮你更新腾讯文档云端主档，手机电脑实时共享。");
 }
 
-let EDGE = null; // {baseUrl, token} 来自 data/edgeone-token.json
-loadEdgeToken().then(loadCloud).then(function(){ renderStudents(); renderEntry(); renderOverview(); });
+// ===== 云端同步（直连 GitHub Contents API，无需后端/无 SSO 墙）=====
+const GH_REPO = 'xytyymq/xingyi-workbench';
+const GH_PATH = 'data/profiles.json';
+const GH_API = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_PATH;
 
-async function loadEdgeToken(){
-  try { const r = await fetch('data/edgeone-token.json'); if(r.ok) EDGE = await r.json(); } catch(e){}
-}
-async function loadCloud(){
-  if(!EDGE || !EDGE.baseUrl) return;
-  try {
-    const r = await fetch('data/profiles.json?t=' + Date.now());
-    if(!r.ok) return;
-    const cloud = await r.json();
-    mergeCloud(cloud); save();
-  } catch(e){}
-}
-function mergeCloud(cloud){
+// 本机优先合并：本机数据保留，云端只补充本机缺失的学员/test
+function mergeLocalFirst(local, cloud){
   const map = {};
-  data.forEach(s=>map[s.id]=s);
-  cloud.forEach(cs=>{
+  local.forEach(s => map[s.id] = JSON.parse(JSON.stringify(s)));
+  (cloud || []).forEach(cs => {
     if(map[cs.id]){
-      const tm = {}; map[cs.id].tests.forEach(t=>tm[t.date]=t);
-      cs.tests.forEach(t=>tm[t.date]=t);
+      const tm = {};
+      map[cs.id].tests.forEach(t => tm[t.date] = t);
+      (cs.tests || []).forEach(t => { if(!tm[t.date]) tm[t.date] = t; });
       map[cs.id].tests = Object.values(tm).sort((a,b)=>a.date.localeCompare(b.date));
-      if(cs.name) map[cs.id].name=cs.name;
-      if(cs.age) map[cs.id].age=cs.age;
-      if(cs.gender) map[cs.id].gender=cs.gender;
-      if(cs.cls) map[cs.id].cls=cs.cls;
-    } else { data.push(cs); }
+    } else { map[cs.id] = JSON.parse(JSON.stringify(cs)); }
   });
+  return Object.values(map);
 }
+function b64utf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for(let i=0;i<bytes.length;i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+function decodeB64(str){
+  return decodeURIComponent(escape(atob(str.replace(/\s/g,''))));
+}
+async function getCloud(){
+  const r = await fetch('data/profiles.json?t=' + Date.now());
+  if(!r.ok) return null;
+  try { return await r.json(); } catch(e){ return null; }
+}
+// 启动：拉公开主档（所有人统一视图），本机优先合并
+(async function bootCloud(){
+  const cloud = await getCloud();
+  if(cloud){ data = mergeLocalFirst(data, cloud); save(); }
+  renderStudents(); renderEntry(); renderOverview();
+})();
+
 async function syncUpstream(){
-  if(!EDGE || !EDGE.baseUrl){ setSync('未配置云端，仅存本机'); return; }
-  const url = EDGE.baseUrl + (EDGE.token ? '?'+EDGE.token : '');
+  const gt = (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : '';
+  if(!gt){ setSync('⚠️ 未配置写凭证：仅存本机。让老板重发带「GitHub写凭证」的授权链接即可自动同步'); return; }
   try {
-    const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token: XYGate.token(), records: data})});
-    setSync(r.ok ? '已同步云端 ✓' : '云端拒绝（授权过期），已存本机');
-  } catch(e){ setSync('云端同步失败（网络/授权），已存本机'); }
+    const gr = await fetch(GH_API, { headers: { 'Authorization':'token '+gt, 'Accept':'application/vnd.github+json' } });
+    if(!gr.ok){ setSync('⚠️ 云端读取失败（写凭证无效或无权限）'); return; }
+    const gj = await gr.json();
+    const cloud = JSON.parse(decodeB64(gj.content));
+    const merged = mergeLocalFirst(data, cloud);
+    const putBody = JSON.stringify({
+      message: '体测同步 ' + new Date().toISOString().slice(0,19).replace('T',' '),
+      content: b64utf8(JSON.stringify(merged, null, 2)),
+      sha: gj.sha
+    });
+    let pr = await fetch(GH_API, { method:'PUT', headers: { 'Authorization':'token '+gt, 'Content-Type':'application/json', 'Accept':'application/vnd.github+json' }, body: putBody });
+    if(pr.ok){ data = merged; save(); setSync('✅ 已同步云端（'+merged.length+'位学员）'); return; }
+    if(pr.status === 409){ // 并发冲突，重新拉取再写一次
+      const g2 = await (await fetch(GH_API, { headers:{ 'Authorization':'token '+gt, 'Accept':'application/vnd.github+json' } })).json();
+      const c2 = JSON.parse(decodeB64(g2.content));
+      const m2 = mergeLocalFirst(data, c2);
+      const pr2 = await fetch(GH_API, { method:'PUT', headers:{ 'Authorization':'token '+gt, 'Content-Type':'application/json', 'Accept':'application/vnd.github+json' }, body: JSON.stringify({ message:'体测同步(重试) '+new Date().toISOString().slice(0,19).replace('T',' '), content:b64utf8(JSON.stringify(m2,null,2)), sha:g2.sha }) });
+      if(pr2.ok){ data = m2; save(); setSync('✅ 已同步云端（重试成功）'); return; }
+    }
+    setSync('⚠️ 云端写入失败，已存本机（稍后点「立即同步」重试）');
+  } catch(e){ setSync('⚠️ 同步失败（网络/凭证），已存本机'); }
 }
 function setSync(msg){ const el=document.getElementById('syncStatus'); if(el) el.textContent='☁️ 同步状态：'+msg; }
 </script>
