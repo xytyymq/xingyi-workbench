@@ -58,8 +58,8 @@
       <input type="text" id="purpose" placeholder="如：教练-张三">
     </div>
     <div>
-      <label>有效天数</label>
-      <input type="number" id="days" value="365" min="1" max="3650">
+      <label>有效天数（0 = 永久，推荐）</label>
+      <input type="number" id="days" value="0" min="0" max="3650">
     </div>
   </div>
 
@@ -77,7 +77,8 @@
 
   <label>GitHub 写凭证（细粒度 Token · 选填，建议填）</label>
   <input type="text" id="gt" placeholder="gho_xxx 或 github_pat_xxx（只限本仓库 contents:write）">
-  <div class="warn" style="margin-top:8px">📌 填了它，员工点链接进来就能<b>直接把体测/上课记录写回云端主档</b>（自动同步，不用再上传导出）。不填则员工只能看、不能写。生成后此凭证随授权链接下发，请勿泄露给无关人员。</div>
+  <div class="chk"><input type="checkbox" id="rememberGt"><label for="rememberGt" style="margin:0">记住写凭证到本机浏览器（下次免粘贴）</label></div>
+  <div class="warn" style="margin-top:8px">📌 填了它，员工点链接进来就能<b>直接把体测/上课记录写回云端主档</b>（全自动，员工不用点任何同步按钮）。不填则员工只能看、不能写。生成后此凭证随授权链接下发，请勿泄露给无关人员。</div>
 
   <div class="row" id="bindRow" style="display:none;margin-top:0">
     <div>
@@ -85,8 +86,8 @@
       <input type="number" id="hours" value="24" min="1" max="168">
     </div>
     <div>
-      <label>授权时长（天，默认365）</label>
-      <input type="number" id="bindDays" value="365" min="1" max="3650">
+      <label>授权时长（0 = 永久）</label>
+      <input type="number" id="bindDays" value="0" min="0" max="3650">
     </div>
   </div>
 
@@ -118,9 +119,11 @@
     return bytes;
   }
 
-  // 记住私钥到本机浏览器
+  // 记住私钥 / 写凭证到本机浏览器（下次打开直接用，只填设备码即可）
   var saved = localStorage.getItem('xy_gen_priv');
-  if (saved) document.getElementById('priv').value = saved;
+  if (saved) { document.getElementById('priv').value = saved; document.getElementById('remember').checked = true; }
+  var savedGt = localStorage.getItem('xy_gen_gt');
+  if (savedGt) { document.getElementById('gt').value = savedGt; document.getElementById('rememberGt').checked = true; }
 
   // 绑定模式切换
   var bindMode = document.getElementById('bindMode');
@@ -150,24 +153,26 @@
     var dev = document.getElementById('dev').value.trim();
       var purpose = document.getElementById('purpose').value.trim();
       var role = document.getElementById('role').value;
-      var days = parseInt(document.getElementById('days').value,10) || 365;
+      var days = parseInt(document.getElementById('days').value,10) || 0;   // 0 = 永久
       var gt = document.getElementById('gt').value.trim();
     var base = document.getElementById('base').value.trim().replace(/\/+$/,'') + '/';
     if(!privPem){ err.textContent='请粘贴私钥'; return; }
     if(!bindMode.checked && !dev){ err.textContent='请填写员工设备授权码'; return; }
     if(document.getElementById('remember').checked){ localStorage.setItem('xy_gen_priv', privPem); }
     else { localStorage.removeItem('xy_gen_priv'); }
+    if(document.getElementById('rememberGt').checked && gt){ localStorage.setItem('xy_gen_gt', gt); }
+    else if(!document.getElementById('rememberGt').checked){ localStorage.removeItem('xy_gen_gt'); }
     try{
       var priv = await crypto.subtle.importKey('pkcs8', pemToBuf(privPem),
         {name:'ECDSA', namedCurve:'P-256'}, false, ['sign']);
       var payload;
       if (bindMode.checked){
         var hours = parseInt(document.getElementById('hours').value,10) || 24;
-        var bindDays = parseInt(document.getElementById('bindDays').value,10) || 365;
-        payload = { bind:true, e: Date.now() + hours*3600000, fe: Date.now() + bindDays*86400000, r: role, p: purpose };
+        var bindDays = parseInt(document.getElementById('bindDays').value,10) || 0;
+        payload = { bind:true, e: Date.now() + hours*3600000, fe: bindDays>0 ? Date.now()+bindDays*86400000 : 0, r: role, p: purpose };
         if (gt) payload.gt = gt;
       } else {
-        payload = { d: dev, e: Date.now() + days*86400000, r: role, p: purpose };
+        payload = { d: dev, e: days>0 ? Date.now()+days*86400000 : 0, r: role, p: purpose };
         if (gt) payload.gt = gt;
       }
       var data = new TextEncoder().encode(JSON.stringify(payload));
