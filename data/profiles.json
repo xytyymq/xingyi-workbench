@@ -1,22 +1,5 @@
 [
   {
-    "id": "ZZTEST-AUTOSYNC",
-    "name": "自动同步测试",
-    "age": "9",
-    "gender": "男",
-    "cls": "测试班",
-    "createdAt": "2026-08-09",
-    "tests": [
-      {
-        "date": "2026-08-09",
-        "m": {
-          "height": 130,
-          "weight": 28
-        }
-      }
-    ]
-  },
-  {
     "id": "SDEMO",
     "name": "示例学员(可删)",
     "age": "8",
