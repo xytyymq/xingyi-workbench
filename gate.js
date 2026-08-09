@@ -6,7 +6,7 @@
 // 无需任何后端，GitHub Pages 静态托管即可运行。
 (function () {
   const XYGate = (function () {
-    const LS_T = 'xy_token', LS_D = 'xy_dev', LS_B = 'xy_bind', LS_R = 'xy_role';
+    const LS_T = 'xy_token', LS_D = 'xy_dev', LS_B = 'xy_bind', LS_R = 'xy_role', LS_GT = 'xy_ght';
     // 内联公钥 (SPKI PEM, ECDSA P-256)。公钥公开无害，无法用于伪造签名。
     const PUB_PEM = [
       '-----BEGIN PUBLIC KEY-----',
@@ -59,7 +59,8 @@
     function authed() { return !!token(); }
     function role() { return localStorage.getItem(LS_R) || 'boss'; }
     function roleName() { var m={boss:'老板',coach:'教练',admin:'教务'}; return m[role()] || '老板'; }
-    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); localStorage.removeItem(LS_R); }
+    function ghToken() { return localStorage.getItem(LS_GT) || ''; }   // GitHub 写凭证（授权链接下发）
+    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); localStorage.removeItem(LS_R); localStorage.removeItem(LS_GT); }
 
     function parsePayload(t) {
       try {
@@ -118,7 +119,10 @@
     function consume(t) {
       const payload = parsePayload(t);
       if (!payload) return Promise.resolve(false);
-      function setRole(r) { if (r) localStorage.setItem(LS_R, r); }
+      function setRole(r, gt) {
+        if (r) localStorage.setItem(LS_R, r);
+        if (gt) localStorage.setItem(LS_GT, gt);   // 授权链接下发的 GitHub 写凭证
+      }
       function report(it) {
         try {
           // 上报到授权日志服务
@@ -142,7 +146,7 @@
           return makeMac(obj).then(function (mac) {
             obj.mac = mac;
             localStorage.setItem(LS_B, JSON.stringify(obj));
-            setRole(payload.r);
+            setRole(payload.r, payload.gt);
             report({ dev: devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
             return true;
           });
@@ -151,7 +155,7 @@
       return verifySig(t, false).then(function (ok) {
         if (ok) {
           localStorage.setItem(LS_T, t);
-          setRole(payload.r);
+          setRole(payload.r, payload.gt);
           report({ dev: payload.d || devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
         }
         return ok;
@@ -183,7 +187,7 @@
     }
 
     return { devId: devId, token: token, authed: authed, logout: logout, role: role, roleName: roleName,
-             parsePayload: parsePayload, consume: consume, authorized: authorized };
+             ghToken: ghToken, parsePayload: parsePayload, consume: consume, authorized: authorized };
   })();
   window.XYGate = XYGate;
 
