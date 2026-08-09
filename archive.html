@@ -114,7 +114,7 @@ svg{width:100%;height:auto;display:block;}
 <body>
 
 <div class="xy-topbar">
-  <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
   <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
 </div>
 
@@ -185,6 +185,8 @@ svg{width:100%;height:auto;display:block;}
     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">⬆️ 导入备份(JSON)</button>
     <input id="importFile" type="file" accept="application/json" class="hidden" onchange="importJSON(event)">
     <button class="btn btn-primary btn-sm" onclick="pushToCloud()">📤 导出并推送到腾讯文档</button>
+    <div id="syncStatus" class="tip">☁️ 同步状态：初始化…</div>
+    <button class="btn btn-ghost btn-sm" onclick="syncUpstream()">🔄 立即同步到云端</button>
     <div class="tip" id="syncTip">☁️ <b>云端主档已建好（腾讯文档）：</b><br>
       <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" style="color:#0f766e;font-weight:600;text-decoration:none;">👉 打开《星羿·学员体测档案》</a><br>
       手机电脑都能直接看。在球馆录完数据后，点上方"导出并推送到腾讯文档"，把下载的文件发给我（星星），我帮你更新这张表，全校验实时共享。</div>
@@ -327,6 +329,7 @@ function saveTest(){
   st.tests.push(rec); st.tests.sort((a,b)=>a.date.localeCompare(b.date)); save();
   renderOverview();
   alert("已保存！成长概览和趋势图已更新。");
+  syncUpstream();
 }
 
 function valAt(st, key){
@@ -741,7 +744,45 @@ function pushToCloud(){
   alert("备份已导出。把下载的 JSON 文件发给我（星星），我立刻帮你更新腾讯文档云端主档，手机电脑实时共享。");
 }
 
-renderStudents(); renderEntry(); renderOverview();
+let EDGE = null; // {baseUrl, token} 来自 data/edgeone-token.json
+loadEdgeToken().then(loadCloud).then(function(){ renderStudents(); renderEntry(); renderOverview(); });
+
+async function loadEdgeToken(){
+  try { const r = await fetch('data/edgeone-token.json'); if(r.ok) EDGE = await r.json(); } catch(e){}
+}
+async function loadCloud(){
+  if(!EDGE || !EDGE.baseUrl) return;
+  try {
+    const r = await fetch('data/profiles.json?t=' + Date.now());
+    if(!r.ok) return;
+    const cloud = await r.json();
+    mergeCloud(cloud); save();
+  } catch(e){}
+}
+function mergeCloud(cloud){
+  const map = {};
+  data.forEach(s=>map[s.id]=s);
+  cloud.forEach(cs=>{
+    if(map[cs.id]){
+      const tm = {}; map[cs.id].tests.forEach(t=>tm[t.date]=t);
+      cs.tests.forEach(t=>tm[t.date]=t);
+      map[cs.id].tests = Object.values(tm).sort((a,b)=>a.date.localeCompare(b.date));
+      if(cs.name) map[cs.id].name=cs.name;
+      if(cs.age) map[cs.id].age=cs.age;
+      if(cs.gender) map[cs.id].gender=cs.gender;
+      if(cs.cls) map[cs.id].cls=cs.cls;
+    } else { data.push(cs); }
+  });
+}
+async function syncUpstream(){
+  if(!EDGE || !EDGE.baseUrl){ setSync('未配置云端，仅存本机'); return; }
+  const url = EDGE.baseUrl + (EDGE.token ? '?'+EDGE.token : '');
+  try {
+    const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token: XYGate.token(), records: data})});
+    setSync(r.ok ? '已同步云端 ✓' : '云端拒绝（授权过期），已存本机');
+  } catch(e){ setSync('云端同步失败（网络/授权），已存本机'); }
+}
+function setSync(msg){ const el=document.getElementById('syncStatus'); if(el) el.textContent='☁️ 同步状态：'+msg; }
 </script>
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 学员体测档案<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
 </body>
