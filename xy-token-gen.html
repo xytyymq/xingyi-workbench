@@ -75,6 +75,10 @@
     <div style="flex:0"></div>
   </div>
 
+  <label>GitHub 写凭证（细粒度 Token · 选填，建议填）</label>
+  <input type="text" id="gt" placeholder="gho_xxx 或 github_pat_xxx（只限本仓库 contents:write）">
+  <div class="warn" style="margin-top:8px">📌 填了它，员工点链接进来就能<b>直接把体测/上课记录写回云端主档</b>（自动同步，不用再上传导出）。不填则员工只能看、不能写。生成后此凭证随授权链接下发，请勿泄露给无关人员。</div>
+
   <div class="row" id="bindRow" style="display:none;margin-top:0">
     <div>
       <label>链接有效期（小时，默认24）</label>
@@ -147,6 +151,7 @@
       var purpose = document.getElementById('purpose').value.trim();
       var role = document.getElementById('role').value;
       var days = parseInt(document.getElementById('days').value,10) || 365;
+      var gt = document.getElementById('gt').value.trim();
     var base = document.getElementById('base').value.trim().replace(/\/+$/,'') + '/';
     if(!privPem){ err.textContent='请粘贴私钥'; return; }
     if(!bindMode.checked && !dev){ err.textContent='请填写员工设备授权码'; return; }
@@ -160,8 +165,10 @@
         var hours = parseInt(document.getElementById('hours').value,10) || 24;
         var bindDays = parseInt(document.getElementById('bindDays').value,10) || 365;
         payload = { bind:true, e: Date.now() + hours*3600000, fe: Date.now() + bindDays*86400000, r: role, p: purpose };
+        if (gt) payload.gt = gt;
       } else {
         payload = { d: dev, e: Date.now() + days*86400000, r: role, p: purpose };
+        if (gt) payload.gt = gt;
       }
       var data = new TextEncoder().encode(JSON.stringify(payload));
       var sig = await crypto.subtle.sign({name:'ECDSA', hash:'SHA-256'}, priv, data);
