@@ -15,19 +15,8 @@
     width:100%;max-width:420px;padding:32px 28px;text-align:center}
   .logo{font-size:30px;font-weight:800;color:var(--main2);letter-spacing:1px}
   .logo small{display:block;font-size:13px;color:var(--mut);font-weight:500;margin-top:4px;letter-spacing:0}
-  .tip{margin:22px 0 8px;font-size:14px;color:var(--mut);line-height:1.7}
-  .code-box{background:var(--bg);border:1.5px dashed var(--main);border-radius:12px;
-    padding:16px;margin:14px 0;cursor:pointer;position:relative;transition:.2s}
-  .code-box:hover{background:#e3f3f1}
-  .code-label{font-size:12px;color:var(--mut);margin-bottom:6px}
-  .code{font-size:20px;font-weight:700;color:var(--main2);letter-spacing:1px;word-break:break-all}
-  .copy-hint{font-size:12px;color:var(--main);margin-top:8px}
-  .step{font-size:13px;color:var(--ink);text-align:left;background:var(--bg);
-    border-radius:10px;padding:12px 14px;margin:16px 0;line-height:1.8}
-  .step b{color:var(--main2)}
-  .divider{margin:20px 0 12px;font-size:12px;color:var(--mut);position:relative}
-  .divider:before,.divider:after{content:"";position:absolute;top:50%;width:32%;height:1px;background:#d6e6e4}
-  .divider:before{left:0}.divider:after{right:0}
+  .tip{margin:28px 0 10px;font-size:15px;color:var(--ink);line-height:1.7}
+  .tip.mute{font-size:13px;color:var(--mut);margin-top:8px}
   input[type=text]{width:100%;padding:12px 14px;border:1.5px solid #d6e6e4;border-radius:10px;
     font-size:14px;outline:none;transition:.2s}
   input[type=text]:focus{border-color:var(--main)}
@@ -36,57 +25,27 @@
   .btn:hover{background:var(--main2)}
   .btn.ghost{background:#fff;color:var(--main2);border:1.5px solid var(--main)}
   .err{color:#e05656;font-size:13px;margin-top:10px;min-height:18px}
-  .out{margin-top:14px}
+  .out{margin-top:18px}
   .ok{color:var(--main2);font-weight:700}
+  .contact{font-size:12.5px;color:var(--mut);margin-top:22px}
+  .contact a{color:var(--main2);text-decoration:none}
 </style>
 </head>
 <body>
 <div class="card" id="card">
   <div class="logo">星羿羽毛球馆<small>内部工作台 · 仅限授权人员</small></div>
   <div id="mainView">
-    <div class="tip">本设备未授权。请把下面的「设备授权码」微信发给老板，<br>拿到授权链接后点击即可进入。</div>
-    <div class="code-box" id="codeBox">
-      <div class="code-label">本设备授权码（点一下复制）</div>
-      <div class="code" id="devCode">—</div>
-      <div class="copy-hint" id="copyHint">点击复制，发给老板</div>
-    </div>
-    <div class="step">
-      <b>①</b> 复制上方设备码，微信发给老板<br>
-      <b>②</b> 老板生成专属授权链接发回给你<br>
-      <b>③</b> 点击链接自动进入（仅本设备有效）
-    </div>
-    <div class="divider">已有授权链接？</div>
-    <input type="text" id="tokenInput" placeholder="粘贴授权链接或令牌，点下方进入">
+    <div class="tip">请使用老板提供的专属链接进入工作台<br><span class="mute">或把链接粘贴到下方</span></div>
+    <input type="text" id="tokenInput" placeholder="粘贴授权链接或令牌">
     <button class="btn" id="enterBtn">进入工作台</button>
     <div class="err" id="err"></div>
+    <div class="contact">没有链接？<a href="weixin://">联系老板获取</a></div>
   </div>
   <div class="out" id="out"></div>
 </div>
 
 <script>
   (function () {
-    var dev = XYGate.devId();
-    document.getElementById('devCode').textContent = dev;
-
-    document.getElementById('codeBox').addEventListener('click', function () {
-      var t = dev;
-      var done = function () {
-        var h = document.getElementById('copyHint');
-        h.textContent = '已复制 ✓ 发给老板即可';
-        setTimeout(function () { h.textContent = '点击复制，发给老板'; }, 2000);
-      };
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(t).then(done, function () { fallbackCopy(t); done(); });
-      } else { fallbackCopy(t); done(); }
-    });
-    function fallbackCopy(text) {
-      var ta = document.createElement('textarea');
-      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand('copy'); } catch (e) {}
-      document.body.removeChild(ta);
-    }
-
     function enterWith(token) {
       var err = document.getElementById('err');
       err.textContent = '校验中…';
@@ -95,7 +54,7 @@
           var from = new URLSearchParams(location.search).get('from') || '/index.html';
           location.replace(from);
         } else {
-          err.textContent = '授权无效或已失效（可能链接不属于本设备/已过期）。';
+          err.textContent = '授权链接无效或已失效，请联系老板重新获取。';
         }
       });
     }
@@ -103,7 +62,6 @@
     document.getElementById('enterBtn').addEventListener('click', function () {
       var raw = document.getElementById('tokenInput').value.trim();
       if (!raw) { document.getElementById('err').textContent = '请粘贴授权链接或令牌'; return; }
-      // 支持完整链接或纯令牌
       var token = raw;
       try {
         var u = new URL(raw);
