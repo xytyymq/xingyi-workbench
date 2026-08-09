@@ -55,12 +55,27 @@
       writeCookie('xy_dev', d, 400);
       return d;
     }
-    function token() { return localStorage.getItem(LS_T) || ''; }
+    // 授权信息双持久：localStorage 优先，cookie 兜底（清缓存/微信内置浏览器隔离也不丢）
+    // 每次读取命中 cookie 会回写 localStorage，并续期 cookie —— 只要常用就永不失效
+    function dual(lsKey, ckKey) {
+      var v = localStorage.getItem(lsKey) || readCookie(ckKey) || '';
+      if (v) { try { localStorage.setItem(lsKey, v); writeCookie(ckKey, v, 400); } catch (e) {} }
+      return v;
+    }
+    function dualSet(lsKey, ckKey, v) {
+      if (!v) return;
+      try { localStorage.setItem(lsKey, v); } catch (e) {}
+      writeCookie(ckKey, v, 400);
+    }
+    function token() { return dual(LS_T, 'xy_tk'); }
     function authed() { return !!token(); }
-    function role() { return localStorage.getItem(LS_R) || 'boss'; }
+    function role() { return dual(LS_R, 'xy_role') || 'boss'; }
     function roleName() { var m={boss:'老板',coach:'教练',admin:'教务'}; return m[role()] || '老板'; }
-    function ghToken() { return localStorage.getItem(LS_GT) || ''; }   // GitHub 写凭证（授权链接下发）
-    function logout() { localStorage.removeItem(LS_T); localStorage.removeItem(LS_B); localStorage.removeItem(LS_R); localStorage.removeItem(LS_GT); }
+    function ghToken() { return dual(LS_GT, 'xy_ght'); }   // GitHub 写凭证（授权链接下发，长期保存）
+    function logout() {
+      [LS_T, LS_B, LS_R, LS_GT].forEach(function (k) { localStorage.removeItem(k); });
+      ['xy_tk', 'xy_role', 'xy_ght'].forEach(function (k) { writeCookie(k, '', -1); });
+    }
 
     function parsePayload(t) {
       try {
@@ -82,7 +97,7 @@
           let payload;
           try { payload = JSON.parse(new TextDecoder().decode(dataBytes)); }
           catch (e) { return resolve(false); }
-          if (!payload.e || payload.e < Date.now()) return resolve(false); // 过期
+          if (payload.e && payload.e < Date.now()) return resolve(false); // e 缺省或为 0 = 永久有效
           if (!ignoreDevice && payload.d !== devId()) return resolve(false); // 设备不匹配
           const keyBuf = pemToBuf(PUB_PEM);
           crypto.subtle.importKey('spki', keyBuf,
@@ -110,7 +125,7 @@
     function verifyLocal() {
       const obj = localBind();
       if (!obj) return Promise.resolve(false);
-      if (obj.e < Date.now()) return Promise.resolve(false);   // 最终过期
+      if (obj.e && obj.e < Date.now()) return Promise.resolve(false);   // e 为 0 = 永久
       if (obj.d !== devId()) return Promise.resolve(false);     // 设备变了
       return makeMac(obj).then(function (mac) { return mac === obj.mac; });
     }
@@ -120,8 +135,8 @@
       const payload = parsePayload(t);
       if (!payload) return Promise.resolve(false);
       function setRole(r, gt) {
-        if (r) localStorage.setItem(LS_R, r);
-        if (gt) localStorage.setItem(LS_GT, gt);   // 授权链接下发的 GitHub 写凭证
+        if (r) dualSet(LS_R, 'xy_role', r);
+        if (gt) dualSet(LS_GT, 'xy_ght', gt);   // 授权链接下发的 GitHub 写凭证（长期保存）
       }
       function report(it) {
         try {
@@ -141,7 +156,7 @@
       if (payload.bind === true) {
         return verifySig(t, true).then(function (ok) {
           if (!ok) return false;
-          const finalE = payload.fe || (Date.now() + 365 * 86400000);
+          const finalE = payload.fe || 0;   // 缺省 = 永久绑定本机
           const obj = { d: devId(), e: finalE, p: payload.p || '', from: 'bind' };
           return makeMac(obj).then(function (mac) {
             obj.mac = mac;
@@ -154,7 +169,7 @@
       }
       return verifySig(t, false).then(function (ok) {
         if (ok) {
-          localStorage.setItem(LS_T, t);
+          dualSet(LS_T, 'xy_tk', t);
           setRole(payload.r, payload.gt);
           report({ dev: payload.d || devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
         }
