@@ -162,8 +162,21 @@
       // 网络不可达时放行（不锁死正常用户），但无法强制单次。
       const CONSUME_REPO = 'xytyymq/xingyi-workbench';
       const CONSUME_PATH = 'data/consume-log.json';
-      function b64utf8(s) { return b64urlEncodeBytes(new TextEncoder().encode(s)); }
-      function unb64utf8(s) { try { return new TextDecoder().decode(b64urlDecodeBytes(s)); } catch (e) { return ''; } }
+      // GitHub Contents API 要求标准 base64（+/=），不能用 base64url
+      function b64utf8(s) {
+        const bytes = new TextEncoder().encode(s);
+        let bin = '';
+        for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+        return btoa(bin);
+      }
+      function unb64utf8(s) {
+        try {
+          const bin = atob(s);
+          const bytes = new Uint8Array(bin.length);
+          for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          return new TextDecoder().decode(bytes);
+        } catch (e) { return ''; }
+      }
       async function readConsumeLog(tok) {
         if (!tok) return null;
         const url = 'https://api.github.com/repos/' + CONSUME_REPO + '/contents/' + CONSUME_PATH;
