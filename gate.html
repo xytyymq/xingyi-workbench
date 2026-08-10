@@ -66,7 +66,12 @@
 
     function goConsume(token) {
       errMain.textContent = '校验中…';
+      var settled = false;
+      var timer = setTimeout(function () {
+        if (!settled) errMain.textContent = '网络较慢，请稍候或点击「进入工作台」重新校验。';
+      }, 8000);
       XYGate.consume(token).then(function (ok) {
+        settled = true; clearTimeout(timer);
         if (ok) {
           var from = (hashParams.get('from') || params.get('from')) || 'index.html';
           if (from.charAt(0) === '/') from = from.slice(1); // GitHub Pages 项目站子目录：去掉绝对路径前缀
