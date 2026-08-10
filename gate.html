@@ -76,7 +76,10 @@
 
     // 先过团队口令，再消费令牌
     function requirePassThen(token) {
-      if (window.XYPass.ok()) { goConsume(token); return; }
+      var p = XYGate.parsePayload(token) || {};
+      // 仅教练/教务通用链接需团队口令；老板链接与设备绑定链接免口令
+      var needPass = !!(p.bind === true && p.r !== 'boss');
+      if (!needPass || window.XYPass.ok()) { goConsume(token); return; }
       pendingToken = token;
       mainView.style.display = 'none';
       passView.style.display = 'block';
