@@ -96,7 +96,7 @@
 
   <button class="btn" id="gen">生成授权链接</button>
   <div class="warn" id="bindTip" style="display:none;margin-top:12px">
-    💡 绑定模式：把链接微信发给对方，<b>他点开一次即自动绑定其手机</b>，以后永久进入。链接仅在生成后指定小时内可点击绑定；若他清了浏览器缓存，重发同一条链接（24小时内）即可重新绑。
+    💡 绑定模式：把链接微信发给对方，<b>他点开一次即自动绑定其手机</b>。注意：<b>每条链接仅首个设备可用一次</b>（防转发他人盗用），若对方清了缓存需重新生成一条新链接发他。
   </div>
   <div class="err" id="err"></div>
 
@@ -169,7 +169,9 @@
       if (bindMode.checked){
         var hours = parseInt(document.getElementById('hours').value,10) || 24;
         var bindDays = parseInt(document.getElementById('bindDays').value,10) || 0;
-        payload = { bind:true, e: Date.now() + hours*3600000, fe: bindDays>0 ? Date.now()+bindDays*86400000 : 0, r: role, p: purpose };
+        payload = { bind:true, e: Date.now() + hours*3600000, fe: bindDays>0 ? Date.now()+bindDays*86400000 : 0, r: role, p: purpose,
+                    jti: (crypto.randomUUID ? crypto.randomUUID().replace(/-/g,'') : (''+Math.random()).slice(2,18)+Date.now().toString(36)),
+                    one: role !== 'boss' };
         if (gt) payload.gt = gt;
       } else {
         payload = { d: dev, e: days>0 ? Date.now()+days*86400000 : 0, r: role, p: purpose };
@@ -178,7 +180,7 @@
       var data = new TextEncoder().encode(JSON.stringify(payload));
       var sig = await crypto.subtle.sign({name:'ECDSA', hash:'SHA-256'}, priv, data);
       var token = b64urlEncodeBytes(data) + '.' + b64urlEncodeBytes(new Uint8Array(sig));
-      var url = base + 'gate.html?token=' + encodeURIComponent(token) + '&from=' + encodeURIComponent('/index.html');
+      var url = base + 'gate.html#token=' + encodeURIComponent(token) + '&from=' + encodeURIComponent('index.html');
       document.getElementById('url').textContent = url;
       document.getElementById('result').classList.add('show');
     }catch(e){
