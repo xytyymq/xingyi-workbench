@@ -167,15 +167,18 @@
       async function readConsumeLog(tok) {
         if (!tok) return null;
         const url = 'https://api.github.com/repos/' + CONSUME_REPO + '/contents/' + CONSUME_PATH;
+        const ctrl = new AbortController();
+        const timer = setTimeout(function () { ctrl.abort(); }, 6000);  // 墙 GitHub 时不永久卡死，超时按网络失败放行
         try {
-          const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json' } });
+          const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json' }, signal: ctrl.signal });
+          clearTimeout(timer);
           if (res.status === 404) return { sha: null, list: [] };
           if (!res.ok) return null;
           const j = await res.json();
           let list = [];
           try { list = (JSON.parse(unb64utf8(j.content)) || {}).used || []; } catch (e) {}
           return { sha: j.sha, list: list };
-        } catch (e) { return null; }
+        } catch (e) { return null; }  // 超时 / 网络失败 -> null -> 放行
       }
       async function writeConsumeLog(tok, sha, list) {
         if (!tok) return false;
