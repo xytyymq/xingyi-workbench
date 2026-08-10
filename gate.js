@@ -134,6 +134,10 @@
     function consume(t) {
       const payload = parsePayload(t);
       if (!payload) return Promise.resolve(false);
+      // 旧版「通用教练链接」(无单次使用标记) 已停用，必须改用新单次链接
+      if (payload.bind === true && payload.r !== 'boss' && !payload.one) {
+        return Promise.resolve(false);
+      }
       function setRole(r, gt) {
         if (r) dualSet(LS_R, 'xy_role', r);
         if (gt) dualSet(LS_GT, 'xy_ght', gt);   // 授权链接下发的 GitHub 写凭证（长期保存）
@@ -153,18 +157,71 @@
           }).catch(function () {});
         } catch (e) {}
       }
+      // —— 单次使用登记（防链接被转发他人复用）——
+      // 共享账本：GitHub 仓库 data/consume-log.json（链接内嵌写凭证可写）。
+      // 网络不可达时放行（不锁死正常用户），但无法强制单次。
+      const CONSUME_REPO = 'xytyymq/xingyi-workbench';
+      const CONSUME_PATH = 'data/consume-log.json';
+      function b64utf8(s) { return b64urlEncodeBytes(new TextEncoder().encode(s)); }
+      function unb64utf8(s) { try { return new TextDecoder().decode(b64urlDecodeBytes(s)); } catch (e) { return ''; } }
+      async function readConsumeLog(tok) {
+        if (!tok) return null;
+        const url = 'https://api.github.com/repos/' + CONSUME_REPO + '/contents/' + CONSUME_PATH;
+        try {
+          const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json' } });
+          if (res.status === 404) return { sha: null, list: [] };
+          if (!res.ok) return null;
+          const j = await res.json();
+          let list = [];
+          try { list = (JSON.parse(unb64utf8(j.content)) || {}).used || []; } catch (e) {}
+          return { sha: j.sha, list: list };
+        } catch (e) { return null; }
+      }
+      async function writeConsumeLog(tok, sha, list) {
+        if (!tok) return false;
+        const url = 'https://api.github.com/repos/' + CONSUME_REPO + '/contents/' + CONSUME_PATH;
+        const body = JSON.stringify({
+          message: 'consume ' + (list[list.length - 1] || 'x'),
+          content: b64utf8(JSON.stringify({ used: list, updated: Date.now() })),
+          sha: sha || undefined, branch: 'main'
+        });
+        try {
+          const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' }, body });
+          return res.ok;
+        } catch (e) { return false; }
+      }
+      async function markConsumed(jti, tok) {
+        if (!jti) return true;            // 老板链接无 jti，直接放行
+        let st = await readConsumeLog(tok);
+        if (st === null) return true;     // 网络异常：放行，不锁死
+        if (st.list.includes(jti)) return false;   // 已使用 -> 拒绝
+        let ok = await writeConsumeLog(tok, st.sha, st.list.concat(jti));
+        if (ok) return true;
+        st = await readConsumeLog(tok);   // 冲突重试
+        if (st === null) return true;
+        if (st.list.includes(jti)) return false;
+        return await writeConsumeLog(tok, st.sha, st.list.concat(jti));
+      }
+      function bindLocal(payload) {
+        const finalE = payload.fe || 0;
+        const obj = { d: devId(), e: finalE, p: payload.p || '', from: 'bind' };
+        return makeMac(obj).then(function (mac) {
+          obj.mac = mac;
+          localStorage.setItem(LS_B, JSON.stringify(obj));
+          setRole(payload.r, payload.gt);
+          report({ dev: devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
+          return true;
+        });
+      }
       if (payload.bind === true) {
         return verifySig(t, true).then(function (ok) {
           if (!ok) return false;
-          const finalE = payload.fe || 0;   // 缺省 = 永久绑定本机
-          const obj = { d: devId(), e: finalE, p: payload.p || '', from: 'bind' };
-          return makeMac(obj).then(function (mac) {
-            obj.mac = mac;
-            localStorage.setItem(LS_B, JSON.stringify(obj));
-            setRole(payload.r, payload.gt);
-            report({ dev: devId(), role: payload.r || 'unknown', purpose: payload.p || '' });
-            return true;
-          });
+          if (payload.one) {
+            return markConsumed(payload.jti, payload.gt || ghToken()).then(function (allowed) {
+              return allowed ? bindLocal(payload) : false;
+            });
+          }
+          return bindLocal(payload);
         });
       }
       return verifySig(t, false).then(function (ok) {
@@ -206,16 +263,8 @@
   })();
   window.XYGate = XYGate;
 
-  // —— 团队口令（轻门槛：挡误发，不挡真破解）——
-  // 改下面 _stored 的存储值即可让所有旧链接失效，无需重发链接。
-  // 实际口令 = 把 _stored 反转。当前：反转('8866yx') = 'xy6688'
-  const _stored = '8866yx';
-  const TEAM_CODE = _stored.split('').reverse().join('');
-  window.XYPass = {
-    ok: function () { try { return localStorage.getItem('xy_pass') === '1'; } catch (e) { return false; } },
-    check: function (code) { return (code || '').trim().toLowerCase() === TEAM_CODE.toLowerCase(); },
-    set: function () { try { localStorage.setItem('xy_pass', '1'); } catch (e) {} }
-  };
+  // 团队口令已移除：改为「每条教练链接单次使用」机制（见 consume / markConsumed），
+  // 转发他人即失效，比共享口令安全。旧通用教练链接因无 jti 已被判失效。
 
   // 推导根目录 gate.html 绝对地址（兼容 GitHub Pages 项目站子目录）
   var gateUrl = (function () {
