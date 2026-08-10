@@ -86,7 +86,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 </style></head><body>
 
 <div class="xy-topbar">
-  <span class="brand">🏸 星羿 · 全馆工作台</span>
+  <span class="brand">🏸 星羿 · 招生工作台</span>
   <span class="role-badge" id="roleBadge">教练</span>
   <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
 </div>
@@ -96,47 +96,13 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
   <p>考核标准 · 价格速查 · 促出勤话术 · 课堂自评指南</p>
 </div>
 
-<!-- 我的绩效 -->
+<!-- 我的绩效（云端共享） -->
 <div class="sec" id="perf">
-  <div class="sec-title"><span class="bar"></span>我的绩效 <span class="perf-date" id="perfDate"></span></div>
-  <div class="perf-grid">
-    <div class="perf-card">
-      <div class="p-label">出勤率</div>
-      <div class="p-num" id="pAttend">--</div>
-      <div class="p-trend" id="pAttendTrend"></div>
-    </div>
-    <div class="perf-card">
-      <div class="p-label">缺课追回率</div>
-      <div class="p-num" id="pRecall">--</div>
-      <div class="p-trend" id="pRecallTrend"></div>
-    </div>
-    <div class="perf-card">
-      <div class="p-label">续费转化</div>
-      <div class="p-num" id="pRenew">--</div>
-      <div class="p-trend" id="pRenewTrend"></div>
-    </div>
-    <div class="perf-card">
-      <div class="p-label">课堂评分</div>
-      <div class="p-num" id="pScore">--</div>
-      <div class="p-trend" id="pScoreTrend"></div>
-    </div>
-  </div>
-  <button class="perf-update" id="perfUpdate">📝 更新本月数据</button>
-  <div class="perf-modal" id="perfModal" style="display:none">
-    <div class="perf-modal-bg"></div>
-    <div class="perf-modal-card">
-      <h3>更新本月绩效数据</h3>
-      <label>本月应上课次数</label><input type="number" id="fTotal" min="0" placeholder="如：20">
-      <label>本月实际出勤次数</label><input type="number" id="fAttend" min="0" placeholder="如：18">
-      <label>本月缺课追回次数</label><input type="number" id="fRecall" min="0" placeholder="如：5">
-      <label>本月续费人数</label><input type="number" id="fRenew" min="0" placeholder="如：3">
-      <label>到期总人数</label><input type="number" id="fExpire" min="0" placeholder="如：8">
-      <label>课堂自评均分（1-5）</label><input type="number" id="fScore" min="1" max="5" step="0.1" placeholder="如：4.2">
-      <div class="perf-actions">
-        <button class="btn btn-primary" id="perfSave">保存</button>
-        <button class="btn btn-ghost" id="perfCancel">取消</button>
-      </div>
-    </div>
+  <div class="sec-title"><span class="bar"></span>我的绩效 · 云端共享 <span class="perf-date">教练填·老板实时看</span></div>
+  <div style="margin:0 0 10px;font-size:13px;color:#5b6b7b;background:#f3f7fb;border:1px solid #e3e8ef;border-radius:10px;padding:10px 12px">📌 已接入腾讯文档，一人填写、全员手机实时可见。直接在下方表格按月登记，老板打开同一张表即可查看。</div>
+  <iframe src="https://docs.qq.com/sheet/DQmxHY09VcVFWTXRU?from=embed&tab=BB08J2" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width:100%;height:440px;border:1px solid #e3e8ef;border-radius:10px"></iframe>
+  <div class="link-row" style="margin-top:10px">
+    <a href="https://docs.qq.com/sheet/DQmxHY09VcVFWTXRU" target="_blank" rel="noopener">↗ 新窗口打开 / 手机端填写</a>
   </div>
 </div>
 
@@ -309,86 +275,8 @@ function updateResult(){
   else{r.classList.remove('show');}
 }
 
-// ===== 绩效数据管理 =====
+// ===== 角色角标（绩效区已改为云端腾讯文档，无需本地逻辑）=====
 (function(){
-  var PKEY = 'xy_coach_perf';
-  function load(){ try{ return JSON.parse(localStorage.getItem(PKEY)||'null'); }catch(e){ return null; } }
-  function save(d){ d.updatedAt=Date.now(); localStorage.setItem(PKEY,JSON.stringify(d)); }
-
-  function render(p){
-    if(!p || !p.total){
-      document.getElementById('pAttend').textContent='--';
-      document.getElementById('pRecall').textContent='--';
-      document.getElementById('pRenew').textContent='--';
-      document.getElementById('pScore').textContent='--';
-      document.getElementById('perfDate').textContent='';
-      return;
-    }
-    var attendRate = p.total ? Math.round(p.attend/p.total*100) : 0;
-    var recallRate = p.total ? Math.round(p.recall/p.total*100) : 0;
-    var renewRate = p.expire ? Math.round(p.renewNum/p.expire*100) : 0;
-    document.getElementById('pAttend').textContent = attendRate+'%';
-    document.getElementById('pRecall').textContent = recallRate+'%';
-    document.getElementById('pRenew').textContent = p.renewNum+'/'+p.expire+' '+(p.expire?Math.round(p.renewNum/p.expire*100):0)+'%';
-    document.getElementById('pScore').textContent = (p.score||0).toFixed(1)+'/5';
-    var d = new Date(p.updatedAt);
-    document.getElementById('perfDate').textContent = '更新于'+('0'+(d.getMonth()+1)).slice(-2)+'/'+('0'+d.getDate()).slice(-2);
-
-    // 趋势比较
-    if(p.prev){
-      var prevAR = p.prev.total ? Math.round(p.prev.attend/p.prev.total*100) : null;
-      setTrend('pAttendTrend', attendRate, prevAR, '%');
-      var prevRR = p.prev.total ? Math.round(p.prev.recall/p.prev.total*100) : null;
-      setTrend('pRecallTrend', recallRate, prevRR, '%');
-      var prevRen = p.prev.expire ? Math.round(p.prev.renewNum/p.prev.expire*100) : null;
-      setTrend('pRenewTrend', renewRate, prevRen, '%');
-      var prevSc = p.prev.score || null;
-      setTrend('pScoreTrend', p.score, prevSc, '');
-    }
-  }
-  function setTrend(id, now, prev, unit){
-    var el=document.getElementById(id);
-    if(prev===null||prev===undefined){ el.textContent=''; el.className='p-trend'; return; }
-    var diff = now - prev;
-    if(diff>0){ el.textContent='▲ +'+diff+unit; el.className='p-trend up'; }
-    else if(diff<0){ el.textContent='▼ '+diff+unit; el.className='p-trend down'; }
-    else { el.textContent='→ 持平'; el.className='p-trend flat'; }
-  }
-
-  var data = load();
-  render(data);
-
-  document.getElementById('perfUpdate').addEventListener('click',function(){
-    document.getElementById('perfModal').style.display='flex';
-    if(data){
-      document.getElementById('fTotal').value=data.total||'';
-      document.getElementById('fAttend').value=data.attend||'';
-      document.getElementById('fRecall').value=data.recall||'';
-      document.getElementById('fRenew').value=data.renewNum||'';
-      document.getElementById('fExpire').value=data.expire||'';
-      document.getElementById('fScore').value=data.score||'';
-    }
-  });
-  document.getElementById('perfCancel').addEventListener('click',function(){
-    document.getElementById('perfModal').style.display='none';
-  });
-  document.getElementById('perfSave').addEventListener('click',function(){
-    var prev = data ? {total:data.total,attend:data.attend,recall:data.recall,renewNum:data.renewNum,expire:data.expire,score:data.score} : null;
-    data = {
-      total: parseInt(document.getElementById('fTotal').value)||0,
-      attend: parseInt(document.getElementById('fAttend').value)||0,
-      recall: parseInt(document.getElementById('fRecall').value)||0,
-      renewNum: parseInt(document.getElementById('fRenew').value)||0,
-      expire: parseInt(document.getElementById('fExpire').value)||0,
-      score: parseFloat(document.getElementById('fScore').value)||0,
-      prev: prev
-    };
-    save(data);
-    render(data);
-    document.getElementById('perfModal').style.display='none';
-  });
-
-  // 角色角标
   var role = XYGate.role();
   var badge = document.getElementById('roleBadge');
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
