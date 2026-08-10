@@ -190,52 +190,11 @@
 
   <!-- 1. 经营看板 -->
   <section class="xy-sec boss-only" id="kpi">
-    <div class="xy-sec-title"><span class="bar"></span>经营看板<span class="hint" id="kpiDate"></span></div>
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">消课率</div>
-        <div class="kpi-num" id="kpConsume">--</div>
-        <div class="kpi-sub">实际 / 应上课节数</div>
-        <div class="kpi-trend" id="kpConsumeTrend"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">出勤率</div>
-        <div class="kpi-num" id="kpAttend">--</div>
-        <div class="kpi-sub">到课 / 排课人次</div>
-        <div class="kpi-trend" id="kpAttendTrend"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">体验转化率</div>
-        <div class="kpi-num" id="kpTrial">--</div>
-        <div class="kpi-sub">付费 / 体验到访</div>
-        <div class="kpi-trend" id="kpTrialTrend"></div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">续费率</div>
-        <div class="kpi-num" id="kpRenew">--</div>
-        <div class="kpi-sub">续费 / 到期人数</div>
-        <div class="kpi-trend" id="kpRenewTrend"></div>
-      </div>
+    <div class="xy-sec-title"><span class="bar"></span>经营看板<span class="hint">腾讯文档·多端同步</span></div>
+    <div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;">
+      <iframe src="https://docs.qq.com/sheet/DQnVJRVpQTXZZVXh5?from=embed&tab=BB08J2" style="width:100%;height:560px;border:0;display:block;" allowfullscreen></iframe>
     </div>
-    <button class="kpi-update" id="kpiUpdate">📝 更新本月经营数据</button>
-    <div class="kpi-modal" id="kpiModal" style="display:none">
-      <div class="kpi-modal-bg"></div>
-      <div class="kpi-modal-card">
-        <h3>更新本月经营数据</h3>
-        <label>本月应上课节数（排课总数）</label><input type="number" id="kTotal" min="0" placeholder="如：320">
-        <label>本月实际上课节数</label><input type="number" id="kActual" min="0" placeholder="如：250">
-        <label>本月到课总人次</label><input type="number" id="kAttend" min="0" placeholder="如：280">
-        <label>本月排课总人次</label><input type="number" id="kSched" min="0" placeholder="如：310">
-        <label>本月体验课到访人数</label><input type="number" id="kTrialCome" min="0" placeholder="如：15">
-        <label>本月体验课付费转化人数</label><input type="number" id="kTrialPay" min="0" placeholder="如：5">
-        <label>本月到期人数</label><input type="number" id="kExpire" min="0" placeholder="如：20">
-        <label>本月实际续费人数</label><input type="number" id="kRenewNum" min="0" placeholder="如：12">
-        <div class="kpi-actions">
-          <button class="btn btn-primary" id="kpiSave">保存</button>
-          <button class="btn btn-ghost" id="kpiCancel">取消</button>
-        </div>
-      </div>
-    </div>
+    <p style="font-size:11px;color:var(--muted);margin:8px 2px 0;">👉 在表中填本月数据，老板任意手机/电脑登录腾讯文档账号即可查看与编辑；通过链接访问的人只读。</p>
   </section>
 
   <!-- 2. 快捷入口 -->
@@ -414,87 +373,7 @@
   badge.textContent = names[role] || '老板';
   badge.className = 'role-badge ' + role;
 
-  // ===== KPI 经营看板 =====
-  if(role === 'boss'){
-    var KKEY = 'xy_kpi';
-    function kLoad(){ try{ return JSON.parse(localStorage.getItem(KKEY)||'null'); }catch(e){ return null; } }
-    function kSave(d){ d.updatedAt=Date.now(); localStorage.setItem(KKEY,JSON.stringify(d)); }
-
-    function kpRender(p){
-      if(!p){
-        ['kpConsume','kpAttend','kpTrial','kpRenew'].forEach(function(id){ document.getElementById(id).textContent='--'; });
-        return;
-      }
-      var consume = p.total ? Math.round(p.actual/p.total*100) : 0;
-      var attend = p.sched ? Math.round(p.attendNum/p.sched*100) : 0;
-      var trial = p.trialCome ? Math.round(p.trialPay/p.trialCome*100) : 0;
-      var renew = p.expire ? Math.round(p.renewNum/p.expire*100) : 0;
-
-      document.getElementById('kpConsume').textContent = consume+'%';
-      document.getElementById('kpAttend').textContent = attend+'%';
-      document.getElementById('kpTrial').textContent = trial+'%';
-      document.getElementById('kpRenew').textContent = renew+'%';
-
-      var d = new Date(p.updatedAt);
-      document.getElementById('kpiDate').textContent = '更新于'+('0'+(d.getMonth()+1)).slice(-2)+'/'+('0'+d.getDate()).slice(-2);
-
-      if(p.prev){
-        var pConsume = p.prev.total ? Math.round(p.prev.actual/p.prev.total*100) : null;
-        kpTrend('kpConsumeTrend',consume,pConsume);
-        var pAttend = p.prev.sched ? Math.round(p.prev.attendNum/p.prev.sched*100) : null;
-        kpTrend('kpAttendTrend',attend,pAttend);
-        var pTrial = p.prev.trialCome ? Math.round(p.prev.trialPay/p.prev.trialCome*100) : null;
-        kpTrend('kpTrialTrend',trial,pTrial);
-        var pRenew = p.prev.expire ? Math.round(p.prev.renewNum/p.prev.expire*100) : null;
-        kpTrend('kpRenewTrend',renew,pRenew);
-      }
-    }
-    function kpTrend(id,now,prev){
-      var el=document.getElementById(id);
-      if(prev===null||prev===undefined){ return; }
-      var diff=now-prev;
-      if(diff>0){ el.textContent='▲ +'+diff+'%'; el.className='kpi-trend up'; }
-      else if(diff<0){ el.textContent='▼ '+diff+'%'; el.className='kpi-trend down'; }
-      else { el.textContent='→ 持平'; el.className='kpi-trend flat'; }
-    }
-
-    var kpData = kLoad();
-    kpRender(kpData);
-
-    document.getElementById('kpiUpdate').addEventListener('click',function(){
-      document.getElementById('kpiModal').style.display='flex';
-      if(kpData){
-        document.getElementById('kTotal').value=kpData.total||'';
-        document.getElementById('kActual').value=kpData.actual||'';
-        document.getElementById('kAttend').value=kpData.attendNum||'';
-        document.getElementById('kSched').value=kpData.sched||'';
-        document.getElementById('kTrialCome').value=kpData.trialCome||'';
-        document.getElementById('kTrialPay').value=kpData.trialPay||'';
-        document.getElementById('kExpire').value=kpData.expire||'';
-        document.getElementById('kRenewNum').value=kpData.renewNum||'';
-      }
-    });
-    document.getElementById('kpiCancel').addEventListener('click',function(){
-      document.getElementById('kpiModal').style.display='none';
-    });
-    document.getElementById('kpiSave').addEventListener('click',function(){
-      var prev = kpData ? {total:kpData.total,actual:kpData.actual,attendNum:kpData.attendNum,sched:kpData.sched,trialCome:kpData.trialCome,trialPay:kpData.trialPay,expire:kpData.expire,renewNum:kpData.renewNum} : null;
-      kpData = {
-        total: parseInt(document.getElementById('kTotal').value)||0,
-        actual: parseInt(document.getElementById('kActual').value)||0,
-        attendNum: parseInt(document.getElementById('kAttend').value)||0,
-        sched: parseInt(document.getElementById('kSched').value)||0,
-        trialCome: parseInt(document.getElementById('kTrialCome').value)||0,
-        trialPay: parseInt(document.getElementById('kTrialPay').value)||0,
-        expire: parseInt(document.getElementById('kExpire').value)||0,
-        renewNum: parseInt(document.getElementById('kRenewNum').value)||0,
-        prev: prev
-      };
-      kSave(kpData);
-      kpRender(kpData);
-      document.getElementById('kpiModal').style.display='none';
-    });
-  }
+  // ===== KPI 经营看板（已改为腾讯文档嵌入，数据存云端，老板多端可见）=====
 })();
 </script>
 </body>
