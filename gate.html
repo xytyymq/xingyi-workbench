@@ -66,7 +66,8 @@
       errPass.textContent = '校验中…';
       XYGate.consume(token).then(function (ok) {
         if (ok) {
-          var from = params.get('from') || '/index.html';
+          var from = params.get('from') || 'index.html';
+          if (from.charAt(0) === '/') from = from.slice(1); // GitHub Pages 项目站子目录：去掉绝对路径前缀
           location.replace(from);
         } else {
           errPass.textContent = '授权链接无效或已失效，请联系老板。';
