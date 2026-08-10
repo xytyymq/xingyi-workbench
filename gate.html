@@ -41,13 +41,6 @@
     <div class="err" id="err"></div>
     <div class="contact">没有链接？<a href="weixin://">联系老板获取</a></div>
   </div>
-  <div id="passView" style="display:none">
-    <div class="tip">这是内部工作台，请输入<span class="mute">团队口令</span>进入</div>
-    <input type="text" id="passInput" placeholder="团队口令" autocomplete="off" inputmode="text">
-    <button class="btn" id="passBtn">验证进入</button>
-    <div class="err" id="passErr"></div>
-    <div class="contact">口令请咨询老板</div>
-  </div>
   <div class="out" id="out"></div>
 </div>
 
@@ -57,50 +50,32 @@
     var hashParams = new URLSearchParams(location.hash.slice(1));
     var tokenFromUrl = hashParams.get('token') || params.get('token');
     var mainView = document.getElementById('mainView');
-    var passView = document.getElementById('passView');
     var errMain = document.getElementById('err');
-    var errPass = document.getElementById('passErr');
-    var passInput = document.getElementById('passInput');
-    var pendingToken = null;
+
+    // 从完整链接里抽出 token（兼容 ?token= 与 #token=）
+    function extractToken(raw) {
+      try {
+        var u = new URL(raw);
+        var h = new URLSearchParams(u.hash.slice(1)).get('token');
+        if (h) return h;
+        var q = u.searchParams.get('token');
+        if (q) return q;
+      } catch (e) {}
+      return raw;
+    }
 
     function goConsume(token) {
-      errPass.textContent = '校验中…';
+      errMain.textContent = '校验中…';
       XYGate.consume(token).then(function (ok) {
         if (ok) {
           var from = (hashParams.get('from') || params.get('from')) || 'index.html';
           if (from.charAt(0) === '/') from = from.slice(1); // GitHub Pages 项目站子目录：去掉绝对路径前缀
           location.replace(from);
         } else {
-          errPass.textContent = '授权链接无效或已失效，请联系老板。';
+          errMain.textContent = '授权链接无效、已失效或已被使用，请联系老板重新获取。';
         }
       });
     }
-
-    // 先过团队口令，再消费令牌
-    function requirePassThen(token) {
-      var p = XYGate.parsePayload(token) || {};
-      // 仅教练/教务通用链接需团队口令；老板链接与设备绑定链接免口令
-      var needPass = !!(p.bind === true && p.r !== 'boss');
-      if (!needPass || window.XYPass.ok()) { goConsume(token); return; }
-      pendingToken = token;
-      mainView.style.display = 'none';
-      passView.style.display = 'block';
-      passInput.value = '';
-      errPass.textContent = '';
-      passInput.focus();
-    }
-
-    document.getElementById('passBtn').addEventListener('click', function () {
-      if (window.XYPass.check(passInput.value)) {
-        window.XYPass.set();
-        goConsume(pendingToken);
-      } else {
-        errPass.textContent = '口令错误，请咨询老板。';
-      }
-    });
-    passInput.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') document.getElementById('passBtn').click();
-    });
 
     // 已登录则显示退出
     if (XYGate.authed()) {
@@ -112,16 +87,14 @@
       out.appendChild(b);
     }
 
-    // 入口：URL 带 token 直接走口令；否则显示粘贴框
+    // 入口：URL 带 token 直接消费；否则显示粘贴框
     if (tokenFromUrl) {
-      requirePassThen(tokenFromUrl);
+      goConsume(tokenFromUrl);
     } else {
       document.getElementById('enterBtn').addEventListener('click', function () {
         var raw = document.getElementById('tokenInput').value.trim();
         if (!raw) { errMain.textContent = '请粘贴授权链接或令牌'; return; }
-        var token = raw;
-        try { var u = new URL(raw); token = u.searchParams.get('token') || raw; } catch (e) {}
-        requirePassThen(token);
+        goConsume(extractToken(raw));
       });
     }
   })();
