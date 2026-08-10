@@ -206,6 +206,17 @@
   })();
   window.XYGate = XYGate;
 
+  // —— 团队口令（轻门槛：挡误发，不挡真破解）——
+  // 改下面 _stored 的存储值即可让所有旧链接失效，无需重发链接。
+  // 实际口令 = 把 _stored 反转。当前：反转('8866yx') = 'xy6688'
+  const _stored = '8866yx';
+  const TEAM_CODE = _stored.split('').reverse().join('');
+  window.XYPass = {
+    ok: function () { try { return localStorage.getItem('xy_pass') === '1'; } catch (e) { return false; } },
+    check: function (code) { return (code || '').trim().toLowerCase() === TEAM_CODE.toLowerCase(); },
+    set: function () { try { localStorage.setItem('xy_pass', '1'); } catch (e) {} }
+  };
+
   // 推导根目录 gate.html 绝对地址（兼容 GitHub Pages 项目站子目录）
   var gateUrl = (function () {
     var sc = document.querySelectorAll('script[src*="gate.js"]');
@@ -219,13 +230,8 @@
   const here = path.split('/').pop();
 
   if (here === 'gate.html') {
-    const t = params.get('token');
-    if (t) {
-      XYGate.consume(t).then(function (ok) {
-        if (ok) location.replace(params.get('from') || idxUrl);
-      });
-    }
-    return; // gate 页本身不强制跳
+    // gate.html 的进入流程（含团队口令）由 gate.html 内联脚本接管，这里只放行
+    return;
   }
   if (params.get('token')) {
     XYGate.consume(params.get('token')).then(function () {});
