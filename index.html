@@ -184,6 +184,32 @@
     </div>
   </section>
 
+  <!-- 1.5 学员积分 -->
+  <section class="xy-sec" id="points">
+    <div class="xy-sec-title"><span class="bar"></span>学员积分<span class="hint">消课 · 邀友 · 续费都赚分</span></div>
+    <div class="today-strip" style="margin-bottom:10px;">
+      <div class="today-badge"><div class="tb-num">消 1 节课 +10</div><div class="tb-label">按时来、多消课</div></div>
+      <div class="today-badge good"><div class="tb-num">带好友 +30~100</div><div class="tb-label">朋友多来</div></div>
+      <div class="today-badge warn"><div class="tb-num">续费 +80 起</div><div class="tb-label">接着买</div></div>
+    </div>
+    <div class="grid">
+      <div class="tool">
+        <div class="ico">🏆</div>
+        <div class="t-name">积分榜 / 录分</div>
+        <div class="t-use" id="pointsTop" style="font-size:12px;line-height:1.6;">加载中…</div>
+        <div class="t-when">云端实时同步</div>
+        <a class="go" href="points.html" target="_blank" rel="noopener">打开</a>
+      </div>
+      <div class="tool">
+        <div class="ico">📜</div>
+        <div class="t-name">积分政策</div>
+        <div class="t-use">消课 / 邀友 / 多练 / 续费怎么赚分、积分怎么换好礼</div>
+        <div class="t-when">要给家长讲时翻</div>
+        <a class="go" href="points.html" target="_blank" rel="noopener">查看方案</a>
+      </div>
+    </div>
+  </section>
+
   <!-- 2. 招生转化流程 -->
   <section class="xy-sec" id="flow">
     <div class="xy-sec-title"><span class="bar"></span>招生转化流程<span class="hint">按顺序点</span></div>
@@ -343,6 +369,26 @@
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
   badge.textContent = names[role] || '老板';
   badge.className = 'role-badge ' + role;
+})();
+
+// 首页顶部积分榜 Top3（与 points.html 同一数据源）
+(function loadPointsTop(){
+  var el=document.getElementById('pointsTop');
+  if(!el) return;
+  var VIEW='https://xytyymq.github.io/xingyi-workbench/data/points.json';
+  fetch(VIEW+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(arr){
+    if(!Array.isArray(arr)||!arr.length){ el.innerHTML='<span style="color:var(--muted)">暂无积分记录，去录入第一笔 🏆</span>'; return; }
+    var sum={};
+    arr.forEach(function(it){ var n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
+    var list=Object.keys(sum).map(function(n){return {name:n,sc:sum[n]};}).sort(function(a,b){return b.sc-a.sc;}).slice(0,3);
+    var medal=['🥇','🥈','🥉'];
+    el.innerHTML=list.map(function(it,i){ return medal[i]+' '+it.name+' '+it.sc+'分'; }).join('<br>');
+  }).catch(function(e){
+    el.innerHTML='<span style="color:var(--muted)">榜单一键打开查看 →</span>';
+  });
 })();
 </script>
 </body>
