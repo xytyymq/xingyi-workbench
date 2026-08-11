@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿羽毛球馆 · 课程表</title>
+<script src="gate.js"></script>
+<style>
+  :root{
+    --ink:#0f201d; --sub:#5b6b67; --muted:#8aa09a;
+    --teal-900:#0b3d38; --teal-700:#0f766e; --teal-500:#14b8a6; --teal-100:#d6f3ec;
+    --card:#ffffff; --line:#e3ece9;
+    --coral:#ef7d4f; --coral-soft:#fdeee6;
+    --gold:#e0a93b; --good:#16a34a; --bad:#dc2626;
+    --radius:14px; --shadow:0 2px 10px rgba(15,32,29,.06);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--mint-50,#f1faf7);color:var(--ink);line-height:1.55;font-size:14px;}
+  .topbar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;
+    padding:10px 14px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .topbar .back{font-size:13px;color:var(--teal-700);text-decoration:none;font-weight:700;padding:6px 10px;border:1px solid var(--teal-500);border-radius:10px;background:var(--teal-100);}
+  .topbar .title{font-weight:800;font-size:15px;color:var(--teal-700);}
+  .topbar .role-badge{margin-left:auto;font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700;}
+  .role-badge.boss{background:var(--coral);color:#fff;}
+  .role-badge.coach{background:var(--teal-100);color:var(--teal-700);}
+  .role-badge.admin{background:var(--gold);color:#fff;}
+
+  .subbar{display:flex;align-items:center;gap:10px;padding:10px 14px 4px;}
+  .subbar .wk{font-size:13px;font-weight:700;color:var(--sub);}
+  .subbar .sync{margin-left:auto;font-size:11px;display:flex;align-items:center;gap:6px;color:var(--muted);}
+  .sync .dot{width:7px;height:7px;border-radius:50%;background:var(--muted);}
+  .sync.ok .dot{background:var(--good);}
+  .sync.warn .dot{background:var(--gold);}
+  .sync.err .dot{background:var(--bad);}
+  .subbar .refresh{font-size:12px;color:var(--teal-700);text-decoration:none;font-weight:700;padding:5px 10px;border:1px solid var(--teal-500);border-radius:9px;background:var(--teal-100);}
+
+  .sched-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:10px 14px 78px;}
+  .sched-grid{display:grid;grid-template-columns:repeat(7,minmax(108px,1fr));gap:8px;min-width:780px;}
+  .day-col{background:var(--card);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column;min-height:260px;overflow:hidden;}
+  .day-head{padding:8px 8px 6px;background:linear-gradient(135deg,var(--teal-900),var(--teal-700));color:#fff;text-align:center;}
+  .day-head.today{background:linear-gradient(135deg,var(--coral),#f0976f);}
+  .day-head .dn{font-size:13px;font-weight:800;}
+  .day-head .dd{font-size:10px;opacity:.85;margin-top:1px;}
+  .day-body{flex:1;padding:7px;display:flex;flex-direction:column;gap:7px;}
+  .add-btn{border:1px dashed var(--teal-500);background:var(--teal-100);color:var(--teal-700);border-radius:9px;
+    padding:14px 0;text-align:center;font-size:18px;font-weight:800;cursor:pointer;margin-top:auto;}
+  .add-btn:active{background:var(--teal-500);color:#fff;}
+  .course{background:#fff;border:1px solid var(--line);border-left:4px solid var(--teal-500);border-radius:9px;padding:7px 8px;cursor:pointer;box-shadow:var(--shadow);}
+  .course:active{transform:scale(.99);}
+  .course .ct{font-size:12.5px;font-weight:800;color:var(--teal-700);}
+  .course .cn{font-size:12.5px;font-weight:700;margin:1px 0;}
+  .course .cm{font-size:11px;color:var(--sub);line-height:1.4;}
+  .course .cm b{color:var(--ink);font-weight:600;}
+  .empty-tip{font-size:11px;color:var(--muted);text-align:center;padding:18px 4px;}
+
+  .fab{position:fixed;right:16px;bottom:18px;z-index:30;background:var(--coral);color:#fff;border:none;border-radius:50px;
+    padding:13px 20px;font-size:14px;font-weight:800;box-shadow:0 6px 18px rgba(239,125,79,.4);cursor:pointer;}
+  .fab:active{filter:brightness(.94);}
+
+  .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;}
+  .modal.show{display:flex;}
+  .modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);}
+  .modal-card{position:relative;background:#fff;border-radius:16px;padding:18px 16px;width:92%;max-width:380px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .modal-card h3{margin:0 0 12px;font-size:16px;color:var(--teal-700);text-align:center;}
+  .modal-card label{display:block;font-size:12.5px;color:var(--sub);margin:10px 0 4px;font-weight:600;}
+  .modal-card input,.modal-card select,.modal-card textarea{width:100%;padding:9px 10px;border:1.5px solid #d6e6e4;border-radius:9px;font-size:14px;outline:none;font-family:inherit;background:#fff;color:var(--ink);}
+  .modal-card input:focus,.modal-card select:focus,.modal-card textarea:focus{border-color:var(--teal-500);}
+  .modal-card textarea{resize:vertical;min-height:54px;}
+  .modal-acts{display:flex;gap:8px;margin-top:16px;}
+  .modal-acts .b{flex:1;padding:11px;border:none;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;}
+  .b.primary{background:var(--teal-700);color:#fff;}
+  .b.ghost{background:var(--teal-100);color:var(--teal-700);}
+  .b.del{flex:0 0 auto;background:var(--coral-soft);color:var(--coral);border:1px solid var(--coral);}
+  .b:active{filter:brightness(.96);}
+  .warnbar{margin:10px 14px;padding:9px 12px;border-radius:10px;background:#fff7ed;border:1px solid var(--gold);color:#9a6a16;font-size:12px;display:none;}
+  .warnbar.show{display:block;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="back" href="index.html">← 返回</a>
+  <span class="title">🗓️ 星羿课程表</span>
+  <span class="role-badge boss" id="roleBadge">老板</span>
+</div>
+
+<div class="subbar">
+  <span class="wk" id="weekLabel">本周</span>
+  <a class="refresh" href="javascript:void(0)" onclick="Sched.refresh()">↻ 刷新</a>
+  <span class="sync" id="syncState"><span class="dot"></span><span id="syncText">同步中…</span></span>
+</div>
+
+<div class="warnbar" id="warnBar"></div>
+
+<div class="sched-scroll">
+  <div class="sched-grid" id="grid"></div>
+</div>
+
+<button class="fab" onclick="Sched.openEditor(null)">＋ 新增课程</button>
+
+<div class="modal" id="modal">
+  <div class="modal-bg" onclick="Sched.closeEditor()"></div>
+  <div class="modal-card">
+    <h3 id="modalTitle">新增课程</h3>
+    <label>星期</label>
+    <select id="f_day">
+      <option value="1">周一</option><option value="2">周二</option><option value="3">周三</option>
+      <option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="7">周日</option>
+    </select>
+    <label>时间段（如 09:00-10:30）</label>
+    <input id="f_time" placeholder="09:00-10:30" inputmode="text">
+    <label>课程 / 班级名</label>
+    <input id="f_name" placeholder="如 启蒙班 / 私教课">
+    <label>教练</label>
+    <input id="f_coach" placeholder="带课教练">
+    <label>学员 / 人数</label>
+    <input id="f_students" placeholder="如 8人 / 张三李四">
+    <label>备注</label>
+    <textarea id="f_note" placeholder="场地、注意事项等（选填）"></textarea>
+    <div class="modal-acts">
+      <button class="b del" id="delBtn" style="display:none" onclick="Sched.deleteCourse()">删除</button>
+      <button class="b ghost" onclick="Sched.closeEditor()">取消</button>
+      <button class="b primary" onclick="Sched.saveCourse()">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var REPO = 'xytyymq/xingyi-workbench';
+  var FILE = 'data/schedule.json';
+  // 写凭证来自授权链接下发（gate.js 长期保存于 localStorage/cookie），不在此硬编码，避免密钥入库被拦截
+  var DAYS = ['','周一','周二','周三','周四','周五','周六','周日'];
+  var courses = [];
+  var editingId = null;
+  var dirty = false;
+
+  function token(){
+    try { if (window.XYGate && XYGate.ghToken) { var t = XYGate.ghToken(); if (t) return t; } } catch(e){}
+    return '';
+  }
+  function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
+  function b64decode(b64){ return decodeURIComponent(escape(atob(b64))); }
+
+  function setSync(state, text){
+    var el = document.getElementById('syncState');
+    el.className = 'sync ' + (state||'');
+    document.getElementById('syncText').textContent = text || '';
+  }
+  function showWarn(msg){
+    var w = document.getElementById('warnBar');
+    if (!msg){ w.className='warnbar'; w.textContent=''; return; }
+    w.className='warnbar show'; w.textContent = msg;
+  }
+
+  // ---- 周日期计算（周一为一周开始）----
+  function weekDays(){
+    var now = new Date();
+    var dow = now.getDay(); // 0=周日
+    var diff = (dow === 0 ? -6 : 1 - dow); // 距本周一
+    var mon = new Date(now.getFullYear(), now.getMonth(), now.getDate() + diff);
+    var arr = [];
+    for (var i=0;i<7;i++){
+      var d = new Date(mon.getFullYear(), mon.getMonth(), mon.getDate()+i);
+      arr.push(d);
+    }
+    return arr;
+  }
+  function fmtMD(d){ return (d.getMonth()+1) + '/' + d.getDate(); }
+  function isToday(d){ return d.toDateString() === new Date().toDateString(); }
+
+  function timeMin(t){
+    if (!t) return 9999;
+    var m = t.match(/(\d{1,2}):(\d{2})/);
+    if (!m) return 9999;
+    return parseInt(m[1],10)*60 + parseInt(m[2],10);
+  }
+
+  function render(){
+    var days = weekDays();
+    var todayIdx = days.findIndex(isToday);
+    document.getElementById('weekLabel').textContent = '本周 ' + fmtMD(days[0]) + ' ~ ' + fmtMD(days[6]);
+    var grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    for (var di=1; di<=7; di++){
+      var col = document.createElement('div');
+      col.className = 'day-col';
+      var head = document.createElement('div');
+      head.className = 'day-head' + (di-1 === todayIdx ? ' today' : '');
+      head.innerHTML = '<div class="dn">'+DAYS[di]+'</div><div class="dd">'+fmtMD(days[di-1])+'</div>';
+      col.appendChild(head);
+      var body = document.createElement('div');
+      body.className = 'day-body';
+      var list = courses.filter(function(c){return c.day===di;})
+                        .sort(function(a,b){return timeMin(a.time)-timeMin(b.time);});
+      if (list.length === 0){
+        var tip = document.createElement('div');
+        tip.className='empty-tip'; tip.textContent='暂无排课';
+        body.appendChild(tip);
+      } else {
+        list.forEach(function(c){ body.appendChild(courseEl(c)); });
+      }
+      var add = document.createElement('div');
+      add.className='add-btn'; add.textContent='＋';
+      add.onclick = (function(d){ return function(){ Sched.openEditor({day:d}); }; })(di);
+      body.appendChild(add);
+      col.appendChild(body);
+      grid.appendChild(col);
+    }
+  }
+
+  function courseEl(c){
+    var el = document.createElement('div');
+    el.className='course';
+    var html = '<div class="ct">'+(c.time||'')+'</div>';
+    html += '<div class="cn">'+(c.name||'(未命名)')+'</div>';
+    var m = '';
+    if (c.coach) m += '<div class="cm">教练：<b>'+(c.coach)+'</b></div>';
+    if (c.students) m += '<div class="cm">学员：<b>'+(c.students)+'</b></div>';
+    if (c.note) m += '<div class="cm">备注：'+(c.note)+'</div>';
+    html += m;
+    el.innerHTML = html;
+    el.onclick = function(){ Sched.openEditor(c); };
+    return el;
+  }
+
+  // ---- 云端读写 ----
+  function ghFetch(method, body, withContent){
+    var ctrl = new AbortController();
+    var timer = setTimeout(function(){ ctrl.abort(); }, 6000);
+    var headers = { 'Authorization':'token '+token(), 'Accept':'application/vnd.github+json', 'User-Agent':'xingyi-sched' };
+    if (body) headers['Content-Type'] = 'application/json';
+    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+FILE, {
+      method: method, headers: headers, body: body||undefined, signal: ctrl.signal
+    }).then(function(res){
+      clearTimeout(timer);
+      return res.text().then(function(t){ return {status:res.status, text:t}; });
+    }).then(function(o){
+      var data = null; try { data = o.text ? JSON.parse(o.text) : null; } catch(e){}
+      return {status:o.status, data:data};
+    });
+  }
+
+  function load(){
+    setSync('', '同步中…');
+    var tk = token();
+    if (!tk){
+      // 未携带写凭证：本地缓存可用，但无法云端同步（需通过带授权的链接进入）
+      var cache = null;
+      try { cache = JSON.parse(localStorage.getItem('xy_sched_cache')||'null'); } catch(e){}
+      if (cache && Array.isArray(cache.courses)) courses = cache.courses;
+      setSync('warn', '只读（未授权）');
+      showWarn('未检测到云端写凭证：当前为本地只读模式。请通过带授权的链接进入工作台，即可多人协同编辑并云端同步。');
+      render();
+      return;
+    }
+    ghFetch('GET').then(function(r){
+      if (r.status === 200 && r.data && r.data.content){
+        try {
+          var obj = JSON.parse(b64decode(r.data.content));
+          courses = Array.isArray(obj.courses) ? obj.courses : [];
+          dirty = false;
+          setSync('ok', '已同步');
+          showWarn('');
+          render();
+        } catch(e){ setSync('err','解析失败'); render(); }
+      } else if (r.status === 404){
+        // 文件尚不存在：若本地有缓存则保留，否则空
+        var c0 = null; try { c0 = JSON.parse(localStorage.getItem('xy_sched_cache')||'null'); } catch(e){}
+        if (c0 && Array.isArray(c0.courses) && c0.courses.length){ courses = c0.courses; dirty=false; setSync('warn','本地缓存（云端暂无）'); showWarn('云端暂无数据，显示本地缓存；联网写入后自动同步。'); }
+        else { courses = []; dirty = false; setSync('ok', '已同步（空）'); }
+        render();
+      } else {
+        // 网络/鉴权异常：用本地缓存
+        var cache = null;
+        try { cache = JSON.parse(localStorage.getItem('xy_sched_cache')||'null'); } catch(e){}
+        if (cache && Array.isArray(cache.courses)){ courses = cache.courses; }
+        setSync('warn', '离线（本地缓存）');
+        showWarn('未能连接云端，当前显示本地缓存；联网后点「刷新」可恢复。');
+        render();
+      }
+    }).catch(function(){
+      setSync('warn', '离线（本地缓存）');
+      showWarn('网络超时，显示本地缓存；联网后点「刷新」恢复。');
+      render();
+    });
+  }
+
+  function persist(){
+    localStorage.setItem('xy_sched_cache', JSON.stringify({courses:courses}));
+    var body = JSON.stringify({ courses: courses });
+    setSync('', '保存中…');
+    // 先取 sha
+    ghFetch('GET').then(function(r){
+      var sha = (r.status===200 && r.data) ? r.data.sha : null;
+      var payload = { message:'chore(schedule): update course table', content: b64encode(body) };
+      if (sha) payload.sha = sha;
+      return ghFetch('PUT', JSON.stringify(payload));
+    }).then(function(r){
+      if (r.status===200 || r.status===201){
+        dirty = false; setSync('ok','已同步'); showWarn('');
+      } else {
+        dirty = true; setSync('warn','未同步'); showWarn('保存失败，已存本地；联网后点「刷新」重试。');
+      }
+    }).catch(function(){
+      dirty = true; setSync('warn','未同步'); showWarn('网络超时，已存本地；联网后点「刷新」重试。');
+    });
+  }
+
+  function genId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+  // ---- 编辑弹窗 ----
+  function openEditor(seed){
+    editingId = null;
+    document.getElementById('modalTitle').textContent = '新增课程';
+    document.getElementById('delBtn').style.display = 'none';
+    document.getElementById('f_day').value = (seed && seed.day) ? String(seed.day) : '1';
+    document.getElementById('f_time').value = (seed && seed.time) || '';
+    document.getElementById('f_name').value = (seed && seed.name) || '';
+    document.getElementById('f_coach').value = (seed && seed.coach) || '';
+    document.getElementById('f_students').value = (seed && seed.students) || '';
+    document.getElementById('f_note').value = (seed && seed.note) || '';
+    if (seed && seed.id){
+      editingId = seed.id;
+      document.getElementById('modalTitle').textContent = '编辑课程';
+      document.getElementById('delBtn').style.display = '';
+    }
+    document.getElementById('modal').classList.add('show');
+  }
+  function closeEditor(){ document.getElementById('modal').classList.remove('show'); editingId=null; }
+  function saveCourse(){
+    var v = {
+      day: parseInt(document.getElementById('f_day').value,10),
+      time: document.getElementById('f_time').value.trim(),
+      name: document.getElementById('f_name').value.trim(),
+      coach: document.getElementById('f_coach').value.trim(),
+      students: document.getElementById('f_students').value.trim(),
+      note: document.getElementById('f_note').value.trim()
+    };
+    if (!v.name && !v.time){ showWarn('请至少填写「时间段」或「课程名」'); return; }
+    if (editingId){
+      var idx = courses.findIndex(function(c){return c.id===editingId;});
+      if (idx>=0) courses[idx] = Object.assign({}, courses[idx], v);
+    } else {
+      v.id = genId();
+      courses.push(v);
+    }
+    closeEditor();
+    render();
+    persist();
+  }
+  function deleteCourse(){
+    if (!editingId) return;
+    courses = courses.filter(function(c){return c.id!==editingId;});
+    closeEditor();
+    render();
+    persist();
+  }
+  function refresh(){ load(); }
+
+  // 暴露
+  window.Sched = { openEditor:openEditor, closeEditor:closeEditor, saveCourse:saveCourse, deleteCourse:deleteCourse, refresh:refresh };
+
+  // 角色徽章
+  try {
+    if (window.XYGate){
+      var role = XYGate.role();
+      var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
+      var b = document.getElementById('roleBadge');
+      b.textContent = names[role] || '老板';
+      b.className = 'role-badge ' + (role||'boss');
+    }
+  } catch(e){}
+
+  load();
+})();
+</script>
+</body>
+</html>
