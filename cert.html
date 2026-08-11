@@ -24,8 +24,9 @@
     border-radius: 6px;
     padding: 46px 50px 40px;
     box-shadow: 0 10px 30px rgba(15,118,110,.25);
-    aspect-ratio: 1.414 / 1;
-    max-width: 920px;
+    width: 920px;
+    height: 651px;
+    max-width: 100%;
     overflow: hidden;
   }
   .cert::before {
@@ -78,7 +79,8 @@ body{background:var(--mint-50)!important;font-family:-apple-system,BlinkMacSyste
 .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
 .xy-topbar .brand .em{margin-right:5px;}
 .xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
-.cert-wrap{max-width:920px;margin:14px auto 0;padding:0 12px;}
+.cert-wrap{max-width:100%;margin:14px auto 0;padding:0 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.cert{margin:0 auto;}
 .toolbar{background:#fff!important;border:1px solid var(--line)!important;border-radius:14px!important;padding:14px 16px!important;margin-bottom:16px!important;box-shadow:0 2px 10px rgba(15,32,29,.06)!important;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif!important;}
 .toolbar label{font-size:13px;color:#334155;font-weight:600;}
 .toolbar input,.toolbar select{font-size:14px;padding:6px 8px;border:1.5px solid #cbd5e1!important;border-radius:6px;font-family:inherit;}
@@ -158,8 +160,19 @@ function saveCertImage(){
   var old = btn.textContent; btn.disabled = true; btn.textContent = '生成中…';
   try {
     if(typeof html2canvas !== 'function'){ throw new Error('图片库未加载，请检查网络后重试'); }
-    html2canvas(node, { scale: 2, backgroundColor: null, useCORS: true, logging: false })
+    // 渲染前固定尺寸，避免百分比/aspect-ratio导致 html2canvas 比例异常
+    var origMaxW = node.style.maxWidth;
+    var origW = node.style.width;
+    var origH = node.style.height;
+    node.style.maxWidth = 'none';
+    node.style.width = '920px';
+    node.style.height = '651px';
+    html2canvas(node, { scale: 2, backgroundColor: '#fffdf5', useCORS: true, logging: false, width: 920, height: 651 })
       .then(function(canvas){
+        // 恢复原有样式
+        node.style.maxWidth = origMaxW;
+        node.style.width = origW;
+        node.style.height = origH;
         var name = (document.getElementById('vName').textContent || '学员').trim().replace(/[\\/:*?"<>|]/g,'');
         var dataURL = canvas.toDataURL('image/png');
         btn.disabled = false; btn.textContent = old;
@@ -171,7 +184,11 @@ function saveCertImage(){
           document.body.appendChild(a); a.click(); a.remove();
         }
       })
-      .catch(function(err){ btn.disabled = false; btn.textContent = old; alert('生成图片失败：' + (err && err.message ? err.message : err)); });
+      .catch(function(err){
+        node.style.maxWidth = origMaxW; node.style.width = origW; node.style.height = origH;
+        btn.disabled = false; btn.textContent = old;
+        alert('生成图片失败：' + (err && err.message ? err.message : err));
+      });
   } catch(e){ btn.disabled = false; btn.textContent = old; alert('生成图片失败：' + e.message); }
 }
 function showCertPreview(dataURL, name){
@@ -179,13 +196,14 @@ function showCertPreview(dataURL, name){
   if(!mask){
     mask = document.createElement('div');
     mask.id = 'certPreviewMask';
-    mask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:99;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
-    mask.innerHTML = '<img id="certPrevImg" style="max-width:92%;max-height:72%;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.4);background:#fff;">'
-      + '<div style="color:#cbd5e1;text-align:center;margin-top:12px;font-size:12.5px;">📱 手机端：长按上方图片 → 保存到相册</div>'
-      + '<button id="certPrevClose" style="margin-top:14px;padding:9px 22px;border:none;border-radius:9px;background:#14b8a6;color:#fff;font-size:14px;">关闭</button>';
+    mask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999;display:none;flex-direction:column;padding:12px;overflow:auto;';
+    mask.innerHTML = '<div style="flex:0 0 auto;text-align:right;padding:4px 4px 8px;"><button id="certPrevClose" style="padding:7px 16px;border:none;border-radius:8px;background:#14b8a6;color:#fff;font-size:13px;">关闭</button></div>'
+      + '<div style="flex:1 1 auto;display:flex;align-items:flex-start;justify-content:center;min-height:0;">'
+      + '<img id="certPrevImg" style="max-width:100%;width:auto;height:auto;border-radius:8px;box-shadow:0 6px 24px rgba(0,0,0,.5);background:#fff;">'
+      + '</div>'
+      + '<div style="flex:0 0 auto;color:#cbd5e1;text-align:center;padding:12px 8px;font-size:12.5px;">📱 长按上方图片 → 保存到相册<br>若图片被裁，先点右上角「关闭」再重新生成</div>';
     document.body.appendChild(mask);
-    mask.addEventListener('click', function(e){ if(e.target === mask) mask.style.display='none'; });
-    document.getElementById('certPrevClose').addEventListener('click', function(){ mask.style.display='none'; });
+    document.getElementById('certPrevClose').addEventListener('click', function(e){ e.stopPropagation(); mask.style.display='none'; });
   }
   document.getElementById('certPrevImg').src = dataURL;
   mask.style.display = 'flex';
