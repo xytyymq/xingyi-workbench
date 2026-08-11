@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿羽毛球馆 · 成人羽毛球自学系统（完整版 v3）</title>
+<style>
+:root{
+  /* warm-tinted neutrals */
+  --paper:#f4f1e8; --paper-2:#efe9dc; --card:#fffdf7;
+  --ink:#211f18; --ink-2:#4c463b; --mut:#857c6c;
+  --line:#ddd5c4; --line-2:#cabfa9;
+  /* brand */
+  --court:#1f6b4e; --court-d:#154e38; --court-soft:#e7f0ea;
+  --cork:#ffb22e; --cork-d:#e8950f; --alert:#d9531e; --info:#3b6fb0;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --shadow:0 1px 2px rgba(33,31,24,.04), 0 10px 28px rgba(33,31,24,.07);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);line-height:1.68;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;font-size:16px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 84px}
+
+/* ===== masthead (editorial) ===== */
+.masthead{position:relative;margin:0 -16px 22px;padding:34px 20px 26px;
+  background:var(--card);border-bottom:3px solid var(--ink);overflow:hidden}
+.masthead::before{content:"";position:absolute;top:0;left:0;right:0;height:6px;
+  background:repeating-linear-gradient(90deg,var(--cork) 0 14px,var(--ink) 14px 16px,var(--court) 16px 30px,var(--ink) 30px 32px)}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--court);font-weight:700;margin-bottom:12px}
+.masthead h1{position:relative;display:inline-block;margin:0;font-size:clamp(30px,9vw,46px);
+  line-height:1.02;letter-spacing:-.01em;font-weight:800}
+.masthead h1::after{content:"";display:block;width:66px;height:5px;background:var(--cork);margin-top:12px;border-radius:3px}
+.sub{margin-top:14px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600}
+.welcome{margin:14px 0 0;font-size:15px;color:var(--ink-2)}
+.contact{display:inline-block;margin-top:14px;background:var(--court-soft);color:var(--court-d);
+  border:1px solid #c9e0d3;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600}
+.contact b{color:var(--court-d)}
+.tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.tags span{font-size:12px;font-weight:600;color:var(--ink-2);background:var(--paper-2);
+  border:1px solid var(--line-2);border-radius:999px;padding:4px 12px}
+
+/* ===== nav ===== */
+#topnav{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 12px;
+  background:var(--ink);box-shadow:0 4px 18px rgba(33,31,24,.20);overflow-x:auto;-webkit-overflow-scrolling:touch}
+#topnav .tab{flex:0 0 auto;border:none;background:transparent;color:#cfc8b8;
+  font-size:14px;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;
+  font-weight:600;font-family:inherit;transition:color .2s,background .25s var(--ease)}
+#topnav .tab:active{transform:scale(.96)}
+#topnav .tab.active{background:var(--cork);color:#221c08}
+@media(max-width:480px){#topnav .tab{padding:8px 11px;font-size:13px}}
+
+/* ===== subtabs (techlib) ===== */
+#subtabs{display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:var(--court);
+  position:sticky;top:52px;z-index:50}
+#subtabs .stab{flex:0 0 auto;border:none;background:rgba(255,255,255,.14);color:#eafff5;
+  font-size:13px;padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;font-family:inherit;
+  transition:background .25s var(--ease)}
+#subtabs .stab.active{background:var(--cork);color:#221c08;font-weight:700}
+#subtabs .lv{font-size:10px;background:rgba(255,255,255,.22);color:#fff;border-radius:6px;padding:1px 5px;margin-right:4px}
+#subtabs .sgroup{width:100%;font-size:11px;color:rgba(255,255,255,.72);font-weight:700;
+  margin:10px 2px 5px;letter-spacing:.12em}
+.routecard{background:var(--court-soft);border-left:3px solid var(--court);border-radius:10px;
+  padding:10px 14px;margin:0 0 14px;font-size:13px;color:var(--court-d);line-height:1.6}
+.routecard b{color:var(--court-d)}
+
+/* ===== section heads ===== */
+h2{font-size:20px;margin:30px 0 14px;display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+h2 .n{background:var(--ink);color:var(--cork);width:30px;height:30px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto;font-weight:800}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.card p{margin:0 0 6px}
+
+.module{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.module:last-child{border-bottom:0}
+.module .ic{font-size:20px;flex:0 0 auto;width:30px;text-align:center}
+.module b{color:var(--court-d)}
+.module small{color:var(--mut);display:block;margin-top:2px;font-size:12.5px}
+
+/* ===== technique panel ===== */
+.tech{position:relative;background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--court);border-radius:12px;padding:20px 18px;margin-bottom:18px;
+  box-shadow:var(--shadow);overflow:hidden;transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+.tech:hover{transform:translateY(-2px);box-shadow:0 4px 10px rgba(33,31,24,.06),0 18px 40px rgba(33,31,24,.11)}
+.tech h3{margin:0 0 4px;font-size:18px;color:var(--ink);font-weight:800;letter-spacing:-.01em}
+.tech .lead{color:var(--ink-2);font-size:13.5px;margin:0 0 14px;line-height:1.6}
+
+#techwrap{counter-reset:tech}
+#techwrap .tech{counter-increment:tech}
+#techwrap .tech::before{content:counter(tech,decimal-leading-zero);position:absolute;
+  top:4px;right:14px;font-size:60px;font-weight:800;line-height:1;color:var(--court);opacity:.10;pointer-events:none}
+
+.steps{margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;position:relative;padding:9px 6px 9px 40px;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{content:counter(s);position:absolute;left:4px;top:9px;background:var(--court);color:#fff;
+  width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.steps li b{color:var(--court-d)}
+
+.bad{background:#fdf1ea;border:1px solid #f3cdba;border-radius:10px;padding:11px 13px;margin:10px 0;font-size:13.5px;line-height:1.6}
+.bad b{color:var(--alert)}
+.drill{background:var(--court-soft);border:1px solid #c9e0d3;border-radius:10px;padding:11px 13px;margin-top:12px;font-size:13.5px;line-height:1.6}
+.drill b{color:var(--court-d)}
+.note{background:#fbf3d8;border:1px solid #ecd99a;border-radius:10px;padding:11px 13px;font-size:13px;color:#7a5a12;line-height:1.6;margin-top:12px}
+
+.extra{background:var(--court-soft);border:1px solid #c9e0d3;border-left:4px solid var(--cork);
+  border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.extra h4{margin:0 0 6px;font-size:16px;color:var(--court-d)}
+.extra p{margin:0;color:var(--ink-2);font-size:13.5px;line-height:1.65}
+
+svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line);
+  border-radius:10px;display:block;margin:8px 0 14px}
+
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}
+.week label{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;
+  padding:10px 4px;text-align:center;font-size:11px;cursor:pointer;transition:background .2s,border-color .2s}
+.week label b{display:block;color:var(--court-d);font-size:13px;margin-bottom:4px}
+.week label:has(input:checked){background:var(--court-soft);border-color:var(--court)}
+.week input{margin-top:6px;width:20px;height:20px;accent-color:var(--court);cursor:pointer}
+@media(max-width:480px){.week{grid-template-columns:repeat(4,1fr)}}
+
+.levels{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.levels span{background:var(--paper-2);border:1px solid var(--line-2);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--ink-2)}
+
+.news{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.ev{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.ev .date{display:inline-block;background:var(--court);color:#fff;font-size:11px;padding:3px 10px;border-radius:999px;margin-bottom:8px;font-weight:700;letter-spacing:.04em}
+.ev b{font-size:15px;color:var(--ink)}
+.ev p{margin:6px 0 0;font-size:13px;color:var(--ink-2);line-height:1.6}
+.ev .src{display:block;margin-top:8px;font-size:11px;color:var(--mut)}
+
+.foot{text-align:center;color:var(--mut);font-size:12px;margin-top:30px;line-height:1.7}
+
+/* hidden-section remnants (brand / script) */
+.script{background:#eef3fb;border-left:4px solid var(--info);border-radius:0 10px 10px 0;padding:10px 12px;margin-top:10px;font-size:13.5px;color:#23324a;position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:var(--info);color:#fff;border:0;border-radius:18px;padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+.copybtn:active{transform:scale(.96)}
+.hook{background:linear-gradient(135deg,#fff3e8,#ffe9d6);border:1px solid #ffd0a8;border-radius:12px;padding:12px;margin-top:12px;font-size:13.5px}
+.hook b{color:var(--cork-d)}
+.exportbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.exportbar button{background:var(--court);color:#fff;border:0;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit}
+
+/* ===== motion ===== */
+@keyframes catIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.tech,.card,.extra{animation:catIn .38s var(--ease)}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="theme-color" content="#1f6b4e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="星羿羽球自学">
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="kicker">星羿羽毛球馆 · 毛毛球大队</div>
+  <h1>成人羽毛球<br>自学系统</h1>
+  <div class="sub">SELF-TRAINING SYSTEM · 不卖课，只帮你打得更好</div>
+  <p class="welcome">欢迎加入星羿毛毛球大队，一起涨球，一起健康生活</p>
+  <div class="contact">📞 球馆联系 · 星羿体育：<b>15107920066</b>（微信同号）</div>
+  <div class="tags"><span>会员增值</span><span>品牌内容</span><span>全 AI 图解</span></div>
+</header>
+<nav id="topnav"><button class="tab active" data-cat="home">🏠 首页</button><button class="tab" data-cat="basics">🌱 自检·球感</button><button class="tab" data-cat="techlib">🏸 技术库</button><button class="tab" data-cat="news">📰 羽球大事件</button><button class="tab" data-cat="biz">💼 商务合作</button><button class="tab" data-cat="hire">👥 教练应聘</button></nav>
+
+<!-- ============ 模块 C：单人训练计划 · 周打卡（首页） ============ -->
+<h2><span class="n">C</span>单人训练计划 · 周打卡（首页）</h2>
+<div class="card">
+  <p style="margin:0 0 6px;font-size:14px"><b>一周打卡表</b>：每天 30-40 分钟，按科学顺序涨球。打完当天勾一下 ✅。</p>
+  <div class="week">
+    <label><b>周一</b>球感+步法<br>颠球/对墙/米字步<input type="checkbox"></label>
+    <label><b>周二</b>高远球<br>挥拍定型/墙抽<input type="checkbox"></label>
+    <label><b>周三</b>挑球+发球<br>低手挑/对墙发<input type="checkbox"></label>
+    <label><b>周四</b>步法+吊球<br>米字步/切吊<input type="checkbox"></label>
+    <label><b>周五</b>杀球+防守<br>转体鞭打/接杀挡<input type="checkbox"></label>
+    <label><b>周六</b>网前+平抽<br>搓球/对墙平抽<input type="checkbox"></label>
+    <label><b>周日</b>轻量复习<br>或来馆实测<input type="checkbox"></label>
+  </div>
+  <div class="drill" style="margin-top:12px"><b>📌 训练原则：</b><br>
+    ① <b>先量后质</b>：动作没定型前别求快，慢动作找发力顺序；<br>
+    ② <b>每天一小步</b>：30 分钟胜过周末猛练 3 小时；<br>
+    ③ <b>周日是节点</b>：来星羿开放场把一周练的实战一遍，验证动作对不对；<br>
+    ④ <b>伤痛即停</b>：肩/膝不适立刻停，冰敷休息，别硬撑（遵循训练安全原则）。</div>
+</div>
+
+<!-- 进度系统 -->
+<h2><span class="n">↑</span>成长等级（进度系统）</h2>
+<div class="card">
+  <p style="margin:0;font-size:14px">每练一个模块积累经验值，等级越高解锁越深内容：</p>
+  <div class="levels">
+    <span>🌱 初学者：掌握基础概念</span>
+    <span>🌿 进阶者：能独立分析应用</span>
+    <span>🌳 熟练者：能解决复杂问题</span>
+    <span>🌟 专家级：能创新和教学</span>
+  </div>
+</div>
+
+<!-- ============ 顶部模块 A：入门自检 + 球感基础 ============ -->
+<h2><span class="n">A</span>入门自检 + 球感基础</h2>
+<div class="module-group">
+
+  <div class="tech">
+    <h3>入门自检：先认清自己</h3>
+    <p class="lead">动手前先测四项，知道自己卡在哪，后面练起来才有方向。</p>
+
+    <svg viewBox="0 0 400 230" role="img" aria-label="握拍与站位自检">
+      <text x="20" y="22" font-size="12" fill="#164e39">✅ 正确：V 型虎口对棱</text>
+      <ellipse cx="80" cy="68" rx="14" ry="20" fill="none" stroke="#1f6b4e" stroke-width="3"/>
+      <line x1="80" y1="48" x2="80" y2="28" stroke="#1f6b4e" stroke-width="4"/>
+      <text x="56" y="108" font-size="11" fill="#6b7c72">虎口贴侧棱</text>
+      <text x="220" y="22" font-size="12" fill="#d9531e">❌ 错误：拳头攥拍</text>
+      <ellipse cx="290" cy="68" rx="14" ry="20" fill="none" stroke="#d9531e" stroke-width="3"/>
+      <circle cx="290" cy="46" r="6" fill="#d9531e"/>
+      <text x="250" y="108" font-size="11" fill="#6b7c72">手腕被锁死</text>
+      <text x="20" y="140" font-size="12" fill="#164e39">站位自检</text>
+      <line x1="40" y1="200" x2="360" y2="200" stroke="#cfe0d6" stroke-width="1.5"/>
+      <circle cx="200" cy="178" r="9" fill="#1f6b4e"/>
+      <line x1="200" y1="187" x2="200" y2="200" stroke="#1f6b4e" stroke-width="5"/>
+      <text x="118" y="222" font-size="11" fill="#6b7c72">双脚与肩同宽 · 微曲膝 · 重心在前脚</text>
+    </svg>
+
+    <ol class="steps">
+      <li><b>握拍自检</b>：虎口卡在拍柄侧棱、像"握手"一样自然 → 合格；攥成拳头 → 先改握法，否则手腕打不开。</li>
+      <li><b>球感自检</b>：原地颠球连续 10 个不落地 / 对墙击球连续 5 个 → 合格；总接不住 → 先练下面的球感。</li>
+      <li><b>站位自检</b>：双脚与肩同宽、膝盖微曲、重心在前脚 → 合格；僵直站着 → 永远启动慢。</li>
+      <li><b>高远球自检</b>：对墙打高远能连续 10 拍不落地 → 合格；总下网/出界 → 先练动作二高远球。</li>
+      <li><b>步法自检</b>：原地米字步跑 6 点不喘、回中利索 → 合格；跑完站不稳 → 先练动作一步法。</li>
+    </ol>
+
+    <div class="note">📋 自检结论：4-5 项全过 = 🌿 进阶；过 2-3 项 = 🌱 初学者，从动作一开始；别跳级，地基稳才涨球。</div>
+  </div>
+
+  <div class="tech">
+    <h3>球感基础（颠球 / 对墙 / 控球）</h3>
+    <p class="lead">握拍和步法之前，先让球"听你的话"。球感差，后面所有技术都使不上劲。</p>
+
+    <svg viewBox="0 0 400 190" role="img" aria-label="球感训练示意">
+      <text x="30" y="22" font-size="12" fill="#164e39">原地颠球</text>
+      <circle cx="80" cy="90" r="12" fill="none" stroke="#1f6b4e" stroke-width="3"/>
+      <line x1="80" y1="120" x2="80" y2="160" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+      <path d="M80 78 Q80 50 80 40" fill="none" stroke="#444" stroke-width="2" stroke-dasharray="4 3"/>
+      <circle cx="80" cy="36" r="5" fill="#444"/>
+      <text x="56" y="178" font-size="11" fill="#6b7c72">目标：连续 10 个</text>
+      <text x="210" y="22" font-size="12" fill="#164e39">对墙击球</text>
+      <rect x="300" y="30" width="8" height="130" fill="#cfe0d6"/>
+      <path d="M304 30 L304 160" stroke="#9bb3a6" stroke-width="2"/>
+      <path d="M240 70 Q270 50 300 60" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <path d="M300 80 Q270 110 240 100" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="5 4"/>
+      <circle cx="238" cy="72" r="5" fill="#444"/>
+      <text x="220" y="178" font-size="11" fill="#6b7c72">目标：连续 5 个回合</text>
+    </svg>
+
+    <ol class="steps">
+      <li><b>原地颠球</b>：拍面放平，轻颠球底部，让球直上直下，先练稳不跑位。</li>
+      <li><b>对墙击球</b>：离墙 2-3 米，轻打轻接，连续回合越多越好，培养击球节奏。</li>
+      <li><b>空中控球</b>：把球挑高，等落下再挑高，循环控制，练习拍面角度微调。</li>
+      <li><b>目标击球</b>：对墙画圈或贴点，连续把球打到目标区域，提升控球精度。</li>
+      <li><b>每日 5 分钟</b>：球感不需要大强度，贵在天天碰，手指手腕自然灵活。</li>
+    </ol>
+
+    <div class="bad"><b>❌ 常见错误：</b>一上来就猛抽 → 球乱飞，没手感还伤拍。<br><b>✅ 纠正：</b>先轻、慢、稳，力度控制在能把球接回来即可。</div>
+
+    <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+      ① <b>颠球计数</b>：连续 10 个 × 5 组，掉球归零重来；<br>
+      ② <b>对墙回合</b>：连续 5 个回合 × 5 组；<br>
+      ③ <b>高低控球</b>：挑高→等落→再挑高，10 次 × 3 组。</div>
+
+    
+  </div>
+
+</div>
+
+<!-- ============ 顶部模块 B：核心技术库（动作1-9 + 反手过渡） ============ -->
+<h2><span class="n">B</span>核心技术库（动作 1-9 + 反手过渡）</h2>
+<div class="module-group" id="techwrap">
+
+<!-- 动作 一：基础步法 -->
+<div class="tech">
+  <h3>动作一 · 基础步法（Footwork）</h3>
+  <p class="lead">⭐ 优先级超越所有击球技术。90% 成人打不好，不是手的问题，是脚到不了位。</p>
+
+  <svg viewBox="0 0 400 240" role="img" aria-label="基础步法示意">
+    <rect x="40" y="30" width="320" height="170" fill="none" stroke="#cfe0d6" stroke-width="1.5"/>
+    <line x1="200" y1="30" x2="200" y2="200" stroke="#cfe0d6" stroke-width="1"/>
+    <circle cx="200" cy="115" r="6" fill="#1f6b4e"/>
+    <path d="M200 115 L182 100 M200 115 L218 100 M200 115 L182 130 M200 115 L218 130" stroke="#1f6b4e" stroke-width="2.5" marker-end="url(#ar)"/>
+    <text x="120" y="100" font-size="11" fill="#164e39">① 启动步：小跳分脚</text>
+    <circle cx="120" cy="170" r="5" fill="#d9531e"/>
+    <path d="M120 170 L150 170 L178 170" stroke="#d9531e" stroke-width="2.5" fill="none" marker-end="url(#ar2)"/>
+    <text x="110" y="190" font-size="11" fill="#d9531e">② 并步：双脚交替横移</text>
+    <circle cx="250" cy="60" r="5" fill="#3b6fb0"/>
+    <path d="M250 60 L272 72 L258 84 L282 96" stroke="#3b6fb0" stroke-width="2.5" fill="none" marker-end="url(#ar3)"/>
+    <text x="236" y="50" font-size="11" fill="#2a5a9e">③ 交叉步：大范围救球</text>
+    <defs>
+      <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f6b4e"/></marker>
+      <marker id="ar2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#d9531e"/></marker>
+      <marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#3b6fb0"/></marker>
+    </defs>
+  </svg>
+
+  <ol class="steps">
+    <li><b>启动步（分脚跳）</b>：对手击球瞬间小跳一下、双脚微开，像弹簧蓄力，别站着等。</li>
+    <li><b>并步（侧移）</b>：中短距离用，双脚交替往同方向滑，重心平稳不跳。</li>
+    <li><b>交叉步（大范围）</b>：救远球用，后脚从体前交叉迈到前脚前方，步幅大。</li>
+    <li><b>回中</b>：每打完一步立刻小碎步回中心位置，准备下一拍。</li>
+    <li><b>节奏</b>：启动→移动→击球→回中，形成闭环，越练越像"滑着打"；米字步覆盖前/后/左/右/左前/右前共 6 个点，每个点都能快速到位再回中。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>站着不动等球，再猛冲 → 永远慢半拍。<br><b>✅ 纠正：</b>把"启动步"刻进肌肉，对方一出手你就小跳。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>用并步去救大角度球 → 够不到还容易扭脚。<br><b>✅ 纠正：</b>超过 2 步距离直接上交叉步。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>绳梯/地砖</b>：并步左右 30 秒 × 3 组；交叉步前后 30 秒 × 3 组；<br>
+    ② <b>米字步</b>：地板贴 6 个点（前/后/左/右/两斜），启动→跑点→回中，每点 10 次；<br>
+    ③ <b>无器材替代</b>：没绳梯就用地砖线，没贴点就用想象点，每天 10 分钟。</div>
+
+  
+</div>
+
+<!-- 动作 二：高远球 -->
+<div class="tech">
+  <h3>动作二 · 高远球（High Clear）</h3>
+  <p class="lead">后场技术地基。打不到位等于送对手杀球，也是所有进攻技术的前提。</p>
+
+  <svg viewBox="0 0 400 250" role="img" aria-label="高远球击球示意">
+    <line x1="20" y1="210" x2="380" y2="210" stroke="#9bb3a6" stroke-width="2"/>
+    <text x="24" y="226" font-size="11" fill="#6b7c72">己方底线</text>
+    <circle cx="300" cy="120" r="14" fill="#1f6b4e"/>
+    <line x1="300" y1="134" x2="300" y2="180" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="300" y1="145" x2="262" y2="78" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="252" cy="66" rx="16" ry="22" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(-35 252 66)"/>
+    <circle cx="250" cy="60" r="5" fill="#d9531e"/>
+    <text x="200" y="44" font-size="12" fill="#d9531e">击球点：头顶前上方</text>
+    <path d="M70 90 Q150 40 246 58" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 4"/>
+    <circle cx="72" cy="92" r="4" fill="#444"/>
+    <path d="M252 60 Q330 20 372 150" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="300" y="30" font-size="11" fill="#164e39">回球：又高又远压后场</text>
+    <text x="318" y="200" font-size="11" fill="#6b7c72">侧身·蹬转发力</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>侧身对网</b>：左脚在前、右脚在后，身体转到侧向，别正面朝前硬抡。</li>
+    <li><b>举拍架拍</b>：持拍手自然举到耳边，肘部抬高，像"敬礼"一样等球。</li>
+    <li><b>找击球点</b>：球落到<b>右肩前上方最高点</b>才打（手臂自然伸直刚好够得到的位置）；宁可稍后仰也别等球到身侧。引拍时小臂外旋、拍面竖直向下蓄力，击球瞬间拍面转正、正对来球。</li>
+    <li><b>蹬转鞭打</b>：右脚蹬地→转腰→大臂带小臂→手腕"甩"出去，像甩鞭子。</li>
+    <li><b>随挥收拍</b>：打完手臂顺势划到左下方，立刻回中准备下一拍。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>等球降到肩膀才打 → 只能往上"推"，球又短又高送给对手。<br><b>✅ 纠正：</b>提前移动到位，抢高点；球在头顶上方一臂远处就出手。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>只用手臂发力，腰不转 → 球软、容易酸痛。<br><b>✅ 纠正：</b>先练"蹬地+转腰"带动手臂，手腕最后才加速。</div>
+
+  <div class="bad"><b>❌ 常见错误 3：</b>击球点偏右（顺手往身体右侧够球）→ 横向发力、球路偏低不到位。<br><b>✅ 纠正：</b>脚下微调，保证击球点在持拍肩正上方的延长线区域，才能打出合力。</div>
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>挥拍定型</b>：空拍架拍→蹬转鞭打，30 次 × 3 组，慢动作找发力顺序；<br>
+    ② <b>墙抽高远</b>：对墙高处画目标圈，打向圈内连续 20 回合 × 3 组；<br>
+    ③ <b>原地起跳</b>：模拟抢点，10 次 × 2 组（膝盖不适就免跳）。</div>
+
+  
+</div>
+
+<!-- 动作 三：挑球 -->
+<div class="tech">
+  <h3>动作三 · 挑球（Lift）</h3>
+  <p class="lead">⭐ 救命技术。对方吊球/网前球把你压到前场，一挑到位就能摆脱压迫，重新组织。</p>
+
+  <svg viewBox="0 0 400 250" role="img" aria-label="挑球示意">
+    <line x1="200" y1="40" x2="200" y2="200" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="188" y="34" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="130" cy="170" r="13" fill="#1f6b4e"/>
+    <line x1="130" y1="183" x2="130" y2="215" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="130" y1="180" x2="170" y2="130" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="176" cy="126" rx="12" ry="16" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(55 176 126)"/>
+    <circle cx="178" cy="128" r="4" fill="#d9531e"/>
+    <text x="140" y="90" font-size="11" fill="#d9531e">击球点：身前下方</text>
+    <path d="M210 70 Q190 100 178 126" fill="none" stroke="#888" stroke-width="2" stroke-dasharray="5 4"/>
+    <circle cx="212" cy="68" r="4" fill="#444"/>
+    <path d="M178 128 Q260 60 350 175" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="250" y="90" font-size="11" fill="#164e39">挑高远：又高又远压后场</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>快速上网</b>：对方吊球一落就启动，大步跨到球下落点，后脚蹬住别晃。</li>
+    <li><b>低手位击球</b>：球在膝盖到腰之间击球，拍面从下方兜上去，别等球落地。</li>
+    <li><b>拍面立稳</b>：挑球时手腕外展、拍面稍立，向斜上方"送"，不是往前"推"。</li>
+    <li><b>借助步法发力</b>：蹬地+转肩带动手臂，手腕最后轻抖控制方向。</li>
+    <li><b>挑完回中</b>：一挑出去立刻后撤回中，防止对方回放或扑球。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>挑球只高不远 → 对方在中场就能截杀。<br><b>✅ 纠正：</b>拍面立起向前上方送，目标是对方后场底线。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>挑完还站在网前 → 被扑。<br><b>✅ 纠正：</b>击球同时后腿已开始后撤，打完顺势回中。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>原地低手挑</b>：把球放地上，拍面从下方挑起送高，20 次 × 3 组；<br>
+    ② <b>对墙挑高远</b>：离墙 3 米，低手位把球挑向墙上方目标，连续 10 次 × 3 组；<br>
+    ③ <b>跨步+挑</b>：向前跨弓步→挑球→后撤回中，左右各 10 次 × 3 组。</div>
+
+  
+</div>
+
+<!-- 动作 四：发球 -->
+<div class="tech">
+  <h3>动作四 · 发球（Serve）</h3>
+  <p class="lead">每分球从发球开始。发得好直接压制对手，发不好直接送分。成人最该先稳住的一项。</p>
+
+  <svg viewBox="0 0 400 250" role="img" aria-label="发球示意">
+    <line x1="200" y1="40" x2="200" y2="200" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="186" y="34" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="90" cy="170" r="13" fill="#1f6b4e"/>
+    <line x1="90" y1="183" x2="90" y2="215" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="90" y1="190" x2="130" y2="150" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="138" cy="146" rx="12" ry="16" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(30 138 146)"/>
+    <circle cx="140" cy="150" r="4" fill="#d9531e"/>
+    <path d="M140 150 Q260 60 350 170" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="220" y="92" font-size="11" fill="#164e39">发高远：高弧线压后场</text>
+    <path d="M140 150 Q175 130 215 165" fill="none" stroke="#3b6fb0" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="150" y="120" font-size="11" fill="#2a5a9e">发网前：贴网轻放</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>站位</b>：发球区腰部位置，双脚前后开立，重心在前脚，身体略前倾。</li>
+    <li><b>握拍放松</b>：用<b>正手握拍</b>（别用"苍蝇拍"式），手腕放松才能控制发力。</li>
+    <li><b>击球点低</b>：拍面在腰部以下击球，别把球抛太高。</li>
+    <li><b>发高远</b>：抖腕把球送高送远，过网后急速下坠到对方后场。</li>
+    <li><b>发网前</b>：轻切轻送，球贴网落下对方前发球线内，逼对手起高球。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>发球过高或出界 → 直接送分/被扑。<br><b>✅ 纠正：</b>多练"切送"手感，网前球贴网 30cm 内下落最佳。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>抛球不稳、击球点乱 → 动作变形。<br><b>✅ 纠正：</b>左手抛球固定在身前，右手只管在腰下稳定点击。</div>
+
+  <div class="bad"><b>❌ 常见错误 3：</b>左手抛球不稳、击球时机乱 → 发球忽高忽低。<br><b>✅ 纠正：</b>左手在身前固定高度放球，右手只在腰下稳定点击；重心从后脚转到前脚，靠身体带动而非只用手臂。</div>
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>对墙发</b>：离墙 2 米，发高远贴墙高处目标圈，20 次 × 3 组；<br>
+    ② <b>网前手感</b>：用椅子当"网"，发网前球轻落椅前 30cm，20 次 × 3 组；<br>
+    ③ <b>稳定性</b>：连续发球不失误 15 个算一组，做 3 组。</div>
+
+  
+</div>
+
+<!-- 动作 五：吊球 -->
+<div class="tech">
+  <h3>动作五 · 吊球（Drop Shot）</h3>
+  <p class="lead">后场"软刀子"。高远球是拉开，吊球是突然把球放近网，骗对手来不及上前。高远 + 吊球组合最杀人。</p>
+
+  <svg viewBox="0 0 400 240" role="img" aria-label="吊球直线斜线示意">
+    <line x1="200" y1="40" x2="200" y2="210" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="188" y="34" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="120" cy="120" r="13" fill="#1f6b4e"/>
+    <line x1="120" y1="133" x2="120" y2="175" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="120" y1="133" x2="160" y2="70" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="166" cy="64" rx="12" ry="16" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(35 166 64)"/>
+    <circle cx="168" cy="62" r="4" fill="#d9531e"/>
+    <text x="110" y="55" font-size="11" fill="#d9531e">击球点：肩上方</text>
+    <path d="M168 62 Q230 120 290 195" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="195" y="150" font-size="11" fill="#164e39">吊直线：贴边下坠</text>
+    <path d="M168 62 Q230 100 320 175" fill="none" stroke="#3b6fb0" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <text x="245" y="118" font-size="11" fill="#2a5a9e">吊斜线：对角落点</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>动作像高远</b>：引拍、侧身和打高远几乎一样，故意不让对手看出你要吊。</li>
+    <li><b>切击不甩腕</b>：击球点比高远球稍靠前，拍面斜切球托侧下部，手腕"切"一下就收，别像杀球那样发力。</li>
+    <li><b>控制落点</b>：吊直线贴自己这侧边线下坠；吊斜线切向对角网前。</li>
+    <li><b>过网即坠</b>：球过网后急速下坠，落在前发球线附近，逼对手挑高球。</li>
+    <li><b>连贯收拍</b>：吊完立刻回中，准备扑对方的回放或平高球。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>吊球出界/挂网 → 用力过猛像高远。<br><b>✅ 纠正：</b>收力！吊球是"切"不是"打"，想象把球轻轻抹过网。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>动作和高远区别太大，对手一眼看穿。<br><b>✅ 纠正：</b>引拍完全一致，最后一瞬才变拍面，骗到位才算吊。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>对墙切吊</b>：离墙 3 米，把球轻切向墙根 30cm 区域，20 次 × 3 组；<br>
+    ② <b>落点控制</b>：地板贴两个目标点（直线/斜线），原地挥拍想象切向不同点，30 次；<br>
+    ③ <b>高远+吊组合</b>：空拍交替做高远发力、吊球切击，体会发力差别 20 次 × 2 组。</div>
+
+  
+</div>
+
+<!-- 动作 六：杀球 -->
+<div class="tech">
+  <h3>动作六 · 杀球（Smash）</h3>
+  <p class="lead">进攻终结技。球从上往下尖角砸，对手最难接。成人要练"准"多于"狠"，别急着跳。</p>
+
+  <svg viewBox="0 0 400 250" role="img" aria-label="杀球下压示意">
+    <line x1="200" y1="60" x2="200" y2="220" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="190" y="54" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="150" cy="90" r="13" fill="#1f6b4e"/>
+    <line x1="150" y1="103" x2="145" y2="135" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="150" y1="103" x2="120" y2="60" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="112" cy="54" rx="12" ry="16" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(-40 112 54)"/>
+    <circle cx="114" cy="52" r="4" fill="#d9531e"/>
+    <text x="55" y="40" font-size="11" fill="#d9531e">侧身引拍·最高点</text>
+    <path d="M114 52 Q170 110 300 200" fill="none" stroke="#1f6b4e" stroke-width="3" marker-end="url(#ar4)"/>
+    <text x="150" y="130" font-size="11" fill="#164e39">下压·尖角劈杀</text>
+    <circle cx="300" cy="200" r="4" fill="#1f6b4e"/>
+    <text x="308" y="216" font-size="11" fill="#6b7c72">落点：对方中场</text>
+    <defs><marker id="ar4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#1f6b4e"/></marker></defs>
+  </svg>
+
+  <ol class="steps">
+    <li><b>抢高点的侧身</b>：来球到后场，侧身转体、举拍到头顶后方，像拉弓。</li>
+    <li><b>起跳时机</b>：球到最高点前一瞬起跳，在空中完成击球（不跳也能杀，先练原地）。</li>
+    <li><b>鞭打下压</b>：转体带动大臂→小臂→手腕依次加速，拍面正对前方"劈"下去。</li>
+    <li><b>落点优先</b>：成人先练把球杀到对方中场两腰/边线/追身，别一味求快求狠；落点选边线、追身、空档最致命，避开对手正手防守区。</li>
+    <li><b>落地回中</b>：双脚缓冲落地，立刻回中心，准备封网或接挡。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>杀球出界 → 拍面太仰、用力过猛。<br><b>✅ 纠正：</b>拍面稍前压，瞄准对方场地内，落点比速度重要。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>只用手臂、不转体 → 球软没威胁还伤肩。<br><b>✅ 纠正：</b>转体带动是核心，先练原地转体杀，再上跳。</div>
+
+  <div class="bad"><b>❌ 常见错误 3：</b>只求狠、忽略腾空与落地 → 跳杀后重心不稳、易扭伤。<br><b>✅ 纠正：</b>起跳后身体自然向后"弓"起蓄力（像拉开的弓），击球瞬间腹背收紧；落地前脚掌着地、屈膝缓冲，重心跟上准备下一拍。</div>
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>转体鞭打</b>：空拍侧身引拍→转体下压，慢→快 30 次 × 3 组；<br>
+    ② <b>落点靶</b>：地板贴目标区，原地杀向靶心，20 次 × 3 组练准度；<br>
+    ③ <b>核心+肩</b>：平板支撑 30s × 3、弹力带肩外旋 15 次 × 3，保护肩关节。</div>
+
+  
+</div>
+
+<!-- 动作 七：网前球 -->
+<div class="tech">
+  <h3>动作七 · 网前球（Net Play）</h3>
+  <p class="lead">网前是"巧劲"区。搓、勾、推、放四种手法，谁手感细谁占便宜。成人拼手感比拼力气更划算。</p>
+
+  <svg viewBox="0 0 400 230" role="img" aria-label="网前搓勾推示意">
+    <line x1="200" y1="40" x2="200" y2="200" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="190" y="34" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="150" cy="120" r="12" fill="#1f6b4e"/>
+    <line x1="150" y1="130" x2="150" y2="170" stroke="#1f6b4e" stroke-width="5" stroke-linecap="round"/>
+    <line x1="150" y1="128" x2="175" y2="95" stroke="#1f6b4e" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="180" cy="92" rx="10" ry="14" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(40 180 92)"/>
+    <path d="M180 92 Q210 80 225 130" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="200" y="100" font-size="10" fill="#164e39">搓：翻滚</text>
+    <path d="M180 92 Q250 95 320 150" fill="none" stroke="#3b6fb0" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="248" y="115" font-size="10" fill="#2a5a9e">勾：对角</text>
+    <path d="M180 92 Q230 90 280 95" fill="none" stroke="#d9531e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="222" y="80" font-size="10" fill="#d9531e">推：平快</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>举拍迎网</b>：上网最后一步跨弓步，持拍手举到网口高度，别等球落地。</li>
+    <li><b>搓球</b>：拍面斜切球托底部，轻轻"搓"一下让球翻滚过网贴网落，最难接。</li>
+    <li><b>勾对角</b>：手腕轻拨，把球勾到对方斜对角网前，调动对手。</li>
+    <li><b>推球</b>：手腕平推，把球快速平飞到对方后场空档，变线突击。</li>
+    <li><b>放网（轻放）</b>：把球轻轻"放"过网贴网落下，比搓更柔和，用于过渡或逼对手起高球。</li>
+    <li><b>收拍防守</b>：网前做完立刻举拍封直线，防对手回放或平推。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>网前把球打太高 → 直接被对方扑死。<br><b>✅ 纠正：</b>拍面贴网、轻搓轻放，球过网就往下掉，别往上挑。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>伸手太早或太晚，戳不到球。<br><b>✅ 纠正：</b>跨弓步定住再出手，手腕是最后微调，别用大臂够。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>对墙网前</b>：离墙 1 米，轻搓让球贴墙根落下，20 次 × 3 组练手感；<br>
+    ② <b>勾对角想象</b>：原地举拍，手腕左拨/右拨交替，体会勾球腕法 30 次；<br>
+    ③ <b>弓步稳定</b>：网前跨弓步定 10 秒 × 3 组，练上网不晃。</div>
+
+  
+</div>
+
+<!-- 动作 八：平抽挡 -->
+<div class="tech">
+  <h3>动作八 · 平抽挡（Drive & Drive Return）</h3>
+  <p class="lead">中场"对抽"对抗。双打最常用，单打也常出现。比的是反应和拍面控制，成人靠节奏赢。</p>
+
+  <svg viewBox="0 0 400 220" role="img" aria-label="平抽挡中场对抗示意">
+    <line x1="200" y1="50" x2="200" y2="190" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="190" y="44" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="110" cy="130" r="11" fill="#1f6b4e"/>
+    <line x1="110" y1="141" x2="110" y2="175" stroke="#1f6b4e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="110" y1="130" x2="150" y2="120" stroke="#1f6b4e" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="290" cy="130" r="11" fill="#d9531e"/>
+    <line x1="290" y1="141" x2="290" y2="175" stroke="#d9531e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="290" y1="130" x2="250" y2="120" stroke="#d9531e" stroke-width="4" stroke-linecap="round"/>
+    <path d="M150 122 Q200 100 248 122" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <path d="M248 124 Q200 145 152 124" fill="none" stroke="#d9531e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="165" y="95" font-size="10" fill="#164e39">平抽：平行飞</text>
+    <text x="165" y="162" font-size="10" fill="#d9531e">挡：接杀弹回</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>举拍在胸肩之间</b>：平抽时拍子举在胸前到肩部高度，别垂手，争取反应时间。</li>
+    <li><b>平抽（攻）</b>：手腕带动把球平飞抽向对方中线/两腰，拍面立一点不挑高。</li>
+    <li><b>挡（守）</b>：对方杀来，用拍面轻挡弹回，借力把球挡到对方空档，不硬抗。</li>
+    <li><b>正反手切换</b>：球到反手位直接反手平抽，别每次都转身用正手。</li>
+    <li><b>连贯压迫</b>：抽完不收拍，保持举拍连续压，逼对手起高球你就转进攻。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>平抽把球挑太高 → 给对方杀球机会。<br><b>✅ 纠正：</b>拍面立起、向前平送，球走平行线不过网太多。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>接杀硬扛、手腕僵 → 球飞出场还伤腕。<br><b>✅ 纠正：</b>放松挡、借力弹，挡向空档比挡回去更重要。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>对墙平抽</b>：离墙 2 米，正手/反手交替平抽向墙，连续 30 回合 × 3 组；<br>
+    ② <b>反应举拍</b>：原地快速正反手举拍切换，30 秒 × 3 组练频率；<br>
+    ③ <b>手腕力量</b>：手腕弯举小哑铃 15 次 × 3 组，增强平抽爆发。</div>
+
+  
+</div>
+
+<!-- 动作 九：防守接杀 -->
+<div class="tech">
+  <h3>动作九 · 防守接杀（Defensive Return）</h3>
+  <p class="lead">⭐ 攻防转换核心。对方杀球越狠，你越要柔。接得住杀球，才有机会反击。</p>
+
+  <svg viewBox="0 0 400 220" role="img" aria-label="防守接杀挡网示意">
+    <line x1="200" y1="50" x2="200" y2="190" stroke="#9bb3a6" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="190" y="44" font-size="11" fill="#6b7c72">网</text>
+    <circle cx="120" cy="130" r="11" fill="#1f6b4e"/>
+    <line x1="120" y1="141" x2="120" y2="175" stroke="#1f6b4e" stroke-width="4" stroke-linecap="round"/>
+    <line x1="120" y1="130" x2="150" y2="115" stroke="#1f6b4e" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="156" cy="112" rx="10" ry="13" fill="none" stroke="#d9531e" stroke-width="3" transform="rotate(35 156 112)"/>
+    <path d="M300 60 Q220 90 158 112" fill="none" stroke="#d9531e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <circle cx="302" cy="58" r="4" fill="#d9531e"/>
+    <text x="240" y="80" font-size="11" fill="#d9531e">杀球下压</text>
+    <path d="M158 112 Q180 145 215 160" fill="none" stroke="#1f6b4e" stroke-width="2.5" stroke-dasharray="5 4"/>
+    <text x="170" y="155" font-size="11" fill="#164e39">挡网：卸力贴网落</text>
+  </svg>
+
+  <ol class="steps">
+    <li><b>站位靠后</b>：预判对方要杀球时，双脚平行、重心压低，别站太前。</li>
+    <li><b>拍子举在身前</b>：拍面正对来球，像一面"盾牌"，等球来碰拍。</li>
+    <li><b>挡网卸力</b>：对方重杀时，顺势轻挡到对方网前，借他的力把球送过去。</li>
+    <li><b>抽挡变线</b>：球速不快时，用平抽挡把球弹向空档，直接转守为攻。</li>
+    <li><b>接杀三选一</b>：重杀用<b>挡网</b>卸力贴网落；球速缓用<b>抽挡</b>弹向空档转守为攻；被动时<b>挑高</b>争取时间回位。</li>
+    <li><b>接杀后举拍</b>：挡/抽完立刻举拍封网，准备下一拍，别站着看。</li>
+  </ol>
+
+  <div class="bad"><b>❌ 常见错误 1：</b>接杀硬顶 → 球出界/下网，手腕还受伤。<br><b>✅ 纠正：</b>放松卸力，让球"粘"在拍面上再送出去，借力比发力重要。</div>
+  <div class="bad"><b>❌ 常见错误 2：</b>接杀站位太前或重心高 → 反应不过来。<br><b>✅ 纠正：</b>重心下沉、膝盖弯曲，拍子在身前保护躯干。</div>
+
+  <div class="drill"><b>🏋️ 单人训练（无搭档）：</b><br>
+    ① <b>抛球接杀</b>：把球高抛下落后用拍轻挡，体会卸力 20 次 × 3 组；<br>
+    ② <b>对墙重挡</b>：用力向墙丢球，等球反弹后用挡网动作轻送向墙根 20 次；<br>
+    ③ <b>反应蹲姿</b>：半蹲举拍保持 20 秒 × 3 组，练接杀准备姿态。</div>
+
+  
+</div>
+
+<!-- 进阶补充：反手过渡 -->
+<div class="extra">
+  <h4>🔄 进阶补充 · 反手过渡（Backhand Clear）</h4>
+  <p>当球到反手后场、来不及侧身转体时，用反手过渡把球打到对方后场，先不丢分。要点：握拍换成拇指顶宽面、肘部抬高、手腕外展"甩"出去（击球前展腕蓄力，触球瞬间快速甩腕带出）；先求过渡到位，再练斜线，别急着反手杀球。成人先练过渡直线，再练斜线；优先练到位，别急着反手杀球。属于 🌳 熟练者阶段内容。</p>
+</div>
+
+</div>
+
+<!-- ============ 品牌反哺 · 导出即发 ============ -->
+<h2><span class="n">★</span>品牌反哺 · 导出即发</h2>
+<div class="card">
+  <p style="margin:0 0 6px;font-size:14px">每个技术模块卡片都是现成的短视频素材——后续将内置 <b>抖音/小红书 30s 口播脚本</b>（一键复制 + 图解下载），方便你直接发帖引流。</p>
+  <div class="note" style="margin-bottom:10px">💡 <b>关于"直接接入抖音/小红书自动发布"</b>：两大平台目前<b>没有开放给第三方的自动发帖接口</b>，需企业号 + 平台服务商授权才能做，小馆子走不通。所以系统做成<b>"导出即发"</b>——脚本一键复制、图解可保存，你 30 秒粘贴就能发，效果等同，还不被平台规则绑死。</div>
+  <div class="exportbar">
+    <button onclick="exportAll()">📤 导出全部口播脚本</button>
+    <button onclick="exportList()">📋 复制发帖清单</button>
+  </div>
+  <div class="module"><div class="ic">📅</div><div><b>建议发帖节奏</b><small>每周 2 条：一条技术干货（如高远球）、一条馆内花絮/开放场预告</small></div></div>
+  <div class="module"><div class="ic">🎯</div><div><b>统一人设</b><small>"星羿教练说球"——随性靠谱、不端着，结尾带场馆信息</small></div></div>
+  <div class="module"><div class="ic">🔁</div><div><b>评论区运营</b><small>引导互动，把流量接进微信/订场</small></div></div>
+  <div class="note">💡 9 个技术模块 + 球感 = 至少 10 条脚本素材，够发 5 周不重样。自媒体从这里重启，不再断更。</div>
+</div>
+
+<!-- 系统总览 -->
+<h2><span class="n">★</span>系统总览：4 大模块</h2>
+<div class="card">
+  <p style="margin:0 0 6px;font-size:14px">整套系统服务一个目标：<b>让成年散客/会员，没搭档、没教练陪练也能系统进步</b>，学完自然想到来星羿实测、约课、订场。</p>
+  <div class="module"><div class="ic">🔍</div><div><b>① 自检与球感</b><small>入门自检 + 球感基础，先认清自己、让球听你话</small></div></div>
+  <div class="module"><div class="ic">🎯</div><div><b>② 核心技术库</b><small>步法（优先）→ 高远 / 挑球 / 发球 / 吊 / 杀 / 网前 / 平抽挡 / 防守接杀 / 反手过渡，全套图解</small></div></div>
+  <div class="module"><div class="ic">🗓️</div><div><b>③ 训练打卡</b><small>无搭档也能练的单人周计划，首页勾选打卡</small></div></div>
+  <div class="module"><div class="ic">📣</div><div><b>④ 品牌反哺</b><small>每个技术模块自带抖音/小红书短脚本，一键复制即发</small></div></div>
+  <div class="note">⚠️ 本系统为免费增值内容，不当付费课卖；动作细节以馆内教练现场把关为准。</div>
+</div>
+
+<!-- 商务合作 -->
+<h2><span class="n">💼</span>商务合作</h2>
+<div class="card">
+  <p style="margin:0 0 6px;font-size:15px">欢迎品牌、场地、赛事、课程等任何形式的合作洽谈，一起把羽毛球这件事做大。</p>
+  <div class="module"><div class="ic">📞</div><div><b>合作联系 · 星羿体育</b><small>15107920066（微信同号）</small></div></div>
+  <div class="note">添加微信时备注「商务合作」，我们会尽快回复。</div>
+</div>
+
+<!-- 教练应聘 -->
+<h2><span class="n">👥</span>教练应聘</h2>
+<div class="card">
+  <p style="margin:0 0 6px;font-size:15px">有羽毛球教学 / 陪练经验，想加入星羿教练团队？随时联系我们。</p>
+  <div class="module"><div class="ic">📞</div><div><b>应聘联系 · 星羿体育</b><small>15107920066（微信同号）</small></div></div>
+  <div class="note">添加微信时备注「教练应聘」+ 简要经历，我们会尽快回复。</div>
+</div>
+
+<!-- ============ 羽球大事件（每周自动更新） ============ -->
+<h2><span class="n">📰</span>羽球大事件</h2>
+<div class="card">
+  <p style="margin:0 0 8px;font-size:14px">每周自动更新 · 来自中羽在线 / 世界羽联 / 主流体育媒体，帮你跟上羽球圈的大事儿，也欢迎投稿身边赛事与馆内活动。</p>
+  <div class="news">
+    <div class="ev"><span class="date">2026-08-17</span><b>2026 世界羽毛球锦标赛 · 新德里开赛</b><p>奥运之外含金量最高的单项羽球赛事，8 月 17-23 日在印度新德里打响，全球顶尖高手齐聚。国羽全队已在成都双流基地进入最后冲刺备战。</p><span class="src">来源：中羽在线 / 世界羽联 BWF</span></div>
+    <div class="ev"><span class="date">2026-08-11</span><b>世界羽联第 33 周排名更新</b><p>石宇奇稳居男单世界第一；安洗莹女单第一，王祉怡/陈雨菲/韩悦紧随 3-5 位；刘圣书/谭宁女双断层第一；梁伟铿/王昶男双第 3；冯彦哲/黄东萍混双前二。国羽小将朱轩辰、孙超本周排名飙升。</p><span class="src">来源：世界羽联 / 网易体育</span></div>
+    <div class="ev"><span class="date">2026-08</span><b>国羽女单剑指打破 15 年世锦赛冠军荒</b><p>自 2011 年后国羽女单再无世锦赛金牌。陈雨菲、王祉怡、韩悦正面迎战安洗莹、山口茜两大强敌，以挑战者姿态冲击新德里金牌。</p><span class="src">来源：腾讯体育</span></div>
+    <div class="ev"><span class="date">上届回顾</span><b>巴黎世锦赛 5 单项冠军</b><p>男单石宇奇（首冠）、女单山口茜、男双韩国徐承宰/金元昊、女双国羽刘圣书/谭宁、混双马来西亚陈堂杰/杜颐沩。国羽当届 2 冠 3 亚。</p><span class="src">来源：中羽在线</span></div>
+    <div class="ev"><span class="date">近期</span><b>韩国大师赛国羽年轻组合登顶</b><p>罗意/王汀戈夺冠，排名大涨 5 位刷新组合纪录；日本渡边勇大/田口真彩混双升至第 13。新星持续冒头，国羽梯队厚度提升。</p><span class="src">来源：网易体育</span></div>
+  </div>
+  <div class="note">📌 本板块由星星 AI 每周定时抓取更新；身边有比赛、约球或馆内活动想发上来，联系星羿体育 15107920066（微信同号）。</div>
+</div>
+
+<div class="foot">成人羽毛球自学系统 · 完整版 v3 · 入门自检+球感 / 核心技术库(动作1-9+反手过渡) / 单人周打卡 / 品牌反哺(导出即发)<br>星羿羽毛球馆 × 星星 AI 工作台 · 内容融合羽毛球技术体系图解，动作细节以馆内教练现场把关为准。</div>
+
+<script>
+function copyText(txt, btn, ok){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){
+      if(btn){var o=btn.textContent;btn.textContent=ok;setTimeout(function(){btn.textContent=o;},1500);}
+    }).catch(function(){ fallbackCopy(txt); });
+  } else { fallbackCopy(txt); }
+}
+function fallbackCopy(txt){
+  var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);
+  alert('已复制，去抖音/小红书粘贴即可');
+}
+function copyScript(btn){
+  var el=btn.parentElement;
+  var txt=el.innerText.replace(/📋\s*复制/g,'').replace(/^\s+|\s+$/g,'');
+  copyText(txt, btn, '✅ 已复制');
+}
+function exportAll(){
+  var blocks=[].slice.call(document.querySelectorAll('.script')).map(function(b){
+    return b.innerText.replace(/📋\s*复制/g,'').replace(/^\s+|\s+$/g,'');
+  });
+  var txt='【星羿羽毛球馆 · 成人自学系统 口播脚本合集】\n\n'+blocks.join('\n\n--------------------\n\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(function(){alert('已复制全部 '+blocks.length+' 条脚本，去文档/备忘录粘贴即可');})
+      .catch(function(){fallbackCopy(txt);});
+  } else { fallbackCopy(txt); }
+}
+function exportList(){
+  var names=['步法','高远球','挑球','发球','吊球','杀球','网前球','平抽挡','防守接杀','球感基础'];
+  var txt='【本周发帖清单】\n'+names.map(function(n,i){return (i+1)+'. '+n+'：复制对应口播脚本 → 配系统图解 → 发抖音/小红书';}).join('\n');
+  copyText(txt, null, '');
+  alert('已复制发帖清单');
+}
+</script>
+</div>
+<script>(function(){  var h2s=Array.prototype.slice.call(document.querySelectorAll("h2"));  var cats=["home","home","basics","techlib","hidden","hidden","biz","hire","news"];  var secs=h2s.map(function(h2,i){    var els=[h2];var n=h2.nextElementSibling;var nx=h2s[i+1];    while(n&&n!==nx){els.push(n);n=n.nextElementSibling;}    return {cat:(cats[i]||"home"),els:els};  });  var techEls=null,subBar=null;    function ensureSub(){
+  if(subBar) return;
+  var wrap=secs[3].els[1];
+  techEls=Array.prototype.slice.call(wrap.querySelectorAll(":scope > .tech"));
+  var extra=wrap.querySelector(":scope > .extra");
+  if(extra) techEls.push(extra);
+  subBar=document.createElement("div");
+  subBar.id="subtabs";
+  var groups=[
+    {n:"基础移动", items:[{i:0,l:"步法",lv:"基础"},{i:3,l:"发球",lv:"基础"}]},
+    {n:"后场进攻", items:[{i:1,l:"高远球",lv:"进阶"},{i:2,l:"挑球",lv:"进阶"},{i:4,l:"吊球",lv:"进阶"},{i:5,l:"杀球",lv:"高级"}]},
+    {n:"前中场", items:[{i:6,l:"网前球",lv:"进阶"},{i:7,l:"平抽挡",lv:"进阶"}]},
+    {n:"防守过渡", items:[{i:8,l:"防守接杀",lv:"高级"},{i:9,l:"反手过渡",lv:"高级"}]}
+  ];
+  groups.forEach(function(g){
+    var gt=document.createElement("div");
+    gt.className="sgroup";
+    gt.textContent='▸ '+g.n;
+    gt.style.cssText="width:100%;font-size:12px;color:#8a9a8f;font-weight:700;margin:12px 2px 5px;letter-spacing:1px;";
+    subBar.appendChild(gt);
+    g.items.forEach(function(it){
+      var b=document.createElement("button");
+      b.className="stab";
+      b.setAttribute("data-i", it.i);
+      var lv=document.createElement("span");
+      lv.className="lv";
+      lv.textContent=it.lv;
+      lv.style.cssText="font-size:10px;background:#e6f0ea;color:#3a8f5f;border-radius:6px;padding:1px 5px;margin-right:4px;";
+      b.appendChild(lv);
+      b.appendChild(document.createTextNode(it.l));
+      b.onclick=function(){showTech(it.i);};
+      subBar.appendChild(b);
+    });
+  });
+  wrap.insertBefore(subBar, wrap.firstChild);
+  var route=document.createElement("div");
+  route.className="routecard";
+  route.innerHTML="🧭 <b>推荐学习路线</b>：基础移动（步法·发球）→ 后场进攻（高远·挑球·吊球·杀球）→ 前中场（网前·平抽挡）→ 防守过渡（接杀·反手）。按顺序练，进步最快。";
+  route.style.cssText="background:#f3f8f4;border-left:3px solid #3a8f5f;border-radius:8px;padding:9px 12px;margin:0 0 12px;font-size:13px;color:#3a4a40;line-height:1.55;";
+  wrap.insertBefore(route, subBar);
+} function showTech(i){    if(!techEls) return;    techEls.forEach(function(t,idx){t.style.display=(idx===i)?"":"none";});    var bs=subBar.querySelectorAll(".stab");    bs.forEach(function(b){b.classList.toggle("active", b.getAttribute("data-i")===String(i));});  }  function showCat(cat){    secs.forEach(function(sec){      var disp=(sec.cat===cat)?"":"none";      sec.els.forEach(function(e){e.style.display=disp;});    });    if(cat==="techlib"){ensureSub();showTech(0);}    var tabs=document.querySelectorAll("#topnav .tab");    tabs.forEach(function(t){t.classList.toggle("active",t.getAttribute("data-cat")===cat);});    window.scrollTo(0,0);  }  document.querySelectorAll("#topnav .tab").forEach(function(t){    t.onclick=function(){showCat(t.getAttribute("data-cat"));};  });  showCat("home");})();</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+</body>
+</html>
