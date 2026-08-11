@@ -33,26 +33,27 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.68;
 .masthead h1::after{content:"";display:block;width:66px;height:5px;background:var(--cork);margin-top:12px;border-radius:3px}
 .sub{margin-top:14px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600}
 .welcome{margin:14px 0 0;font-size:15px;color:var(--ink-2)}
-.contact{display:inline-block;margin-top:14px;background:var(--court-soft);color:var(--court-d);
-  border:1px solid #c9e0d3;border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600}
-.contact b{color:var(--court-d)}
+.contact{display:inline-flex;align-items:center;gap:4px;margin-top:10px;color:var(--court-d);
+  font-size:13px;font-weight:600;text-decoration:none}
+.contact::before{content:"📞"}
+.contact b{font-weight:700;color:var(--court-d)}
 .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .tags span{font-size:12px;font-weight:600;color:var(--ink-2);background:var(--paper-2);
   border:1px solid var(--line-2);border-radius:999px;padding:4px 12px}
 
 /* ===== nav ===== */
-#topnav{position:sticky;top:0;z-index:60;display:flex;gap:6px;padding:8px 12px;
-  background:var(--ink);box-shadow:0 4px 18px rgba(33,31,24,.20);overflow-x:auto;-webkit-overflow-scrolling:touch}
-#topnav .tab{flex:0 0 auto;border:none;background:transparent;color:#cfc8b8;
-  font-size:14px;padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;
+#topnav{position:sticky;top:0;z-index:60;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,auto);gap:6px;padding:8px 12px;
+  background:var(--ink);box-shadow:0 4px 18px rgba(33,31,24,.20)}
+#topnav .tab{border:none;background:transparent;color:#cfc8b8;
+  font-size:13px;padding:9px 4px;border-radius:999px;cursor:pointer;white-space:normal;text-align:center;line-height:1.25;
   font-weight:600;font-family:inherit;transition:color .2s,background .25s var(--ease)}
 #topnav .tab:active{transform:scale(.96)}
 #topnav .tab.active{background:var(--cork);color:#221c08}
-@media(max-width:480px){#topnav .tab{padding:8px 11px;font-size:13px}}
+@media(max-width:480px){#topnav .tab{padding:8px 2px;font-size:12px}}
 
 /* ===== subtabs (techlib) ===== */
 #subtabs{display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:var(--court);
-  position:sticky;top:52px;z-index:50}
+  position:sticky;top:92px;z-index:50}
 #subtabs .stab{flex:0 0 auto;border:none;background:rgba(255,255,255,.14);color:#eafff5;
   font-size:13px;padding:7px 11px;border-radius:999px;cursor:pointer;white-space:nowrap;font-family:inherit;
   transition:background .25s var(--ease)}
@@ -163,7 +164,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   <h1>成人羽毛球<br>自学系统</h1>
   <div class="sub">SELF-TRAINING SYSTEM · 不卖课，只帮你打得更好</div>
   <p class="welcome">欢迎加入星羿毛毛球大队，一起涨球，一起健康生活</p>
-  <div class="contact">📞 球馆联系 · 星羿体育：<b>15107920066</b>（微信同号）</div>
+  <a class="contact" href="tel:15107920066"><b>15107920066</b>（微信同号）</a>
   <div class="tags"><span>会员增值</span><span>品牌内容</span><span>全 AI 图解</span></div>
 </header>
 <nav id="topnav"><button class="tab active" data-cat="home">🏠 首页</button><button class="tab" data-cat="basics">🌱 自检·球感</button><button class="tab" data-cat="techlib">🏸 技术库</button><button class="tab" data-cat="news">📰 羽球大事件</button><button class="tab" data-cat="biz">💼 商务合作</button><button class="tab" data-cat="hire">👥 教练应聘</button></nav>
