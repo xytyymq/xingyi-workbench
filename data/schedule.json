@@ -1,195 +1,193 @@
 {
   "courses": [
     {
+      "id": "S10_msojiyf2ngk",
       "day": 1,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、吴思妤、黄瑾丞、周语安",
-      "note": "",
-      "id": "imp01"
+      "students": "刘铭俊、吴思好、黄瑾丞、周语安",
+      "note": ""
     },
     {
+      "id": "S11_msojiyf2o3n",
       "day": 1,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
       "students": "曹宛宁、易子文、洪振宇、熊安然、熊一鸣",
-      "note": "",
-      "id": "imp02"
+      "note": ""
     },
     {
+      "id": "S12_msojiyf2sy2",
       "day": 1,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸",
-      "note": "",
-      "id": "imp03"
+      "students": "熊一鸣、胡显宸",
+      "note": ""
     },
     {
+      "id": "S20_msojiyf23mf",
       "day": 2,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘曾熙、邹书芸、黄瑾宁、桂浩然",
-      "note": "",
-      "id": "imp04"
+      "students": "刘曾熙、邹书芸、桂浩然",
+      "note": ""
     },
     {
+      "id": "S21_msojiyf2kxj",
       "day": 2,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
-      "students": "郭奕妍、郭一谦、洪振新、易子文、程俊辉、陈梓诺、彭嘉妤",
-      "note": "",
-      "id": "imp05"
+      "students": "郭奕妍、郭一谦、洪振新、易子文、陈梓诺",
+      "note": ""
     },
     {
+      "id": "S22_msojiyf23l2",
       "day": 2,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "熊一鸣、宛梓恩、朱思然",
-      "note": "",
-      "id": "imp06"
+      "students": "熊一鸣、宛梓恩、宋思然",
+      "note": ""
     },
     {
+      "id": "S30_msojiyf2eg2",
       "day": 3,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、吴思妤、桂浩然、彭嘉妤",
-      "note": "",
-      "id": "imp07"
+      "students": "刘铭俊、吴思好、桂浩然",
+      "note": ""
     },
     {
+      "id": "S31_msojiyf29d9",
       "day": 3,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
       "students": "曹宛宁、洪振宇、郭奕妍、郭一谦、熊一鸣",
-      "note": "",
-      "id": "imp08"
+      "note": ""
     },
     {
+      "id": "S32_msojiyf27iq",
       "day": 3,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸",
-      "note": "",
-      "id": "imp09"
+      "students": "胡显宸",
+      "note": ""
     },
     {
+      "id": "S40_msojiyf26su",
       "day": 4,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、吴思妤、桂浩然、周语安",
-      "note": "",
-      "id": "imp10"
+      "students": "刘曾熙、吴思好、邹书芸、周语安",
+      "note": ""
     },
     {
+      "id": "S41_msojiyf29tw",
       "day": 4,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
       "students": "曹宛宁、洪振宇、郭奕妍、郭一谦、熊一鸣",
-      "note": "",
-      "id": "imp11"
+      "note": ""
     },
     {
+      "id": "S42_msojiyf28ea",
       "day": 4,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸",
-      "note": "",
-      "id": "imp12"
+      "students": "胡显宸",
+      "note": ""
     },
     {
+      "id": "S50_msojiyf23he",
       "day": 5,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、吴思妤、邹书芸、周语安",
-      "note": "",
-      "id": "imp13"
+      "students": "刘铭俊、吴思好、邹书芸",
+      "note": ""
     },
     {
+      "id": "S51_msojiyf2pjc",
       "day": 5,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
-      "students": "曹宛宁、洪振宇、郭奕妍、郭一谦、熊一鸣",
-      "note": "",
-      "id": "imp14"
+      "students": "曹宛宁、洪振宇、郭一谦、熊一鸣",
+      "note": ""
     },
     {
+      "id": "S52_msojiyf2vvy",
       "day": 5,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸",
-      "note": "",
-      "id": "imp15"
+      "students": "胡显宸",
+      "note": ""
     },
     {
+      "id": "S60_msojiyf2lvl",
       "day": 6,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、左瑞霖、邹书芸、周语安",
-      "note": "",
-      "id": "imp16"
+      "students": "刘铭翰、左瑞霖、邹书芸、桂浩然",
+      "note": ""
     },
     {
+      "id": "S61_msojiyf29wu",
       "day": 6,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
-      "students": "熊一凡、洪振新、熊安然、元奕诺、谢邓泽洋",
-      "note": "",
-      "id": "imp17"
+      "students": "程俊辉、洪振新、郭奕妍、元奕诺、谢邓洋洋",
+      "note": ""
     },
     {
+      "id": "S62_msojiyf23ah",
       "day": 6,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸、桂浩然",
-      "note": "",
-      "id": "imp18"
+      "students": "沈熠南、熊一鸣、桂浩然、胡显宸",
+      "note": ""
     },
     {
+      "id": "S70_msojiyf2i2f",
       "day": 7,
       "time": "10:00-11:30",
       "name": "常规训练",
       "coach": "",
-      "students": "刘铭俊、沈子辰、桂浩然、邹书芸",
-      "note": "",
-      "id": "imp19"
+      "students": "刘铭俊、沈子辰、邹书芸、桂浩然",
+      "note": ""
     },
     {
+      "id": "S71_msojiyf2dqi",
       "day": 7,
       "time": "16:00-17:30",
       "name": "常规训练",
       "coach": "",
-      "students": "程俊辉、洪振新、郭奕妍、郭一谦、洪振宇",
-      "note": "",
-      "id": "imp20"
+      "students": "郭奕妍、郭一谦、易子文、洪振宇、洪振新",
+      "note": ""
     },
     {
+      "id": "S72_msojiyf2lsi",
       "day": 7,
       "time": "18:00-19:30",
       "name": "常规训练",
       "coach": "",
-      "students": "胡昱宸",
-      "note": "",
-      "id": "imp21"
+      "students": "熊一鸣、胡显宸",
+      "note": ""
     }
-  ],
-  "updated": 1786437879219,
-  "source": "screenshot-import-2026-08-11"
+  ]
 }
