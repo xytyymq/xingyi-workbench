@@ -1880,11 +1880,9 @@ XX拿了小组第二
 
   <div class="card">
     <div class="card-title"><span class="icon">📄</span> 文案库内容（实时同步）</div>
-    <div style="border:1px solid var(--border,#e3ece9);border-radius:12px;overflow:hidden;margin-top:6px;">
-      <iframe src="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo?from=embed" style="width:100%;height:620px;border:0;display:block;" allowfullscreen></iframe>
-    </div>
-    <a style="display:block;text-align:center;background:var(--primary);color:#fff;text-decoration:none;padding:11px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px;" href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">↗ 新窗口 / 手机端打开文案库</a>
-    <p style="font-size:11.5px;color:var(--text-light);margin-top:8px;">👉 内容自动更新，无需手动维护。若上方表格没显示，点上面按钮在新窗口打开。</p>
+    <div id="ailibBox"><div style="text-align:center;color:#6B7280;padding:22px;font-size:13px;">加载中…</div></div>
+    <a style="display:block;text-align:center;background:var(--primary);color:#fff;text-decoration:none;padding:11px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px;" href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">↗ 原文档（腾讯文档）在新窗口打开</a>
+    <p style="font-size:11.5px;color:var(--text-light);margin-top:8px;">👉 文案由 AI 每 15 天追加更新，直接在此复制取用，无需跳转腾讯文档。</p>
   </div>
 
 </div>
@@ -1897,11 +1895,12 @@ XX拿了小组第二
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  var tab = el || document.querySelector('.tab[onclick*="\'" + name + "\'"');
+  var tab = el || document.querySelector('.tab[onclick*="' + name + '"]');
   if(tab) tab.classList.add('active');
   var panel = document.getElementById('panel-' + name);
   if(panel) panel.classList.add('active');
   window.scrollTo({top:0, behavior:'smooth'});
+  if(name === 'ailib') renderAiLib();
 }
 
 // URL ?tab=ailib 自动打开 AI文案库页签
@@ -1963,6 +1962,32 @@ document.querySelectorAll('.chip').forEach((c, i) => {
   const cats = ['all','teach','student','daily','recruit','science','ip'];
   c.dataset.cat = cats[i];
 });
+
+// ===== AI 文案库：从站内云文件渲染（不依赖腾讯文档 iframe）=====
+function esc(s){ return (s==null?'':s+'').replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+async function renderAiLib(){
+  var box = document.getElementById('ailibBox');
+  if(!box) return;
+  try{
+    var r = await fetch('data/ailib.json?t=' + Date.now(), {cache:'no-store'});
+    if(!r.ok){ if(r.status===404){ box.innerHTML='<div style="text-align:center;color:#6B7280;padding:22px;font-size:13px;">文案库暂为空，下次自动更新后即出现～</div>'; } else { throw new Error('HTTP '+r.status); } return; }
+    var arr = await r.json();
+    if(!Array.isArray(arr) || !arr.length){
+      box.innerHTML = '<div style="text-align:center;color:#6B7280;padding:22px;font-size:13px;">文案库暂为空，下次自动更新后即出现～</div>';
+      return;
+    }
+    box.innerHTML = arr.map(function(it){
+      var tag = it.tags ? ' <span style="font-size:11px;color:#6B7280;"># '+esc(it.tags)+'</span>' : '';
+      return '<div style="border:1px solid var(--border,#e5e7eb);border-radius:10px;padding:12px;margin-bottom:10px;">'
+        + '<div class="card-title" style="margin-bottom:8px;"><span class="icon">📝</span> ' + esc(it.title || '未命名文案') + tag + '</div>'
+        + '<div class="script-block"><button class="copy-btn" onclick="copyScript(this)">复制</button>'
+        + '<div class="script-label">' + esc(it.platform || '通用') + '</div>'
+        + '<div class="script-content">' + esc(it.content || '') + '</div></div></div>';
+    }).join('');
+  }catch(e){
+    box.innerHTML = '<div style="text-align:center;color:#b91c1c;padding:22px;font-size:13px;">文案库加载失败：' + esc(e.message) + '<br>可点上方按钮在新窗口打开原文档。</div>';
+  }
+}
 </script>
 
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 自媒体内容规划<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
