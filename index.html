@@ -161,33 +161,13 @@
     <a href="#flow">📋 招生流程</a>
     <a href="#teach">🎓 教学运营</a>
     <a href="#data">📊 数据报表</a>
+    <a href="points.html" target="_blank" rel="noopener">🏆 学员积分</a>
     <a href="saishi.html" target="_blank" rel="noopener">🏆 赛事</a>
     <a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank" rel="noopener">📦 库存管理</a>
   </div>
 </header>
 
 <div class="xy-wrap">
-
-  <!-- 0. 顶部特色：学员积分（左） + 赛事（右） -->
-  <section class="xy-sec" id="top-feature">
-    <div class="xy-sec-title"><span class="bar"></span>热门推荐<span class="hint">积分激励 · 赛事活动</span></div>
-    <div class="grid">
-      <div class="tool">
-        <div class="ico">🏆</div>
-        <div class="t-name">学员积分</div>
-        <div class="t-use">消课 +10 · 邀友 +30~100 · 续费 +80 起</div>
-        <div class="t-when" id="pointsTop">加载中…</div>
-        <a class="go" href="points.html" target="_blank" rel="noopener">打开积分榜 / 录分</a>
-      </div>
-      <div class="tool">
-        <div class="ico">🏅</div>
-        <div class="t-name">赛事活动</div>
-        <div class="t-use">月度赛 / 友谊赛报名与成绩榜，以赛代练涨水平</div>
-        <div class="t-when">想参加 / 看成绩时打开</div>
-        <a class="go" href="saishi.html" target="_blank" rel="noopener">打开赛事</a>
-      </div>
-    </div>
-  </section>
 
   <!-- 2. 快捷入口 -->
   <section class="xy-sec" id="today">
@@ -364,26 +344,6 @@
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
   badge.textContent = names[role] || '老板';
   badge.className = 'role-badge ' + role;
-})();
-
-// 首页顶部积分榜 Top3（与 points.html 同一数据源）
-(function loadPointsTop(){
-  var el=document.getElementById('pointsTop');
-  if(!el) return;
-  var VIEW='https://xytyymq.github.io/xingyi-workbench/data/points.json';
-  fetch(VIEW+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
-  }).then(function(arr){
-    if(!Array.isArray(arr)||!arr.length){ el.innerHTML='<span style="color:var(--muted)">暂无积分记录，去录入第一笔 🏆</span>'; return; }
-    var sum={};
-    arr.forEach(function(it){ var n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
-    var list=Object.keys(sum).map(function(n){return {name:n,sc:sum[n]};}).sort(function(a,b){return b.sc-a.sc;}).slice(0,3);
-    var medal=['🥇','🥈','🥉'];
-    el.innerHTML=list.map(function(it,i){ return medal[i]+' '+it.name+' '+it.sc+'分'; }).join('<br>');
-  }).catch(function(e){
-    el.innerHTML='<span style="color:var(--muted)">榜单一键打开查看 →</span>';
-  });
 })();
 </script>
 </body>
