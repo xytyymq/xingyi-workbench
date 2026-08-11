@@ -37,7 +37,18 @@
   .btn-primary:active{background:var(--teal-900);}
   .btn-ghost{background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);}
   .btn-sm{padding:8px;font-size:12.5px;margin-top:7px;border-radius:8px;display:inline-block;width:auto;}
+  .btn-text{background:transparent;color:var(--teal-700);border:none;padding:8px 0;font-size:12.5px;font-weight:700;text-decoration:underline;cursor:pointer;}
   .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
+  .report-list{margin-top:10px;}
+  .report-item{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:11px 12px;margin-bottom:8px;}
+  .report-item .r-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .report-item .r-date{font-size:13px;font-weight:700;color:var(--teal-700);}
+  .report-item .r-emp{font-size:12px;color:var(--sub);background:var(--teal-100);padding:2px 8px;border-radius:10px;}
+  .report-item .r-body{font-size:12.5px;color:var(--ink);line-height:1.6;}
+  .report-item .r-body p{margin:3px 0;}
+  .report-item .r-body .r-label{color:var(--sub);font-size:11.5px;margin-right:4px;}
+  .report-item .r-empty{color:var(--muted);font-size:12px;text-align:center;padding:14px;}
+  .report-toggle{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
   .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
   .chart-box{margin-top:12px;background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;}
   .chart-box h3{font-size:13.5px;color:var(--teal-700);margin-bottom:8px;}
@@ -101,6 +112,17 @@
     <button class="btn btn-primary" id="wrSaveBtn" onclick="saveWorkReport()">💾 保存并上传云端</button>
     <button class="btn btn-ghost" id="wrRetryBtn" style="display:none;" onclick="retryLocalWR()">🔄 上传本机待传记录</button>
     <div id="wrStatus" class="note" style="margin-top:8px;"></div>
+  </div>
+
+  <!-- 模块A+ 日报查看列表 -->
+  <div class="card" id="wrListCard">
+    <div class="report-toggle">
+      <h2><span class="num">📋</span>已提交日报列表</h2>
+      <button class="btn-text" id="wrToggleBtn" onclick="toggleWRList()">收起 ▲</button>
+    </div>
+    <p class="note" id="wrListNote">从云端加载中…</p>
+    <div id="wrListBox" class="report-list"></div>
+    <button class="btn btn-ghost btn-sm" onclick="loadReportList()" style="margin-top:8px;">🔄 刷新列表</button>
   </div>
 
   <!-- 模块B 学员上课记录 -->
@@ -284,6 +306,50 @@ const LS_WR='xy_wr_local';
 function b64utf8(s){ const bytes=new TextEncoder().encode(s); let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]); return btoa(bin); }
 function decodeB64(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
 function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function _role(){ return (window.XYGate && XYGate.role) ? XYGate.role() : 'boss'; }
+
+// ===== 日报列表查看（老板默认展开，员工默认折叠）=====
+async function loadReportList(){
+  const box = document.getElementById('wrListBox');
+  const note = document.getElementById('wrListNote');
+  if(!box) return;
+  note.textContent = '从云端加载中…';
+  box.innerHTML = '<div class="r-empty">加载中…</div>';
+  try{
+    const r = await fetch(WR_API + '?t=' + Date.now(), {cache:'no-store'});
+    if(!r.ok){ throw new Error('HTTP '+r.status); }
+    const j = await r.json();
+    const arr = JSON.parse(decodeB64(j.content)) || [];
+    if(!arr.length){ box.innerHTML = '<div class="r-empty">暂无日报记录</div>'; note.textContent = '暂无记录'; return; }
+    // 按日期倒序
+    arr.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+    box.innerHTML = arr.map(function(it){
+      return '<div class="report-item">'
+        + '<div class="r-head"><span class="r-date">' + esc(it.date || '-') + '</span><span class="r-emp">' + esc(it.employee || '未署名') + '</span></div>'
+        + '<div class="r-body">'
+        + (it.work ? '<p><span class="r-label">今日完成：</span>' + nl2br(esc(it.work)) + '</p>' : '')
+        + (it.parent ? '<p><span class="r-label">学员沟通/家长反馈：</span>' + nl2br(esc(it.parent)) + '</p>' : '')
+        + (it.tomorrow ? '<p><span class="r-label">明日待办：</span>' + nl2br(esc(it.tomorrow)) + '</p>' : '')
+        + (it.issues ? '<p><span class="r-label">需协调：</span>' + nl2br(esc(it.issues)) + '</p>' : '')
+        + '</div></div>';
+    }).join('');
+    note.textContent = '共 ' + arr.length + ' 条记录 · 云端实时同步';
+  }catch(e){
+    box.innerHTML = '<div class="r-empty">加载失败：' + esc(e.message) + '<br>可点「刷新列表」重试。</div>';
+    note.textContent = '加载失败';
+  }
+}
+function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+function nl2br(s){ return s.replace(/\n/g,'<br>'); }
+function toggleWRList(){
+  const card = document.getElementById('wrListCard');
+  const box = document.getElementById('wrListBox');
+  const btn = document.getElementById('wrToggleBtn');
+  if(!box || !btn) return;
+  const hidden = box.style.display === 'none';
+  box.style.display = hidden ? 'block' : 'none';
+  btn.textContent = hidden ? '收起 ▲' : '展开 ▼';
+}
 function setWRStatus(txt,color){ const el=document.getElementById('wrStatus'); if(el){ el.textContent=txt; el.style.color=color||''; } }
 function saveLocalWR(rec){ try{ const arr=JSON.parse(localStorage.getItem(LS_WR)||'[]'); arr.push(rec); localStorage.setItem(LS_WR,JSON.stringify(arr)); }catch(e){} }
 function loadLocalWR(){ try{ return JSON.parse(localStorage.getItem(LS_WR)||'[]')||[]; }catch(e){ return []; } }
@@ -344,12 +410,22 @@ async function retryLocalWR(){
   else { refreshRetryBtn(); setWRStatus('⚠️ 上传 '+okCount+'/'+arr.length+' 条成功，剩余稍后重试。','#b91c1c'); }
 }
 
-// 初始化：默认日期 + 本机待传提示
+// 初始化：默认日期 + 本机待传提示 + 角色化列表显示
 (function initWR(){
   const d=document.getElementById('wrDate'); if(d) d.value=new Date().toISOString().slice(0,10);
   const n=loadLocalWR().length;
   refreshRetryBtn();
   if(n) setWRStatus('📥 本机有 '+n+' 条待上传，联网后点「上传本机待传记录」可重传。','#b45309');
+  // 角色控制列表：老板/教务默认展开，教练默认折叠
+  const role = _role();
+  const box = document.getElementById('wrListBox');
+  const btn = document.getElementById('wrToggleBtn');
+  const card = document.getElementById('wrListCard');
+  if(role === 'coach'){
+    if(box) box.style.display = 'none';
+    if(btn) btn.textContent = '展开 ▼';
+  }
+  if(card){ loadReportList(); }
 })();
 
 </script>
