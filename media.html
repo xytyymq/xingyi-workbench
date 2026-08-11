@@ -412,15 +412,10 @@ body {
   <div class="tab" onclick="switchTab('wechat')">微信朋友圈</div>
   <div class="tab" onclick="switchTab('xhs')">小红书</div>
   <div class="tab" onclick="switchTab('sop')">执行SOP</div>
+  <div class="tab" onclick="switchTab('ailib')">📚 AI文案库</div>
 </div>
 
 <div class="content">
-
-  <div class="card">
-    <div class="card-title"><span class="icon">📚</span> 最新 AI 文案库（每 15 天自动更新）</div>
-    <p style="font-size:13px;color:var(--text-light);margin-bottom:10px;">抖音 / 小红书 / 朋友圈文案自动追加到这里，直接复制取用。下方「脚本模板」是固定模板，本库是滚动更新的最新素材。</p>
-    <a style="display:block;text-align:center;background:var(--primary);color:#fff;text-decoration:none;padding:10px;border-radius:10px;font-size:13px;font-weight:700;" href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">打开《自媒体文案库》腾讯文档 ↗</a>
-  </div>
 
 <!-- ===== 账号定位 ===== -->
 <div class="panel active" id="panel-positioning">
@@ -1871,6 +1866,25 @@ XX拿了小组第二
       ❌ <b>追求完美不发</b> → 先发再优化，60分的发布 > 100分的草稿<br>
       ❌ <b>标题太随意</b> → 标题决定点击率，花30秒想标题
     </div>
+  </div>
+
+</div>
+
+<!-- ===== AI文案库（自动更新·内嵌） ===== -->
+<div class="panel" id="panel-ailib">
+
+  <div class="highlight">
+    <h4>📚 最新 AI 文案库（每 15 天自动更新）</h4>
+    <p>抖音 / 小红书 / 朋友圈文案由系统自动追加到这里，下方直接查看、复制取用。上方「脚本模板」是固定模板，本库是滚动更新的最新素材。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="icon">📄</span> 文案库内容（实时同步）</div>
+    <div style="border:1px solid var(--border,#e3ece9);border-radius:12px;overflow:hidden;margin-top:6px;">
+      <iframe src="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo?from=embed" style="width:100%;height:620px;border:0;display:block;" allowfullscreen></iframe>
+    </div>
+    <a style="display:block;text-align:center;background:var(--primary);color:#fff;text-decoration:none;padding:11px;border-radius:10px;font-size:13px;font-weight:700;margin-top:10px;" href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">↗ 新窗口 / 手机端打开文案库</a>
+    <p style="font-size:11.5px;color:var(--text-light);margin-top:8px;">👉 内容自动更新，无需手动维护。若上方表格没显示，点上面按钮在新窗口打开。</p>
   </div>
 
 </div>
