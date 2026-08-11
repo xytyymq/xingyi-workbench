@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>星羿羽毛球馆 · 荣誉证书</title>
   <script src="gate.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: "STKaiti", "KaiTi", "PingFang SC", "Microsoft YaHei", serif; background: #e2e8f0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
@@ -90,7 +91,7 @@ body{background:var(--mint-50)!important;font-family:-apple-system,BlinkMacSyste
 <body>
 
 <div class="xy-topbar">
-  <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+  <span class="brand"><span class="em">🏸</span>星羿 · 招生工作台</span>
   <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
 </div>
 
@@ -106,7 +107,8 @@ body{background:var(--mint-50)!important;font-family:-apple-system,BlinkMacSyste
       </select>
     </label>
     <label>日期：<input id="fDate" value="2026年8月__日" oninput="document.getElementById('vDate').textContent=this.value"></label>
-    <button class="btn" onclick="window.print()">🖨️ 打印 / 存为PDF</button>
+    <button class="btn" id="saveImgBtn" onclick="saveCertImage()">💾 保存为图片</button>
+    <button class="btn" style="background:#64748b" onclick="window.print()">🖨️ 打印 / 存为PDF</button>
   </div>
 
   <div class="cert" id="cert">
@@ -148,6 +150,47 @@ body{background:var(--mint-50)!important;font-family:-apple-system,BlinkMacSyste
 </div>
 
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 荣誉证书<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
+
+<script>
+function saveCertImage(){
+  var node = document.getElementById('cert');
+  var btn = document.getElementById('saveImgBtn');
+  var old = btn.textContent; btn.disabled = true; btn.textContent = '生成中…';
+  try {
+    if(typeof html2canvas !== 'function'){ throw new Error('图片库未加载，请检查网络后重试'); }
+    html2canvas(node, { scale: 2, backgroundColor: null, useCORS: true, logging: false })
+      .then(function(canvas){
+        var name = (document.getElementById('vName').textContent || '学员').trim().replace(/[\\/:*?"<>|]/g,'');
+        var dataURL = canvas.toDataURL('image/png');
+        btn.disabled = false; btn.textContent = old;
+        var isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if(isMobile){ showCertPreview(dataURL, name); }
+        else {
+          var a = document.createElement('a');
+          a.href = dataURL; a.download = '星羿荣誉证书_' + name + '.png';
+          document.body.appendChild(a); a.click(); a.remove();
+        }
+      })
+      .catch(function(err){ btn.disabled = false; btn.textContent = old; alert('生成图片失败：' + (err && err.message ? err.message : err)); });
+  } catch(e){ btn.disabled = false; btn.textContent = old; alert('生成图片失败：' + e.message); }
+}
+function showCertPreview(dataURL, name){
+  var mask = document.getElementById('certPreviewMask');
+  if(!mask){
+    mask = document.createElement('div');
+    mask.id = 'certPreviewMask';
+    mask.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:99;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;';
+    mask.innerHTML = '<img id="certPrevImg" style="max-width:92%;max-height:72%;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.4);background:#fff;">'
+      + '<div style="color:#cbd5e1;text-align:center;margin-top:12px;font-size:12.5px;">📱 手机端：长按上方图片 → 保存到相册</div>'
+      + '<button id="certPrevClose" style="margin-top:14px;padding:9px 22px;border:none;border-radius:9px;background:#14b8a6;color:#fff;font-size:14px;">关闭</button>';
+    document.body.appendChild(mask);
+    mask.addEventListener('click', function(e){ if(e.target === mask) mask.style.display='none'; });
+    document.getElementById('certPrevClose').addEventListener('click', function(){ mask.style.display='none'; });
+  }
+  document.getElementById('certPrevImg').src = dataURL;
+  mask.style.display = 'flex';
+}
+</script>
 
 </body>
 </html>
