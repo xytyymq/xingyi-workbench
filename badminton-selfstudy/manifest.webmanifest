@@ -1,0 +1,20 @@
+{
+  "name": "星羿羽毛球成人自学系统",
+  "short_name": "星羿羽球",
+  "description": "星羿羽毛球馆成人自学系统 · 免费不卖课",
+  "id": "/xingyi-badminton/",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f1e8",
+  "theme_color": "#1f6b4e",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
