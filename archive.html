@@ -148,6 +148,8 @@ svg{width:100%;height:auto;display:block;}
   <!-- 录入体测 -->
   <div class="card">
     <h2><span class="num">②</span>录入一次体测</h2>
+    <label>选择学员（从档案库）</label>
+    <select id="stuSelect" onchange="selectStudent(this.value)"><option value="">— 请选择学员 —</option></select>
     <div id="noStudent" class="tip">请先在上方选择或新建一位学员。</div>
     <div id="entryArea" class="hidden">
       <label>测试日期</label>
@@ -266,17 +268,25 @@ function delStudent(id){
   if(current===id) current=null;
   renderStudents(); renderEntry(); renderOverview();
 }
-function selectStudent(id){ current=id; renderStudents(); renderEntry(); renderOverview(); }
+function selectStudent(id){ current=id; renderStudentSelect(); renderStudents(); renderEntry(); renderOverview(); }
 function curStudent(){ return data.find(s=>s.id===current); }
 
 function renderStudents(){
   const box = studentList;
-  if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; return; }
-  box.innerHTML = data.map(s=>`
+  if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; }
+  else { box.innerHTML = data.map(s=>`
     <div class="student ${s.id===current?'active':''}" onclick="selectStudent('${s.id}')">
       <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测</div></div>
       <button class="del" onclick="event.stopPropagation();delStudent('${s.id}')">删除</button>
-    </div>`).join("");
+    </div>`).join(""); }
+  renderStudentSelect();
+}
+
+// 录入体测区下拉框：与本页学员档案库联动，与点击卡片并存
+function renderStudentSelect(){
+  const sel = document.getElementById('stuSelect'); if(!sel) return;
+  sel.innerHTML = '<option value="">— 请选择学员 —</option>' + data.map(s=>`<option value="${s.id}">${s.name}（${s.cls} · ${s.tests.length}次）</option>`).join("");
+  sel.value = current || "";
 }
 
 function renderEntry(){
