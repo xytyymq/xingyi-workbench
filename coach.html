@@ -53,28 +53,6 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 .link-row a:active{background:var(--teal-500);color:#fff;}
 .link-row a.alt{background:var(--coral-soft);color:var(--coral);border-color:var(--coral);}
 
-/* 绩效卡片 */
-.perf-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-.perf-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;box-shadow:0 1px 4px rgba(15,32,29,.04);}
-.perf-card .p-label{font-size:11px;color:var(--muted);margin-bottom:4px;}
-.perf-card .p-num{font-size:24px;font-weight:800;color:var(--teal-700);}
-.perf-card .p-trend{font-size:10.5px;margin-top:2px;}
-.perf-card .p-trend.up{color:var(--good);}.perf-card .p-trend.down{color:var(--bad);}.perf-card .p-trend.flat{color:var(--muted);}
-.perf-date{font-size:11px;color:var(--muted);font-weight:400;}
-.perf-update{display:block;width:100%;background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);padding:8px;border-radius:10px;font-size:12.5px;font-weight:700;cursor:pointer;text-align:center;margin-top:4px;font-family:inherit;transition:.15s;}
-.perf-update:active{background:var(--teal-500);color:#fff;}
-.perf-modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;}
-.perf-modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.4);}
-.perf-modal-card{position:relative;background:#fff;border-radius:16px;padding:22px 18px;width:90%;max-width:380px;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2);}
-.perf-modal-card h3{font-size:15px;color:var(--teal-700);margin:0 0 14px;text-align:center;}
-.perf-modal-card label{display:block;font-size:12.5px;color:var(--sub);margin:10px 0 4px;}
-.perf-modal-card input{width:100%;padding:9px 10px;border:1.5px solid #d6e6e4;border-radius:8px;font-size:13px;outline:none;font-family:inherit;}
-.perf-modal-card input:focus{border-color:var(--teal-500);}
-.perf-actions{display:flex;gap:8px;margin-top:16px;}
-.perf-actions .btn{flex:1;padding:10px;border:none;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;}
-.perf-actions .btn-primary{background:var(--teal-700);color:#fff;}
-.perf-actions .btn-ghost{background:var(--teal-100);color:var(--teal-700);}
-
 /* 角色 */
 .role-badge{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700;}
 .role-badge.boss{background:var(--coral);color:#fff;}
@@ -94,16 +72,6 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 <div class="header">
   <h1>教练工作台</h1>
   <p>考核标准 · 价格速查 · 促出勤话术 · 课堂自评指南</p>
-</div>
-
-<!-- 我的绩效（云端共享） -->
-<div class="sec" id="perf">
-  <div class="sec-title"><span class="bar"></span>我的绩效 · 云端共享 <span class="perf-date">教练填·老板实时看</span></div>
-  <div style="margin:0 0 10px;font-size:13px;color:#5b6b7b;background:#f3f7fb;border:1px solid #e3e8ef;border-radius:10px;padding:10px 12px">📌 已接入腾讯文档，一人填写、全员手机实时可见。直接在下方表格按月登记，老板打开同一张表即可查看。</div>
-  <iframe src="https://docs.qq.com/sheet/DQmxHY09VcVFWTXRU?from=embed&tab=BB08J2" loading="lazy" referrerpolicy="no-referrer-when-downgrade" style="width:100%;height:440px;border:1px solid #e3e8ef;border-radius:10px"></iframe>
-  <div class="link-row" style="margin-top:10px">
-    <a href="https://docs.qq.com/sheet/DQmxHY09VcVFWTXRU" target="_blank" rel="noopener">↗ 新窗口打开 / 手机端填写</a>
-  </div>
 </div>
 
 <!-- 1. 教练考核标准 -->
