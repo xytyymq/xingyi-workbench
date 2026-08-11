@@ -1894,13 +1894,24 @@ XX拿了小组第二
 <div class="toast" id="toast">已复制到剪贴板 ✓</div>
 
 <script>
-function switchTab(name) {
+function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  event.target.classList.add('active');
-  document.getElementById('panel-' + name).classList.add('active');
+  var tab = el || document.querySelector('.tab[onclick*="\'" + name + "\'"');
+  if(tab) tab.classList.add('active');
+  var panel = document.getElementById('panel-' + name);
+  if(panel) panel.classList.add('active');
   window.scrollTo({top:0, behavior:'smooth'});
 }
+
+// URL ?tab=ailib 自动打开 AI文案库页签
+(function initTabFromURL(){
+  var params = new URLSearchParams(window.location.search);
+  var tab = params.get('tab');
+  if(tab && document.getElementById('panel-' + tab)){
+    switchTab(tab);
+  }
+})();
 
 function copyScript(btn) {
   const content = btn.parentElement.querySelector('.script-content').innerText;
