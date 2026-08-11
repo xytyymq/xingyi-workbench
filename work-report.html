@@ -67,7 +67,7 @@
     <h2><span class="num">☁️</span>数据真源（腾讯文档）</h2>
     <p class="note" style="margin:0 0 4px">员工 / 教练用手机填 → 自动进在线表 → 你电脑实时看（填完即同步）</p>
     <div class="entrance">
-      <a href="https://docs.qq.com/sheet/DQmdaUnJyZUJRWWdO" target="_blank" rel="noopener">📝 员工工作日报 · 去填写/查看</a>
+      <span style="flex:1;min-width:140px;background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);padding:11px 8px;border-radius:11px;font-size:13px;font-weight:700;line-height:1.4;">📝 员工工作日报：在本页①直接填，<b>不用跳</b></span>
       <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录 · 去填写/查看</a>
     </div>
   </div>
@@ -84,20 +84,23 @@
 
   <!-- 模块A 员工工作日报 -->
   <div class="card">
-    <h2><span class="num">①</span>员工工作日报（模板）</h2>
-    <p class="note">以下为填写参考模板，正式填写请在上方腾讯文档收集表完成（自动同步）。此模板可截图/打印作示例。</p>
+    <h2><span class="num">①</span>员工工作日报（在线填写）</h2>
+    <p class="note">在本页填写 → 点「保存并上传云端」，老板账号实时可见。无需跳转腾讯文档。</p>
     <div class="grid2">
-      <div><label>日期</label><input type="date"></div>
-      <div><label>员工</label><input type="text" placeholder="如：前台小萍 / 教练王"></div>
+      <div><label>日期</label><input id="wrDate" type="date"></div>
+      <div><label>员工</label><input id="wrEmp" type="text" placeholder="如：前台小萍 / 教练王"></div>
     </div>
     <label>今日完成工作</label>
-    <textarea placeholder="如：接待新访客3组、续费跟进2人、场地消杀、器材盘点"></textarea>
+    <textarea id="wrWork" placeholder="如：接待新访客3组、续费跟进2人、场地消杀、器材盘点"></textarea>
     <label>学员沟通 / 家长反馈</label>
-    <textarea placeholder="如：小明妈妈问暑期班、小红爸爸续费意向强"></textarea>
+    <textarea id="wrParent" placeholder="如：小明妈妈问暑期班、小红爸爸续费意向强"></textarea>
     <div class="grid2">
-      <div><label>明日待办</label><textarea placeholder="如：电话回访3位试听家长"></textarea></div>
-      <div><label>需老板协调的问题</label><textarea placeholder="如：2号场灯光闪烁需维修"></textarea></div>
+      <div><label>明日待办</label><textarea id="wrTomorrow" placeholder="如：电话回访3位试听家长"></textarea></div>
+      <div><label>需老板协调的问题</label><textarea id="wrIssues" placeholder="如：2号场灯光闪烁需维修"></textarea></div>
     </div>
+    <button class="btn btn-primary" id="wrSaveBtn" onclick="saveWorkReport()">💾 保存并上传云端</button>
+    <button class="btn btn-ghost" id="wrRetryBtn" style="display:none;" onclick="retryLocalWR()">🔄 上传本机待传记录</button>
+    <div id="wrStatus" class="note" style="margin-top:8px;"></div>
   </div>
 
   <!-- 模块B 学员上课记录 -->
@@ -272,6 +275,83 @@ document.getElementById('csvFile').addEventListener('change', function(e){
   r.onload=function(){ autoData=r.result; document.getElementById('csvText').value=r.result; renderCharts(); };
   r.readAsText(f,'utf-8');
 });
+
+// ===== 员工日报：页内编辑 + 直传云端（data/work-reports.json）=====
+const WR_REPO='xytyymq/xingyi-workbench';
+const WR_PATH='data/work-reports.json';
+const WR_API='https://api.github.com/repos/'+WR_REPO+'/contents/'+WR_PATH;
+const LS_WR='xy_wr_local';
+function b64utf8(s){ const bytes=new TextEncoder().encode(s); let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]); return btoa(bin); }
+function decodeB64(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function setWRStatus(txt,color){ const el=document.getElementById('wrStatus'); if(el){ el.textContent=txt; el.style.color=color||''; } }
+function saveLocalWR(rec){ try{ const arr=JSON.parse(localStorage.getItem(LS_WR)||'[]'); arr.push(rec); localStorage.setItem(LS_WR,JSON.stringify(arr)); }catch(e){} }
+function loadLocalWR(){ try{ return JSON.parse(localStorage.getItem(LS_WR)||'[]')||[]; }catch(e){ return []; } }
+function clearLocalWR(){ try{ localStorage.removeItem(LS_WR); }catch(e){} }
+function refreshRetryBtn(){ const n=loadLocalWR().length; const b=document.getElementById('wrRetryBtn'); if(b) b.style.display = n>0 ? 'inline-block':'none'; }
+
+async function pushWR(gt, rec){
+  const H={'Authorization':'token '+gt,'Accept':'application/vnd.github+json'};
+  let ctrl=new AbortController(); let timer=setTimeout(function(){ctrl.abort();},6000);
+  let gr, sha=null, arr=[];
+  try{ gr=await fetch(WR_API,{headers:H,cache:'no-store',signal:ctrl.signal}); }
+  catch(e){ clearTimeout(timer); return false; }
+  clearTimeout(timer);
+  if(gr.ok){ const gj=await gr.json(); sha=gj.sha; try{ arr=JSON.parse(decodeB64(gj.content))||[]; }catch(e){ arr=[]; } }
+  else if(gr.status!==404){ return false; }
+  arr.push(rec);
+  const body=JSON.stringify({message:'工作日报 '+rec.date+' '+rec.employee, content:b64utf8(JSON.stringify(arr,null,2)), sha:sha||undefined});
+  const pctrl=new AbortController(); const pt=setTimeout(function(){pctrl.abort();},6000);
+  try{
+    const put=await fetch(WR_API,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},H),body:body,signal:pctrl.signal});
+    clearTimeout(pt); return put.ok;
+  }catch(e){ clearTimeout(pt); return false; }
+}
+
+function clearWR(){ ['wrEmp','wrWork','wrParent','wrTomorrow','wrIssues'].forEach(function(id){ const el=document.getElementById(id); if(el) el.value=''; }); }
+
+async function saveWorkReport(){
+  const rec={
+    date: document.getElementById('wrDate').value || new Date().toISOString().slice(0,10),
+    employee: document.getElementById('wrEmp').value.trim(),
+    work: document.getElementById('wrWork').value.trim(),
+    parent: document.getElementById('wrParent').value.trim(),
+    tomorrow: document.getElementById('wrTomorrow').value.trim(),
+    issues: document.getElementById('wrIssues').value.trim(),
+    createdAt: new Date().toISOString()
+  };
+  if(!rec.employee){ alert('请填员工姓名'); return; }
+  if(!rec.work && !rec.parent && !rec.tomorrow && !rec.issues){ alert('至少填一项内容再保存'); return; }
+  const btn=document.getElementById('wrSaveBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='上传中…';
+  const gt=_gt();
+  if(!gt){ saveLocalWR(rec); btn.disabled=false; btn.textContent=old; refreshRetryBtn(); setWRStatus('📱 本机未授权写云端：已先存本机，找老板要授权链接点开后点「上传本机待传记录」可重传。','#b45309'); alert('本机未授权，已先存本机。'); return; }
+  try{
+    const ok=await pushWR(gt, rec);
+    if(ok){ alert('✅ 已保存到云端，老板账号实时可见！'); clearWR(); clearLocalWR(); refreshRetryBtn(); setWRStatus('✅ 已上传云端 · '+new Date().toLocaleString('zh-CN'),'#0f766e'); }
+    else { saveLocalWR(rec); refreshRetryBtn(); setWRStatus('⚠️ 上传失败（网络受限），已先存本机，联网后可点「上传本机待传记录」重传。','#b91c1c'); alert('⚠️ 上传失败，已存本机。'); }
+  }catch(e){ saveLocalWR(rec); refreshRetryBtn(); setWRStatus('⚠️ 上传出错，已存本机：'+e.message,'#b91c1c'); alert('上传出错：'+e.message); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+async function retryLocalWR(){
+  const gt=_gt(); if(!gt){ alert('本机未授权，无法上传。请先点开老板发的授权链接。'); return; }
+  const arr=loadLocalWR(); if(!arr.length){ setWRStatus('没有待传记录。','#0f766e'); return; }
+  const btn=document.getElementById('wrRetryBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='上传中…';
+  let okCount=0;
+  for(const rec of arr){ const ok=await pushWR(gt, rec); if(ok) okCount++; }
+  btn.disabled=false; btn.textContent=old;
+  if(okCount===arr.length){ clearLocalWR(); refreshRetryBtn(); setWRStatus('✅ 本机 '+okCount+' 条已全部上传云端。','#0f766e'); alert('已全部上传！'); }
+  else { refreshRetryBtn(); setWRStatus('⚠️ 上传 '+okCount+'/'+arr.length+' 条成功，剩余稍后重试。','#b91c1c'); }
+}
+
+// 初始化：默认日期 + 本机待传提示
+(function initWR(){
+  const d=document.getElementById('wrDate'); if(d) d.value=new Date().toISOString().slice(0,10);
+  const n=loadLocalWR().length;
+  refreshRetryBtn();
+  if(n) setWRStatus('📥 本机有 '+n+' 条待上传，联网后点「上传本机待传记录」可重传。','#b45309');
+})();
+
 </script>
 </body>
 </html>
