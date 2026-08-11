@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿球馆 · 学员积分</title>
+  <script src="gate.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f1faf7;color:#0f201d;line-height:1.7;padding-bottom:50px;}
+  :root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+  .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+  .xy-topbar .brand .em{margin-right:5px;}
+  .xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+  .hero{background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));color:#fff;padding:26px 18px 18px;position:relative;overflow:hidden;}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+  .hero>*{position:relative;z-index:1;}
+  .hero h1{font-size:20px;font-weight:800;}
+  .hero p{font-size:12.5px;opacity:.92;margin-top:5px;}
+  .container{max-width:680px;margin:0 auto;padding:14px 12px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px;margin-bottom:13px;box-shadow:0 2px 10px rgba(15,32,29,.06);}
+  .card h2{font-size:15px;color:var(--teal-700);margin:0 0 9px;display:flex;align-items:center;gap:7px;}
+  .card h2 .num{background:var(--teal-700);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  label{font-size:12.5px;color:#475569;display:block;margin:9px 0 3px;}
+  input,select,textarea{width:100%;padding:9px 10px;border:1px solid #cbd5db;border-radius:8px;font-size:13.5px;background:#fff;color:#1f2933;font-family:inherit;}
+  textarea{resize:vertical;min-height:54px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .btn{display:block;width:100%;padding:11px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:11px;font-family:inherit;}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:active{background:var(--teal-900);}
+  .btn-ghost{background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);}
+  .btn-sm{padding:8px;font-size:12.5px;margin-top:7px;border-radius:8px;display:inline-block;width:auto;}
+  .btn-text{background:transparent;color:var(--teal-700);border:none;padding:8px 0;font-size:12.5px;font-weight:700;text-decoration:underline;cursor:pointer;}
+  .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
+
+  /* 政策区 */
+  .policy h3{font-size:14px;color:var(--teal-700);margin:14px 0 6px;padding-left:9px;border-left:4px solid var(--coral);}
+  .policy p{font-size:13px;color:var(--ink);margin:4px 0;}
+  .policy .lead{font-size:12.5px;color:var(--sub);background:var(--mint-50);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin:4px 0 2px;}
+  table.pt{width:100%;border-collapse:collapse;margin:6px 0;font-size:12.5px;}
+  table.pt th,table.pt td{border:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top;}
+  table.pt th{background:var(--teal-100);color:var(--teal-900);font-weight:700;}
+  table.pt td.pts{color:var(--coral);font-weight:800;white-space:nowrap;text-align:center;}
+  .tag-line{font-size:12px;color:var(--sub);margin-top:4px;}
+
+  /* 榜单 */
+  .lb-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .lb{margin-top:4px;}
+  .lb-row{display:flex;align-items:center;gap:10px;background:#f8fafc;border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:7px;}
+  .lb-row .rk{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;background:var(--teal-100);color:var(--teal-700);flex-shrink:0;}
+  .lb-row.top1 .rk{background:var(--gold);color:#fff;}
+  .lb-row.top2 .rk{background:#9ca3af;color:#fff;}
+  .lb-row.top3 .rk{background:#cd7f32;color:#fff;}
+  .lb-row .nm{flex:1;font-weight:700;font-size:14px;}
+  .lb-row .sc{font-weight:800;color:var(--teal-700);font-size:15px;}
+  .lb-row .sc small{color:var(--muted);font-weight:600;font-size:11px;margin-left:2px;}
+  .lb-empty{color:var(--muted);font-size:12.5px;text-align:center;padding:16px;}
+
+  /* 录入表单角色提示 */
+  .role-note{font-size:12px;color:#9a4a28;background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:8px 11px;margin-top:9px;line-height:1.6;}
+  .xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:26px 14px 30px;line-height:1.9;}
+  .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>🏆 学员积分</h1>
+  <p>消课 · 邀朋友 · 多练 · 续费，都能赚分换好礼</p>
+</div>
+
+<div class="container">
+
+  <!-- 积分榜 -->
+  <div class="card">
+    <div class="lb-head">
+      <h2 style="margin:0;"><span class="num">🏅</span>积分榜</h2>
+      <button class="btn-text" onclick="loadBoard()">🔄 刷新</button>
+    </div>
+    <p class="note" id="boardNote">从云端加载中…</p>
+    <div id="boardBox" class="lb"></div>
+  </div>
+
+  <!-- 录入积分 -->
+  <div class="card">
+    <h2><span class="num">➕</span>录入积分（老板 / 教练）</h2>
+    <p class="note">选事由自动带出建议分值，可改；保存即同步云端，榜单实时更新。</p>
+    <div class="grid2">
+      <div><label>学员姓名</label><input id="pName" type="text" placeholder="如：小明"></div>
+      <div><label>日期</label><input id="pDate" type="date"></div>
+    </div>
+    <label>事由（选一项自动带分值）</label>
+    <select id="pReason" onchange="onReasonChange()">
+      <option value="">— 请选择 —</option>
+      <option value="消正课1节">消正课1节</option>
+      <option value="月度满勤">月度满勤</option>
+      <option value="当月无爽约/迟到">当月无爽约/迟到</option>
+      <option value="连续出勤满4周">连续出勤满4周</option>
+      <option value="单周消课≥3节">单周消课≥3节</option>
+      <option value="自主加练1次">自主加练1次</option>
+      <option value="参加开放日/训练营">参加开放日/训练营</option>
+      <option value="带好友来体验">带好友来体验</option>
+      <option value="好友报名正课">好友报名正课</option>
+      <option value="好友续费">好友续费</option>
+      <option value="老带新组团同报">老带新组团同报</option>
+      <option value="朋友圈/小红书打卡@球馆">朋友圈/小红书打卡@球馆</option>
+      <option value="到期前续费">到期前续费</option>
+      <option value="升级高阶课程包">升级高阶课程包</option>
+      <option value="体测晋级一级">体测晋级一级</option>
+      <option value="赛事获奖">赛事获奖</option>
+      <option value="其他">其他（手动填分）</option>
+    </select>
+    <div class="grid2">
+      <div><label>分值（正=加 / 负=扣）</label><input id="pDelta" type="number" placeholder="如：10"></div>
+      <div><label>操作人</label><input id="pBy" type="text" placeholder="如：王教练"></div>
+    </div>
+    <label>备注（可选）</label>
+    <textarea id="pMemo" placeholder="如：带同学小李来体验，已完成定级"></textarea>
+    <button class="btn btn-primary" id="pSaveBtn" onclick="savePoint()">💾 保存并上传云端</button>
+    <button class="btn btn-ghost" id="pRetryBtn" style="display:none;" onclick="retryLocalP()">🔄 上传本机待传记录</button>
+    <div id="pStatus" class="note" style="margin-top:8px;"></div>
+    <div class="role-note" id="pRoleNote" style="display:none;"></div>
+  </div>
+
+  <!-- 详细积分政策 -->
+  <div class="card policy">
+    <h2><span class="num">📜</span>积分政策（详细方案）</h2>
+    <p class="lead">目标：把"买了不来"变成"按时来、多来"，把"来都来了"变成"带朋友来、接着买"。核心三件事——<b>消课</b>、<b>邀朋友多来多练</b>、<b>续费</b>。</p>
+
+    <h3>一、怎么赚积分（获取规则）</h3>
+
+    <p class="tag-line"><b>A. 消课出勤（核心：减少沉睡课时）</b></p>
+    <table class="pt">
+      <tr><th>行为</th><th>分值</th></tr>
+      <tr><td>消 1 节正课</td><td class="pts">+10</td></tr>
+      <tr><td>月度满勤（按合同课时全消）</td><td class="pts">+50</td></tr>
+      <tr><td>当月无爽约 / 无迟到早退</td><td class="pts">+30</td></tr>
+      <tr><td>连续出勤满 4 周</td><td class="pts">+30</td></tr>
+      <tr><td>单周消课 ≥ 3 节（额外）</td><td class="pts">+20</td></tr>
+    </table>
+
+    <p class="tag-line"><b>B. 多练加场（提高频次）</b></p>
+    <table class="pt">
+      <tr><th>行为</th><th>分值</th></tr>
+      <tr><td>自主加练 / 加场（每节）</td><td class="pts">+5</td></tr>
+      <tr><td>参加馆内开放日 / 训练营（每次）</td><td class="pts">+15</td></tr>
+      <tr><td>课后体能·步法打卡（拍照@教练，每周）</td><td class="pts">+10</td></tr>
+    </table>
+
+    <p class="tag-line"><b>C. 邀友裂变（朋友多来）</b></p>
+    <table class="pt">
+      <tr><th>行为</th><th>分值</th></tr>
+      <tr><td>带 1 位好友完成定级体验</td><td class="pts">+30</td></tr>
+      <tr><td>好友报名正课（首单成交）</td><td class="pts">+100 / 人</td></tr>
+      <tr><td>好友续费</td><td class="pts">+50 / 人</td></tr>
+      <tr><td>老带新组团（≥2 人同报）</td><td class="pts">+60 / 人</td></tr>
+      <tr><td>朋友圈 / 小红书晒训练成果@球馆（每次，月上限 100）</td><td class="pts">+20</td></tr>
+    </table>
+
+    <p class="tag-line"><b>D. 续费留存（接着买）</b></p>
+    <table class="pt">
+      <tr><th>行为</th><th>分值</th></tr>
+      <tr><td>到期前 15 天内续费</td><td class="pts">+80</td></tr>
+      <tr><td>升级更高阶课程包</td><td class="pts">+120</td></tr>
+      <tr><td>老学员推荐后自己续费升级（额外）</td><td class="pts">+40</td></tr>
+    </table>
+
+    <p class="tag-line"><b>E. 荣誉成长</b></p>
+    <table class="pt">
+      <tr><th>行为</th><th>分值</th></tr>
+      <tr><td>体测晋级一级</td><td class="pts">+40</td></tr>
+      <tr><td>馆内 / 外部赛事获奖（一等 / 二三等 / 参与）</td><td class="pts">+100 / +60 / +20</td></tr>
+      <tr><td>主动整理器材 / 帮助新人（酌情）</td><td class="pts">+10</td></tr>
+    </table>
+
+    <h3>二、积分怎么花（兑换）</h3>
+    <table class="pt">
+      <tr><th>积分</th><th>可兑换</th></tr>
+      <tr><td class="pts">100</td><td>体验课 1 节 / 手胶·球袜周边</td></tr>
+      <tr><td class="pts">200</td><td>私教体验 1 节 / 专业手胶礼盒</td></tr>
+      <tr><td class="pts">300</td><td>球拍穿线 1 次 / 训练营抵扣券</td></tr>
+      <tr><td class="pts">500</td><td>正课 1 节抵扣 / 球拍配件</td></tr>
+      <tr><td class="pts">800</td><td>1 对 1 技术诊断 / 会员日专属礼</td></tr>
+      <tr><td class="pts">1000</td><td>免费训练周 / 指定球拍折扣券</td></tr>
+      <tr><td class="pts">榜前3</td><td>月度实物奖 + 荣誉证书（朋友圈素材）</td></tr>
+    </table>
+
+    <h3>三、规则与执行</h3>
+    <p>· 有效期：当年有效，次年 3 月统一清零（或滚动 12 个月，二选一）。</p>
+    <p>· 消课 / 满勤分：由系统或教练按实际上课记录录入。</p>
+    <p>· 邀友 / 续费分：需好友完成对应动作后，由教务核验发放。</p>
+    <p>· 弄虚作假、代打卡不计分并追回已发积分。</p>
+    <p>· 最终解释权归球馆；政策每季复盘一次，可上下微调分值。</p>
+  </div>
+
+  <footer class="xy-footer">
+    🏸 星羿羽毛球馆 · 学员积分<br>
+    榜单与记录云端实时同步（手机电脑一致）<br>
+    录入需授权账号；未授权会自动存本机，联网后可重传
+  </footer>
+</div>
+
+<script>
+// ===== 云端读写（与 work-report 同一套）=====
+const POINTS_REPO='xytyymq/xingyi-workbench';
+const POINTS_PATH='data/points.json';
+const POINTS_API='https://api.github.com/repos/'+POINTS_REPO+'/contents/'+POINTS_PATH;
+const POINTS_VIEW='https://xytyymq.github.io/xingyi-workbench/data/points.json';
+const LS_P='xy_points_local';
+
+function b64utf8(s){ const bytes=new TextEncoder().encode(s); let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]); return btoa(bin); }
+function decodeB64(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function _role(){ return (window.XYGate && XYGate.role) ? XYGate.role() : 'boss'; }
+function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+
+// 事由 → 建议分值
+const REASON_POINTS={
+  '消正课1节':10,'月度满勤':50,'当月无爽约/迟到':30,'连续出勤满4周':30,'单周消课≥3节':20,
+  '自主加练1次':5,'参加开放日/训练营':15,'带好友来体验':30,'好友报名正课':100,'好友续费':50,
+  '老带新组团同报':60,'朋友圈/小红书打卡@球馆':20,'到期前续费':80,'升级高阶课程包':120,
+  '体测晋级一级':40,'赛事获奖':60,'其他':0
+};
+function onReasonChange(){
+  const sel=document.getElementById('pReason');
+  const d=document.getElementById('pDelta');
+  if(sel.value && REASON_POINTS[sel.value]!==undefined){ d.value=REASON_POINTS[sel.value]; }
+}
+
+// 榜单
+async function loadBoard(){
+  const box=document.getElementById('boardBox');
+  const note=document.getElementById('boardNote');
+  if(!box) return;
+  note.textContent='从云端加载中…';
+  box.innerHTML='<div class="lb-empty">加载中…</div>';
+  try{
+    const r=await fetch(POINTS_VIEW+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok){ if(r.status===404){ box.innerHTML='<div class="lb-empty">暂无积分记录，去录入第一笔 🏆</div>'; note.textContent='暂无记录'; return; } throw new Error('HTTP '+r.status); }
+    const arr=await r.json();
+    if(!Array.isArray(arr)||!arr.length){ box.innerHTML='<div class="lb-empty">暂无积分记录，去录入第一笔 🏆</div>'; note.textContent='暂无记录'; return; }
+    const sum={};
+    arr.forEach(function(it){ const n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
+    const list=Object.keys(sum).map(function(n){return {name:n,sc:sum[n]};}).sort(function(a,b){return b.sc-a.sc;}).slice(0,20);
+    box.innerHTML=list.map(function(it,i){
+      const cls=i<3?(' top'+(i+1)):'';
+      return '<div class="lb-row'+cls+'"><div class="rk">'+(i+1)+'</div>'
+        +'<div class="nm">'+esc(it.name)+'</div>'
+        +'<div class="sc">'+it.sc+'<small>分</small></div></div>';
+    }).join('');
+    note.textContent='共 '+Object.keys(sum).length+' 位学员上榜 · 实时同步';
+  }catch(e){
+    box.innerHTML='<div class="lb-empty">加载失败：'+esc(e.message)+'<br>点「刷新」重试。</div>';
+    note.textContent='加载失败';
+  }
+}
+
+// 本地兜底
+function saveLocalP(rec){ try{ const a=JSON.parse(localStorage.getItem(LS_P)||'[]'); a.push(rec); localStorage.setItem(LS_P,JSON.stringify(a)); }catch(e){} }
+function loadLocalP(){ try{ return JSON.parse(localStorage.getItem(LS_P)||'[]')||[]; }catch(e){ return []; } }
+function clearLocalP(){ try{ localStorage.removeItem(LS_P); }catch(e){} }
+function refreshRetryBtn(){ const n=loadLocalP().length; const b=document.getElementById('pRetryBtn'); if(b) b.style.display=n>0?'inline-block':'none'; }
+function setPStatus(t,c){ const el=document.getElementById('pStatus'); if(el){ el.textContent=t; el.style.color=c||''; } }
+
+async function pushP(gt,rec){
+  const H={'Authorization':'token '+gt,'Accept':'application/vnd.github+json'};
+  let ctrl=new AbortController(); let timer=setTimeout(function(){ctrl.abort();},6000);
+  let gr, sha=null, arr=[];
+  try{ gr=await fetch(POINTS_API,{headers:H,cache:'no-store',signal:ctrl.signal}); }
+  catch(e){ clearTimeout(timer); return false; }
+  clearTimeout(timer);
+  if(gr.ok){ const gj=await gr.json(); sha=gj.sha; try{ arr=JSON.parse(decodeB64(gj.content))||[]; }catch(e){ arr=[]; } }
+  else if(gr.status!==404){ return false; }
+  arr.push(rec);
+  const body=JSON.stringify({message:'学员积分 '+rec.date+' '+rec.name+' '+(rec.delta>0?'+':'')+rec.delta, content:b64utf8(JSON.stringify(arr,null,2)), sha:sha||undefined});
+  const pctrl=new AbortController(); const pt=setTimeout(function(){pctrl.abort();},6000);
+  try{
+    const put=await fetch(POINTS_API,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},H),body:body,signal:pctrl.signal});
+    clearTimeout(pt); return put.ok;
+  }catch(e){ clearTimeout(pt); return false; }
+}
+
+function clearP(){ ['pName','pMemo'].forEach(function(id){ const el=document.getElementById(id); if(el) el.value=''; }); document.getElementById('pReason').value=''; document.getElementById('pDelta').value=''; }
+
+async function savePoint(){
+  const rec={
+    name:document.getElementById('pName').value.trim(),
+    delta:parseInt(document.getElementById('pDelta').value,10),
+    reason:document.getElementById('pReason').value,
+    memo:document.getElementById('pMemo').value.trim(),
+    by:document.getElementById('pBy').value.trim(),
+    date:document.getElementById('pDate').value||new Date().toISOString().slice(0,10),
+    createdAt:new Date().toISOString()
+  };
+  if(!rec.name){ alert('请填学员姓名'); return; }
+  if(isNaN(rec.delta)||rec.delta===0){ alert('请填写分值（正数为加、负数为扣）'); return; }
+  const btn=document.getElementById('pSaveBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='上传中…';
+  const gt=_gt();
+  if(!gt){ saveLocalP(rec); btn.disabled=false; btn.textContent=old; refreshRetryBtn(); setPStatus('📱 本机未授权写云端：已先存本机，点开授权链接后可重传。','#b45309'); alert('本机未授权，已先存本机。'); return; }
+  try{
+    const ok=await pushP(gt,rec);
+    if(ok){ alert('✅ 已保存到云端，积分榜实时更新！'); clearP(); clearLocalP(); refreshRetryBtn(); setPStatus('✅ 已上传云端 · '+new Date().toLocaleString('zh-CN'),'#0f766e'); loadBoard(); }
+    else { saveLocalP(rec); refreshRetryBtn(); setPStatus('⚠️ 上传失败（网络受限），已存本机，稍后可重传。','#b91c1c'); alert('⚠️ 上传失败，已存本机。'); }
+  }catch(e){ saveLocalP(rec); refreshRetryBtn(); setPStatus('⚠️ 上传出错，已存本机：'+e.message,'#b91c1c'); alert('上传出错：'+e.message); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+async function retryLocalP(){
+  const gt=_gt(); if(!gt){ alert('本机未授权，无法上传。请先点开授权链接。'); return; }
+  const arr=loadLocalP(); if(!arr.length){ setPStatus('没有待传记录。','#0f766e'); return; }
+  const btn=document.getElementById('pRetryBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='上传中…';
+  let okCount=0;
+  for(const rec of arr){ const ok=await pushP(gt,rec); if(ok) okCount++; }
+  btn.disabled=false; btn.textContent=old;
+  if(okCount===arr.length){ clearLocalP(); refreshRetryBtn(); setPStatus('✅ 本机 '+okCount+' 条已全部上传云端。','#0f766e'); alert('已全部上传！'); loadBoard(); }
+  else { refreshRetryBtn(); setPStatus('⚠️ 上传 '+okCount+'/'+arr.length+' 条成功，剩余稍后重试。','#b91c1c'); }
+}
+
+// 初始化：默认日期 + 角色提示 + 本机待传
+(function initP(){
+  const d=document.getElementById('pDate'); if(d) d.value=new Date().toISOString().slice(0,10);
+  refreshRetryBtn();
+  const n=loadLocalP().length;
+  if(n) setPStatus('📥 本机有 '+n+' 条待上传，联网后点「上传本机待传记录」可重传。','#b45309');
+  const role=_role();
+  const note=document.getElementById('pRoleNote');
+  if(role==='coach'){ if(note){ note.style.display='block'; note.textContent='教练账号：可给自己学员录「消课/加练/带友」等分，邀友成交与续费分由教务核验后录入。'; } }
+  else if(role==='boss'||role==='admin'){ if(note){ note.style.display='block'; note.textContent='老板/教务：可录入全部类型积分（含续费、赛事、晋级）。'; } }
+  loadBoard();
+})();
+</script>
+</body>
+</html>
