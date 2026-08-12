@@ -148,6 +148,30 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
+
+/* ===== 手机端技术库排版优化 (2026-08-13) ===== */
+@media (max-width:600px){
+  /* 导航更紧凑，降低吸顶高度 */
+  #topnav{gap:4px;padding:6px 8px}
+  #topnav .tab{padding:7px 2px;font-size:12px;line-height:1.18}
+
+  /* 子标签：单行横滑薄条吸顶，紧贴导航下方；隐藏分组标题省空间 */
+  #subtabs{flex-wrap:nowrap;overflow-x:auto;top:80px;padding:7px 10px;gap:6px;
+    scrollbar-width:none;-ms-overflow-style:none}
+  #subtabs::-webkit-scrollbar{display:none}
+  #subtabs .sgroup{display:none}
+  #subtabs .stab{flex:0 0 auto;white-space:nowrap;padding:6px 12px;font-size:13px}
+  .routecard{font-size:12.5px;padding:8px 11px;margin-bottom:10px}
+
+  /* 技术面板更紧凑，水印缩小不挡内容 */
+  .tech{padding:15px 13px;border-left-width:3px}
+  .tech h3{font-size:16.5px}
+  .tech .lead{font-size:13px;margin-bottom:10px}
+  #techwrap .tech::before{font-size:40px;top:3px;right:7px;opacity:.08}
+  .steps li{padding:8px 4px 8px 34px;font-size:13px}
+  .steps li::before{width:22px;height:22px;font-size:11px;top:8px;left:3px}
+  .bad,.drill{padding:10px 12px;font-size:13px}
+}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.png">
