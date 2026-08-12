@@ -1,0 +1,5 @@
+[
+  { "id": "S_EX1", "name": "（示例）小明", "remaining": 6, "lastAttend": "2026-07-20" },
+  { "id": "S_EX2", "name": "（示例）小红", "remaining": 12, "lastAttend": "2026-08-10" },
+  { "id": "S_EX3", "name": "（示例）小刚", "remaining": 3, "lastAttend": "2026-08-12" }
+]
