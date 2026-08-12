@@ -38,7 +38,7 @@
   .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
 
   /* 预警两张卡 */
-  .warn-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .warn-grid{display:grid;grid-template-columns:1fr;gap:11px;}
   .warn-card{border-radius:14px;padding:13px 12px;color:#fff;box-shadow:0 2px 10px rgba(15,32,29,.08);}
   .warn-card.red{background:linear-gradient(135deg,#dc2626,#ef4444);}
   .warn-card.orange{background:linear-gradient(135deg,#ea580c,#f59e0b);}
@@ -72,7 +72,7 @@
 
 <div class="hero">
   <h1>🚨 课程预警</h1>
-  <p>剩余课时不多 · 久未上课的学员，提前跟进不流失</p>
+  <p>剩余课时不多（≤10 课）的学员，提前跟进不流失</p>
 </div>
 
 <div class="container">
@@ -89,11 +89,6 @@
         <div class="wc-num" id="lowNum">0</div>
         <div class="wc-label">剩余课时 ≤ 10 课</div>
         <div class="wc-list" id="lowList"><span class="wc-empty">—</span></div>
-      </div>
-      <div class="warn-card orange">
-        <div class="wc-num" id="idleNum">0</div>
-        <div class="wc-label">超过 15 天未上课</div>
-        <div class="wc-list" id="idleList"><span class="wc-empty">—</span></div>
       </div>
     </div>
     <div class="note" id="warnMeta">从云端加载中…</div>
@@ -308,20 +303,15 @@ function deleteStudent(id){
 // ===== 渲染 =====
 function renderAll(){
   const low=currentStudents.filter(isLow).sort(function(a,b){return Number(a.remaining)-Number(b.remaining);});
-  const idle=currentStudents.filter(isIdle).sort(function(a,b){return daysSince(b.lastAttend)-daysSince(a.lastAttend);});
 
   document.getElementById('lowNum').textContent=low.length;
-  document.getElementById('idleNum').textContent=idle.length;
   document.getElementById('lowList').innerHTML = low.length
     ? low.map(function(s){return esc(s.name)+' '+s.remaining+'课';}).join(' · ')
     : '<span class="wc-empty">暂无 ✅</span>';
-  document.getElementById('idleList').innerHTML = idle.length
-    ? idle.map(function(s){return esc(s.name)+' '+daysSince(s.lastAttend)+'天';}).join(' · ')
-    : '<span class="wc-empty">暂无 ✅</span>';
 
-  document.getElementById('warnMeta').textContent = (low.length+idle.length>0)
-    ? '⚠️ 共 '+(low.length+idle.length)+' 条预警，建议本周跟进'
-    : '✅ 当前无预警学员';
+  document.getElementById('warnMeta').textContent = low.length>0
+    ? '⚠️ 共 '+low.length+' 位学员剩余 ≤10 课，建议本周跟进续费'
+    : '✅ 当前无课时预警学员';
 
   // 总表
   const box=document.getElementById('rosterBox');
@@ -329,16 +319,15 @@ function renderAll(){
   else{
     box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>最近上课</th><th>状态</th><th></th></tr></thead><tbody>'
       + currentStudents.map(function(s){
-          const n=daysSince(s.lastAttend);
+          const dn=daysSince(s.lastAttend);
           const lowTag=isLow(s)?'<span class="tag low">剩'+s.remaining+'</span>':'';
-          const idleTag=(n!==null&&n>=15)?'<span class="tag idle">'+n+'天未上</span>':'';
-          const okTag=(!isLow(s)&&!(n!==null&&n>=15))?'<span class="tag ok">正常</span>':'';
-          const lastTxt = s.lastAttend ? (s.lastAttend+(n!==null?'（'+n+'天前）':'')) : '—';
+          const okTag=isLow(s)?'':'<span class="tag ok">正常</span>';
+          const lastTxt = s.lastAttend ? (s.lastAttend+(dn!==null?'（'+dn+'天前）':'')) : '—';
           return '<tr>'
             + '<td class="nm">'+esc(s.name)+'</td>'
             + '<td>'+Number(s.remaining)+' 课</td>'
             + '<td>'+esc(lastTxt)+'</td>'
-            + '<td>'+lowTag+idleTag+okTag+'</td>'
+            + '<td>'+lowTag+okTag+'</td>'
             + '<td><button class="del-btn" onclick="deleteStudent(\''+s.id+'\')">删除</button></td>'
             + '</tr>';
         }).join('')
