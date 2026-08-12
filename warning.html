@@ -105,6 +105,16 @@
     <div id="rosterBox"><div class="none">加载中…</div></div>
   </div>
 
+  <!-- 模板填报 -->
+  <div class="card" style="border-color:var(--teal-500);">
+    <h2><span class="num">📑</span>模板填报（推荐）</h2>
+    <p class="note" style="margin-top:0;">第一次录入学员课时：下载模板 → 用 Excel/WPS 填好 → 上传即可，自动覆盖成最新名单。</p>
+    <button class="btn btn-primary" onclick="downloadTemplate()">⬇️ 下载填报模板（CSV）</button>
+    <label style="margin-top:11px;">上传填好的模板（.csv）</label>
+    <input type="file" id="tplFile" accept=".csv" onchange="onTemplateFile(this)" style="padding:7px;border:1px dashed var(--teal-500);background:var(--teal-100);border-radius:8px;">
+    <div class="tip" style="margin-top:9px;">💡 模板列：<b>姓名, 剩余课时, 最近上课日期</b>。Excel 打开填好后请「另存为 .csv（逗号分隔）」再上传；上传会覆盖当前名单。</div>
+  </div>
+
   <!-- 编辑区（授权）-->
   <div class="card">
     <h2><span class="num">③</span>维护学员课时（老板/教务）</h2>
@@ -244,6 +254,49 @@ function importStudents(){
   });
   commitStudents(arr, '导入完成：新增 '+added+' · 更新 '+updated);
   document.getElementById('stuImport').value='';
+}
+
+// ===== 模板下载（生成带 BOM 的 CSV，Excel 中文不乱码）=====
+function downloadTemplate(){
+  const header='姓名,剩余课时,最近上课日期';
+  // 示例两行：一行覆盖“课时少”、一行覆盖“久未上课”
+  const sample='小明,8,2026-08-01\n小红,15,2026-07-20';
+  const csv='\uFEFF'+header+'\n'+sample+'\n';
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='星羿学员课时填报模板.csv';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+  setStatus('模板已下载，请用 Excel/WPS 填好“姓名、剩余课时、最近上课日期”三列后上传。','#0f766e');
+}
+
+// ===== 上传填好的模板（CSV）→ 解析 → 覆盖导入 =====
+function onTemplateFile(input){
+  const file=input.files && input.files[0];
+  if(!file){ return; }
+  const reader=new FileReader();
+  reader.onload=function(e){
+    let text=(e.target.result||'').replace(/^\uFEFF/,''); // 去 BOM
+    const lines=text.split(/\r?\n/).map(function(l){return l.trim();}).filter(Boolean);
+    const parsed=[];
+    for(let i=0;i<lines.length;i++){
+      const line=lines[i];
+      if(line.indexOf('#')===0) continue;                                   // 注释行
+      if(line.indexOf('姓名')>=0 && line.indexOf('剩余课时')>=0) continue;     // 表头
+      const parts=line.split(/[,，\t]/).map(function(x){return x.trim();});
+      if(parts.length<3) continue;
+      const name=parts[0], rem=parseInt(parts[1],10), last=parts[2];
+      if(!name||isNaN(rem)||!last) continue;
+      parsed.push({id:'S'+Date.now()+'_'+parsed.length, name:name, remaining:rem, lastAttend:last});
+    }
+    if(!parsed.length){ alert('未在文件中识别到有效数据，请检查格式：姓名,剩余课时,最近上课日期'); input.value=''; return; }
+    if(!confirm('将用模板中的 '+parsed.length+' 位学员覆盖当前云端名单，确定？\n（若需保留现有数据，请改用上方“批量粘贴导入”）')){ input.value=''; return; }
+    commitStudents(parsed, '已导入模板 '+parsed.length+' 位学员');
+    input.value='';
+  };
+  reader.onerror=function(){ alert('文件读取失败，请重试'); input.value=''; };
+  reader.readAsText(file,'utf-8');
 }
 
 function deleteStudent(id){
