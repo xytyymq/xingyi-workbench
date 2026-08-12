@@ -324,12 +324,13 @@ function renderAll(){
     ? '⚠️ 共 '+low.length+' 位学员剩余 ≤10 课，建议本周跟进续费'
     : '✅ 当前无课时预警学员';
 
-  // 总表
+  // 总表（按剩余课时由小到大，余课最少的预警排最前）
+  const sorted=currentStudents.slice().sort(function(a,b){return Number(a.remaining)-Number(b.remaining);});
   const box=document.getElementById('rosterBox');
-  if(!currentStudents.length){ box.innerHTML='<div class="none">暂无学员，请在下方导入或添加。</div>'; }
+  if(!sorted.length){ box.innerHTML='<div class="none">暂无学员，请在下方导入或添加。</div>'; }
   else{
     box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>状态</th><th></th></tr></thead><tbody>'
-      + currentStudents.map(function(s){
+      + sorted.map(function(s){
           const lowTag=isLow(s)?'<span class="tag low">剩'+s.remaining+'</span>':'';
           const okTag=isLow(s)?'':'<span class="tag ok">正常</span>';
           return '<tr>'
