@@ -107,16 +107,16 @@
     <button class="btn btn-primary" onclick="downloadTemplate()">⬇️ 下载填报模板（CSV）</button>
     <label style="margin-top:11px;">上传填好的模板（.csv）</label>
     <input type="file" id="tplFile" accept=".csv" onchange="onTemplateFile(this)" style="padding:7px;border:1px dashed var(--teal-500);background:var(--teal-100);border-radius:8px;">
-    <div class="tip" style="margin-top:9px;">💡 模板列：<b>姓名, 剩余课时, 最近上课日期</b>。Excel 打开填好后请「另存为 .csv（逗号分隔）」再上传；上传会覆盖当前名单。</div>
+    <div class="tip" style="margin-top:9px;">💡 模板列：<b>姓名, 剩余课时</b>。Excel 打开填好后请「另存为 .csv（逗号分隔）」再上传；上传会覆盖当前名单。</div>
   </div>
 
   <!-- 编辑区（授权）-->
   <div class="card">
     <h2><span class="num">③</span>维护学员课时（老板/教务）</h2>
 
-    <div class="tip">📥 从 Excel 一次性导入：在 Excel 里把「姓名、剩余课时、最近上课日期」三列并排，复制粘贴到下面框（每行一人），点「批量导入」即可。<br>例：小明,8,2026-08-01</div>
-    <label>批量粘贴导入（每行：姓名,剩余课时,最近上课日期）</label>
-    <textarea id="stuImport" placeholder="小明,8,2026-08-01&#10;小红,15,2026-08-10&#10;小刚,3,2026-07-20"></textarea>
+    <div class="tip">📥 从 Excel 一次性导入：在 Excel 里把「姓名、剩余课时」两列并排，复制粘贴到下面框（每行一人），点「批量导入」即可。<br>例：小明,8</div>
+    <label>批量粘贴导入（每行：姓名,剩余课时）</label>
+    <textarea id="stuImport" placeholder="小明,8&#10;小红,15&#10;小刚,3"></textarea>
     <button class="btn btn-primary" onclick="importStudents()">📥 批量导入</button>
 
     <hr style="border:none;border-top:1px dashed var(--line);margin:14px 0 4px;">
@@ -126,8 +126,6 @@
       <div><label style="margin-top:0;">姓名</label><input id="stuName" placeholder="如：小明"></div>
       <div><label style="margin-top:0;">剩余课时</label><input id="stuRemain" type="number" min="0" placeholder="如：8"></div>
     </div>
-    <label>最近上课日期</label>
-    <input id="stuLast" type="date">
     <button class="btn btn-coral" onclick="saveStudent()">💾 保存该学员</button>
 
     <button class="btn btn-ghost" id="stuRetryBtn" style="display:none;" onclick="retryOffline()">🔄 上传本机待传记录</button>
@@ -219,18 +217,15 @@ async function retryOffline(){
 function saveStudent(){
   const name=document.getElementById('stuName').value.trim();
   const rem=parseInt(document.getElementById('stuRemain').value,10);
-  const last=document.getElementById('stuLast').value;
   if(!name){ alert('请填学员姓名'); return; }
   if(isNaN(rem)){ alert('剩余课时请填数字'); return; }
-  if(!last){ alert('请选最近上课日期'); return; }
   const arr=currentStudents.slice();
   const idx=arr.findIndex(function(s){return s.name===name;});
-  if(idx>=0){ arr[idx].remaining=rem; arr[idx].lastAttend=last; }
-  else { arr.push({id:'S'+Date.now(), name:name, remaining:rem, lastAttend:last}); }
+  if(idx>=0){ arr[idx].remaining=rem; }
+  else { arr.push({id:'S'+Date.now(), name:name, remaining:rem, lastAttend:''}); }
   commitStudents(arr, '已保存 '+name);
   document.getElementById('stuName').value='';
   document.getElementById('stuRemain').value='';
-  document.getElementById('stuLast').value='';
 }
 
 function importStudents(){
@@ -240,9 +235,9 @@ function importStudents(){
   t.split(/\n+/).forEach(function(line){
     line=line.trim(); if(!line) return;
     const parts=line.split(/[,，\t]/).map(function(x){return x.trim();});
-    if(parts.length<3) return;
-    const name=parts[0], rem=parseInt(parts[1],10), last=parts[2];
-    if(!name||isNaN(rem)||!last) return;
+    if(parts.length<2) return;
+    const name=parts[0], rem=parseInt(parts[1],10), last=parts[2]||'';
+    if(!name||isNaN(rem)) return;
     const idx=arr.findIndex(function(s){return s.name===name;});
     if(idx>=0){ arr[idx].remaining=rem; arr[idx].lastAttend=last; updated++; }
     else { arr.push({id:'S'+Date.now()+'_'+added, name:name, remaining:rem, lastAttend:last}); added++; }
@@ -253,9 +248,9 @@ function importStudents(){
 
 // ===== 模板下载（生成带 BOM 的 CSV，Excel 中文不乱码）=====
 function downloadTemplate(){
-  const header='姓名,剩余课时,最近上课日期';
-  // 示例两行：一行覆盖“课时少”、一行覆盖“久未上课”
-  const sample='小明,8,2026-08-01\n小红,15,2026-07-20';
+  const header='姓名,剩余课时';
+  // 示例两行：都覆盖“课时少”（剩余 ≤10 课触发预警）
+  const sample='小明,8\n小红,3';
   const csv='\uFEFF'+header+'\n'+sample+'\n';
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');
@@ -263,7 +258,7 @@ function downloadTemplate(){
   a.download='星羿学员课时填报模板.csv';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
-  setStatus('模板已下载，请用 Excel/WPS 填好“姓名、剩余课时、最近上课日期”三列后上传。','#0f766e');
+  setStatus('模板已下载，请用 Excel/WPS 填好“姓名、剩余课时”两列后上传。','#0f766e');
 }
 
 // ===== 上传填好的模板（CSV）→ 解析 → 覆盖导入 =====
@@ -280,12 +275,12 @@ function onTemplateFile(input){
       if(line.indexOf('#')===0) continue;                                   // 注释行
       if(line.indexOf('姓名')>=0 && line.indexOf('剩余课时')>=0) continue;     // 表头
       const parts=line.split(/[,，\t]/).map(function(x){return x.trim();});
-      if(parts.length<3) continue;
-      const name=parts[0], rem=parseInt(parts[1],10), last=parts[2];
-      if(!name||isNaN(rem)||!last) continue;
+      if(parts.length<2) continue;
+      const name=parts[0], rem=parseInt(parts[1],10), last=parts[2]||'';
+      if(!name||isNaN(rem)) continue;
       parsed.push({id:'S'+Date.now()+'_'+parsed.length, name:name, remaining:rem, lastAttend:last});
     }
-    if(!parsed.length){ alert('未在文件中识别到有效数据，请检查格式：姓名,剩余课时,最近上课日期'); input.value=''; return; }
+    if(!parsed.length){ alert('未在文件中识别到有效数据，请检查格式：姓名,剩余课时'); input.value=''; return; }
     if(!confirm('将用模板中的 '+parsed.length+' 位学员覆盖当前云端名单，确定？\n（若需保留现有数据，请改用上方“批量粘贴导入”）')){ input.value=''; return; }
     commitStudents(parsed, '已导入模板 '+parsed.length+' 位学员');
     input.value='';
@@ -317,16 +312,13 @@ function renderAll(){
   const box=document.getElementById('rosterBox');
   if(!currentStudents.length){ box.innerHTML='<div class="none">暂无学员，请在下方导入或添加。</div>'; }
   else{
-    box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>最近上课</th><th>状态</th><th></th></tr></thead><tbody>'
+    box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>状态</th><th></th></tr></thead><tbody>'
       + currentStudents.map(function(s){
-          const dn=daysSince(s.lastAttend);
           const lowTag=isLow(s)?'<span class="tag low">剩'+s.remaining+'</span>':'';
           const okTag=isLow(s)?'':'<span class="tag ok">正常</span>';
-          const lastTxt = s.lastAttend ? (s.lastAttend+(dn!==null?'（'+dn+'天前）':'')) : '—';
           return '<tr>'
             + '<td class="nm">'+esc(s.name)+'</td>'
             + '<td>'+Number(s.remaining)+' 课</td>'
-            + '<td>'+esc(lastTxt)+'</td>'
             + '<td>'+lowTag+okTag+'</td>'
             + '<td><button class="del-btn" onclick="deleteStudent(\''+s.id+'\')">删除</button></td>'
             + '</tr>';
