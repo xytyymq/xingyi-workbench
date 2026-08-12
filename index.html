@@ -61,6 +61,19 @@
   .auto-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;}
   .auto-dot.on{background:var(--good);}
 
+  /* 课程预警窗口（快捷入口内，课程表下方） */
+  .warn-window{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;
+    background:linear-gradient(135deg,#fff,#fdeee6);border:1.5px solid var(--coral);border-radius:14px;
+    padding:12px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s;}
+  .warn-window:active{transform:translateY(-1px);}
+  .ww-left{display:flex;align-items:center;gap:10px;}
+  .ww-icon{font-size:24px;}
+  .ww-title{font-weight:800;font-size:14.5px;color:var(--coral);}
+  .ww-sub{font-size:11px;color:var(--sub);}
+  .ww-right{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+  .ww-pill{font-size:11px;font-weight:700;color:var(--bad);background:#fff;border:1px solid #f3c9b8;border-radius:20px;padding:3px 9px;white-space:nowrap;}
+  .ww-pill.warn{color:var(--coral);}
+
   /* flow */
   .flow{position:relative;padding-left:30px;}
   .flow::before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--teal-500),var(--line));}
@@ -183,6 +196,19 @@
       <span><span class="auto-dot on"></span>续费预警 8:00</span>
       <span><span class="auto-dot on"></span>文案库 每15天</span>
     </div>
+    <a class="warn-window" href="warning.html" target="_blank" rel="noopener">
+      <div class="ww-left">
+        <div class="ww-icon">🚨</div>
+        <div>
+          <div class="ww-title">课程预警</div>
+          <div class="ww-sub" id="warnHomeSub">消课预警 · 久未上课提醒</div>
+        </div>
+      </div>
+      <div class="ww-right">
+        <span class="ww-pill" id="warnLow">剩≤10课: –</span>
+        <span class="ww-pill warn" id="warnIdle">15天未上课: –</span>
+      </div>
+    </a>
   </section>
 
   <!-- 2. 招生转化流程 -->
@@ -344,6 +370,34 @@
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
   badge.textContent = names[role] || '老板';
   badge.className = 'role-badge ' + role;
+})();
+
+// 首页课程预警窗口实时计数（读 Pages 静态地址，无 404 误报）
+(function loadWarnHome(){
+  var lowEl=document.getElementById('warnLow'),
+      idleEl=document.getElementById('warnIdle'),
+      sub=document.getElementById('warnHomeSub');
+  if(!lowEl) return;
+  var VIEW='https://xytyymq.github.io/xingyi-workbench/data/students.json';
+  fetch(VIEW+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(arr){
+    if(!Array.isArray(arr)) throw new Error('bad');
+    var today=new Date(); today.setHours(0,0,0,0);
+    var low=arr.filter(function(s){return Number(s.remaining)<=10;}).length;
+    var idle=arr.filter(function(s){
+      var d=new Date(s.lastAttend); if(isNaN(d)) return false;
+      return Math.floor((today-d)/86400000)>=15;
+    }).length;
+    lowEl.textContent='剩≤10课: '+low+'人';
+    idleEl.textContent='15天未上课: '+idle+'人';
+    sub.textContent = (low+idle>0) ? '⚠️ 共 '+(low+idle)+' 条预警，点开处理' : '目前无预警 ✅';
+  }).catch(function(){
+    lowEl.textContent='剩≤10课: –';
+    idleEl.textContent='15天未上课: –';
+    sub.textContent='去录入学员课时表';
+  });
 })();
 </script>
 </body>
