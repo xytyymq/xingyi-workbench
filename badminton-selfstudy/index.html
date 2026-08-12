@@ -807,6 +807,12 @@ function exportList(){
   route.style.cssText="background:#f3f8f4;border-left:3px solid #3a8f5f;border-radius:8px;padding:9px 12px;margin:0 0 12px;font-size:13px;color:#3a4a40;line-height:1.55;";
   wrap.insertBefore(route, subBar);
 } function showTech(i){    if(!techEls) return;    techEls.forEach(function(t,idx){t.style.display=(idx===i)?"":"none";});    var bs=subBar.querySelectorAll(".stab");    bs.forEach(function(b){b.classList.toggle("active", b.getAttribute("data-i")===String(i));});  }  function showCat(cat){    secs.forEach(function(sec){      var disp=(sec.cat===cat)?"":"none";      sec.els.forEach(function(e){e.style.display=disp;});    });    if(cat==="techlib"){ensureSub();showTech(0);}    var tabs=document.querySelectorAll("#topnav .tab");    tabs.forEach(function(t){t.classList.toggle("active",t.getAttribute("data-cat")===cat);});    window.scrollTo(0,0);  }  document.querySelectorAll("#topnav .tab").forEach(function(t){    t.onclick=function(){showCat(t.getAttribute("data-cat"));};  });  showCat("home");})();</script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){});});}</script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).catch(function(){});});
+  var _r=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){if(!_r){_r=true;location.reload();}});
+}
+</script>
 </body>
 </html>
