@@ -159,8 +159,24 @@ function daysSince(dateStr){
 function isLow(s){ return Number(s.remaining)<=10; }
 function isIdle(s){ const n=daysSince(s.lastAttend); return n!==null && n>=15; }
 
-// ===== 读取（走 Pages 静态地址，公开可读无限流）=====
+// ===== 读取（授权走 API 实时，无缓存；未授权走 Pages 只读，有约 10 分钟 CDN 缓存）=====
 async function loadStudents(){
+  const gt=_gt();
+  if(gt){
+    try{
+      const H={'Authorization':'token '+gt,'Accept':'application/vnd.github+json'};
+      const ctrl=new AbortController(); const timer=setTimeout(function(){ctrl.abort();},6000);
+      const r=await fetch(STU_API,{headers:H,cache:'no-store',signal:ctrl.signal});
+      clearTimeout(timer);
+      if(r.ok){
+        const j=await r.json();
+        const arr=JSON.parse(decodeB64(j.content));
+        return Array.isArray(arr)?arr:[];
+      }
+      // 非成功（404/限流等）降级到 Pages
+    }catch(e){ /* 降级 */ }
+  }
+  // 降级 / 未授权：公开 Pages 静态地址（只读，注意约 10 分钟缓存）
   try{
     const r=await fetch(STU_VIEW+'?t='+Date.now(),{cache:'no-store'});
     if(!r.ok){ if(r.status===404) return []; throw new Error('HTTP '+r.status); }
@@ -331,9 +347,22 @@ function renderAll(){
   document.getElementById('demoBanner').style.display = hasDemo ? 'block' : 'none';
 }
 
-// 初始化
-(function init(){
-  loadStudents().then(function(arr){ currentStudents=arr; renderAll(); });
+// 初始化（修复：授权走 API 实时读，避免 Pages 10 分钟缓存导致刷新"丢数据"；本机待传刷新后也不丢）
+(async function init(){
+  const local=JSON.parse(localStorage.getItem(LS_STU)||'[]');
+  const gt=_gt();
+  if(local.length && gt){
+    // 本机有待传且已授权：联网后自动重传，避免刷新丢失
+    const res=await saveStudents(local);
+    if(res.ok){ localStorage.removeItem(LS_STU); currentStudents=local; renderAll(); return; }
+  } else if(local.length && !gt){
+    // 未授权：先展示本机刚导入的数据，并提示去授权上传（不再"刷新即丢"）
+    currentStudents=local; renderAll(); showRetry();
+    setStatus('⚠️ 当前显示的是本机未上传数据，刷新不会丢，但请先授权再点「上传本机待传记录」同步到云端。','#b45309');
+    return;
+  }
+  const arr=await loadStudents();
+  currentStudents=arr; renderAll();
   const localN=JSON.parse(localStorage.getItem(LS_STU)||'[]').length;
   if(localN) showRetry();
 })();
