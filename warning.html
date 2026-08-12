@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿球馆 · 课程预警</title>
+  <script src="gate.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f1faf7;color:#0f201d;line-height:1.65;padding-bottom:50px;}
+  :root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;--bad:#dc2626;}
+  .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+  .xy-topbar .brand .em{margin-right:5px;}
+  .xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+  .hero{background:linear-gradient(135deg,#b91c1c,var(--coral) 60%,#f59e0b);color:#fff;padding:24px 18px 16px;position:relative;overflow:hidden;}
+  .hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+  .hero>*{position:relative;z-index:1;}
+  .hero h1{font-size:20px;font-weight:800;}
+  .hero p{font-size:12.5px;opacity:.95;margin-top:5px;}
+  .container{max-width:680px;margin:0 auto;padding:14px 12px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px;margin-bottom:13px;box-shadow:0 2px 10px rgba(15,32,29,.06);}
+  .card h2{font-size:15px;color:var(--teal-700);margin:0 0 9px;display:flex;align-items:center;gap:7px;}
+  .card h2 .num{background:var(--teal-700);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  label{font-size:12.5px;color:#475569;display:block;margin:9px 0 3px;}
+  input,textarea{width:100%;padding:9px 10px;border:1px solid #cbd5db;border-radius:8px;font-size:13.5px;background:#fff;color:#1f2933;font-family:inherit;}
+  textarea{resize:vertical;min-height:54px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .btn{display:block;width:100%;padding:11px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:11px;font-family:inherit;}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:active{background:var(--teal-900);}
+  .btn-coral{background:var(--coral);color:#fff;}
+  .btn-coral:active{filter:brightness(.94);}
+  .btn-ghost{background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);}
+  .btn-sm{padding:8px;font-size:12.5px;margin-top:7px;border-radius:8px;display:inline-block;width:auto;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
+  .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
+
+  /* 预警两张卡 */
+  .warn-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+  .warn-card{border-radius:14px;padding:13px 12px;color:#fff;box-shadow:0 2px 10px rgba(15,32,29,.08);}
+  .warn-card.red{background:linear-gradient(135deg,#dc2626,#ef4444);}
+  .warn-card.orange{background:linear-gradient(135deg,#ea580c,#f59e0b);}
+  .warn-card .wc-num{font-size:30px;font-weight:800;line-height:1;}
+  .warn-card .wc-label{font-size:12px;opacity:.95;margin-top:4px;font-weight:700;}
+  .warn-card .wc-list{font-size:12px;margin-top:8px;line-height:1.6;max-height:120px;overflow:auto;}
+  .warn-card .wc-empty{font-size:12px;opacity:.9;margin-top:8px;}
+
+  /* 名单表格 */
+  .roster{width:100%;border-collapse:collapse;font-size:13px;}
+  .roster th{text-align:left;color:var(--sub);font-size:11.5px;padding:6px 6px;border-bottom:2px solid var(--line);}
+  .roster td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .roster .nm{font-weight:700;}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:1px 7px;border-radius:10px;margin-left:4px;}
+  .tag.low{background:#fee2e2;color:#b91c1c;}
+  .tag.idle{background:#ffedd5;color:#c2410c;}
+  .tag.ok{background:#dcfce7;color:#15803d;}
+  .del-btn{background:#fff;border:1px solid var(--bad);color:var(--bad);border-radius:7px;font-size:11.5px;padding:4px 9px;cursor:pointer;}
+  .del-btn:active{background:var(--bad);color:#fff;}
+  .none{color:var(--muted);font-size:12.5px;text-align:center;padding:16px;}
+  .status{font-size:12.5px;margin-top:8px;font-weight:700;}
+  .demo-banner{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;border-radius:10px;padding:9px 11px;font-size:12px;margin-bottom:13px;line-height:1.7;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+  <a class="back" href="index.html" target="_blank" rel="noopener">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>🚨 课程预警</h1>
+  <p>剩余课时不多 · 久未上课的学员，提前跟进不流失</p>
+</div>
+
+<div class="container">
+
+  <div class="demo-banner" id="demoBanner" style="display:none;">
+    ⚠️ 当前是<b>示例数据</b>（姓名带「（示例）」）。请在下方编辑区<b>批量导入</b>你的真实学员课时表替换，或逐条删除示例。
+  </div>
+
+  <!-- 预警总览 -->
+  <div class="card">
+    <h2><span class="num">!</span>需要关注的学员</h2>
+    <div class="warn-grid">
+      <div class="warn-card red">
+        <div class="wc-num" id="lowNum">0</div>
+        <div class="wc-label">剩余课时 ≤ 10 课</div>
+        <div class="wc-list" id="lowList"><span class="wc-empty">—</span></div>
+      </div>
+      <div class="warn-card orange">
+        <div class="wc-num" id="idleNum">0</div>
+        <div class="wc-label">超过 15 天未上课</div>
+        <div class="wc-list" id="idleList"><span class="wc-empty">—</span></div>
+      </div>
+    </div>
+    <div class="note" id="warnMeta">从云端加载中…</div>
+  </div>
+
+  <!-- 学员课时总表 -->
+  <div class="card">
+    <h2><span class="num">②</span>学员课时总表</h2>
+    <div id="rosterBox"><div class="none">加载中…</div></div>
+  </div>
+
+  <!-- 编辑区（授权）-->
+  <div class="card">
+    <h2><span class="num">③</span>维护学员课时（老板/教务）</h2>
+
+    <div class="tip">📥 从 Excel 一次性导入：在 Excel 里把「姓名、剩余课时、最近上课日期」三列并排，复制粘贴到下面框（每行一人），点「批量导入」即可。<br>例：小明,8,2026-08-01</div>
+    <label>批量粘贴导入（每行：姓名,剩余课时,最近上课日期）</label>
+    <textarea id="stuImport" placeholder="小明,8,2026-08-01&#10;小红,15,2026-08-10&#10;小刚,3,2026-07-20"></textarea>
+    <button class="btn btn-primary" onclick="importStudents()">📥 批量导入</button>
+
+    <hr style="border:none;border-top:1px dashed var(--line);margin:14px 0 4px;">
+
+    <label>单个学员 · 新增或修改（按姓名匹配，存在则更新）</label>
+    <div class="grid2">
+      <div><label style="margin-top:0;">姓名</label><input id="stuName" placeholder="如：小明"></div>
+      <div><label style="margin-top:0;">剩余课时</label><input id="stuRemain" type="number" min="0" placeholder="如：8"></div>
+    </div>
+    <label>最近上课日期</label>
+    <input id="stuLast" type="date">
+    <button class="btn btn-coral" onclick="saveStudent()">💾 保存该学员</button>
+
+    <button class="btn btn-ghost" id="stuRetryBtn" style="display:none;" onclick="retryOffline()">🔄 上传本机待传记录</button>
+    <div id="stuStatus" class="status" style="color:var(--muted);"></div>
+  </div>
+
+  <div class="note" style="text-align:center;margin-top:6px;">数据存于云端 <code>data/students.json</code>，与工作台实时共享。</div>
+</div>
+
+<script>
+// ===== 课程预警：读取/写入 data/students.json（与日报同一套云端模式）=====
+const STU_REPO='xytyymq/xingyi-workbench';
+const STU_PATH='data/students.json';
+const STU_API='https://api.github.com/repos/'+STU_REPO+'/contents/'+STU_PATH;
+const STU_VIEW='https://xytyymq.github.io/xingyi-workbench/data/students.json';
+const LS_STU='xy_stu_local';
+
+function b64utf8(s){ const bytes=new TextEncoder().encode(s); let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]); return btoa(bin); }
+function decodeB64(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+
+let currentStudents=[];
+
+function daysSince(dateStr){
+  if(!dateStr) return null;
+  const d=new Date(dateStr); if(isNaN(d)) return null;
+  const today=new Date(); today.setHours(0,0,0,0);
+  return Math.floor((today-d)/86400000);
+}
+function isLow(s){ return Number(s.remaining)<=10; }
+function isIdle(s){ const n=daysSince(s.lastAttend); return n!==null && n>=15; }
+
+// ===== 读取（走 Pages 静态地址，公开可读无限流）=====
+async function loadStudents(){
+  try{
+    const r=await fetch(STU_VIEW+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok){ if(r.status===404) return []; throw new Error('HTTP '+r.status); }
+    const arr=await r.json();
+    return Array.isArray(arr)?arr:[];
+  }catch(e){ return []; }
+}
+
+// ===== 写入（走 API，需授权；带本机兜底）=====
+async function saveStudents(arr){
+  const gt=_gt();
+  if(!gt){ localStorage.setItem(LS_STU, JSON.stringify(arr)); return {offline:true}; }
+  const H={'Authorization':'token '+gt,'Accept':'application/vnd.github+json'};
+  let gr,sha=null;
+  let ctrl=new AbortController(); let timer=setTimeout(function(){ctrl.abort();},6000);
+  try{ gr=await fetch(STU_API,{headers:H,cache:'no-store',signal:ctrl.signal}); }
+  catch(e){ clearTimeout(timer); return {offline:true}; }
+  clearTimeout(timer);
+  if(gr.ok){ const gj=await gr.json(); sha=gj.sha; }
+  else if(gr.status!==404){ return {err:true}; }
+  const body=JSON.stringify({message:'学员课时表更新 '+new Date().toISOString().slice(0,10), content:b64utf8(JSON.stringify(arr,null,2)), sha:sha||undefined});
+  const pctrl=new AbortController(); const pt=setTimeout(function(){pctrl.abort();},6000);
+  try{
+    const put=await fetch(STU_API,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},H),body:body,signal:pctrl.signal});
+    clearTimeout(pt); return {ok:put.ok};
+  }catch(e){ clearTimeout(pt); return {offline:true}; }
+}
+
+function setStatus(txt,color){ const el=document.getElementById('stuStatus'); if(el){ el.textContent=txt; el.style.color=color||'var(--muted)'; } }
+function showRetry(){ const b=document.getElementById('stuRetryBtn'); if(b) b.style.display='inline-block'; }
+function hideRetry(){ const b=document.getElementById('stuRetryBtn'); if(b) b.style.display='none'; }
+
+async function commitStudents(arr, msg){
+  setStatus('上传中…');
+  const gt=_gt();
+  if(!gt){ localStorage.setItem(LS_STU, JSON.stringify(arr)); currentStudents=arr; renderAll(); showRetry(); setStatus('📱 本机未授权写云端：已先存本机，找老板要授权链接点开后点「上传本机待传记录」可重传。','#b45309'); return; }
+  const res=await saveStudents(arr);
+  if(res.offline){ localStorage.setItem(LS_STU, JSON.stringify(arr)); currentStudents=arr; renderAll(); showRetry(); setStatus('📱 网络不通，已存本机，联网后点「上传本机待传记录」。','#b45309'); return; }
+  if(res.err){ setStatus('上传失败，请重试','#dc2626'); return; }
+  localStorage.removeItem(LS_STU);
+  currentStudents=arr; renderAll(); hideRetry(); setStatus(msg+' · 云端已更新 ✅','#16a34a');
+}
+
+async function retryOffline(){
+  const local=JSON.parse(localStorage.getItem(LS_STU)||'[]');
+  if(!local.length){ hideRetry(); return; }
+  const gt=_gt(); if(!gt){ alert('未授权，无法上传'); return; }
+  const res=await saveStudents(local);
+  if(res.offline||res.err){ setStatus('重传失败，稍后再试','#dc2626'); return; }
+  localStorage.removeItem(LS_STU); hideRetry(); currentStudents=local; renderAll(); setStatus('本机待传已上传 ✅','#16a34a');
+}
+
+// ===== 编辑操作 =====
+function saveStudent(){
+  const name=document.getElementById('stuName').value.trim();
+  const rem=parseInt(document.getElementById('stuRemain').value,10);
+  const last=document.getElementById('stuLast').value;
+  if(!name){ alert('请填学员姓名'); return; }
+  if(isNaN(rem)){ alert('剩余课时请填数字'); return; }
+  if(!last){ alert('请选最近上课日期'); return; }
+  const arr=currentStudents.slice();
+  const idx=arr.findIndex(function(s){return s.name===name;});
+  if(idx>=0){ arr[idx].remaining=rem; arr[idx].lastAttend=last; }
+  else { arr.push({id:'S'+Date.now(), name:name, remaining:rem, lastAttend:last}); }
+  commitStudents(arr, '已保存 '+name);
+  document.getElementById('stuName').value='';
+  document.getElementById('stuRemain').value='';
+  document.getElementById('stuLast').value='';
+}
+
+function importStudents(){
+  const t=document.getElementById('stuImport').value.trim();
+  if(!t){ alert('请粘贴数据'); return; }
+  let arr=currentStudents.slice(); let added=0, updated=0;
+  t.split(/\n+/).forEach(function(line){
+    line=line.trim(); if(!line) return;
+    const parts=line.split(/[,，\t]/).map(function(x){return x.trim();});
+    if(parts.length<3) return;
+    const name=parts[0], rem=parseInt(parts[1],10), last=parts[2];
+    if(!name||isNaN(rem)||!last) return;
+    const idx=arr.findIndex(function(s){return s.name===name;});
+    if(idx>=0){ arr[idx].remaining=rem; arr[idx].lastAttend=last; updated++; }
+    else { arr.push({id:'S'+Date.now()+'_'+added, name:name, remaining:rem, lastAttend:last}); added++; }
+  });
+  commitStudents(arr, '导入完成：新增 '+added+' · 更新 '+updated);
+  document.getElementById('stuImport').value='';
+}
+
+function deleteStudent(id){
+  if(!confirm('确定删除该学员记录？')) return;
+  const arr=currentStudents.filter(function(s){return s.id!==id;});
+  commitStudents(arr, '已删除');
+}
+
+// ===== 渲染 =====
+function renderAll(){
+  const low=currentStudents.filter(isLow).sort(function(a,b){return Number(a.remaining)-Number(b.remaining);});
+  const idle=currentStudents.filter(isIdle).sort(function(a,b){return daysSince(b.lastAttend)-daysSince(a.lastAttend);});
+
+  document.getElementById('lowNum').textContent=low.length;
+  document.getElementById('idleNum').textContent=idle.length;
+  document.getElementById('lowList').innerHTML = low.length
+    ? low.map(function(s){return esc(s.name)+' '+s.remaining+'课';}).join(' · ')
+    : '<span class="wc-empty">暂无 ✅</span>';
+  document.getElementById('idleList').innerHTML = idle.length
+    ? idle.map(function(s){return esc(s.name)+' '+daysSince(s.lastAttend)+'天';}).join(' · ')
+    : '<span class="wc-empty">暂无 ✅</span>';
+
+  document.getElementById('warnMeta').textContent = (low.length+idle.length>0)
+    ? '⚠️ 共 '+(low.length+idle.length)+' 条预警，建议本周跟进'
+    : '✅ 当前无预警学员';
+
+  // 总表
+  const box=document.getElementById('rosterBox');
+  if(!currentStudents.length){ box.innerHTML='<div class="none">暂无学员，请在下方导入或添加。</div>'; }
+  else{
+    box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>最近上课</th><th>状态</th><th></th></tr></thead><tbody>'
+      + currentStudents.map(function(s){
+          const n=daysSince(s.lastAttend);
+          const lowTag=isLow(s)?'<span class="tag low">剩'+s.remaining+'</span>':'';
+          const idleTag=(n!==null&&n>=15)?'<span class="tag idle">'+n+'天未上</span>':'';
+          const okTag=(!isLow(s)&&!(n!==null&&n>=15))?'<span class="tag ok">正常</span>':'';
+          const lastTxt = s.lastAttend ? (s.lastAttend+(n!==null?'（'+n+'天前）':'')) : '—';
+          return '<tr>'
+            + '<td class="nm">'+esc(s.name)+'</td>'
+            + '<td>'+Number(s.remaining)+' 课</td>'
+            + '<td>'+esc(lastTxt)+'</td>'
+            + '<td>'+lowTag+idleTag+okTag+'</td>'
+            + '<td><button class="del-btn" onclick="deleteStudent(\''+s.id+'\')">删除</button></td>'
+            + '</tr>';
+        }).join('')
+      + '</tbody></table>';
+  }
+
+  // 示例数据提示
+  const hasDemo=currentStudents.some(function(s){return (s.name||'').indexOf('（示例）')>=0;});
+  document.getElementById('demoBanner').style.display = hasDemo ? 'block' : 'none';
+}
+
+// 初始化
+(function init(){
+  loadStudents().then(function(arr){ currentStudents=arr; renderAll(); });
+  const localN=JSON.parse(localStorage.getItem(LS_STU)||'[]').length;
+  if(localN) showRetry();
+})();
+</script>
+</body>
+</html>
