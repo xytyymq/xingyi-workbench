@@ -4,10 +4,27 @@
 window.Seeding = (function () {
   const DISC_SIZE = { MS: 1, WS: 1, MD: 2, WD: 2, XD: 2 };
 
+  // 某单项 code 对应的性别（XD 混双不限性别 → null）
+  function codeGender(code) {
+    if (code === "MS" || code === "MD") return "男";
+    if (code === "WS" || code === "WD") return "女";
+    return null;
+  }
+
+  // 选手是否可参加某项：填了报名项目按项目；没填则按性别自动认定
+  // （男→男单/男双/混双，女→女单/女双/混双，性别未知则全部可参加）
+  function playerEligible(p, code) {
+    const ds = (p.disciplines || []);
+    if (ds.length) return ds.includes(code);
+    const g = codeGender(code);
+    if (!g) return true;            // 混双：无项目时任何性别均可
+    return p.gender === g;
+  }
+
   function buildEntrants(disc) {
     const code = disc.code;
     const size = DISC_SIZE[code] || 1;
-    const present = Store.allPlayers().filter(p => p.present && p.disciplines.includes(code));
+    const present = Store.allPlayers().filter(p => p.present && playerEligible(p, code));
     if (size === 1) {
       return present.map(p => ({
         id: Store.uid("E"), kind: "player", playerIds: [p.id],
@@ -70,10 +87,10 @@ window.Seeding = (function () {
   }
 
   function missingPartner(disc) {
-    // 报了双打项目但未从名单选取搭档的到场选手
+    // 可参加该项（含按性别自动认定）但未从名单选取搭档的到场选手
     const code = disc.code;
     return Store.allPlayers().filter(p =>
-      p.present && p.disciplines.includes(code) && !resolvePartner(p));
+      p.present && playerEligible(p, code) && !resolvePartner(p));
   }
 
   /* ---------- 团体赛：手选分组 + 多种赛制 ---------- */
