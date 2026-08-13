@@ -65,13 +65,17 @@
       case "set-disc":
         Store.setUI({ activeDisciplineId: id }); UI.render(); break;
       case "draw": drawBracket(); break;
+      case "draw-team": drawTeam(); break;
+      case "team-gc": teamGroupCount(parseInt(el.getAttribute("data-d") || "0", 10)); break;
 
       case "score": openScore(id); break;
       case "save-score": saveScore(id); break;
       case "clear-score": clearScore(id); break;
 
       case "export-rank": {
-        const d = UI.activeDisc(); if (d) CSVUtil.exportRankCSV(d); break;
+        const d = UI.activeDisc();
+        if (d) { if (d.kind === "team") CSVUtil.exportTeamRankCSV(d); else CSVUtil.exportRankCSV(d); }
+        break;
       }
       case "export-json": CSVUtil.exportJSON(); break;
       case "import-json": triggerImport(); break;
@@ -88,6 +92,12 @@
     if (!t) return;
     if (t.id === "imp_json") { /* 选中后由 import-json 按钮触发 */ return; }
     if (t.id === "imp_csv") { loadCsvFile(t); return; }
+    // 团体赛：手选分组
+    if (t.classList && t.classList.contains("gassign")) {
+      const pid = t.getAttribute("data-pid");
+      assignGroup(pid, t.value);
+      return;
+    }
     // 赛程台号输入
     if (t.id && t.id.indexOf("court_") === 0) {
       const d = UI.activeDisc(); if (!d) return;
@@ -148,6 +158,11 @@
     ev.date = $("#f_date").value.trim();
     ev.venue = $("#f_venue").value.trim();
     ev.note = $("#f_note").value.trim();
+    // 编辑时支持增删比赛项目（含团体赛）
+    const wanted = $$('#modalCard input[name="disc"]:checked').map(c => c.value);
+    const have = (ev.disciplines || []).map(x => x.code);
+    wanted.filter(c => !have.includes(c)).forEach(c => ev.disciplines.push(UI.newDiscipline(c)));
+    ev.disciplines = (ev.disciplines || []).filter(x => wanted.includes(x.code));
     Store.save(); UI.closeModal(); UI.render(); UI.toast("已保存");
   }
 
@@ -186,7 +201,7 @@
 
   /* ---------- 分组 / 生成对阵 ---------- */
   function drawBracket() {
-    const d = UI.activeDisc(); if (!d) return;
+    const d = UI.activeDisc(); if (!d || d.kind === "team") return;
     d.scoringMode = $("#g_scoring").value;
     d.thirdPlace = $("#g_third").checked;
     const sd = parseInt($("#g_seed").value, 10) || 0;
@@ -197,6 +212,42 @@
     Seeding.makeBracket(d);
     UI.render();
     UI.toast("对阵已生成（签表 " + d.bracketSize + "，轮空 " + d.byeCount + "）");
+  }
+
+  /* ---------- 团体赛：分组 / 生成对阵 ---------- */
+  function drawTeam() {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
+    const sm = document.getElementById("g_scoring");
+    if (sm) d.scoringMode = sm.value;
+    const ok = (d.groups || []).some(g => (g.playerIds || []).length >= 2);
+    if (!ok) { UI.toast("请至少在一个组安排 2 名以上选手"); return; }
+    Seeding.generateTeamMatches(d);
+    UI.render(); UI.toast("组内循环对阵已生成");
+  }
+
+  function teamGroupCount(delta) {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
+    let n = (d.groupCount || 2) + delta;
+    n = Math.max(1, Math.min(Seeding.TEAM_MAX_GROUPS, n));
+    if (n === d.groupCount) { UI.toast("分组数范围 1–8"); return; }
+    const names = Seeding.GROUP_LETTERS.slice(0, n).split("");
+    const newGroups = names.map((nm, i) => d.groups[i] ? d.groups[i] : { name: nm, playerIds: [] });
+    d.groupCount = n;
+    d.groups = newGroups;
+    Store.save(); UI.render();
+  }
+
+  function assignGroup(pid, groupName) {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
+    (d.groups || []).forEach(g => {
+      const idx = (g.playerIds || []).indexOf(pid);
+      if (idx >= 0) g.playerIds.splice(idx, 1);
+    });
+    if (groupName) {
+      const g = (d.groups || []).find(x => x.name === groupName);
+      if (g) g.playerIds.push(pid);
+    }
+    Store.save(); UI.render();
   }
 
   /* ---------- 比分录入 ---------- */
