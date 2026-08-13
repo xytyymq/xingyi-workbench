@@ -26,15 +26,20 @@ window.Store = (function () {
     catch (e) { /* keep default */ }
   }
 
-  function save() {
+  function save(noSync) {
     DB.meta.updatedAt = new Date().toISOString();
     try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); }
     catch (e) { alert("保存失败：" + e.message + "\n（可能是隐私模式或存储空间已满）"); }
+    // 挂载点：任意写入后自动排队上传云端（noSync 时不触发，避免程序内替换造成循环）
+    if (!noSync && typeof window.scheduleSync === "function") window.scheduleSync();
   }
 
   function saveUI() {
     try { localStorage.setItem(LS_UI, JSON.stringify(UIState)); } catch (e) { /* ignore */ }
   }
+
+  // 供云端同步引擎整体读写整库
+  function getRaw() { return DB; }
 
   let _seq = 0;
   function uid(prefix) { _seq++; return (prefix || "") + Date.now().toString(36) + _seq.toString(36); }
@@ -92,7 +97,7 @@ window.Store = (function () {
     UIState = { activeTab: "events", activeEventId: null, activeDisciplineId: null };
     save(); saveUI();
   }
-  function replaceAll(data) {
+  function replaceAll(data, noSync) {
     const merged = emptyDB();
     if (data && typeof data === "object") {
       if (Array.isArray(data.players)) merged.players = data.players;
@@ -102,11 +107,11 @@ window.Store = (function () {
     DB = merged;
     if (!DB.events.length) UIState.activeEventId = null;
     else if (!DB.events.find(e => e.id === UIState.activeEventId)) UIState.activeEventId = DB.events[0].id;
-    save(); saveUI();
+    save(noSync); saveUI();
   }
 
   return {
-    LS_KEY, load, save, saveUI, uid, emptyDB,
+    LS_KEY, load, save, saveUI, uid, emptyDB, getRaw,
     addPlayer, delPlayer, getPlayer, updatePlayer, allPlayers: () => DB.players,
     addEvent, delEvent, getEvent, curEvent, allEvents: () => DB.events,
     getDiscipline, matchesOf, getMatch, entrantsOf, getEntrant,
