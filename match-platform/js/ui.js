@@ -4,6 +4,7 @@
 window.UI = (function () {
   const DISC_CODES = ["MS", "WS", "MD", "WD", "XD", "TEAM"];
   const DISC_NAMES = CSVUtil.DISC_BY_CODE;
+  let editingPlayerId = null; // 编辑选手时回填用（当前仅添加，预留）
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -123,13 +124,38 @@ window.UI = (function () {
       h += '<div class="tbl-wrap"><table><thead><tr><th>姓名</th><th>搭档</th><th>项目</th><th>单位</th><th></th></tr></thead><tbody>';
       players.forEach(p => {
         const discs = (p.disciplines || []).map(c => DISC_NAMES[c] || c).join("/");
-        h += '<tr><td>' + esc(p.name) + '</td><td>' + esc(p.partner || "—") + '</td><td>' + esc(discs || "—") + '</td><td>' + esc(p.club || "—") + '</td>'
+        h += '<tr><td>' + esc(p.name) + '</td><td>' + esc(partnerName(p) || "—") + '</td><td>' + esc(discs || "—") + '</td><td>' + esc(p.club || "—") + '</td>'
           + '<td><button class="btn sm danger" data-act="del-player" data-id="' + p.id + '">删</button></td></tr>';
       });
       h += '</tbody></table></div>';
     }
     h += '</div>';
     return h;
+  }
+
+  function partnerOptionsHtml() {
+    const sel = document.getElementById("p_partner");
+    const cur = sel ? sel.value : "";
+    const discs = Array.prototype.slice.call(document.querySelectorAll('#modalCard input[name="pdisc"]:checked')).map(c => c.value);
+    const myGender = (document.getElementById("p_gender") || {}).value || "";
+    const others = Store.allPlayers().filter(p => p.id !== (editingPlayerId || ""));
+    let allow = null; // 允许的搭档性别：'男' / '女' / null=不限
+    if (discs.indexOf("XD") >= 0) allow = myGender === "男" ? "女" : (myGender === "女" ? "男" : null);
+    else if (discs.length && discs.every(d => d === "MD")) allow = "男";
+    else if (discs.length && discs.every(d => d === "WD")) allow = "女";
+    else if (discs.indexOf("MD") >= 0 || discs.indexOf("WD") >= 0) allow = myGender || null;
+    const list = allow ? others.filter(p => p.gender === allow) : others;
+    let opts = '<option value="">— 未选 —</option>';
+    list.forEach(p => {
+      opts += '<option value="' + p.id + '"' + (p.id === cur ? " selected" : "") + '>' + esc(p.name) + '（' + (p.gender || "?") + '）</option>';
+    });
+    return opts;
+  }
+
+  function partnerName(p) {
+    if (!p.partner) return "";
+    const pp = Store.getPlayer(p.partner);
+    return pp ? pp.name : p.partner;
   }
 
   function playerForm() {
@@ -139,7 +165,7 @@ window.UI = (function () {
     return '<h3>添加选手</h3>'
       + '<div class="field"><label>姓名</label><input id="p_name" placeholder="必填"></div>'
       + '<div class="row">'
-      + '<div class="field" style="flex:1"><label>搭档（双打）</label><input id="p_partner" placeholder="如参加双打填这里"></div>'
+      + '<div class="field" style="flex:1"><label>搭档（双打·从名单选取）</label><select id="p_partner">' + partnerOptionsHtml() + '</select></div>'
       + '<div class="field" style="flex:1"><label>性别</label><input id="p_gender" placeholder="男/女"></div></div>'
       + '<div class="row">'
       + '<div class="field" style="flex:1"><label>单位/俱乐部</label><input id="p_club"></div>'
@@ -156,7 +182,7 @@ window.UI = (function () {
   function importForm() {
     return '<h3>从表格导入</h3>'
       + '<p class="muted" style="margin:0 0 8px">支持两种方式：① 点下方「选择文件」直接上传 .csv / .txt / 制表符表格；② 从 Excel / 微信复制后粘贴到文本框。'
-      + '支持表头：姓名、搭档、性别、项目、单位、电话、水平、种子。逗号 / 制表符 / 中文逗号均可。同名且同项目自动去重。</p>'
+      + '支持表头：姓名、性别、项目、单位、电话、水平、种子。逗号 / 制表符 / 中文逗号均可。同名且同项目自动去重。搭档请在添加选手后于「选手名单」中从名单下拉选取。</p>'
       + '<div class="field"><label>从文件导入</label><input type="file" id="imp_csv" accept=".csv,.txt,.tsv,text/csv,text/plain"></div>'
       + '<textarea id="imp_text" placeholder="姓名,项目,单位\n张三,男单/男双,星羿\n李四,女单,星羿"></textarea>'
       + '<div id="imp_preview" class="muted" style="margin:8px 0"></div>'
@@ -245,7 +271,7 @@ window.UI = (function () {
       + (d.code === "MS" || d.code === "WS" ? '（单打，每人 1 席）' : '（双打，需已填搭档）') + '</div>';
     if (d.code !== "MS" && d.code !== "WS") {
       const miss = Seeding.missingPartner(d);
-      if (miss.length) h += '<div class="badge bye">有 ' + miss.length + ' 名到场选手未填搭档，将无法成组</div>';
+      if (miss.length) h += '<div class="badge bye">有 ' + miss.length + ' 名到场选手未从名单选取搭档，将无法成组</div>';
     }
     if (!entrants.length) {
       h += '<div class="empty">到场人数不足。请先到「签到」让选手签到。</div>';
@@ -646,6 +672,6 @@ window.UI = (function () {
   return {
     esc, toast, openModal, closeModal, render, activeEvent, activeDisc,
     eventForm, playerForm, importForm, scoreModal, newDiscipline,
-    entrantLabel
+    entrantLabel, partnerOptionsHtml, partnerName
   };
 })();
