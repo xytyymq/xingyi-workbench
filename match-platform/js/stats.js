@@ -137,5 +137,66 @@ window.Stats = (function () {
       || (y.gf - x.gf));
   }
 
-  return { finalRanking, teamStandings, overallStandings, disciplineStandings, leagueStandings };
+  /* 双打轮转赛名次
+   * - eight / super8 / mixed：按个人积分排名（胜 2:0/1:0 得 2 分、2:1 得 1 分、负 0 分），同分比净胜分；mixed 男女分别排名
+   * - fixed：按组合（成对）积分排名
+   * 计分与图片规则一致：大比分 2:0 或 1:0 胜 → 2 分，2:1 胜 → 1 分，负 → 0 分。
+   */
+  function rotationStandings(disc) {
+    if (!disc || disc.kind !== "rotation") return [];
+    const matches = (disc.matches || []).filter(m => m.result);
+    const is31 = (disc.scoringMode === "31x1");
+    const ptsFor = (result, side) => {
+      if (!result || result.winner !== side) return 0;
+      if (is31) return 2;                         // 31 分制：胜即 2 分
+      const g = side === "a" ? result.aGames : result.bGames;
+      return g === 2 ? 2 : 1;                    // 21 分制：2:0/2:1 分别得 2/1 分
+    };
+    const rec = {}; // id -> {id,name,pts,net,played,wins}
+    const pairRec = {}; // 固搭转：key -> {key,label,pts,net,played,wins}
+    // 预填所有参赛单元（含未开赛的），保证名次完整
+    (disc.entrants || []).forEach(e => {
+      const ids = e.playerIds || [];
+      if (disc.rotationMode === "fixed") {
+        const key = ids.slice().sort().join("|");
+        if (!pairRec[key]) pairRec[key] = { key: key, label: ids.map(id => (Store.getPlayer(id) || {}).name || id).join("/"), pts: 0, net: 0, played: 0, wins: 0 };
+      } else {
+        ids.forEach(id => { if (!rec[id]) { const p = Store.getPlayer(id); rec[id] = { id: id, name: p ? p.name : id, gender: p ? (p.gender || "") : "", pts: 0, net: 0, played: 0, wins: 0 }; } });
+      }
+    });
+    function touch(id) {
+      if (!rec[id]) { const p = Store.getPlayer(id); rec[id] = { id: id, name: p ? p.name : id, gender: p ? (p.gender || "") : "", pts: 0, net: 0, played: 0, wins: 0 }; }
+      return rec[id];
+    }
+    matches.forEach(m => {
+      const aIds = m.a.playerIds || [], bIds = (m.b && m.b.playerIds) || [];
+      const aP = ptsFor(m.result, "a"), bP = ptsFor(m.result, "b");
+      const aNet = (m.result.aPoints || 0) - (m.result.bPoints || 0);
+      const bNet = (m.result.bPoints || 0) - (m.result.aPoints || 0);
+      if (disc.rotationMode === "fixed") {
+        const ka = aIds.slice().sort().join("|"), kb = bIds.slice().sort().join("|");
+        [ka, kb].forEach((k, idx) => {
+          if (!pairRec[k]) pairRec[k] = { key: k, label: ka === k ? aIds.map(id => (Store.getPlayer(id) || {}).name || id).join("/") : bIds.map(id => (Store.getPlayer(id) || {}).name || id).join("/"), pts: 0, net: 0, played: 0, wins: 0 };
+          const r = pairRec[k];
+          r.played++; r.pts += (idx === 0 ? aP : bP); r.net += (idx === 0 ? aNet : bNet);
+          if ((idx === 0 && m.result.winner === "a") || (idx === 1 && m.result.winner === "b")) r.wins++;
+        });
+      } else {
+        aIds.forEach(id => { const r = touch(id); r.played++; r.pts += aP; r.net += aNet; if (m.result.winner === "a") r.wins++; });
+        bIds.forEach(id => { const r = touch(id); r.played++; r.pts += bP; r.net += bNet; if (m.result.winner === "b") r.wins++; });
+      }
+    });
+    if (disc.rotationMode === "fixed") {
+      return Object.values(pairRec).sort((x, y) => (y.pts - x.pts) || ((y.net) - (x.net)) || (y.wins - x.wins));
+    }
+    if (disc.rotationMode === "mixed") {
+      const men = Object.values(rec).filter(r => r.gender === "男").sort(cmpRot);
+      const women = Object.values(rec).filter(r => r.gender === "女").sort(cmpRot);
+      return { men: men, women: women };
+    }
+    return Object.values(rec).sort(cmpRot);
+  }
+  function cmpRot(x, y) { return (y.pts - x.pts) || ((y.net) - (x.net)) || (y.wins - x.wins) || (x.name < y.name ? -1 : 1); }
+
+  return { finalRanking, teamStandings, overallStandings, disciplineStandings, leagueStandings, rotationStandings };
 })();
