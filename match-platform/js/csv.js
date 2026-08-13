@@ -51,6 +51,145 @@ window.CSVUtil = (function () {
     return { headers, rows };
   }
 
+  /* ---------- .xlsx 轻量解析（Excel 常被改名成 .csv） ---------- */
+  function isXlsxBuffer(buf) {
+    if (!buf || buf.byteLength < 4) return false;
+    const v = new Uint8Array(buf);
+    return v[0] === 0x50 && v[1] === 0x4B && v[2] === 0x03 && v[3] === 0x04;
+  }
+
+  // 用原生 DecompressionStream 解压 deflate-raw（xlsx 使用）
+  async function inflateRawWeb(data) {
+    if (typeof DecompressionStream === "undefined") {
+      throw new Error("当前浏览器不支持解压 .xlsx，请把文件另存为 CSV 后再上传");
+    }
+    const ds = new DecompressionStream("deflate-raw");
+    const writer = ds.writable.getWriter();
+    writer.write(data);
+    writer.close();
+    return await new Response(ds.readable).text();
+  }
+
+  // 解析 ZIP 中心目录，返回所有条目信息
+  function readZipIndex(arrayBuffer) {
+    const data = new Uint8Array(arrayBuffer);
+    const dv = new DataView(arrayBuffer);
+    const len = data.length;
+    // 找 End of Central Directory（最后 22 字节，signature 0x06054b50）
+    let eocd = -1;
+    for (let i = len - 22; i >= 0; i--) {
+      if (data[i] === 0x50 && data[i + 1] === 0x4B && data[i + 2] === 0x05 && data[i + 3] === 0x06) { eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error("不是有效的 .xlsx / ZIP 文件");
+    const cdOffset = dv.getUint32(eocd + 16, true);
+    const cdSize = dv.getUint32(eocd + 12, true);
+    const files = {};
+    let off = cdOffset;
+    const end = cdOffset + cdSize;
+    while (off < end) {
+      if (dv.getUint32(off, true) !== 0x02014b50) break;
+      const compMethod = dv.getUint16(off + 10, true);
+      const compSize = dv.getUint32(off + 20, true);
+      const uncompSize = dv.getUint32(off + 24, true);
+      const nameLen = dv.getUint16(off + 28, true);
+      const extraLen = dv.getUint16(off + 30, true);
+      const commentLen = dv.getUint16(off + 32, true);
+      const localOffset = dv.getUint32(off + 42, true);
+      const name = new TextDecoder().decode(data.slice(off + 46, off + 46 + nameLen));
+      files[name] = { compMethod, compSize, uncompSize, localOffset };
+      off += 46 + nameLen + extraLen + commentLen;
+    }
+    return { files, data, dv };
+  }
+
+  async function extractZipText(index, fileName, inflateRaw) {
+    const e = index.files[fileName];
+    if (!e) return null;
+    const dv = index.dv, data = index.data;
+    const loff = e.localOffset;
+    const nameLen = dv.getUint16(loff + 26, true);
+    const extraLen = dv.getUint16(loff + 28, true);
+    const start = loff + 30 + nameLen + extraLen;
+    const payload = data.slice(start, start + e.compSize);
+    if (e.compMethod === 0) return new TextDecoder().decode(payload);
+    if (e.compMethod === 8) {
+      const fn = inflateRaw || inflateRawWeb;
+      return await fn(payload);
+    }
+    throw new Error("不支持的 xlsx 压缩方式：" + e.compMethod);
+  }
+
+  function parseSharedStrings(xml) {
+    const arr = [];
+    const re = /<si[^>]*>([\s\S]*?)<\/si>/g;
+    let m;
+    while ((m = re.exec(xml)) !== null) {
+      let text = "";
+      const tRe = /<t[^>]*>([\s\S]*?)<\/t>/g;
+      let tm;
+      while ((tm = tRe.exec(m[1])) !== null) text += tm[1];
+      arr.push(text);
+    }
+    return arr;
+  }
+
+  function colIndex(col) {
+    let n = 0;
+    for (let i = 0; i < col.length; i++) n = n * 26 + (col.charCodeAt(i) - 64);
+    return n - 1;
+  }
+
+  function parseSheet(xml, shared) {
+    const cellRe = /<c[^>]*r="([A-Z]+)(\d+)"([^>]*)>([\s\S]*?)<\/c>/g;
+    const rowMap = {};
+    let m;
+    while ((m = cellRe.exec(xml)) !== null) {
+      const col = m[1], r = parseInt(m[2], 10);
+      const cAttrs = m[3];
+      const inner = m[4];
+      let val = "";
+      const vMatch = inner.match(/<v>([\s\S]*?)<\/v>/);
+      if (vMatch) {
+        val = vMatch[1];
+        if (cAttrs.indexOf('t="s"') >= 0 && shared) val = shared[parseInt(val, 10)] || "";
+      } else {
+        const isMatch = inner.match(/<is><t>([\s\S]*?)<\/t><\/is>/);
+        if (isMatch) val = isMatch[1];
+      }
+      if (!rowMap[r]) rowMap[r] = [];
+      rowMap[r].push({ idx: colIndex(col), val });
+    }
+    const rows = [];
+    Object.keys(rowMap).map(n => parseInt(n, 10)).sort((a, b) => a - b).forEach(r => {
+      const cells = rowMap[r].sort((a, b) => a.idx - b.idx);
+      const maxIdx = cells.length ? cells[cells.length - 1].idx : 0;
+      const arr = new Array(maxIdx + 1).fill("");
+      cells.forEach(c => arr[c.idx] = c.val);
+      rows.push(arr);
+    });
+    return rows;
+  }
+
+  function rowsToTsv(rows) {
+    return rows.map(r => r.map(csvCell).join("\t")).join("\n");
+  }
+
+  // 把 .xlsx ArrayBuffer 转成制表符文本（第一行为表头），供 rowsToPlayers 继续解析
+  async function parseXlsx(arrayBuffer, inflateRaw) {
+    const idx = readZipIndex(arrayBuffer);
+    const sst = await extractZipText(idx, "xl/sharedStrings.xml", inflateRaw);
+    const shared = sst ? parseSharedStrings(sst) : [];
+    let sheet = await extractZipText(idx, "xl/worksheets/sheet1.xml", inflateRaw);
+    if (sheet === null) {
+      // 兼容非标准 sheet 名：取第一个 worksheets 下的 sheet
+      const first = Object.keys(idx.files).find(n => /^xl\/worksheets\/sheet\d+\.xml$/.test(n));
+      if (first) sheet = await extractZipText(idx, first, inflateRaw);
+    }
+    if (sheet === null) throw new Error("在 .xlsx 中找不到工作表");
+    const rows = parseSheet(sheet, shared);
+    return rowsToTsv(rows);
+  }
+
   function resolveCodes(val) {
     if (!val) return [];
     const parts = String(val).split(/[\/,，、\s]+/).filter(Boolean);
@@ -189,6 +328,7 @@ window.CSVUtil = (function () {
 
   return {
     DISC_BY_CODE, CODE_BY_NAME, HEADER_MAP, normalizeGender,
+    isXlsxBuffer, parseXlsx,
     sniffDelimiter, parseCSVLine, parseTable, resolveCodes, rowsToPlayers,
     download, exportJSON, exportPlayersCSV, exportRankCSV, exportTeamRankCSV, csvCell, dateStamp
   };
