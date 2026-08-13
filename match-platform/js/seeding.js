@@ -66,7 +66,7 @@ window.Seeding = (function () {
       p.present && p.disciplines.includes(code) && !p.partner);
   }
 
-  /* ---------- 团体赛：手选分组 + 组内循环赛 ---------- */
+  /* ---------- 团体赛：手选分组 + 组间循环赛（整组当整体记总比分） ---------- */
   const TEAM_MAX_GROUPS = 8;
   const GROUP_LETTERS = "ABCDEFGH";
 
@@ -93,58 +93,38 @@ window.Seeding = (function () {
     return res;
   }
 
-  // 把选手分配到各组的 entrants（单人单元，带 groupName 标记）
-  function buildTeamEntrants(disc) {
-    const entrants = [];
-    (disc.groups || []).forEach(g => {
-      (g.playerIds || []).forEach(pid => {
-        const p = Store.getPlayer(pid);
-        entrants.push({
-          id: Store.uid("E"), kind: "player", playerIds: [pid],
-          label: p ? p.name : "?", seed: 0, status: "active", groupName: g.name
-        });
-      });
-    });
-    return entrants;
-  }
-
+  // 组间循环赛：每个"组"当作一支队伍，组与组之间两两循环
+  // entrants = 各组（团队单元）；match.stage = "team"，记录双方整组总比分
   function generateTeamMatches(disc) {
-    const entrants = buildTeamEntrants(disc);
-    disc.entrants = entrants;
-    const eByPid = {};
-    entrants.forEach(e => { if (e.playerIds && e.playerIds[0]) eByPid[e.playerIds[0]] = e; });
+    const groups = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
+    if (groups.length < 2) return { matches: [], groups: groups.length };
 
-    const matches = [];
-    let maxRounds = 0;
-    (disc.groups || []).forEach(g => {
-      const gEntrants = g.playerIds
-        .map(pid => eByPid[pid])
-        .filter(Boolean);
-      const pairs = roundRobin(gEntrants);
-      pairs.forEach(pm => {
-        matches.push({
-          id: Store.uid("M"), stage: "group", groupId: g.name, groupName: g.name,
-          round: pm.round, slotIndex: pm.slot, roundLabel: "第" + pm.round + "轮",
-          a: { entrantId: pm.a, source: { type: "seed" } },
-          b: { entrantId: pm.b, source: { type: "seed" } },
-          nextMatchId: null, nextSlot: null, loserNextMatchId: null, loserNextSlot: null,
-          result: null, status: "ready", court: ""
-        });
-      });
-      const r = pairs.length ? Math.max.apply(null, pairs.map(p => p.round)) : 0;
-      if (r > maxRounds) maxRounds = r;
-    });
+    // 各组作为一支队伍的参赛单元
+    const entrants = groups.map(g => ({
+      id: Store.uid("E"), kind: "team", groupName: g.name, label: g.name,
+      playerIds: g.playerIds.slice(), seed: 0, status: "active"
+    }));
+    disc.entrants = entrants;
+
+    // 在"组"之间做循环赛（roundRobin 作用于组 entrant 列表）
+    const pairs = roundRobin(entrants); // [{a,b,round,slot}]，a/b 为 entrantId
+    const matches = pairs.map(pm => ({
+      id: Store.uid("M"), stage: "team", round: pm.round, slotIndex: pm.slot,
+      roundLabel: "第" + pm.round + "轮",
+      a: { entrantId: pm.a }, b: { entrantId: pm.b },
+      nextMatchId: null, nextSlot: null, loserNextMatchId: null, loserNextSlot: null,
+      result: null, status: "ready", court: ""
+    }));
 
     disc.matches = matches;
-    disc.totalRounds = maxRounds;
+    disc.totalRounds = pairs.length ? Math.max.apply(null, pairs.map(p => p.round)) : 0;
     disc.bracketSize = entrants.length;
     disc.byeCount = 0;
     disc.status = "drawn";
-    Scoring.propagateInitial(disc); // 组内无轮空，仅置 ready
     Store.save();
-    return { matches: matches, groups: (disc.groups || []).length };
+    return { matches: matches, groups: groups.length };
   }
 
   return { buildEntrants, assignSeeds, makeBracket, missingPartner, DISC_SIZE,
-    roundRobin, buildTeamEntrants, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS };
+    roundRobin, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS };
 })();
