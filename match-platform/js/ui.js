@@ -183,9 +183,9 @@ window.UI = (function () {
 
   function importForm() {
     return '<h3>从表格导入</h3>'
-      + '<p class="muted" style="margin:0 0 8px">支持两种方式：① 点下方「选择文件」直接上传 .csv / .txt / 制表符表格；② 从 Excel / 微信复制后粘贴到文本框。'
+      + '<p class="muted" style="margin:0 0 8px">支持两种方式：① 点下方「选择文件」直接上传 .csv / .txt / .xlsx / 制表符表格；② 从 Excel / 微信复制后粘贴到文本框。'
       + '只需 <b>姓名 + 性别</b> 两列即可（项目 / 单位等可选，不填也能用）。性别支持 男/女/M/F/男生/女生/1/0 等写法会自动归一化。逗号 / 制表符 / 中文逗号均可。同名且同项目自动去重。搭档请在添加选手后于「选手名单」中从名单下拉选取。</p>'
-      + '<div class="field"><label>从文件导入</label><input type="file" id="imp_csv" accept=".csv,.txt,.tsv,text/csv,text/plain"></div>'
+      + '<div class="field"><label>从文件导入</label><input type="file" id="imp_csv" accept=".csv,.txt,.tsv,.xlsx,text/csv,text/plain,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"></div>'
       + '<textarea id="imp_text" placeholder="姓名,项目,单位\n张三,男单/男双,星羿\n李四,女单,星羿"></textarea>'
       + '<div id="imp_preview" class="muted" style="margin:8px 0"></div>'
       + '<div class="row">'
