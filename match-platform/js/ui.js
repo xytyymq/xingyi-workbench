@@ -2,7 +2,7 @@
  * 纯 DOM 字符串渲染 + 事件委托（app.js 统一分发 data-act）。
  */
 window.UI = (function () {
-  const DISC_CODES = ["MS", "WS", "MD", "WD", "XD", "TEAM"];
+  const DISC_CODES = ["MS", "WS", "MD", "WD", "XD", "TEAM", "ROTATION"];
   const DISC_NAMES = CSVUtil.DISC_BY_CODE;
   let editingPlayerId = null; // 编辑选手时回填用（当前仅添加，预留）
 
@@ -38,16 +38,24 @@ window.UI = (function () {
     if (code === "TEAM") {
       const names = Seeding.GROUP_LETTERS.slice(0, 2).split("");
       const fmt = Seeding.TEAM_FORMATS.overall;
-      return {
-        id: Store.uid("D"), code: "TEAM", name: "团体赛", kind: "team",
-        teamFormat: "overall", teamGender: "男", teamSlots: [],
-        teamEvents: ["MS", "WS", "MD", "WD", "XD"], teamScoreMode: "points",
-        scoringMode: "31x1", thirdPlace: false, seedCount: 0,
-        groupCount: 2,
-        groups: names.map(n => ({ name: n, playerIds: [], lineup: {} })),
-        entrants: [], matches: [], totalRounds: 0, bracketSize: 0, byeCount: 0, status: "empty"
-      };
-    }
+    return {
+      id: Store.uid("D"), code: "TEAM", name: "团体赛", kind: "team",
+      teamFormat: "overall", teamGender: "男", teamSlots: [],
+      teamEvents: ["MS", "WS", "MD", "WD", "XD"], teamScoreMode: "points",
+      scoringMode: "31x1", thirdPlace: false, seedCount: 0,
+      groupCount: 2,
+      groups: names.map(n => ({ name: n, playerIds: [], lineup: {} })),
+      entrants: [], matches: [], totalRounds: 0, bracketSize: 0, byeCount: 0, status: "empty"
+    };
+  }
+  if (code === "ROTATION") {
+    return {
+      id: Store.uid("D"), code: "ROTATION", name: "双打轮转", kind: "rotation",
+      rotationMode: "eight", courtCount: 2,
+      scoringMode: "21x3", thirdPlace: false, seedCount: 0,
+      entrants: [], matches: [], totalRounds: 0, bracketSize: 0, byeCount: 0, status: "empty"
+    };
+  }
     return {
       id: Store.uid("D"), code: code, name: DISC_NAMES[code],
       scoringMode: "31x1", thirdPlace: true, seedCount: 0,
@@ -255,6 +263,7 @@ window.UI = (function () {
     const d = activeDisc();
     if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
     if (d.kind === "team") return renderTeamGroup(d, sel);
+    if (d.kind === "rotation") return renderRotationGroup(d, sel);
 
     const entrants = Seeding.buildEntrants(d);
     let h = '<div class="card">' + sel;
@@ -568,6 +577,7 @@ window.UI = (function () {
     const d = activeDisc();
     if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
     if (d.kind === "team") return '<div class="card">' + sel + '<h2>赛程 · ' + esc(d.name) + '</h2>' + renderTeamFixtures(d) + '</div>';
+    if (d.kind === "rotation") return '<div class="card">' + sel + '<h2>赛程 · ' + esc(d.name) + '</h2>' + renderRotationFixtures(d) + '</div>';
     if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵，请先到「分组」生成。</div></div>';
 
     const rounds = {};
@@ -611,6 +621,7 @@ window.UI = (function () {
     const d = activeDisc();
     if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
     if (d.kind === "team") return renderTeamBracket(d, sel);
+    if (d.kind === "rotation") return renderRotationStandings(d, sel);
     if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵，请先到「分组」生成。</div></div>';
 
     const total = d.totalRounds || 1;
@@ -706,6 +717,7 @@ window.UI = (function () {
     const d = activeDisc();
     if (!d) return '<div class="card">' + sel + '<div class="empty">请选择比赛项目。</div></div>';
     if (d.kind === "team") return renderTeamSummary(d, sel);
+    if (d.kind === "rotation") return '<div class="card">' + sel + '<h2>汇总 · ' + esc(d.name) + '</h2>' + renderRotationStandingsBody(d) + '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出名次 CSV</button></div></div>';
     if (d.status !== "drawn") return '<div class="card">' + sel + '<div class="empty">尚未生成对阵。</div></div>';
 
     const done = d.matches.filter(m => m.result).length;
@@ -808,8 +820,8 @@ window.UI = (function () {
       if (m.subs && subIdx != null) return subScoreModal(disc, m, subIdx);
       return teamScoreModal(disc, m);
     }
-    const aL = entrantLabel(disc, m.a.entrantId) || "待定";
-    const bL = entrantLabel(disc, m.b.entrantId) || "待定";
+    const aL = (m.a && m.a.playerIds && m.a.playerIds.length) ? rotationSideLabel(m, "a") : (entrantLabel(disc, m.a.entrantId) || "待定");
+    const bL = (m.b && m.b.playerIds && m.b.playerIds.length) ? rotationSideLabel(m, "b") : (entrantLabel(disc, m.b.entrantId) || "待定");
     const rule = Scoring.RULES[disc.scoringMode] || Scoring.RULES["31x1"];
     let games = "";
     for (let i = 0; i < rule.bestOf; i++) {
@@ -971,11 +983,110 @@ window.UI = (function () {
     Store.save();
   }
 
+  /* ============================================================
+   *  双打轮转赛（俱乐部活动 / 打水赛）
+   * ========================================================== */
+  function rotationSideLabel(m, side) {
+    const ids = (m[side] && m[side].playerIds) || [];
+    return ids.map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/") || "待定";
+  }
+
+  function rotationModeOptions(d) {
+    const fmts = Seeding.ROTATION_MODES;
+    return Object.keys(fmts).map(k =>
+      '<option value="' + k + '" ' + (d.rotationMode === k ? "selected" : "") + '>' + fmts[k].label + '</option>').join("");
+  }
+
+  function renderRotationGroup(d, sel) {
+    const rules = Scoring.RULES;
+    let ruleOpts = Object.keys(rules).map(k => '<option value="' + k + '" ' + (d.scoringMode === k ? "selected" : "") + '>' + rules[k].name + '</option>').join("");
+    const present = Store.allPlayers().filter(p => p.present);
+    const men = present.filter(p => p.gender === "男").length;
+    const women = present.filter(p => p.gender === "女").length;
+    let h = '<div class="card">' + sel;
+    h += '<div class="spread"><h2>' + esc(d.name) + ' · 双打轮转</h2></div>';
+    h += '<div class="field" style="margin:8px 0"><label>轮转模式</label><select id="rotation_mode">' + rotationModeOptions(d) + '</select></div>';
+    h += '<div class="field" style="margin:8px 0"><label>赛制（计分）</label><select id="g_scoring">' + ruleOpts + '</select></div>';
+    h += '<div class="field" style="margin:8px 0"><label>场地数（同时开台，用于标注台号）</label><input id="rotation_courts" type="number" min="1" max="8" value="' + (d.courtCount || 2) + '"></div>';
+    h += '<div class="muted">当前到场：<b>' + present.length + '</b> 人（男 ' + men + ' · 女 ' + women + '）。双打轮转不要求报名项目，到场即可参与。</div>';
+
+    if (d.rotationMode === "mixed" && men !== women)
+      h += '<div class="badge bye">混双转需男女数量相等（当前 男' + men + ' 女' + women + '），请调整签到人数</div>';
+    if (d.rotationMode !== "mixed" && present.length < 4)
+      h += '<div class="badge bye">人数不足 4 人，无法生成轮转对阵</div>';
+
+    if (d.status === "drawn" && d.matches.length) {
+      h += '<div class="row" style="margin-top:10px">'
+        + '<span class="badge done">已生成对阵</span>'
+        + '<span class="muted">' + d.bracketSize + ' 人 · ' + d.totalRounds + ' 轮 · 共 ' + d.matches.length + ' 场</span>'
+        + '<button class="btn sm primary" data-act="draw">重新生成</button></div>';
+      h += renderRotationFixtures(d);
+    } else {
+      h += '<div class="row" style="margin-top:10px"><button class="btn primary" data-act="draw"' + ((present.length < 4 || (d.rotationMode === "mixed" && men !== women)) ? " disabled" : "") + '>生成对阵</button></div>';
+    }
+    h += '</div>';
+    return h;
+  }
+
+  function renderRotationFixtures(d) {
+    const matches = d.matches || [];
+    if (!matches.length) return "";
+    const rounds = {};
+    matches.forEach(m => { (rounds[m.round] = rounds[m.round] || []).push(m); });
+    const rkeys = Object.keys(rounds).map(Number).sort((a, b) => a - b);
+    let h = "";
+    rkeys.forEach(r => {
+      const ms = rounds[r];
+      h += '<div class="team-group" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px">';
+      h += '<div class="tg-head" style="margin-bottom:6px"><b>第 ' + r + ' 轮</b></div>';
+      h += '<div class="tbl-wrap"><table><thead><tr><th>对阵（双打组合）</th><th>比分</th><th>台</th><th>操作</th></tr></thead><tbody>';
+      ms.forEach(m => {
+        const aN = rotationSideLabel(m, "a"), bN = rotationSideLabel(m, "b");
+        const sc = m.result ? m.result.games.map(g => g[0] + ":" + g[1]).join("，") : "";
+        const op = m.status === "done"
+          ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
+          : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '">录入</button>';
+        h += '<tr><td>' + esc(aN) + ' <b>VS</b> ' + esc(bN) + '</td>'
+          + '<td>' + (sc ? '<span class="muted">' + sc + '</span>' : "—") + '</td>'
+          + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:46px;padding:4px 5px" placeholder="台"></td>'
+          + '<td>' + op + '</td></tr>';
+      });
+      h += '</tbody></table></div></div>';
+    });
+    return h;
+  }
+
+  function rotationTable(title, rows) {
+    if (!rows || !rows.length) return "";
+    let h = '<div class="tbl-wrap" style="margin-top:10px"><table><thead><tr><th>名次</th><th>' + title + '</th><th>胜场</th><th>积分</th><th>净胜分</th></tr></thead><tbody>';
+    rows.forEach((r, i) => {
+      const nm = r.label || r.name;
+      h += '<tr><td class="rank-' + (i + 1) + '">' + (i + 1) + '</td><td>' + esc(nm) + '</td><td>' + r.wins + '</td><td><b>' + r.pts + '</b></td><td>' + r.net + '</td></tr>';
+    });
+    return h + '</tbody></table></div>';
+  }
+
+  function renderRotationStandingsBody(d) {
+    const st = Stats.rotationStandings(d);
+    if (d.rotationMode === "mixed") {
+      return '<h3>双打轮转名次（男 / 女分别排名）</h3>'
+        + rotationTable("男子", st.men) + rotationTable("女子", st.women);
+    }
+    if (d.rotationMode === "fixed") return '<h3>双打轮转名次（按组合）</h3>' + rotationTable("组合", st);
+    return '<h3>双打轮转名次</h3>' + rotationTable("选手", st);
+  }
+
+  function renderRotationStandings(d, sel) {
+    return '<div class="card">' + sel + '<h2>名次 · ' + esc(d.name) + '</h2>' + renderRotationStandingsBody(d) + '</div>';
+  }
+
   return {
     esc, toast, openModal, closeModal, render, activeEvent, activeDisc,
     eventForm, playerForm, importForm, scoreModal, newDiscipline,
     entrantLabel, partnerOptionsHtml, partnerName, applyLineup,
     teamFormatOptionsHtml, slotConfigHtml, lineupEditorHtml,
-    renderLeagueFixtures, leagueScoreModal, comboNames
+    renderLeagueFixtures, leagueScoreModal, comboNames,
+    rotationSideLabel, renderRotationGroup, renderRotationFixtures,
+    renderRotationStandings, renderRotationStandingsBody
   };
 })();
