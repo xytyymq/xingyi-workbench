@@ -219,10 +219,10 @@
     const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
     const sm = document.getElementById("g_scoring");
     if (sm) d.scoringMode = sm.value;
-    const ok = (d.groups || []).some(g => (g.playerIds || []).length >= 2);
-    if (!ok) { UI.toast("请至少在一个组安排 2 名以上选手"); return; }
-    Seeding.generateTeamMatches(d);
-    UI.render(); UI.toast("组内循环对阵已生成");
+    const nonEmpty = (d.groups || []).filter(g => (g.playerIds || []).length > 0);
+    if (nonEmpty.length < 2) { UI.toast("请至少把 2 个组各安排 1 名以上选手"); return; }
+    const res = Seeding.generateTeamMatches(d);
+    UI.render(); UI.toast("组间循环对阵已生成（" + res.groups + " 组 · " + res.matches.length + " 场）");
   }
 
   function teamGroupCount(delta) {
@@ -262,6 +262,7 @@
     const d = UI.activeDisc(); if (!d) return;
     const m = Store.getMatch(d, matchId);
     if (!m) return;
+    if (d.kind === "team" || m.stage === "team") { saveTeamScore(d, m); return; }
     const rule = Scoring.RULES[d.scoringMode] || Scoring.RULES["31x1"];
     const wo = $("#wo_type").value;
     let reason = "normal", side = null, games = [];
@@ -281,6 +282,14 @@
     }
     const res = Scoring.submitResult(d, matchId, games, reason, side);
     if (!res.ok) { UI.toast(res.msg); return; }
+    UI.closeModal(); UI.render();
+  }
+  function saveTeamScore(d, m) {
+    const a = parseInt($("#t_a").value, 10);
+    const b = parseInt($("#t_b").value, 10);
+    if (isNaN(a) || isNaN(b)) { UI.toast("请填写双方总比分"); return; }
+    if (a < 0 || b < 0) { UI.toast("比分不能为负"); return; }
+    Scoring.submitTeamResult(d, m.id, a, b);
     UI.closeModal(); UI.render();
   }
   function clearScore(matchId) {
