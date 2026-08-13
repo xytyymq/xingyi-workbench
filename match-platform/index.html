@@ -16,6 +16,10 @@
       <div>
         <div class="title">羽毛球比赛现场管理平台</div>
         <div class="subtitle" id="ctxBar">未选择赛事</div>
+        <div class="sync-line">
+          <span id="syncStatus">🔄 正在连接云端…</span>
+          <button id="syncRetry" class="mini-btn" hidden>立即重试</button>
+        </div>
       </div>
     </div>
     <button class="hamburger" id="navToggle" aria-label="菜单">☰</button>
@@ -49,5 +53,6 @@
   <script src="js/stats.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/sync.js"></script>
 </body>
 </html>
