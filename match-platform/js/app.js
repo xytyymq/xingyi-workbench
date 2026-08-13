@@ -68,9 +68,25 @@
       case "draw-team": drawTeam(); break;
       case "team-gc": teamGroupCount(parseInt(el.getAttribute("data-d") || "0", 10)); break;
 
+      case "team-gender": {
+        const d = UI.activeDisc(); if (d && d.kind === "team") { d.teamGender = el.getAttribute("data-g"); Store.save(); UI.render(); }
+        break;
+      }
+      case "team-slot-code": {
+        const d = UI.activeDisc(); if (d && d.kind === "team" && d.teamSlots) { const i = parseInt(el.getAttribute("data-i"), 10); d.teamSlots[i].code = el.value; d.teamSlots[i].name = CSVUtil.DISC_BY_CODE[el.value] || el.value; Store.save(); UI.render(); }
+        break;
+      }
+      case "team-slot-up":   teamSlotMove(parseInt(el.getAttribute("data-i"), 10), -1); break;
+      case "team-slot-down": teamSlotMove(parseInt(el.getAttribute("data-i"), 10), 1); break;
+      case "team-slot-add":  teamSlotAdd(); break;
+      case "team-slot-del":  teamSlotDel(parseInt(el.getAttribute("data-i"), 10)); break;
+
       case "score": openScore(id); break;
       case "save-score": saveScore(id); break;
       case "clear-score": clearScore(id); break;
+      case "score-sub": openSubScore(id, el.getAttribute("data-sub")); break;
+      case "save-sub": saveSubScore(id, el.getAttribute("data-sub")); break;
+      case "clear-sub": clearSubScore(id, el.getAttribute("data-sub")); break;
 
       case "export-rank": {
         const d = UI.activeDisc();
@@ -96,6 +112,24 @@
     if (t.classList && t.classList.contains("gassign")) {
       const pid = t.getAttribute("data-pid");
       assignGroup(pid, t.value);
+      return;
+    }
+    // 团体赛：赛制选择
+    if (t.id === "team_format") { setTeamFormat(t.value); return; }
+    // 团体赛：业余模式分项项目编辑
+    if (t.classList && t.classList.contains("tslot-code")) {
+      const d = UI.activeDisc();
+      if (d && d.kind === "team" && d.teamSlots) {
+        const i = parseInt(t.getAttribute("data-i"), 10);
+        d.teamSlots[i].code = t.value;
+        d.teamSlots[i].name = CSVUtil.DISC_BY_CODE[t.value] || t.value;
+        Store.save(); UI.render();
+      }
+      return;
+    }
+    // 团体赛：各队排阵
+    if (t.classList && t.classList.contains("tlineup")) {
+      UI.applyLineup(UI.activeDisc(), parseInt(t.getAttribute("data-gi"), 10), t.getAttribute("data-slot"), parseInt(t.getAttribute("data-pos"), 10), t.value);
       return;
     }
     // 赛程台号输入
@@ -255,6 +289,88 @@
       if (g) g.playerIds.push(pid);
     }
     Store.save(); UI.render();
+  }
+
+  /* ---------- 团体赛：赛制 / 排阵 配置 ---------- */
+  function setTeamFormat(v) {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
+    d.teamFormat = v;
+    const fmt = Seeding.TEAM_FORMATS[v];
+    if (fmt && fmt.mode === "discipline") {
+      if (fmt.slotsEditable) {
+        if (!d.teamSlots || !d.teamSlots.length) d.teamSlots = fmt.slots().map(s => ({ key: s.key, code: s.code || null, kind: s.kind || null, name: s.name }));
+      } else {
+        d.teamSlots = fmt.slots().map(s => ({ key: s.key, code: s.code || null, kind: s.kind || null, name: s.name }));
+      }
+    } else {
+      d.teamSlots = [];
+    }
+    Store.save(); UI.render();
+  }
+
+  function teamSlotMove(i, dir) {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team" || !d.teamSlots) return;
+    const j = i + dir;
+    if (j < 0 || j >= d.teamSlots.length) return;
+    const arr = d.teamSlots;
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    Store.save(); UI.render();
+  }
+  function teamSlotAdd() {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team" || !d.teamSlots) return;
+    if (d.teamSlots.length >= 7) { UI.toast("最多 7 项"); return; }
+    d.teamSlots.push({ key: "SL" + Date.now().toString(36), code: "MD", name: "男子双打" });
+    Store.save(); UI.render();
+  }
+  function teamSlotDel(i) {
+    const d = UI.activeDisc(); if (!d || d.kind !== "team" || !d.teamSlots) return;
+    if (d.teamSlots.length <= 2) { UI.toast("至少保留 2 项"); return; }
+    d.teamSlots.splice(i, 1);
+    Store.save(); UI.render();
+  }
+
+  /* ---------- 分项团体：分项小场录分 ---------- */
+  function openSubScore(matchId, subIdx) {
+    const d = UI.activeDisc(); if (!d) return;
+    const m = Store.getMatch(d, matchId);
+    if (!m || !m.subs) return;
+    UI.openModal(UI.scoreModal(d, m, parseInt(subIdx, 10)));
+  }
+  function saveSubScore(matchId, subIdx) {
+    const d = UI.activeDisc(); if (!d) return;
+    const m = Store.getMatch(d, matchId);
+    if (!m || !m.subs) return;
+    const idx = parseInt(subIdx, 10);
+    const sub = m.subs[idx];
+    const rule = Scoring.RULES[d.scoringMode] || Scoring.RULES["31x1"];
+    const wo = $("#wo_type").value;
+    const missA = !(sub.a.playerIds || []).length, missB = !(sub.b.playerIds || []).length;
+    let reason = "normal", side = null, games = [];
+    if (wo !== "normal") {
+      const map = { wo_a: ["walkover", "b"], wo_b: ["walkover", "a"], ret_a: ["retire", "b"], ret_b: ["retire", "a"] };
+      [reason, side] = map[wo];
+    } else {
+      if (missA || missB) { UI.toast("该分项一方未排阵，请选择弃权/退赛判定"); return; }
+      for (let i = 0; i < rule.bestOf; i++) {
+        const a = $("#g_" + i + "_a").value.trim();
+        const b = $("#g_" + i + "_b").value.trim();
+        if (a === "" && b === "") continue;
+        if (a === "" || b === "") { UI.toast("第" + (i + 1) + "局比分不完整"); return; }
+        games.push([parseInt(a, 10), parseInt(b, 10)]);
+      }
+      if (!games.length) { UI.toast("请录入至少一局比分"); return; }
+    }
+    const res = Scoring.scoreSub(d, matchId, idx, games, reason, side);
+    if (!res.ok) { UI.toast(res.msg); return; }
+    UI.closeModal(); UI.render();
+  }
+  function clearSubScore(matchId, subIdx) {
+    const d = UI.activeDisc(); if (!d) return;
+    const m = Store.getMatch(d, matchId);
+    if (!m || !m.subs) return;
+    m.subs[parseInt(subIdx, 10)].result = null;
+    Scoring.recomputeTeam(d, m);
+    Store.save(); UI.closeModal(); UI.render(); UI.toast("已清除本分项");
   }
 
   /* ---------- 比分录入 ---------- */
