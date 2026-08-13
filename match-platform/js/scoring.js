@@ -173,8 +173,59 @@ window.Scoring = (function () {
     return { ok: true };
   }
 
+  /* 分项团体：给某一分项小场录分（复用 judgeMatch），再重算整队胜负 */
+  function scoreSub(disc, matchId, subIndex, games, reason, side) {
+    const m = Store.getMatch(disc, matchId);
+    if (!m || !m.subs) return { ok: false, msg: "找不到该分项" };
+    const sub = m.subs[subIndex];
+    if (!sub) return { ok: false, msg: "找不到该分项" };
+    const rule = RULES[disc.scoringMode] || RULES["31x1"];
+    let judged;
+    if (reason === "walkover" || reason === "retire") {
+      if (!side) return { ok: false, msg: "请指定弃权方" };
+      judged = { winner: side, aGames: 0, bGames: 0, aPoints: 0, bPoints: 0, valid: true };
+    } else {
+      judged = judgeMatch(games, rule);
+      if (!judged.valid) return { ok: false, msg: judged.msg };
+    }
+    sub.result = {
+      games: games || [],
+      winner: judged.winner, reason: reason || "normal",
+      aGames: judged.aGames, bGames: judged.bGames,
+      aPoints: judged.aPoints, bPoints: judged.bPoints,
+      finishedAt: new Date().toISOString()
+    };
+    recomputeTeam(disc, m);
+    Store.save();
+    return { ok: true };
+  }
+
+  // 分项胜负累计：任一方分项胜场达到 ceil(n/2)（五场三胜=3）或全部分项录完即判定整队胜负
+  function recomputeTeam(disc, m) {
+    const subs = m.subs || [];
+    let aW = 0, bW = 0, done = 0;
+    for (const s of subs) {
+      if (!s.result) continue;
+      done++;
+      if (s.result.winner === "a") aW++;
+      else if (s.result.winner === "b") bW++;
+    }
+    const need = Math.ceil(subs.length / 2);
+    const allDone = done === subs.length;
+    const decided = allDone || aW >= need || bW >= need;
+    let winner = null;
+    if (aW > bW) winner = "a"; else if (bW > aW) winner = "b";
+    m.result = {
+      winner: decided ? winner : null,
+      aWins: aW, bWins: bW,
+      finishedAt: winner ? new Date().toISOString() : null
+    };
+    m.status = decided ? "done" : "ready";
+  }
+
   return {
     RULES, validateGame, judgeMatch, propagate, autoWinBye,
-    propagateInitial, clearDownstream, submitResult, clearResult, submitTeamResult
+    propagateInitial, clearDownstream, submitResult, clearResult, submitTeamResult,
+    scoreSub, recomputeTeam
   };
 })();
