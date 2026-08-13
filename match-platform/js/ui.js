@@ -274,7 +274,7 @@ window.UI = (function () {
     return h;
   }
 
-  /* ---------- 团体赛：手选分组 + 组内对阵 ---------- */
+  /* ---------- 团体赛：手选分组 + 组间循环对阵 ---------- */
   function renderTeamGroup(d, sel) {
     const rules = Scoring.RULES;
     let ruleOpts = Object.keys(rules).map(k => '<option value="' + k + '" ' + (d.scoringMode === k ? "selected" : "") + '>' + rules[k].name + '</option>').join("");
@@ -313,47 +313,43 @@ window.UI = (function () {
     // 生成 / 重生成
     if (d.status === "drawn" && d.matches.length) {
       h += '<div class="row" style="margin-top:10px">'
-        + '<span class="badge done">已生成组内对阵</span>'
-        + '<span class="muted">共 ' + d.groups.length + ' 组 · ' + d.matches.length + ' 场循环赛</span>'
+        + '<span class="badge done">已生成组间循环对阵</span>'
+        + '<span class="muted">共 ' + d.groups.filter(g => (g.playerIds || []).length > 0).length + ' 组 · ' + d.matches.length + ' 场组间循环</span>'
         + '<button class="btn sm primary" data-act="draw-team">重新生成</button></div>';
       h += renderTeamFixtures(d);
     } else {
       h += '<div class="row" style="margin-top:10px">'
-        + '<button class="btn primary" data-act="draw-team">生成组内对阵</button></div>';
+        + '<button class="btn primary" data-act="draw-team">生成分组对阵</button></div>';
     }
     h += '</div>';
     return h;
   }
 
-  // 组内对阵展示（分组页、赛程页共用）
+  // 组间循环赛对阵展示（分组页、赛程页共用）：每场为「组 vs 组」，只记整组总比分
   function renderTeamFixtures(d) {
     let h = "";
-    const groups = d.groups || [];
-    if (!groups.length) return h;
-    const byGroup = {};
-    (d.matches || []).forEach(m => { (byGroup[m.groupName] = byGroup[m.groupName] || []).push(m); });
-    groups.forEach(g => {
-      const members = (g.playerIds || []).map(pid => { const p = Store.getPlayer(pid); return p ? p.name : "?"; });
+    const matches = d.matches || [];
+    if (!matches.length) return h;
+    const rounds = {};
+    matches.forEach(m => { (rounds[m.round] = rounds[m.round] || []).push(m); });
+    const rkeys = Object.keys(rounds).map(Number).sort((a, b) => a - b);
+    rkeys.forEach(r => {
+      const ms = rounds[r].slice().sort((a, b) => a.slotIndex - b.slotIndex);
       h += '<div class="team-group" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px">';
-      h += '<div class="tg-head" style="margin-bottom:6px"><b>' + esc(g.name) + ' 组</b> <span class="muted">（' + members.length + '人：' + members.map(esc).join("、") + '）</span></div>';
-      const ms = (byGroup[g.name] || []).slice().sort((a, b) => a.round - b.round || a.slotIndex - b.slotIndex);
-      if (!ms.length) { h += '<div class="muted">该组人数不足 2 人，未生成对阵。</div>'; }
-      else {
-        h += '<div class="tbl-wrap"><table><thead><tr><th>轮</th><th>对阵</th><th>比分</th><th>台</th><th>操作</th></tr></thead><tbody>';
-        ms.forEach(m => {
-          const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
-          const score = m.result ? m.result.games.map(gm => gm[0] + ":" + gm[1]).join("，") : "";
-          const op = m.status === "done"
-            ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
-            : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '">录入</button>';
-          h += '<tr><td>' + m.round + '</td><td>' + esc(aL || "待定") + ' vs ' + esc(bL || "待定") + '</td>'
-            + '<td>' + (score ? '<span class="muted">' + score + '</span>' : "—") + '</td>'
-            + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:46px;padding:4px 5px" placeholder="台"></td>'
-            + '<td>' + op + '</td></tr>';
-        });
-        h += '</tbody></table></div>';
-      }
-      h += '</div>';
+      h += '<div class="tg-head" style="margin-bottom:6px"><b>第 ' + r + ' 轮</b></div>';
+      h += '<div class="tbl-wrap"><table><thead><tr><th>组间对抗</th><th>总比分</th><th>台</th><th>操作</th></tr></thead><tbody>';
+      ms.forEach(m => {
+        const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
+        const score = m.result ? (m.result.aTeam + " : " + m.result.bTeam) : "";
+        const op = m.status === "done"
+          ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
+          : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '">录入</button>';
+        h += '<tr><td>' + esc(aL || "待定") + ' <b>VS</b> ' + esc(bL || "待定") + '</td>'
+          + '<td>' + (score ? '<span class="muted">' + score + '</span>' : "—") + '</td>'
+          + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:46px;padding:4px 5px" placeholder="台"></td>'
+          + '<td>' + op + '</td></tr>';
+      });
+      h += '</tbody></table></div></div>';
     });
     return h;
   }
@@ -432,29 +428,23 @@ window.UI = (function () {
   }
 
   function renderTeamBracket(d, sel) {
-    const standings = Stats.teamStandings(d);
+    const rows = Stats.teamStandings(d);
     let h = '<div class="card">' + sel + '<h2>积分榜 · ' + esc(d.name) + '</h2>';
-    if (!standings.length) {
-      h += '<div class="empty">尚未生成对阵或组内无有效比赛。</div>';
+    if (!rows.length) {
+      h += '<div class="empty">尚未生成对阵或组间无有效比赛。</div>';
     } else {
-      standings.forEach(g => {
-        h += '<div class="team-group" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px">';
-        h += '<div class="tg-head" style="margin-bottom:6px"><b>' + esc(g.name) + ' 组 积分榜</b></div>';
-        if (!g.rows.length) { h += '<div class="muted">无选手。</div>'; }
-        else {
-          h += '<div class="tbl-wrap"><table><thead><tr><th>名次</th><th>选手</th><th>胜-负</th><th>局胜-负</th><th>分胜-负</th></tr></thead><tbody>';
-          g.rows.forEach((r, i) => {
-            h += '<tr><td>' + (i + 1) + '</td><td>' + esc(r.label) + '</td>'
-              + '<td>' + r.wins + '-' + r.losses + '</td>'
-              + '<td>' + r.gw + '-' + r.gl + '</td>'
-              + '<td>' + r.pw + '-' + r.pl + '</td></tr>';
-          });
-          h += '</tbody></table></div>';
-        }
-        h += '</div>';
+      h += '<div class="tbl-wrap"><table><thead><tr><th>名次</th><th>组</th><th>胜-平-负</th><th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
+      rows.forEach((r, i) => {
+        const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1);
+        h += '<tr><td class="rank-' + (i + 1) + '">' + (i < 3 ? medal + " " : "") + (i + 1) + '</td>'
+          + '<td>' + esc(r.name) + '</td>'
+          + '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>'
+          + '<td>' + r.gf + '-' + r.ga + '</td>'
+          + '<td><b>' + (r.pts % 1 === 0 ? r.pts : r.pts.toFixed(1)) + '</b></td></tr>';
       });
+      h += '</tbody></table></div>';
       h += '<hr style="border:none;border-top:1px solid var(--line);margin:14px 0">';
-      h += '<h3>各组对阵</h3>' + renderTeamFixtures(d);
+      h += '<h3>组间对阵</h3>' + renderTeamFixtures(d);
     }
     h += '</div>';
     return h;
@@ -520,26 +510,28 @@ window.UI = (function () {
   }
 
   function renderTeamSummary(d, sel) {
-    const standings = Stats.teamStandings(d);
+    const rows = Stats.teamStandings(d);
     let h = '<div class="card">' + sel + '<h2>汇总 · ' + esc(d.name) + '</h2>';
+    const groups = d.groups || [];
+    const activeGroups = groups.filter(g => (g.playerIds || []).length > 0);
+    const totalPlayers = groups.reduce((s, g) => s + (g.playerIds || []).length, 0);
     const done = (d.matches || []).filter(m => m.result).length;
     h += '<div class="stat-grid">'
-      + '<div class="stat-box"><div class="stat-num">' + d.groups.length + '</div><div class="muted">分组数</div></div>'
-      + '<div class="stat-box"><div class="stat-num">' + (d.entrants ? d.entrants.length : 0) + '</div><div class="muted">参赛人数</div></div>'
-      + '<div class="stat-box"><div class="stat-num">' + done + '/' + (d.matches || []).length + '</div><div class="muted">已录场次</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + activeGroups.length + '</div><div class="muted">参赛组数</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + totalPlayers + '</div><div class="muted">参赛人数</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + done + '/' + (d.matches || []).length + '</div><div class="muted">已录场数</div></div>'
       + '</div>';
-    h += '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出各组名次 CSV</button></div>';
-    if (standings.length) {
-      standings.forEach(g => {
-        h += '<h3>' + esc(g.name) + ' 组 名次</h3>';
-        if (!g.rows.length) { h += '<div class="muted">无选手。</div>'; return; }
-        h += '<div class="tbl-wrap"><table><thead><tr><th>名次</th><th>选手</th><th>胜-负</th></tr></thead><tbody>';
-        g.rows.forEach((r, i) => {
-          h += '<tr><td class="rank-' + (i + 1) + '">' + (i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : "") + (i + 1) + '</td>'
-            + '<td>' + esc(r.label) + '</td><td>' + r.wins + '-' + r.losses + '</td></tr>';
-        });
-        h += '</tbody></table></div>';
+    h += '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出分组名次 CSV</button></div>';
+    if (rows.length) {
+      h += '<h3>分组名次</h3><div class="tbl-wrap"><table><thead><tr><th>名次</th><th>组</th><th>胜-平-负</th><th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
+      rows.forEach((r, i) => {
+        h += '<tr><td class="rank-' + (i + 1) + '">' + (i < 3 ? (i === 0 ? "🥇 " : i === 1 ? "🥈 " : "🥉 ") : "") + (i + 1) + '</td>'
+          + '<td>' + esc(r.name) + '</td>'
+          + '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>'
+          + '<td>' + r.gf + '-' + r.ga + '</td>'
+          + '<td><b>' + (r.pts % 1 === 0 ? r.pts : r.pts.toFixed(1)) + '</b></td></tr>';
       });
+      h += '</tbody></table></div>';
     } else {
       h += '<div class="empty">比赛尚未生成或暂无成绩。</div>';
     }
@@ -569,6 +561,7 @@ window.UI = (function () {
    *  比分录入弹窗
    * ========================================================== */
   function scoreModal(disc, m) {
+    if (disc.kind === "team" || m.stage === "team") return teamScoreModal(disc, m);
     const aL = entrantLabel(disc, m.a.entrantId) || "待定";
     const bL = entrantLabel(disc, m.b.entrantId) || "待定";
     const rule = Scoring.RULES[disc.scoringMode] || Scoring.RULES["31x1"];
@@ -596,6 +589,26 @@ window.UI = (function () {
       + '<button class="btn primary block" data-act="save-score" data-id="' + m.id + '">保存</button>'
       + '<button class="btn block" data-act="close-modal">取消</button></div>'
       + (m.result ? '<div class="row" style="margin-top:8px"><button class="btn sm danger block" data-act="clear-score" data-id="' + m.id + '">清除本场成绩</button></div>' : '');
+  }
+
+  // 团体赛：整组当整体，只录入一个团体总比分
+  function teamScoreModal(disc, m) {
+    const aL = entrantLabel(disc, m.a.entrantId) || "待定";
+    const bL = entrantLabel(disc, m.b.entrantId) || "待定";
+    const exi = m.result;
+    const aT = exi ? exi.aTeam : "";
+    const bT = exi ? exi.bTeam : "";
+    return '<h3>录入组间总比分</h3>'
+      + '<div class="vs">' + esc(aL) + ' <small>VS</small> ' + esc(bL) + '</div>'
+      + '<p class="muted" style="margin:4px 0 8px">整组当作一支队伍，只记一个团体总比分（如 ' + esc(aL) + ' 3 : 1 ' + esc(bL) + '）。平局按 0.5 分计。</p>'
+      + '<div class="row">'
+      + '<div class="field" style="flex:1"><label>' + esc(aL) + ' 总比分</label><input id="t_a" inputmode="numeric" value="' + aT + '" placeholder="0"></div>'
+      + '<div class="field" style="flex:1"><label>' + esc(bL) + ' 总比分</label><input id="t_b" inputmode="numeric" value="' + bT + '" placeholder="0"></div>'
+      + '</div>'
+      + '<div class="row" style="margin-top:10px">'
+      + '<button class="btn primary block" data-act="save-score" data-id="' + m.id + '">保存</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>'
+      + (exi ? '<div class="row" style="margin-top:8px"><button class="btn sm danger block" data-act="clear-score" data-id="' + m.id + '">清除本场成绩</button></div>' : '');
   }
 
   /* ============================================================
