@@ -1,5 +1,402 @@
 [
-  { "id": "S_EX1", "name": "（示例）小明", "remaining": 6, "lastAttend": "2026-07-20" },
-  { "id": "S_EX2", "name": "（示例）小红", "remaining": 12, "lastAttend": "2026-08-10" },
-  { "id": "S_EX3", "name": "（示例）小刚", "remaining": 3, "lastAttend": "2026-08-12" }
+  {
+    "id": "S0001",
+    "name": "沈子承",
+    "remaining": 9
+  },
+  {
+    "id": "S0002",
+    "name": "程俊辉",
+    "remaining": 10
+  },
+  {
+    "id": "S0003",
+    "name": "曹宛宁",
+    "remaining": 9
+  },
+  {
+    "id": "S0004",
+    "name": "黄文杰",
+    "remaining": 11
+  },
+  {
+    "id": "S0005",
+    "name": "胡昱宸",
+    "remaining": 76
+  },
+  {
+    "id": "S0006",
+    "name": "周语安",
+    "remaining": 10
+  },
+  {
+    "id": "S0007",
+    "name": "郭一谦/郭奕妍",
+    "remaining": 34
+  },
+  {
+    "id": "S0008",
+    "name": "熊一凡",
+    "remaining": 11
+  },
+  {
+    "id": "S0009",
+    "name": "廖梓涵",
+    "remaining": 12
+  },
+  {
+    "id": "S0010",
+    "name": "陈志林",
+    "remaining": 7
+  },
+  {
+    "id": "S0011",
+    "name": "孔坤",
+    "remaining": 8
+  },
+  {
+    "id": "S0012",
+    "name": "石娟",
+    "remaining": 8
+  },
+  {
+    "id": "S0013",
+    "name": "振洪宇 振洪新",
+    "remaining": 30
+  },
+  {
+    "id": "S0014",
+    "name": "蒋文进",
+    "remaining": 0
+  },
+  {
+    "id": "S0015",
+    "name": "丹丹",
+    "remaining": 9
+  },
+  {
+    "id": "S0016",
+    "name": "吴宇楠",
+    "remaining": 35
+  },
+  {
+    "id": "S0017",
+    "name": "徐梓辰",
+    "remaining": 0
+  },
+  {
+    "id": "S0018",
+    "name": "元奕诺",
+    "remaining": 16
+  },
+  {
+    "id": "S0019",
+    "name": "邹书云",
+    "remaining": 0
+  },
+  {
+    "id": "S0020",
+    "name": "梁晟宇",
+    "remaining": 31
+  },
+  {
+    "id": "S0021",
+    "name": "黄勉",
+    "remaining": 7
+  },
+  {
+    "id": "S0022",
+    "name": "阮恩婷",
+    "remaining": 6
+  },
+  {
+    "id": "S0023",
+    "name": "熊沁杰尼",
+    "remaining": 17
+  },
+  {
+    "id": "S0024",
+    "name": "邹亦欢",
+    "remaining": 0
+  },
+  {
+    "id": "S0025",
+    "name": "陶思晨",
+    "remaining": 8
+  },
+  {
+    "id": "S0026",
+    "name": "熊安然",
+    "remaining": 12
+  },
+  {
+    "id": "S0027",
+    "name": "沈熠南",
+    "remaining": 41
+  },
+  {
+    "id": "S0028",
+    "name": "木心",
+    "remaining": 4
+  },
+  {
+    "id": "S0029",
+    "name": "刘曾熙",
+    "remaining": 7
+  },
+  {
+    "id": "S0030",
+    "name": "山译博",
+    "remaining": 8
+  },
+  {
+    "id": "S0031",
+    "name": "易子文",
+    "remaining": 11
+  },
+  {
+    "id": "S0032",
+    "name": "杨济鸿",
+    "remaining": 2
+  },
+  {
+    "id": "S0033",
+    "name": "徐宁远",
+    "remaining": 17
+  },
+  {
+    "id": "S0034",
+    "name": "曹尹彦",
+    "remaining": 25
+  },
+  {
+    "id": "S0035",
+    "name": "吴泓睿",
+    "remaining": 21
+  },
+  {
+    "id": "S0036",
+    "name": "陈梓诺",
+    "remaining": 14
+  },
+  {
+    "id": "S0037",
+    "name": "朱思然",
+    "remaining": 18
+  },
+  {
+    "id": "S0038",
+    "name": "罗悦芸",
+    "remaining": 0
+  },
+  {
+    "id": "S0039",
+    "name": "李一鸣",
+    "remaining": 1
+  },
+  {
+    "id": "S0040",
+    "name": "熊一鸣",
+    "remaining": 0
+  },
+  {
+    "id": "S0041",
+    "name": "杨星恒",
+    "remaining": 9
+  },
+  {
+    "id": "S0042",
+    "name": "黄敬敏",
+    "remaining": 7
+  },
+  {
+    "id": "S0043",
+    "name": "唐浩南",
+    "remaining": 7
+  },
+  {
+    "id": "S0044",
+    "name": "叶明哲",
+    "remaining": 12
+  },
+  {
+    "id": "S0045",
+    "name": "丹丹",
+    "remaining": 0
+  },
+  {
+    "id": "S0046",
+    "name": "李玲",
+    "remaining": 0
+  },
+  {
+    "id": "S0047",
+    "name": "刘林香",
+    "remaining": 0
+  },
+  {
+    "id": "S0048",
+    "name": "赵悦",
+    "remaining": 8
+  },
+  {
+    "id": "S0049",
+    "name": "朱芳",
+    "remaining": 10
+  },
+  {
+    "id": "S0050",
+    "name": "黄晴",
+    "remaining": 9
+  },
+  {
+    "id": "S0051",
+    "name": "徐琦",
+    "remaining": 0
+  },
+  {
+    "id": "S0052",
+    "name": "羽姐",
+    "remaining": 2
+  },
+  {
+    "id": "S0053",
+    "name": "朱浩天",
+    "remaining": 3
+  },
+  {
+    "id": "S0054",
+    "name": "胥龙辉",
+    "remaining": 0
+  },
+  {
+    "id": "S0055",
+    "name": "李苗",
+    "remaining": 0
+  },
+  {
+    "id": "S0056",
+    "name": "邱",
+    "remaining": 2
+  },
+  {
+    "id": "S0057",
+    "name": "程昱晏",
+    "remaining": 4
+  },
+  {
+    "id": "S0058",
+    "name": "郑亮",
+    "remaining": 5
+  },
+  {
+    "id": "S0059",
+    "name": "黄宇婷",
+    "remaining": 1
+  },
+  {
+    "id": "S0060",
+    "name": "高梓杰",
+    "remaining": 17
+  },
+  {
+    "id": "S0061",
+    "name": "费皙媛",
+    "remaining": 3
+  },
+  {
+    "id": "S0062",
+    "name": "彭佳妤",
+    "remaining": 31
+  },
+  {
+    "id": "S0063",
+    "name": "秦梓悦",
+    "remaining": 1
+  },
+  {
+    "id": "S0064",
+    "name": "高铭辰",
+    "remaining": 19
+  },
+  {
+    "id": "S0065",
+    "name": "朱嘉颖",
+    "remaining": 0
+  },
+  {
+    "id": "S0066",
+    "name": "宛梓恩",
+    "remaining": 0
+  },
+  {
+    "id": "S0067",
+    "name": "琦姐",
+    "remaining": 9
+  },
+  {
+    "id": "S0068",
+    "name": "敖李",
+    "remaining": 0
+  },
+  {
+    "id": "S0069",
+    "name": "杨启承",
+    "remaining": 54
+  },
+  {
+    "id": "S0070",
+    "name": "桂浩然",
+    "remaining": 51
+  },
+  {
+    "id": "S0071",
+    "name": "沈永佳",
+    "remaining": 10
+  },
+  {
+    "id": "S0072",
+    "name": "吴思妤",
+    "remaining": 12
+  },
+  {
+    "id": "S0073",
+    "name": "邓琬妮",
+    "remaining": 7
+  },
+  {
+    "id": "S0074",
+    "name": "邓安淇",
+    "remaining": 0
+  },
+  {
+    "id": "S0075",
+    "name": "东哥",
+    "remaining": 2
+  },
+  {
+    "id": "S0076",
+    "name": "楠哥",
+    "remaining": 50
+  },
+  {
+    "id": "S0077",
+    "name": "沈梓璇",
+    "remaining": 0
+  },
+  {
+    "id": "S0078",
+    "name": "魏硕辰",
+    "remaining": 24
+  },
+  {
+    "id": "S0079",
+    "name": "任芊霖",
+    "remaining": 1
+  },
+  {
+    "id": "S0080",
+    "name": "邓泽兮",
+    "remaining": 8
+  }
 ]
