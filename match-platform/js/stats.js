@@ -50,13 +50,20 @@ window.Stats = (function () {
     return result;
   }
 
-  /* 团体赛：组间循环赛积分榜（整组当整体，按积分→总比分净胜→总比分 排名） */
+  /* 团体赛积分榜
+   * - overall 模式：整组整体记总比分，按 胜/平/负 + 总比分 排名
+   * - discipline 模式：整队按「分项胜场」定团队胜负，按 团队胜场→分项胜场→总得分净胜 排名
+   */
   function teamStandings(disc) {
     if (!disc || disc.kind !== "team") return [];
     const entrants = disc.entrants || [];
     if (!entrants.length) return [];
-    const matches = (disc.matches || []).filter(m => m.stage === "team" && m.result);
+    if (disc.teamFormat && disc.teamFormat !== "overall") return disciplineStandings(disc, entrants);
+    return overallStandings(disc, entrants);
+  }
 
+  function overallStandings(disc, entrants) {
+    const matches = (disc.matches || []).filter(m => m.stage === "team" && m.result);
     const rec = {};
     entrants.forEach(e => {
       rec[e.id] = {
@@ -74,10 +81,41 @@ window.Stats = (function () {
       else if (bT > aT) { b.win++; a.loss++; b.pts += 1; }
       else { a.draw++; b.draw++; a.pts += 0.5; b.pts += 0.5; }
     });
-
     return Object.values(rec).sort((x, y) =>
       (y.pts - x.pts) || ((y.gf - y.ga) - (x.gf - x.ga)) || (y.gf - x.gf));
   }
 
-  return { finalRanking, teamStandings };
+  function disciplineStandings(disc, entrants) {
+    const matches = (disc.matches || []).filter(m => m.stage === "team" && m.result && m.result.winner);
+    const rec = {};
+    entrants.forEach(e => {
+      rec[e.id] = {
+        id: e.id, name: e.groupName || e.label, label: e.label,
+        played: 0, twins: 0, tlosses: 0, dwins: 0, dlosses: 0, gf: 0, ga: 0, pts: 0
+      };
+    });
+    matches.forEach(m => {
+      const a = rec[m.a.entrantId], b = rec[m.b.entrantId];
+      if (!a || !b) return;
+      a.played++; b.played++;
+      if (m.result.winner === "a") { a.twins++; b.tlosses++; }
+      else if (m.result.winner === "b") { b.twins++; a.tlosses++; }
+      (m.subs || []).forEach(s => {
+        if (!s.result || !s.result.winner) return;
+        const w = s.result.winner === "a" ? a : b;
+        const l = s.result.winner === "a" ? b : a;
+        w.dwins++; l.dlosses++;
+        w.gf += (s.result.aPoints || 0); w.ga += (s.result.bPoints || 0);
+        l.gf += (s.result.bPoints || 0); l.ga += (s.result.aPoints || 0);
+      });
+    });
+    Object.values(rec).forEach(r => { r.pts = r.twins; });
+    return Object.values(rec).sort((x, y) =>
+      (y.pts - x.pts)
+      || (y.dwins - x.dwins)
+      || ((y.gf - y.ga) - (x.gf - x.ga))
+      || (y.gf - x.gf));
+  }
+
+  return { finalRanking, teamStandings, overallStandings, disciplineStandings };
 })();
