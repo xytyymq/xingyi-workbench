@@ -76,9 +76,68 @@ window.Seeding = (function () {
       p.present && p.disciplines.includes(code) && !resolvePartner(p));
   }
 
-  /* ---------- 团体赛：手选分组 + 组间循环赛（整组当整体记总比分） ---------- */
+  /* ---------- 团体赛：手选分组 + 多种赛制 ---------- */
   const TEAM_MAX_GROUPS = 8;
   const GROUP_LETTERS = "ABCDEFGH";
+
+  // 团体赛赛制预设（discipline 模式 = 队间循环 + 每对阵拆成多个分项小场，分项计分、整队按分项胜场定胜负）
+  // overall 模式保留原「整组整体记总比分」玩法。
+  const TEAM_FORMATS = {
+    overall:   { label: "整组整体赛（原）", mode: "overall", slots: function () { return []; } },
+    thomas:    {
+      label: "分项团体·汤尤杯式", mode: "discipline", genderBased: true,
+      slots: function () {
+        return [
+          { key: "S1", kind: "S", name: "第一单打" },
+          { key: "S2", kind: "S", name: "第二单打" },
+          { key: "S3", kind: "S", name: "第三单打" },
+          { key: "D1", kind: "D", name: "第一双打" },
+          { key: "D2", kind: "D", name: "第二双打" }
+        ];
+      }
+    },
+    sudirman:  {
+      label: "混合团体·苏迪曼杯式", mode: "discipline",
+      slots: function () {
+        return [
+          { key: "XD", code: "XD", name: "混合双打" },
+          { key: "MS", code: "MS", name: "男子单打" },
+          { key: "WS", code: "WS", name: "女子单打" },
+          { key: "MD", code: "MD", name: "男子双打" },
+          { key: "WD", code: "WD", name: "女子双打" }
+        ];
+      }
+    },
+    amateur:   {
+      label: "业余五场混合", mode: "discipline", slotsEditable: true,
+      slots: function () {
+        return [
+          { key: "D1", code: "MD", name: "男子双打" },
+          { key: "X1", code: "XD", name: "混合双打" },
+          { key: "D2", code: "MD", name: "男子双打" },
+          { key: "X2", code: "XD", name: "混合双打" },
+          { key: "D3", code: "MD", name: "男子双打" }
+        ];
+      }
+    }
+  };
+
+  // 取某 slot 对应的单项 code（thomas 的 S/D 按队伍性别派生 MS/WS/MD/WD）
+  function slotCodeOf(disc, slot) {
+    if (slot.code) return slot.code;
+    const g = (disc.teamGender === "女") ? "W" : "M";
+    return slot.kind === "D" ? g + "D" : g + "S";
+  }
+
+  // 取某赛制当前的 slot 列表（discipline 模式用 disc.teamSlots，否则用预设）
+  function currentSlots(disc) {
+    if (disc.teamFormat && disc.teamFormat !== "overall") {
+      if (disc.teamSlots && disc.teamSlots.length) return disc.teamSlots;
+      const fmt = TEAM_FORMATS[disc.teamFormat];
+      return fmt ? fmt.slots() : [];
+    }
+    return [];
+  }
 
   // 圆桌法生成单组循环赛对阵（返回 [{a,b,round,slot}]，entrantId）
   function roundRobin(list) {
@@ -104,8 +163,15 @@ window.Seeding = (function () {
   }
 
   // 组间循环赛：每个"组"当作一支队伍，组与组之间两两循环
-  // entrants = 各组（团队单元）；match.stage = "team"，记录双方整组总比分
+  // entrants = 各组（团队单元）；match.stage = "team"
+  //  - overall 模式：记录双方整组总比分
+  //  - discipline 模式：每对阵拆成若干分项小场（subs），分项计分、整队按分项胜场定胜负
   function generateTeamMatches(disc) {
+    if (disc.teamFormat && disc.teamFormat !== "overall") return generateDisciplineTeam(disc);
+    return generateOverallTeam(disc);
+  }
+
+  function generateOverallTeam(disc) {
     const groups = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
     if (groups.length < 2) return { matches: [], groups: groups.length };
 
@@ -116,10 +182,9 @@ window.Seeding = (function () {
     }));
     disc.entrants = entrants;
 
-    // 在"组"之间做循环赛（roundRobin 作用于组 entrant 列表）
     const pairs = roundRobin(entrants); // [{a,b,round,slot}]，a/b 为 entrantId
     const matches = pairs.map(pm => ({
-      id: Store.uid("M"), stage: "team", round: pm.round, slotIndex: pm.slot,
+      id: Store.uid("M"), stage: "team", format: "overall", round: pm.round, slotIndex: pm.slot,
       roundLabel: "第" + pm.round + "轮",
       a: { entrantId: pm.a }, b: { entrantId: pm.b },
       nextMatchId: null, nextSlot: null, loserNextMatchId: null, loserNextSlot: null,
@@ -135,6 +200,50 @@ window.Seeding = (function () {
     return { matches: matches, groups: groups.length };
   }
 
+  // discipline 模式：队间循环，每对阵生成 teamSlots 个分项小场
+  function generateDisciplineTeam(disc) {
+    const teams = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
+    if (teams.length < 2) return { matches: [], groups: teams.length };
+
+    const entrants = teams.map(g => ({
+      id: Store.uid("E"), kind: "team", groupName: g.name, label: g.name,
+      playerIds: g.playerIds.slice(), seed: 0, status: "active"
+    }));
+    disc.entrants = entrants;
+
+    const entByTeam = {};
+    teams.forEach((g, i) => { entByTeam[entrants[i].id] = g; });
+
+    const slots = currentSlots(disc);
+    if (!slots.length) return { matches: [], groups: teams.length };
+
+    const pairs = roundRobin(entrants); // [{a,b,round,slot}]
+    const matches = pairs.map(pm => {
+      const ag = entByTeam[pm.a], bg = entByTeam[pm.b];
+      const subs = slots.map(s => ({
+        slotKey: s.key, code: slotCodeOf(disc, s), name: s.name,
+        a: { playerIds: ((ag.lineup && ag.lineup[s.key]) || []).slice() },
+        b: { playerIds: ((bg.lineup && bg.lineup[s.key]) || []).slice() },
+        result: null
+      }));
+      return {
+        id: Store.uid("M"), stage: "team", format: "discipline", round: pm.round, slotIndex: pm.slot,
+        roundLabel: "第" + pm.round + "轮",
+        a: { entrantId: pm.a }, b: { entrantId: pm.b },
+        subs: subs, result: null, status: "ready", court: ""
+      };
+    });
+
+    disc.matches = matches;
+    disc.totalRounds = pairs.length ? Math.max.apply(null, pairs.map(p => p.round)) : 0;
+    disc.bracketSize = entrants.length;
+    disc.byeCount = 0;
+    disc.status = "drawn";
+    Store.save();
+    return { matches: matches, groups: teams.length };
+  }
+
   return { buildEntrants, assignSeeds, makeBracket, missingPartner, DISC_SIZE,
-    roundRobin, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS };
+    roundRobin, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS,
+    TEAM_FORMATS, slotCodeOf, currentSlots };
 })();
