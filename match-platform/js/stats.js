@@ -58,8 +58,28 @@ window.Stats = (function () {
     if (!disc || disc.kind !== "team") return [];
     const entrants = disc.entrants || [];
     if (!entrants.length) return [];
+    if (disc.teamFormat === "league") return leagueStandings(disc);
     if (disc.teamFormat && disc.teamFormat !== "overall") return disciplineStandings(disc, entrants);
     return overallStandings(disc, entrants);
+  }
+
+  // 全员项目联赛：按"实际得分累计"排 1-4 名
+  function leagueStandings(disc) {
+    const groups = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
+    const matches = (disc.matches || []).filter(m => m.stage === "league" && m.result);
+    const rec = {};
+    groups.forEach(g => { rec[g.name] = { id: g.name, name: g.name, label: g.name, total: 0, wins: 0, played: 0, gf: 0, ga: 0 }; });
+    matches.forEach(m => {
+      const ag = rec[m.a.groupId], bg = rec[m.b.groupId];
+      if (!ag || !bg) return;
+      const ga = m.result.aPoints || 0, gb = m.result.bPoints || 0;
+      ag.played++; bg.played++;
+      ag.total += ga; bg.total += gb;
+      ag.gf += ga; ag.ga += gb; bg.gf += gb; bg.ga += ga;
+      if (m.result.winner === "a") ag.wins++; else if (m.result.winner === "b") bg.wins++;
+    });
+    return Object.values(rec).sort((x, y) =>
+      (y.total - x.total) || (y.wins - x.wins) || ((y.gf - y.ga) - (x.gf - x.ga)) || (y.gf - x.gf));
   }
 
   function overallStandings(disc, entrants) {
@@ -117,5 +137,5 @@ window.Stats = (function () {
       || (y.gf - x.gf));
   }
 
-  return { finalRanking, teamStandings, overallStandings, disciplineStandings };
+  return { finalRanking, teamStandings, overallStandings, disciplineStandings, leagueStandings };
 })();
