@@ -66,6 +66,17 @@ window.CSVUtil = (function () {
     return Array.from(new Set(codes));
   }
 
+  // 性别归一化：M/F/男/女/1/0/男生/女生/男士/女士 等 → 男 / 女
+  function normalizeGender(v) {
+    if (!v) return "";
+    const s = String(v).trim().toLowerCase();
+    if (/^(m|male|1|男)/.test(s) || s.indexOf("男生") >= 0 || s.indexOf("男士") >= 0) return "男";
+    if (/^(f|female|0|女)/.test(s) || s.indexOf("女生") >= 0 || s.indexOf("女士") >= 0) return "女";
+    if (s.indexOf("男") >= 0) return "男";
+    if (s.indexOf("女") >= 0) return "女";
+    return "";
+  }
+
   function mapRow(headers, row) {
     const o = {};
     headers.forEach((h, i) => {
@@ -75,6 +86,7 @@ window.CSVUtil = (function () {
       if (key === "disciplines") o.disciplines = resolveCodes(v);
       else if (key === "level") o.level = v ? parseInt(v, 10) || null : null;
       else if (key === "seed") o.seed = v ? parseInt(v, 10) || 0 : 0;
+      else if (key === "gender") o.gender = normalizeGender(v);
       else if (v) o[key] = v;
     });
     return o;
@@ -176,7 +188,7 @@ window.CSVUtil = (function () {
   }
 
   return {
-    DISC_BY_CODE, CODE_BY_NAME, HEADER_MAP,
+    DISC_BY_CODE, CODE_BY_NAME, HEADER_MAP, normalizeGender,
     sniffDelimiter, parseCSVLine, parseTable, resolveCodes, rowsToPlayers,
     download, exportJSON, exportPlayersCSV, exportRankCSV, exportTeamRankCSV, csvCell, dateStamp
   };
