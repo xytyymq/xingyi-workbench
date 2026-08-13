@@ -37,11 +37,13 @@ window.UI = (function () {
   function newDiscipline(code) {
     if (code === "TEAM") {
       const names = Seeding.GROUP_LETTERS.slice(0, 2).split("");
+      const fmt = Seeding.TEAM_FORMATS.overall;
       return {
         id: Store.uid("D"), code: "TEAM", name: "团体赛", kind: "team",
+        teamFormat: "overall", teamGender: "男", teamSlots: [],
         scoringMode: "31x1", thirdPlace: false, seedCount: 0,
         groupCount: 2,
-        groups: names.map(n => ({ name: n, playerIds: [] })),
+        groups: names.map(n => ({ name: n, playerIds: [], lineup: {} })),
         entrants: [], matches: [], totalRounds: 0, bracketSize: 0, byeCount: 0, status: "empty"
       };
     }
@@ -300,6 +302,85 @@ window.UI = (function () {
     return h;
   }
 
+  /* ---------- 团体赛 helpers ---------- */
+  function slotGender(code) {
+    if (code === "MS" || code === "MD") return "男";
+    if (code === "WS" || code === "WD") return "女";
+    return null;
+  }
+  function isDoublesCode(code) { return code === "MD" || code === "WD" || code === "XD"; }
+
+  // 取某队（组）中可打该 slot 的选手（按性别过滤）
+  function teamPlayersForSlot(disc, group, slot) {
+    const code = Seeding.slotCodeOf(disc, slot);
+    const g = slotGender(code);
+    return (group.playerIds || []).map(id => Store.getPlayer(id)).filter(p => p && (!g || p.gender === g));
+  }
+
+  function teamFormatOptionsHtml(disc) {
+    const fmts = Seeding.TEAM_FORMATS;
+    let opts = "";
+    Object.keys(fmts).forEach(k => {
+      opts += '<option value="' + k + '" ' + (disc.teamFormat === k ? "selected" : "") + '>' + fmts[k].label + '</option>';
+    });
+    return opts;
+  }
+
+  // amateur 模式的 slot 编辑（项目下拉 + 上移/下移/删除 + 新增）
+  function slotConfigHtml(disc) {
+    const slots = disc.teamSlots || [];
+    let h = '<div class="field"><label>出场顺序 / 项目（业余五场混合可自定义）</label><div class="slot-cfg">';
+    slots.forEach((s, i) => {
+      const code = s.code || Seeding.slotCodeOf(disc, s);
+      const codeOpts = ["MS", "WS", "MD", "WD", "XD"].map(c =>
+        '<option value="' + c + '" ' + (c === code ? "selected" : "") + '>' + (CSVUtil.DISC_BY_CODE[c] || c) + '</option>').join("");
+      h += '<div class="slot-cfg-row">'
+        + '<span class="idx">' + (i + 1) + '.</span>'
+        + '<select class="tslot-code" data-i="' + i + '">' + codeOpts + '</select>'
+        + '<button class="btn sm" data-act="team-slot-up" data-i="' + i + '"' + (i === 0 ? " disabled" : "") + '>↑</button>'
+        + '<button class="btn sm" data-act="team-slot-down" data-i="' + i + '"' + (i === slots.length - 1 ? " disabled" : "") + '>↓</button>'
+        + '<button class="btn sm danger" data-act="team-slot-del" data-i="' + i + '"' + (slots.length <= 2 ? " disabled" : "") + '>删</button>'
+        + '</div>';
+    });
+    h += '<button class="btn sm" data-act="team-slot-add"' + (slots.length >= 7 ? " disabled" : "") + '>＋ 增加一项</button>';
+    h += '</div></div>';
+    return h;
+  }
+
+  // discipline 模式：各队排阵 UI
+  function lineupEditorHtml(disc) {
+    const slots = Seeding.currentSlots(disc);
+    const groups = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
+    if (!groups.length) return '<div class="empty">请先给各组分配至少 1 名选手。</div>';
+    let h = '<div class="field"><label>各队排阵（每队按下列分项填入出场选手）</label>';
+    groups.forEach((g, gi) => {
+      const gname = esc(g.name);
+      h += '<div class="lineup-card" style="border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0">';
+      h += '<div class="tg-head" style="margin-bottom:6px"><b>' + gname + ' 组</b> <span class="muted">（' + (g.playerIds || []).length + ' 人）</span></div>';
+      slots.forEach(s => {
+        const code = Seeding.slotCodeOf(disc, s);
+        const pool = teamPlayersForSlot(disc, g, s);
+        const selName = "tl_" + gi + "_" + s.key;
+        const assigned = (g.lineup && g.lineup[s.key]) || [];
+        if (isDoublesCode(code)) {
+          const p1 = pool.map(p => '<option value="' + p.id + '" ' + (assigned[0] === p.id ? "selected" : "") + '>' + esc(p.name) + '</option>').join("");
+          const p2 = pool.map(p => '<option value="' + p.id + '" ' + (assigned[1] === p.id ? "selected" : "") + '>' + esc(p.name) + '</option>').join("");
+          h += '<div class="lineup-row"><span class="ln">' + esc(s.name) + '</span>'
+            + '<select class="tlineup" data-gi="' + gi + '" data-slot="' + s.key + '" data-pos="0"><option value="">—</option>' + p1 + '</select>'
+            + '<span class="vs-sep">/</span>'
+            + '<select class="tlineup" data-gi="' + gi + '" data-slot="' + s.key + '" data-pos="1"><option value="">—</option>' + p2 + '</select></div>';
+        } else {
+          const p1 = pool.map(p => '<option value="' + p.id + '" ' + (assigned[0] === p.id ? "selected" : "") + '>' + esc(p.name) + '</option>').join("");
+          h += '<div class="lineup-row"><span class="ln">' + esc(s.name) + '</span>'
+            + '<select class="tlineup" data-gi="' + gi + '" data-slot="' + s.key + '" data-pos="0"><option value="">—</option>' + p1 + '</select></div>';
+        }
+      });
+      h += '</div>';
+    });
+    h += '</div>';
+    return h;
+  }
+
   /* ---------- 团体赛：手选分组 + 组间循环对阵 ---------- */
   function renderTeamGroup(d, sel) {
     const rules = Scoring.RULES;
@@ -307,11 +388,25 @@ window.UI = (function () {
     let h = '<div class="card">' + sel;
     h += '<div class="spread"><h2>' + esc(d.name) + ' · 分组与对阵</h2></div>';
 
-    // 赛制
+    // 团体赛赛制选择
+    h += '<div class="field" style="margin:8px 0"><label>团体赛赛制</label><select id="team_format">' + teamFormatOptionsHtml(d) + '</select></div>';
+
+    const isDisc = d.teamFormat && d.teamFormat !== "overall";
+    if (d.teamFormat === "thomas") {
+      h += '<div class="field"><label>队伍性别</label><div class="row" style="align-items:center">'
+        + '<button class="btn sm" data-act="team-gender" data-g="男"' + (d.teamGender === "男" ? ' style="font-weight:800"' : "") + '>男子团体</button>'
+        + '<button class="btn sm" data-act="team-gender" data-g="女"' + (d.teamGender === "女" ? ' style="font-weight:800"' : "") + '>女子团体</button>'
+        + '</div></div>';
+    }
+    if (isDisc && Seeding.TEAM_FORMATS[d.teamFormat] && Seeding.TEAM_FORMATS[d.teamFormat].slotsEditable) {
+      h += slotConfigHtml(d);
+    }
+
+    // 赛制（计分）
     h += '<div class="field" style="margin:8px 0"><label>赛制（计分）</label><select id="g_scoring">' + ruleOpts + '</select></div>';
 
     // 分组数量
-    h += '<div class="field"><label>分组数量（最多 8 组）</label>'
+    h += '<div class="field"><label>分组数量（最多 8 组，每组=一支队伍）</label>'
       + '<div class="row" style="align-items:center">'
       + '<button class="btn sm" data-act="team-gc" data-d="-1">－</button>'
       + '<div style="min-width:72px;text-align:center;font-size:18px;font-weight:800">' + d.groupCount + ' 组</div>'
@@ -319,12 +414,12 @@ window.UI = (function () {
       + '<span class="muted" style="margin-left:8px">组名：' + (d.groups || []).map(g => esc(g.name)).join("、") + '</span>'
       + '</div></div>';
 
-    // 手选名单
+    // 手选名单（分组）
     const players = Store.allPlayers();
     if (!players.length) {
       h += '<div class="empty">名单为空，请先到「名单」添加选手。</div>';
     } else {
-      h += '<p class="muted" style="margin:6px 0">将下方选手分到各组（可手选），未分组的不会参赛。</p>';
+      h += '<p class="muted" style="margin:6px 0">将下方选手分到各组（每组=一支队伍），未分组的不会参赛。</p>';
       h += '<div class="tbl-wrap"><table><thead><tr><th>选手</th><th>单位</th><th>分组</th></tr></thead><tbody>';
       players.forEach(p => {
         const opts = '<option value="">未分组</option>' + (d.groups || []).map(g =>
@@ -336,11 +431,14 @@ window.UI = (function () {
       h += '</tbody></table></div>';
     }
 
+    // 排阵（discipline 模式）
+    if (isDisc) h += lineupEditorHtml(d);
+
     // 生成 / 重生成
     if (d.status === "drawn" && d.matches.length) {
       h += '<div class="row" style="margin-top:10px">'
         + '<span class="badge done">已生成组间循环对阵</span>'
-        + '<span class="muted">共 ' + d.groups.filter(g => (g.playerIds || []).length > 0).length + ' 组 · ' + d.matches.length + ' 场组间循环</span>'
+        + '<span class="muted">共 ' + (d.groups || []).filter(g => (g.playerIds || []).length > 0).length + ' 队 · ' + d.matches.length + ' 场' + (isDisc ? '（每场 ' + (Seeding.currentSlots(d).length) + ' 分项）' : ' 组间循环') + '</span>'
         + '<button class="btn sm primary" data-act="draw-team">重新生成</button></div>';
       h += renderTeamFixtures(d);
     } else {
@@ -351,11 +449,12 @@ window.UI = (function () {
     return h;
   }
 
-  // 组间循环赛对阵展示（分组页、赛程页共用）：每场为「组 vs 组」，只记整组总比分
+  // 组间循环赛对阵展示（分组页、赛程页共用）
   function renderTeamFixtures(d) {
     let h = "";
     const matches = d.matches || [];
     if (!matches.length) return h;
+    const isDisc = d.teamFormat && d.teamFormat !== "overall";
     const rounds = {};
     matches.forEach(m => { (rounds[m.round] = rounds[m.round] || []).push(m); });
     const rkeys = Object.keys(rounds).map(Number).sort((a, b) => a - b);
@@ -363,20 +462,55 @@ window.UI = (function () {
       const ms = rounds[r].slice().sort((a, b) => a.slotIndex - b.slotIndex);
       h += '<div class="team-group" style="margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px">';
       h += '<div class="tg-head" style="margin-bottom:6px"><b>第 ' + r + ' 轮</b></div>';
-      h += '<div class="tbl-wrap"><table><thead><tr><th>组间对抗</th><th>总比分</th><th>台</th><th>操作</th></tr></thead><tbody>';
-      ms.forEach(m => {
-        const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
-        const score = m.result ? (m.result.aTeam + " : " + m.result.bTeam) : "";
-        const op = m.status === "done"
-          ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
-          : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '">录入</button>';
-        h += '<tr><td>' + esc(aL || "待定") + ' <b>VS</b> ' + esc(bL || "待定") + '</td>'
-          + '<td>' + (score ? '<span class="muted">' + score + '</span>' : "—") + '</td>'
-          + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:46px;padding:4px 5px" placeholder="台"></td>'
-          + '<td>' + op + '</td></tr>';
-      });
-      h += '</tbody></table></div></div>';
+      if (isDisc) {
+        ms.forEach(m => { h += teamMatchBlock(d, m); });
+      } else {
+        h += '<div class="tbl-wrap"><table><thead><tr><th>组间对抗</th><th>总比分</th><th>台</th><th>操作</th></tr></thead><tbody>';
+        ms.forEach(m => {
+          const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
+          const score = m.result ? (m.result.aTeam + " : " + m.result.bTeam) : "";
+          const op = m.status === "done"
+            ? '<button class="btn sm" data-act="score" data-id="' + m.id + '">修改</button>'
+            : '<button class="btn sm primary" data-act="score" data-id="' + m.id + '">录入</button>';
+          h += '<tr><td>' + esc(aL || "待定") + ' <b>VS</b> ' + esc(bL || "待定") + '</td>'
+            + '<td>' + (score ? '<span class="muted">' + score + '</span>' : "—") + '</td>'
+            + '<td><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:46px;padding:4px 5px" placeholder="台"></td>'
+            + '<td>' + op + '</td></tr>';
+        });
+        h += '</tbody></table></div>';
+      }
+      h += '</div>';
     });
+    return h;
+  }
+
+  // discipline 模式：一场团体对抗 = 多个分项小场
+  function teamMatchBlock(d, m) {
+    const aL = entrantLabel(d, m.a.entrantId), bL = entrantLabel(d, m.b.entrantId);
+    let h = '<div class="team-match" style="border:1px dashed var(--line);border-radius:10px;padding:8px 10px;margin:8px 0">';
+    const tscore = m.result ? ('<b>' + (m.result.aWins || 0) + ' : ' + (m.result.bWins || 0) + '</b>') : '<span class="muted">—</span>';
+    h += '<div class="tm-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+      + '<span><b>' + esc(aL || "待定") + '</b> VS <b>' + esc(bL || "待定") + '</b></span>'
+      + '<span>分项比分 ' + tscore + (m.status === "done" ? ' <span class="badge done">已定</span>' : '') + '</span></div>';
+    (m.subs || []).forEach((s, i) => {
+      const aIds = s.a.playerIds || [], bIds = s.b.playerIds || [];
+      const aNames = aIds.map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/") || "—";
+      const bNames = bIds.map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/") || "—";
+      let sc = "—";
+      if (s.result) sc = s.result.games.map(g => g[0] + ":" + g[1]).join("，");
+      else if (!aIds.length || !bIds.length) sc = "（未排阵）";
+      const btn = (s.result || (!aIds.length || !bIds.length))
+        ? '<button class="btn sm" data-act="score-sub" data-id="' + m.id + '" data-sub="' + i + '">'
+          + (s.result ? (aIds.length && bIds.length ? "改" : "判") : (aIds.length && bIds.length ? "录" : "判")) + '</button>'
+        : '<button class="btn sm primary" data-act="score-sub" data-id="' + m.id + '" data-sub="' + i + '">录</button>';
+      h += '<div class="lineup-row" style="padding:3px 0">'
+        + '<span class="ln">' + esc(s.name) + '</span>'
+        + '<span class="vs">' + esc(aNames) + ' <small>VS</small> ' + esc(bNames) + '</span>'
+        + '<span class="muted">' + sc + '</span>'
+        + btn + '</div>';
+    });
+    h += '<div class="row" style="margin-top:4px"><span class="muted">台号</span><input id="court_' + m.id + '" value="' + esc(m.court || "") + '" style="width:54px;padding:4px 6px" placeholder="台"></div>';
+    h += '</div>';
     return h;
   }
 
@@ -455,22 +589,29 @@ window.UI = (function () {
 
   function renderTeamBracket(d, sel) {
     const rows = Stats.teamStandings(d);
+    const isDisc = d.teamFormat && d.teamFormat !== "overall";
     let h = '<div class="card">' + sel + '<h2>积分榜 · ' + esc(d.name) + '</h2>';
     if (!rows.length) {
       h += '<div class="empty">尚未生成对阵或组间无有效比赛。</div>';
     } else {
-      h += '<div class="tbl-wrap"><table><thead><tr><th>名次</th><th>组</th><th>胜-平-负</th><th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
+      h += '<div class="tbl-wrap"><table><thead><tr><th>名次</th><th>' + (isDisc ? "队" : "组") + '</th>'
+        + (isDisc ? '<th>团队胜-负</th><th>分项胜-负</th>' : '<th>胜-平-负</th>')
+        + '<th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
       rows.forEach((r, i) => {
         const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : (i + 1);
         h += '<tr><td class="rank-' + (i + 1) + '">' + (i < 3 ? medal + " " : "") + (i + 1) + '</td>'
-          + '<td>' + esc(r.name) + '</td>'
-          + '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>'
-          + '<td>' + r.gf + '-' + r.ga + '</td>'
+          + '<td>' + esc(r.name) + '</td>';
+        if (isDisc) {
+          h += '<td>' + r.twins + '-' + r.tlosses + '</td><td>' + r.dwins + '-' + r.dlosses + '</td>';
+        } else {
+          h += '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>';
+        }
+        h += '<td>' + r.gf + '-' + r.ga + '</td>'
           + '<td><b>' + (r.pts % 1 === 0 ? r.pts : r.pts.toFixed(1)) + '</b></td></tr>';
       });
       h += '</tbody></table></div>';
       h += '<hr style="border:none;border-top:1px solid var(--line);margin:14px 0">';
-      h += '<h3>组间对阵</h3>' + renderTeamFixtures(d);
+      h += '<h3>' + (isDisc ? "团体对阵（分项小场）" : "组间对阵") + '</h3>' + renderTeamFixtures(d);
     }
     h += '</div>';
     return h;
@@ -537,24 +678,31 @@ window.UI = (function () {
 
   function renderTeamSummary(d, sel) {
     const rows = Stats.teamStandings(d);
+    const isDisc = d.teamFormat && d.teamFormat !== "overall";
     let h = '<div class="card">' + sel + '<h2>汇总 · ' + esc(d.name) + '</h2>';
     const groups = d.groups || [];
     const activeGroups = groups.filter(g => (g.playerIds || []).length > 0);
     const totalPlayers = groups.reduce((s, g) => s + (g.playerIds || []).length, 0);
     const done = (d.matches || []).filter(m => m.result).length;
     h += '<div class="stat-grid">'
-      + '<div class="stat-box"><div class="stat-num">' + activeGroups.length + '</div><div class="muted">参赛组数</div></div>'
+      + '<div class="stat-box"><div class="stat-num">' + activeGroups.length + '</div><div class="muted">参赛队数</div></div>'
       + '<div class="stat-box"><div class="stat-num">' + totalPlayers + '</div><div class="muted">参赛人数</div></div>'
       + '<div class="stat-box"><div class="stat-num">' + done + '/' + (d.matches || []).length + '</div><div class="muted">已录场数</div></div>'
       + '</div>';
-    h += '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出分组名次 CSV</button></div>';
+    h += '<div class="row" style="margin-top:10px"><button class="btn sm" data-act="export-rank">导出' + (isDisc ? "团体" : "分组") + '名次 CSV</button></div>';
     if (rows.length) {
-      h += '<h3>分组名次</h3><div class="tbl-wrap"><table><thead><tr><th>名次</th><th>组</th><th>胜-平-负</th><th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
+      h += '<h3>' + (isDisc ? "团体名次" : "分组名次") + '</h3><div class="tbl-wrap"><table><thead><tr><th>名次</th><th>' + (isDisc ? "队" : "组") + '</th>'
+        + (isDisc ? '<th>团队胜-负</th><th>分项胜-负</th>' : '<th>胜-平-负</th>')
+        + '<th>总比分(进-失)</th><th>积分</th></tr></thead><tbody>';
       rows.forEach((r, i) => {
         h += '<tr><td class="rank-' + (i + 1) + '">' + (i < 3 ? (i === 0 ? "🥇 " : i === 1 ? "🥈 " : "🥉 ") : "") + (i + 1) + '</td>'
-          + '<td>' + esc(r.name) + '</td>'
-          + '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>'
-          + '<td>' + r.gf + '-' + r.ga + '</td>'
+          + '<td>' + esc(r.name) + '</td>';
+        if (isDisc) {
+          h += '<td>' + r.twins + '-' + r.tlosses + '</td><td>' + r.dwins + '-' + r.dlosses + '</td>';
+        } else {
+          h += '<td>' + r.win + '-' + r.draw + '-' + r.loss + '</td>';
+        }
+        h += '<td>' + r.gf + '-' + r.ga + '</td>'
           + '<td><b>' + (r.pts % 1 === 0 ? r.pts : r.pts.toFixed(1)) + '</b></td></tr>';
       });
       h += '</tbody></table></div>';
@@ -586,8 +734,11 @@ window.UI = (function () {
   /* ============================================================
    *  比分录入弹窗
    * ========================================================== */
-  function scoreModal(disc, m) {
-    if (disc.kind === "team" || m.stage === "team") return teamScoreModal(disc, m);
+  function scoreModal(disc, m, subIdx) {
+    if (disc.kind === "team" || m.stage === "team") {
+      if (m.subs && subIdx != null) return subScoreModal(disc, m, subIdx);
+      return teamScoreModal(disc, m);
+    }
     const aL = entrantLabel(disc, m.a.entrantId) || "待定";
     const bL = entrantLabel(disc, m.b.entrantId) || "待定";
     const rule = Scoring.RULES[disc.scoringMode] || Scoring.RULES["31x1"];
@@ -637,6 +788,43 @@ window.UI = (function () {
       + (exi ? '<div class="row" style="margin-top:8px"><button class="btn sm danger block" data-act="clear-score" data-id="' + m.id + '">清除本场成绩</button></div>' : '');
   }
 
+  // 分项团体：录入某一分项小场比分（按名单中排阵的两名/两对选手）
+  function subScoreModal(disc, m, idx) {
+    const sub = m.subs[idx];
+    if (!sub) return '<h3>错误</h3><p>找不到该分项</p>';
+    const nameA = (sub.a.playerIds || []).map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/") || "（未排阵）";
+    const nameB = (sub.b.playerIds || []).map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/") || "（未排阵）";
+    const rule = Scoring.RULES[disc.scoringMode] || Scoring.RULES["31x1"];
+    let games = "";
+    for (let i = 0; i < rule.bestOf; i++) {
+      const g = sub.result && sub.result.games[i];
+      games += '<div class="game-row"><span class="gl">第' + (i + 1) + '局</span>'
+        + '<input id="g_' + i + '_a" inputmode="numeric" value="' + (g ? g[0] : "") + '" placeholder="A">'
+        + '<span class="vs-sep">:</span>'
+        + '<input id="g_' + i + '_b" inputmode="numeric" value="' + (g ? g[1] : "") + '" placeholder="B"></div>';
+    }
+    const exi = sub.result ? sub.result.reason : "normal";
+    const missA = !(sub.a.playerIds || []).length, missB = !(sub.b.playerIds || []).length;
+    let warn = "";
+    if (missA || missB) warn = '<p class="badge bye" style="margin:6px 0">该分项一方未排阵，只能判对方胜（弃权/退赛）。</p>';
+    return '<h3>录入分项 · ' + esc(sub.name) + '</h3>'
+      + '<div class="vs">' + esc(nameA) + ' <small>VS</small> ' + esc(nameB) + '</div>'
+      + warn
+      + '<div id="scoreGames">' + games + '</div>'
+      + '<div class="wo-row"><label class="muted">特殊情况：</label>'
+      + '<select id="wo_type">'
+      + '<option value="normal" ' + (exi === "normal" ? "selected" : "") + '>正常比赛</option>'
+      + '<option value="wo_a" ' + (sub.result && sub.result.reason === "walkover" && sub.result.winner === "b" ? "selected" : "") + '>A 弃权（B 胜）</option>'
+      + '<option value="wo_b" ' + (sub.result && sub.result.reason === "walkover" && sub.result.winner === "a" ? "selected" : "") + '>B 弃权（A 胜）</option>'
+      + '<option value="ret_a" ' + (sub.result && sub.result.reason === "retire" && sub.result.winner === "b" ? "selected" : "") + '>A 退赛（B 胜）</option>'
+      + '<option value="ret_b" ' + (sub.result && sub.result.reason === "retire" && sub.result.winner === "a" ? "selected" : "") + '>B 退赛（A 胜）</option>'
+      + '</select></div>'
+      + '<div class="row" style="margin-top:10px">'
+      + '<button class="btn primary block" data-act="save-sub" data-id="' + m.id + '" data-sub="' + idx + '">保存</button>'
+      + '<button class="btn block" data-act="close-modal">取消</button></div>'
+      + (sub.result ? '<div class="row" style="margin-top:8px"><button class="btn sm danger block" data-act="clear-sub" data-id="' + m.id + '" data-sub="' + idx + '">清除本分项</button></div>' : '');
+  }
+
   /* ============================================================
    *  主渲染分发
    * ========================================================== */
@@ -669,9 +857,25 @@ window.UI = (function () {
     }
   }
 
+  // 各队排阵：把某个 slot 的第 pos 个位置设为 val（单打 size=1，双打 size=2）
+  function applyLineup(d, gi, slotKey, pos, val) {
+    if (!d) return;
+    const g = (d.groups || [])[gi]; if (!g) return;
+    if (!g.lineup) g.lineup = {};
+    const slotDef = (Seeding.currentSlots(d) || []).find(s => s.key === slotKey) || { key: slotKey };
+    const code = Seeding.slotCodeOf(d, slotDef);
+    const size = isDoublesCode(code) ? 2 : 1;
+    let arr = (g.lineup[slotKey] || []).slice();
+    while (arr.length < size) arr.push("");
+    arr[pos] = val;
+    g.lineup[slotKey] = arr;
+    Store.save();
+  }
+
   return {
     esc, toast, openModal, closeModal, render, activeEvent, activeDisc,
     eventForm, playerForm, importForm, scoreModal, newDiscipline,
-    entrantLabel, partnerOptionsHtml, partnerName
+    entrantLabel, partnerOptionsHtml, partnerName, applyLineup,
+    teamFormatOptionsHtml, slotConfigHtml, lineupEditorHtml
   };
 })();
