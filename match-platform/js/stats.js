@@ -50,34 +50,33 @@ window.Stats = (function () {
     return result;
   }
 
-  /* 团体赛：各组循环赛积分榜（按胜场→局净胜→分净胜） */
+  /* 团体赛：组间循环赛积分榜（整组当整体，按积分→总比分净胜→总比分 排名） */
   function teamStandings(disc) {
     if (!disc || disc.kind !== "team") return [];
     const entrants = disc.entrants || [];
-    const eMap = {};
-    entrants.forEach(e => { if (e.playerIds && e.playerIds[0]) eMap[e.id] = e.playerIds[0]; });
-    const matches = (disc.matches || []).filter(m => m.stage === "group");
-    return (disc.groups || []).map(g => {
-      const rec = {};
-      (g.playerIds || []).forEach(pid => {
-        const e = entrants.find(x => x.playerIds && x.playerIds[0] === pid);
-        rec[pid] = { pid: pid, label: e ? e.label : pid, wins: 0, losses: 0, gw: 0, gl: 0, pw: 0, pl: 0 };
-      });
-      matches.filter(m => m.groupName === g.name && m.result).forEach(m => {
-        const aPid = eMap[m.a.entrantId], bPid = eMap[m.b.entrantId];
-        const aR = aPid ? rec[aPid] : null, bR = bPid ? rec[bPid] : null;
-        if (!aR || !bR) return;
-        if (m.result.winner === "a") { aR.wins++; bR.losses++; }
-        else if (m.result.winner === "b") { bR.wins++; aR.losses++; }
-        aR.gw += m.result.aGames || 0; aR.gl += m.result.bGames || 0;
-        aR.pw += m.result.aPoints || 0; aR.pl += m.result.bPoints || 0;
-        bR.gw += m.result.bGames || 0; bR.gl += m.result.aGames || 0;
-        bR.pw += m.result.bPoints || 0; bR.pl += m.result.aPoints || 0;
-      });
-      const rows = Object.values(rec).sort((x, y) =>
-        (y.wins - x.wins) || ((y.gw - y.gl) - (x.gw - x.gl)) || ((y.pw - y.pl) - (x.pw - x.pl)));
-      return { name: g.name, rows: rows };
+    if (!entrants.length) return [];
+    const matches = (disc.matches || []).filter(m => m.stage === "team" && m.result);
+
+    const rec = {};
+    entrants.forEach(e => {
+      rec[e.id] = {
+        id: e.id, name: e.groupName || e.label, label: e.label,
+        played: 0, win: 0, draw: 0, loss: 0, gf: 0, ga: 0, pts: 0
+      };
     });
+    matches.forEach(m => {
+      const a = rec[m.a.entrantId], b = rec[m.b.entrantId];
+      if (!a || !b) return;
+      const aT = m.result.aTeam || 0, bT = m.result.bTeam || 0;
+      a.played++; b.played++;
+      a.gf += aT; a.ga += bT; b.gf += bT; b.ga += aT;
+      if (aT > bT) { a.win++; b.loss++; a.pts += 1; }
+      else if (bT > aT) { b.win++; a.loss++; b.pts += 1; }
+      else { a.draw++; b.draw++; a.pts += 0.5; b.pts += 0.5; }
+    });
+
+    return Object.values(rec).sort((x, y) =>
+      (y.pts - x.pts) || ((y.gf - y.ga) - (x.gf - x.ga)) || (y.gf - x.gf));
   }
 
   return { finalRanking, teamStandings };
