@@ -136,7 +136,8 @@ window.Seeding = (function () {
           { key: "D3", code: "MD", name: "男子双打" }
         ];
       }
-    }
+    },
+    league:    { label: "全员项目联赛（新）", mode: "league" }
   };
 
   // 取某 slot 对应的单项 code（thomas 的 S/D 按队伍性别派生 MS/WS/MD/WD）
@@ -184,8 +185,81 @@ window.Seeding = (function () {
   //  - overall 模式：记录双方整组总比分
   //  - discipline 模式：每对阵拆成若干分项小场（subs），分项计分、整队按分项胜场定胜负
   function generateTeamMatches(disc) {
+    if (disc.teamFormat === "league") return generateLeagueTeam(disc);
     if (disc.teamFormat && disc.teamFormat !== "overall") return generateDisciplineTeam(disc);
     return generateOverallTeam(disc);
+  }
+
+  /* 全员项目联赛：
+   * 每个项目（男单/女单/男双/女双/混双）各自做"跨组循环"——
+   * 把各组同名组合放进同一项目池，每组每个组合与其他各组同名组合各打一次。
+   * 团队总分 = 该队所有组合在所有比赛中的"实际得分累计"，按总分排 1-4 名。
+   * 出场：单打人人上；双打组内自动两两配对（XD 男女配对），保证全员有上场。
+   */
+  function leagueCombosForEvent(disc, group, code) {
+    const elig = (group.playerIds || []).map(id => Store.getPlayer(id))
+      .filter(p => p && playerEligible(p, code));
+    if (!elig.length) return [];
+    const size = DISC_SIZE[code] || 1;
+    if (size === 1) return elig.map(p => ({ playerIds: [p.id], label: p.name }));
+    if (code === "XD") {
+      const men = elig.filter(p => p.gender === "男");
+      const women = elig.filter(p => p.gender === "女");
+      const n = Math.min(men.length, women.length);
+      const out = [];
+      for (let i = 0; i < n; i++) out.push({ playerIds: [men[i].id, women[i].id], label: men[i].name + "/" + women[i].name });
+      return out; // 多余的男/女未能配对（不参赛该项）
+    }
+    const sorted = elig.slice();
+    const out = [];
+    for (let i = 0; i + 1 < sorted.length; i += 2)
+      out.push({ playerIds: [sorted[i].id, sorted[i + 1].id], label: sorted[i].name + "/" + sorted[i + 1].name });
+    return out; // 奇数时最后 1 人未能配对（不参赛该项）
+  }
+
+  function generateLeagueTeam(disc) {
+    const events = (disc.teamEvents && disc.teamEvents.length) ? disc.teamEvents : ["MS", "WS", "MD", "WD", "XD"];
+    const groups = (disc.groups || []).filter(g => (g.playerIds || []).length > 0);
+    if (groups.length < 2) return { matches: [], groups: groups.length };
+
+    const groupCombos = {}; // groupName -> { event -> [combo] }
+    groups.forEach(g => {
+      groupCombos[g.name] = {};
+      events.forEach(code => { groupCombos[g.name][code] = leagueCombosForEvent(disc, g, code); });
+    });
+
+    const matches = [];
+    events.forEach((code, ei) => {
+      const withCombos = groups.filter(g => (groupCombos[g.name][code] || []).length > 0);
+      for (let x = 0; x < withCombos.length; x++) {
+        for (let y = x + 1; y < withCombos.length; y++) {
+          const gx = withCombos[x], gy = withCombos[y];
+          (groupCombos[gx.name][code] || []).forEach(cx => {
+            (groupCombos[gy.name][code] || []).forEach(cy => {
+              matches.push({
+                id: Store.uid("M"), stage: "league", event: code,
+                round: ei + 1, roundLabel: CSVUtil.DISC_BY_CODE[code] || code,
+                a: { comboId: Store.uid("C"), groupId: gx.name, playerIds: cx.playerIds.slice() },
+                b: { comboId: Store.uid("C"), groupId: gy.name, playerIds: cy.playerIds.slice() },
+                result: null, status: "ready", court: ""
+              });
+            });
+          });
+        }
+      }
+    });
+
+    disc.entrants = groups.map(g => ({
+      id: g.name, kind: "team", groupName: g.name, label: g.name,
+      playerIds: g.playerIds.slice(), seed: 0, status: "active"
+    }));
+    disc.matches = matches;
+    disc.totalRounds = events.length;
+    disc.bracketSize = groups.length;
+    disc.byeCount = 0;
+    disc.status = "drawn";
+    Store.save();
+    return { matches: matches, groups: groups.length };
   }
 
   function generateOverallTeam(disc) {
@@ -262,5 +336,6 @@ window.Seeding = (function () {
 
   return { buildEntrants, assignSeeds, makeBracket, missingPartner, DISC_SIZE,
     roundRobin, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS,
-    TEAM_FORMATS, slotCodeOf, currentSlots };
+    TEAM_FORMATS, slotCodeOf, currentSlots,
+    generateLeagueTeam, leagueCombosForEvent };
 })();
