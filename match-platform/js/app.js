@@ -91,7 +91,11 @@
 
       case "export-rank": {
         const d = UI.activeDisc();
-        if (d) { if (d.kind === "team") CSVUtil.exportTeamRankCSV(d); else CSVUtil.exportRankCSV(d); }
+        if (d) {
+          if (d.kind === "team") CSVUtil.exportTeamRankCSV(d);
+          else if (d.kind === "rotation") CSVUtil.exportRotationCSV(d);
+          else CSVUtil.exportRankCSV(d);
+        }
         break;
       }
       case "export-json": CSVUtil.exportJSON(); break;
@@ -154,6 +158,18 @@
     if ((t.name === "pdisc" || t.id === "p_gender") && t.closest && t.closest("#modalCard")) {
       const sel = document.getElementById("p_partner");
       if (sel) sel.innerHTML = UI.partnerOptionsHtml();
+      return;
+    }
+    // 双打轮转：切换模式
+    if (t.id === "rotation_mode") {
+      const d = UI.activeDisc();
+      if (d && d.kind === "rotation") { d.rotationMode = t.value; Store.save(); UI.render(); }
+      return;
+    }
+    // 双打轮转：场地数
+    if (t.id === "rotation_courts") {
+      const d = UI.activeDisc();
+      if (d && d.kind === "rotation") { d.courtCount = Math.max(1, Math.min(8, parseInt(t.value, 10) || 2)); Store.save(); }
       return;
     }
   }
@@ -283,7 +299,10 @@
 
   /* ---------- 分组 / 生成对阵 ---------- */
   function drawBracket() {
-    const d = UI.activeDisc(); if (!d || d.kind === "team") return;
+    const d = UI.activeDisc();
+    if (!d) return;
+    if (d.kind === "team") return;                 // 团体赛用 draw-team
+    if (d.kind === "rotation") return drawRotation();
     d.scoringMode = $("#g_scoring").value;
     d.thirdPlace = $("#g_third").checked;
     const sd = parseInt($("#g_seed").value, 10) || 0;
@@ -294,6 +313,22 @@
     Seeding.makeBracket(d);
     UI.render();
     UI.toast("对阵已生成（签表 " + d.bracketSize + "，轮空 " + d.byeCount + "）");
+  }
+
+  /* ---------- 双打轮转赛：生成搭档轮转对阵 ---------- */
+  function drawRotation() {
+    const d = UI.activeDisc(); if (!d || d.kind !== "rotation") return;
+    const sm = document.getElementById("g_scoring");
+    if (sm) d.scoringMode = sm.value;
+    const cc = document.getElementById("rotation_courts");
+    if (cc) d.courtCount = Math.max(1, Math.min(8, parseInt(cc.value, 10) || 2));
+    const res = Seeding.generateRotation(d);
+    if (!res.matches || !res.matches.length) {
+      UI.render(); UI.toast(res.msg || "无法生成（人数/性别不符合该模式要求）");
+      return;
+    }
+    UI.render();
+    UI.toast("轮转对阵已生成（" + (res.players || res.pairs || 0) + " 人 · " + res.matches.length + " 场 · " + res.rounds + " 轮）");
   }
 
   /* ---------- 团体赛：分组 / 生成对阵 ---------- */
