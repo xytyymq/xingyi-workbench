@@ -153,16 +153,47 @@
     if (t && t.id === "imp_text") previewImport();
   }
 
-  function loadCsvFile(input) {
+  async function loadCsvFile(input) {
     const file = input.files && input.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function () {
-      const ta = $("#imp_text");
-      if (ta) ta.value = reader.result;
+    const ta = $("#imp_text");
+    const prev = $("#imp_preview");
+    const isXlsxByName = /\.xlsx$/i.test(file.name);
+
+    // Excel 常被另存/改名成 .csv，先按二进制读头部判断 ZIP 签名
+    const headBuf = await new Promise((resolve) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.readAsArrayBuffer(file.slice(0, 4));
+    });
+    const isXlsx = isXlsxByName || CSVUtil.isXlsxBuffer(headBuf);
+
+    if (!isXlsx) {
+      const reader = new FileReader();
+      reader.onload = function () {
+        if (ta) ta.value = reader.result;
+        previewImport();
+      };
+      reader.readAsText(file, "utf-8");
+      return;
+    }
+
+    // .xlsx：读完整 ArrayBuffer 后解析
+    try {
+      const buf = await new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onload = () => resolve(r.result);
+        r.onerror = () => reject(new Error("文件读取失败"));
+        r.readAsArrayBuffer(file);
+      });
+      const tsv = await CSVUtil.parseXlsx(buf);
+      if (ta) ta.value = tsv;
       previewImport();
-    };
-    reader.readAsText(file, "utf-8");
+    } catch (err) {
+      if (ta) ta.value = "";
+      if (prev) prev.innerHTML = '<span style="color:#b91c1c">' + UI.esc(err.message || "解析 .xlsx 失败") + '</span>';
+      UI.toast(err.message || "解析 .xlsx 失败");
+    }
   }
 
   function previewImport() {
