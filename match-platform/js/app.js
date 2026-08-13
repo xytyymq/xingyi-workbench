@@ -87,6 +87,7 @@
       case "score-sub": openSubScore(id, el.getAttribute("data-sub")); break;
       case "save-sub": saveSubScore(id, el.getAttribute("data-sub")); break;
       case "clear-sub": clearSubScore(id, el.getAttribute("data-sub")); break;
+      case "save-league": saveLeagueScore(id); break;
 
       case "export-rank": {
         const d = UI.activeDisc();
@@ -130,6 +131,15 @@
     // 团体赛：各队排阵
     if (t.classList && t.classList.contains("tlineup")) {
       UI.applyLineup(UI.activeDisc(), parseInt(t.getAttribute("data-gi"), 10), t.getAttribute("data-slot"), parseInt(t.getAttribute("data-pos"), 10), t.value);
+      return;
+    }
+    // 团体赛：全员项目联赛 — 项目勾选
+    if (t.classList && t.classList.contains("tevent")) {
+      const d = UI.activeDisc();
+      if (d && d.kind === "team") {
+        d.teamEvents = $$('.tevent:checked').map(c => c.value);
+        Store.save(); UI.render();
+      }
       return;
     }
     // 赛程台号输入
@@ -326,6 +336,13 @@
   function setTeamFormat(v) {
     const d = UI.activeDisc(); if (!d || d.kind !== "team") return;
     d.teamFormat = v;
+    if (v === "league") {
+      if (!d.teamEvents || !d.teamEvents.length) d.teamEvents = ["MS", "WS", "MD", "WD", "XD"];
+      d.teamScoreMode = "points";
+      d.teamSlots = [];
+      Store.save(); UI.render();
+      return;
+    }
     const fmt = Seeding.TEAM_FORMATS[v];
     if (fmt && fmt.mode === "discipline") {
       if (fmt.slotsEditable) {
@@ -450,6 +467,31 @@
     const d = UI.activeDisc(); if (!d) return;
     Scoring.clearResult(d, matchId);
     UI.closeModal(); UI.render(); UI.toast("已清除本场成绩");
+  }
+
+  // 全员项目联赛：每组合按正常计分录入实际比分（复用 submitResult）
+  function saveLeagueScore(matchId) {
+    const d = UI.activeDisc(); if (!d) return;
+    const m = Store.getMatch(d, matchId); if (!m) return;
+    const rule = Scoring.RULES[d.scoringMode] || Scoring.RULES["31x1"];
+    const wo = $("#wo_type").value;
+    let reason = "normal", side = null, games = [];
+    if (wo !== "normal") {
+      const map = { wo_a: ["walkover", "b"], wo_b: ["walkover", "a"], ret_a: ["retire", "b"], ret_b: ["retire", "a"] };
+      [reason, side] = map[wo];
+    } else {
+      for (let i = 0; i < rule.bestOf; i++) {
+        const a = $("#g_" + i + "_a").value.trim();
+        const b = $("#g_" + i + "_b").value.trim();
+        if (a === "" && b === "") continue;
+        if (a === "" || b === "") { UI.toast("第" + (i + 1) + "局比分不完整"); return; }
+        games.push([parseInt(a, 10), parseInt(b, 10)]);
+      }
+      if (!games.length) { UI.toast("请录入至少一局比分"); return; }
+    }
+    const res = Scoring.submitResult(d, matchId, games, reason, side);
+    if (!res.ok) { UI.toast(res.msg); return; }
+    UI.closeModal(); UI.render();
   }
 
   /* ---------- 备份导入 ---------- */
