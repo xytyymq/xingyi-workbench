@@ -2,7 +2,7 @@
  * 复用 archive.html 的 download(BOM)/exportJSON/importJSON 范式。
  */
 window.CSVUtil = (function () {
-  const DISC_BY_CODE = { MS: "男单", WS: "女单", MD: "男双", WD: "女双", XD: "混双", TEAM: "团体赛" };
+  const DISC_BY_CODE = { MS: "男单", WS: "女单", MD: "男双", WD: "女双", XD: "混双", TEAM: "团体赛", ROTATION: "双打轮转" };
   const CODE_BY_NAME = { "男单": "MS", "女单": "WS", "男双": "MD", "女双": "WD", "混双": "XD", "团体赛": "TEAM" };
 
   const HEADER_MAP = {
@@ -333,10 +333,32 @@ window.CSVUtil = (function () {
     return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + "_" + p(d.getHours()) + p(d.getMinutes());
   }
 
+  function exportRotationCSV(disc) {
+    const st = Stats.rotationStandings(disc);
+    let csv = "", name = (disc.name || "双打轮转") + "_名次_" + dateStamp();
+    if (disc.rotationMode === "fixed") {
+      const headers = ["名次", "组合", "胜场", "积分", "净胜分"];
+      const data = st.map((r, i) => [i + 1, r.label, r.wins, r.pts, r.net]);
+      csv = [headers.join(",")].concat(data.map(r => r.map(csvCell).join(","))).join("\n");
+    } else if (disc.rotationMode === "mixed") {
+      const block = (title, rows) => {
+        const h = ["名次", title, "胜场", "积分", "净胜分"];
+        const d = rows.map((r, i) => [i + 1, r.name, r.wins, r.pts, r.net]);
+        return [title].concat([h.join(",")]).concat(d.map(r => r.map(csvCell).join(","))).join("\n");
+      };
+      csv = block("男子", st.men || []) + "\n\n" + block("女子", st.women || []);
+    } else {
+      const headers = ["名次", "选手", "胜场", "积分", "净胜分"];
+      const data = st.map((r, i) => [i + 1, r.name, r.wins, r.pts, r.net]);
+      csv = [headers.join(",")].concat(data.map(r => r.map(csvCell).join(","))).join("\n");
+    }
+    download(name + ".csv", "﻿" + csv, "text/csv;charset=utf-8");
+  }
+
   return {
     DISC_BY_CODE, CODE_BY_NAME, HEADER_MAP, normalizeGender,
     isXlsxBuffer, parseXlsx,
     sniffDelimiter, parseCSVLine, parseTable, resolveCodes, rowsToPlayers,
-    download, exportJSON, exportPlayersCSV, exportRankCSV, exportTeamRankCSV, csvCell, dateStamp
+    download, exportJSON, exportPlayersCSV, exportRankCSV, exportTeamRankCSV, exportRotationCSV, csvCell, dateStamp
   };
 })();
