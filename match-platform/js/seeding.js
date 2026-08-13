@@ -334,8 +334,219 @@ window.Seeding = (function () {
     return { matches: matches, groups: teams.length };
   }
 
+  /* ============================================================
+   *  双打轮转赛（俱乐部活动 / 打水赛）
+   *  - eight  八人转：每人与其余人各搭档 1 次（全搭档），按个人积分排名
+   *  - super8 超八转：每人与随机 8 人各搭档 1 次（10~50 人），按个人积分排名
+   *  - mixed  混双转：每男与每女各搭档 1 次（需男女相等），男女分别排名
+   *  - fixed  固搭转：报名固定搭档，组合间循环赛，按组合积分排名
+   *  统一产出 match：a/b 各含 playerIds:[2人]，stage:"rotation"，无晋级链。
+   * ========================================================== */
+  const ROTATION_MODES = {
+    eight:  { label: "八人转（4~13人·全搭档）", partners: 0 },
+    super8: { label: "超八转（10~50人·随机8搭档）", partners: 8 },
+    mixed:  { label: "混双转（男=女·男女各搭档）", partners: -1 },
+    fixed:  { label: "固搭转（固定搭档·组合循环）", partners: -2 }
+  };
+
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  // 取轮转赛参赛选手（到场即可，不要求报名项目；混双按性别分）
+  function rotationPlayers(disc) {
+    const list = Store.allPlayers().filter(p => p.present).map(p => ({ id: p.id, gender: p.gender || "" }));
+    if (disc.rotationMode === "mixed") {
+      const men = list.filter(p => p.gender === "男");
+      const women = list.filter(p => p.gender === "女");
+      return { men, women, all: list };
+    }
+    return { men: [], women: [], all: list };
+  }
+
+  // 构造搭档关系（边）：返回 [{a,b}]（a,b 为 playerId，可能含 "DUMMY" 表示轮空）
+  function buildRotationEdges(mode, players) {
+    const edges = [];
+    if (mode === "eight") {
+      let ps = players.all.slice();
+      if (ps.length % 2) ps = ps.concat([{ id: "DUMMY", gender: "" }]); // 奇数人：每轮 1 人轮空
+      for (let i = 0; i < ps.length; i++)
+        for (let j = i + 1; j < ps.length; j++) edges.push({ a: ps[i].id, b: ps[j].id });
+    } else if (mode === "super8") {
+      // 每人恰好与 8 名不同选手搭档：用环形构造（前后各 4 人）保证 8-正则且完全对称，
+      // 先随机打乱顺序以增加变化，再按环上距离 1..4 双向连边。n>=9 时每人恰 8 个搭档。
+      const ids = shuffle(players.all.map(p => p.id));
+      const n = ids.length, half = Math.min(4, Math.floor((n - 1) / 2));
+      for (let i = 0; i < n; i++) {
+        for (let k = 1; k <= half; k++) {
+          const j1 = (i + k) % n, j2 = (i - k + n) % n;
+          if (j1 !== j2) { edges.push({ a: ids[i], b: ids[j1] }); edges.push({ a: ids[i], b: ids[j2] }); }
+          else edges.push({ a: ids[i], b: ids[j1] });
+        }
+      }
+      // 去重（环形构造会让每条边被两端各加一次）
+      const seen = new Set();
+      const dedup = [];
+      edges.forEach(e => { const key = [e.a, e.b].sort().join("|"); if (!seen.has(key)) { seen.add(key); dedup.push(e); } });
+      return dedup;
+    } else if (mode === "mixed") {
+      const men = players.men.map(p => p.id), women = players.women.map(p => p.id);
+      men.forEach(m => women.forEach(w => edges.push({ a: m, b: w })));
+    }
+    return edges;
+  }
+
+  // 边着色：把边拆成若干轮，每轮内任意两边不共享顶点（每轮可同时开，无冲突）
+  function colorEdges(edges) {
+    const rounds = []; // [{used:Set, list:[edge]}]
+    for (const e of edges) {
+      let placed = false;
+      for (const r of rounds) {
+        if (!r.used.has(e.a) && !r.used.has(e.b)) { r.used.add(e.a); r.used.add(e.b); r.list.push(e); placed = true; break; }
+      }
+      if (!placed) rounds.push({ used: new Set([e.a, e.b]), list: [e] });
+    }
+    return rounds.map(r => r.list);
+  }
+
+  // 全局把边两两配成一场：每条边找一个不共享顶点的搭档边（2 条边=4 人=双打对阵）
+  // 用「按顶点度数降序、优先与相邻边配对」的贪心，保证全部边都被使用（不丢场次）
+  // 把搭档边两两配对成一场双打（每条边=一对搭档，一场=两条不相交边=4人）。
+  // 8-正则图的边集一定能完美匹配，但固定顺序贪心偶发失败，故加随机重试。
+  function pairEdges(edges) {
+    const n = edges.length;
+    if (!n) return [];
+    const conflict = (e, f) => !(f.a !== e.a && f.a !== e.b && f.b !== e.a && f.b !== e.b);
+    // 确定性兜底：按端点度数降序的贪心（多数小图能一次成功）
+    function attempt(order) {
+      const used = new Set();
+      const matched = [];
+      for (const ei of order) {
+        if (used.has(ei)) continue;
+        const e = edges[ei];
+        let best = -1;
+        for (const fi of order) {
+          if (used.has(fi) || fi === ei) continue;
+          if (!conflict(e, edges[fi])) { best = fi; break; }
+        }
+        if (best < 0) return null;        // 该顺序无法完美匹配
+        used.add(ei); used.add(best);
+        matched.push([e, edges[best]]);
+      }
+      return matched;
+    }
+    // 先试确定性顺序，再随机重试若干次，确保拿到完美匹配
+    const deg = {};
+    edges.forEach(e => { deg[e.a] = (deg[e.a] || 0) + 1; deg[e.b] = (deg[e.b] || 0) + 1; });
+    const base = edges.map((_, i) => i).sort((x, y) => (deg[edges[y].a] + deg[edges[y].b]) - (deg[edges[x].a] + deg[edges[x].b]));
+    let r = attempt(base);
+    if (r) return r;
+    for (let t = 0; t < 200; t++) {
+      const o = shuffle(edges.map((_, i) => i));
+      r = attempt(o);
+      if (r) return r;
+    }
+    return r || []; // 理论上不会走到这里
+  }
+
+  // 把配对好的场贪心着色成轮次（每轮内任意两场不共享选手），并标注台号
+  function scheduleMatches(matched, mode, courtCount) {
+    const rounds = []; // [{used:Set, list:[match]}]
+    matched.forEach(pair => {
+      const verts = [pair[0].a, pair[0].b, pair[1].a, pair[1].b];
+      let placed = false;
+      for (const r of rounds) {
+        if (verts.every(v => !r.used.has(v))) { verts.forEach(v => r.used.add(v)); r.list.push(pair); placed = true; break; }
+      }
+      if (!placed) rounds.push({ used: new Set(verts), list: [pair] });
+    });
+    const matches = [];
+    rounds.forEach((r, ri) => {
+      const roundNo = ri + 1;
+      r.list.forEach((pair, ci) => {
+        const e1 = pair[0], e2 = pair[1];
+        matches.push({
+          id: Store.uid("M"), stage: "rotation", rotationMode: mode,
+          round: roundNo, roundLabel: "第" + roundNo + "轮",
+          court: courtCount > 0 ? ((ci % courtCount) + 1) : "",
+          a: { playerIds: [e1.a, e1.b] }, b: { playerIds: [e2.a, e2.b] },
+          result: null, status: "ready"
+        });
+      });
+    });
+    return matches;
+  }
+
+  // 固搭转：先固定组合（按名单 partner 或顺序配对），再组合间循环赛
+  function buildFixedPairs(players) {
+    const all = players.all;
+    const pairs = [], used = new Set();
+    all.forEach(p => {
+      if (used.has(p.id)) return;
+      const pp = Store.getPlayer(p.id);
+      const partner = resolvePartner(pp);
+      if (partner && !used.has(partner.id)) { pairs.push([p.id, partner.id]); used.add(p.id); used.add(partner.id); }
+    });
+    const rest = all.filter(p => !used.has(p.id));
+    for (let i = 0; i + 1 < rest.length; i += 2) pairs.push([rest[i].id, rest[i + 1].id]);
+    return pairs;
+  }
+
+  function generateRotation(disc) {
+    const mode = disc.rotationMode || "eight";
+    const players = rotationPlayers(disc);
+    if (mode === "fixed") {
+      const pairs = buildFixedPairs(players);
+      if (pairs.length < 2) return { matches: [], count: 0, msg: "固定搭档不足 2 对" };
+      const entrants = pairs.map((pr, i) => ({
+        id: Store.uid("E"), kind: "pair", label: pr.map(id => { const p = Store.getPlayer(id); return p ? p.name : "?"; }).join("/"),
+        playerIds: pr.slice(), seed: 0, status: "active"
+      }));
+      disc.entrants = entrants;
+      const rr = roundRobin(entrants);
+      const cc = disc.courtCount || 0;
+      const matches = rr.map((pm, i) => ({
+        id: Store.uid("M"), stage: "rotation", rotationMode: "fixed",
+        round: pm.round, roundLabel: "第" + pm.round + "轮",
+        court: cc > 0 ? ((i % cc) + 1) : "",
+        a: { playerIds: (entrants.find(e => e.id === pm.a) || {}).playerIds || [] },
+        b: { playerIds: (entrants.find(e => e.id === pm.b) || {}).playerIds || [] },
+        result: null, status: "ready"
+      }));
+      disc.matches = matches;
+      disc.totalRounds = rr.length ? Math.max.apply(null, rr.map(p => p.round)) : 0;
+      disc.bracketSize = entrants.length; disc.byeCount = 0; disc.status = "drawn";
+      Store.save();
+      return { matches: matches, count: matches.length, pairs: pairs.length };
+    }
+
+    // eight / super8 / mixed
+    if (mode === "mixed" && (players.men.length === 0 || players.women.length === 0 || players.men.length !== players.women.length))
+      return { matches: [], count: 0, msg: "混双转要求男女数量相等且均>0（当前 男" + players.men.length + " 女" + players.women.length + "）" };
+    const realCount = players.all.length;
+    if (realCount < 4) return { matches: [], count: 0, msg: "到场人数不足 4 人" };
+
+    const edges = buildRotationEdges(mode, players);
+    const realEdges = edges.filter(e => e.a !== "DUMMY" && e.b !== "DUMMY");
+    const matched = pairEdges(realEdges);
+    const cc = disc.courtCount || 0;
+    const matches = scheduleMatches(matched, mode, cc);
+    disc.entrants = players.all.filter(p => p.id !== "DUMMY").map(p => ({ id: p.id, kind: "player", label: (Store.getPlayer(p.id) || {}).name || p.id, playerIds: [p.id], seed: 0, status: "active" }));
+    disc.matches = matches;
+    disc.totalRounds = matches.length ? Math.max.apply(null, matches.map(m => m.round)) : 0;
+    disc.bracketSize = realCount; disc.byeCount = 0; disc.status = "drawn";
+    Store.save();
+    return { matches: matches, count: matches.length, players: realCount, rounds: disc.totalRounds };
+  }
+
   return { buildEntrants, assignSeeds, makeBracket, missingPartner, DISC_SIZE,
     roundRobin, generateTeamMatches, TEAM_MAX_GROUPS, GROUP_LETTERS,
     TEAM_FORMATS, slotCodeOf, currentSlots,
-    generateLeagueTeam, leagueCombosForEvent };
+    generateLeagueTeam, leagueCombosForEvent,
+    generateRotation, ROTATION_MODES };
 })();
