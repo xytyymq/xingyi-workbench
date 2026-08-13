@@ -149,14 +149,14 @@ window.CSVUtil = (function () {
   }
 
   function exportTeamRankCSV(disc) {
-    const standings = Stats.teamStandings(disc);
-    const headers = ["组别", "名次", "选手", "胜-负", "局胜-负", "分胜-负"];
-    const rows = [];
-    standings.forEach(g => {
-      g.rows.forEach((r, i) => rows.push([g.name + "组", i + 1, r.label, r.wins + "-" + r.losses, r.gw + "-" + r.gl, r.pw + "-" + r.pl]));
-    });
-    const csv = [headers.join(",")].concat(rows.map(r => r.map(csvCell).join(","))).join("\n");
-    download((disc.name || "团体赛") + "_各组名次_" + dateStamp() + ".csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+    const rows = Stats.teamStandings(disc);
+    const headers = ["名次", "组", "胜-平-负", "总比分(进-失)", "积分"];
+    const data = rows.map((r, i) => [
+      i + 1, r.name, r.win + "-" + r.draw + "-" + r.loss, r.gf + "-" + r.ga,
+      (r.pts % 1 === 0 ? r.pts : r.pts.toFixed(1))
+    ]);
+    const csv = [headers.join(",")].concat(data.map(r => r.map(csvCell).join(","))).join("\n");
+    download((disc.name || "团体赛") + "_分组名次_" + dateStamp() + ".csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
   }
 
   function csvCell(v) {
