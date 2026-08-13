@@ -152,8 +152,8 @@ window.Scoring = (function () {
     if (!m) return;
     clearDownstream(disc, m);
     m.result = null;
-    // 联赛场次没有 entrantId，始终回到 ready；其余按是否齐人判定
-    m.status = (m.stage === "league") ? "ready" : ((m.a.entrantId && m.b.entrantId) ? "ready" : "pending");
+    // 联赛 / 轮转场次没有 entrantId，始终回到 ready；其余按是否齐人判定
+    m.status = (m.stage === "league" || m.stage === "rotation") ? "ready" : ((m.a.entrantId && m.b.entrantId) ? "ready" : "pending");
     Store.save();
   }
 
