@@ -216,7 +216,7 @@
     const sd = $("#p_seed").value.trim();
     const p = {
       id: null, name: name,
-      gender: $("#p_gender").value.trim(),
+      gender: CSVUtil.normalizeGender($("#p_gender").value),
       partner: $("#p_partner").value.trim(),
       club: $("#p_club").value.trim(),
       phone: $("#p_phone").value.trim(),
