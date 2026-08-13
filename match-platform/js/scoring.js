@@ -156,8 +156,25 @@ window.Scoring = (function () {
     Store.save();
   }
 
+  /* 团体赛：整组当整体，只记一个团体总比分（如 A组 3 : 1 B组） */
+  function submitTeamResult(disc, matchId, aTeam, bTeam) {
+    const m = Store.getMatch(disc, matchId);
+    if (!m) return { ok: false, msg: "找不到该场" };
+    let winner = null;
+    if (aTeam > bTeam) winner = "a";
+    else if (bTeam > aTeam) winner = "b";
+    m.result = {
+      aTeam: aTeam, bTeam: bTeam,
+      winner: winner, draw: (aTeam === bTeam),
+      finishedAt: new Date().toISOString()
+    };
+    m.status = "done";
+    Store.save();
+    return { ok: true };
+  }
+
   return {
     RULES, validateGame, judgeMatch, propagate, autoWinBye,
-    propagateInitial, clearDownstream, submitResult, clearResult
+    propagateInitial, clearDownstream, submitResult, clearResult, submitTeamResult
   };
 })();
