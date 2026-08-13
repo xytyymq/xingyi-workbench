@@ -39,6 +39,12 @@ body {
 .logo { font-size: 26px; }
 .title { font-weight: 700; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .subtitle { font-size: 12px; opacity: .85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sync-line { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
+#syncStatus { font-size: 11px; opacity: .9; white-space: nowrap; }
+.mini-btn {
+  background: rgba(255,255,255,.9); border: none; color: #b45309;
+  font-size: 11px; padding: 2px 8px; border-radius: 8px; cursor: pointer; font-weight: 600;
+}
 .hamburger {
   background: rgba(255,255,255,.15); border: none; color: #fff;
   font-size: 20px; width: 40px; height: 40px; border-radius: 10px; cursor: pointer;
