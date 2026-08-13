@@ -7,7 +7,6 @@ window.CSVUtil = (function () {
 
   const HEADER_MAP = {
     "姓名": "name", "名字": "name", "选手": "name", "选手1": "name", "name": "name",
-    "搭档": "partner", "选手2": "partner", "伙伴": "partner", "partner": "partner",
     "性别": "gender", "gender": "gender", "sex": "gender",
     "项目": "disciplines", "参赛项目": "disciplines", "报名项目": "disciplines",
     "单位": "club", "俱乐部": "club", "学校": "club", "班级": "club", "队伍": "club",
@@ -90,7 +89,7 @@ window.CSVUtil = (function () {
       const o = mapRow(headers, row);
       if (!o.name) continue;
       const disciplines = o.disciplines && o.disciplines.length ? o.disciplines : [];
-      const key = o.name + "|" + (o.partner || "") + "|" + disciplines.join(",");
+      const key = o.name + "|" + disciplines.join(",");
       if (seen.has(key)) continue; // 同次导入去重
       seen.add(key);
       players.push({
@@ -101,7 +100,7 @@ window.CSVUtil = (function () {
         phone: o.phone || "",
         level: o.level || null,
         disciplines: disciplines,
-        partner: o.partner || "",
+        partner: "",
         seed: o.seed || 0,
         present: false,
         checkinAt: null,
@@ -131,9 +130,9 @@ window.CSVUtil = (function () {
   }
 
   function exportPlayersCSV() {
-    const headers = ["姓名", "搭档", "性别", "项目", "单位", "水平", "电话", "签到"];
+    const headers = ["姓名", "性别", "项目", "单位", "水平", "电话", "签到"];
     const rows = Store.allPlayers().map(p => [
-      p.name, p.partner || "", p.gender || "", (p.disciplines || []).join("/"),
+      p.name, p.gender || "", (p.disciplines || []).join("/"),
       p.club || "", p.level || "", p.phone || "", p.present ? "已到" : "未到"
     ]);
     const csv = [headers.join(",")].concat(rows.map(r => r.map(csvCell).join(","))).join("\n");
