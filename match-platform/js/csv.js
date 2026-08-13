@@ -300,6 +300,13 @@ window.CSVUtil = (function () {
 
   function exportTeamRankCSV(disc) {
     const rows = Stats.teamStandings(disc);
+    if (disc.teamFormat === "league") {
+      const headers = ["名次", "队", "胜场", "总分(得分累计)", "净胜分"];
+      const data = rows.map((r, i) => [i + 1, r.name, r.wins, r.total, (r.gf - r.ga)]);
+      const csv = [headers.join(",")].concat(data.map(r => r.map(csvCell).join(","))).join("\n");
+      download((disc.name || "团体赛") + "_团队总分_" + dateStamp() + ".csv", "\uFEFF" + csv, "text/csv;charset=utf-8");
+      return;
+    }
     const isDisc = disc.teamFormat && disc.teamFormat !== "overall";
     const headers = isDisc
       ? ["名次", "队", "团队胜-负", "分项胜-负", "总得分(进-失)", "积分"]
