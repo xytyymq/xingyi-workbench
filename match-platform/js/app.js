@@ -104,6 +104,13 @@
       const mid = t.id.slice(6);
       const m = Store.getMatch(d, mid);
       if (m) { m.court = t.value.trim(); Store.save(); }
+      return;
+    }
+    // 选手表单：双打搭档下拉按项目/性别实时过滤
+    if ((t.name === "pdisc" || t.id === "p_gender") && t.closest && t.closest("#modalCard")) {
+      const sel = document.getElementById("p_partner");
+      if (sel) sel.innerHTML = UI.partnerOptionsHtml();
+      return;
     }
   }
 
@@ -129,7 +136,7 @@
     const prev = $("#imp_preview"); if (!prev) return;
     const text = ta.value;
     if (!text.trim()) { prev.textContent = ""; return; }
-    const existing = Store.allPlayers().map(p => p.name + "|" + (p.partner || "") + "|" + (p.disciplines || []).join(","));
+    const existing = Store.allPlayers().map(p => p.name + "|" + (p.disciplines || []).join(","));
     const players = CSVUtil.rowsToPlayers(text, existing);
     if (!players.length) { prev.innerHTML = "未解析到有效选手（空行或缺少姓名会被跳过）。"; return; }
     prev.innerHTML = "将导入 <b>" + players.length + "</b> 名选手（空行 / 缺姓名 / 重复项已自动跳过）。";
@@ -191,7 +198,7 @@
   function confirmImport() {
     const text = $("#imp_text").value;
     if (!text.trim()) { UI.toast("请粘贴名单"); return; }
-    const existing = Store.allPlayers().map(p => p.name + "|" + (p.partner || "") + "|" + (p.disciplines || []).join(","));
+    const existing = Store.allPlayers().map(p => p.name + "|" + (p.disciplines || []).join(","));
     const players = CSVUtil.rowsToPlayers(text, existing);
     if (!players.length) { UI.toast("未解析到有效选手（可能重复）"); return; }
     players.forEach(p => Store.addPlayer(p));
