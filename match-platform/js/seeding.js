@@ -14,20 +14,30 @@ window.Seeding = (function () {
         label: p.name, seed: 0, status: "active"
       }));
     }
-    // 双打：报名成对（选手 + 搭档）
+    // 双打：从名单里选取搭档（partner 存的是选手 id），解析成真实选手对
     const pairs = [];
     const seen = new Set();
     for (const p of present) {
-      if (!p.partner) continue;
-      const key = [p.name, p.partner].sort().join("|");
+      const partner = resolvePartner(p);
+      if (!partner) continue;
+      const key = [p.id, partner.id].sort().join("|");
       if (seen.has(key)) continue;
       seen.add(key);
       pairs.push({
-        id: Store.uid("E"), kind: "pair", playerIds: [p.id],
-        label: p.name + "/" + p.partner, seed: 0, status: "active"
+        id: Store.uid("E"), kind: "pair", playerIds: [p.id, partner.id],
+        label: p.name + "/" + partner.name, seed: 0, status: "active"
       });
     }
     return pairs;
+  }
+
+  // 把 partner 字段解析成真实选手：优先按 id，兼容旧数据存的是名字
+  function resolvePartner(p) {
+    if (!p.partner) return null;
+    let pp = Store.getPlayer(p.partner);
+    if (pp) return pp;
+    pp = Store.allPlayers().find(x => x.name === p.partner);
+    return pp || null;
   }
 
   function levelOf(e) {
@@ -60,10 +70,10 @@ window.Seeding = (function () {
   }
 
   function missingPartner(disc) {
-    // 报了双打项目但没填搭档的到场选手
+    // 报了双打项目但未从名单选取搭档的到场选手
     const code = disc.code;
     return Store.allPlayers().filter(p =>
-      p.present && p.disciplines.includes(code) && !p.partner);
+      p.present && p.disciplines.includes(code) && !resolvePartner(p));
   }
 
   /* ---------- 团体赛：手选分组 + 组间循环赛（整组当整体记总比分） ---------- */
