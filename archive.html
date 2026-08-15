@@ -254,6 +254,7 @@ function load(){ try { return JSON.parse(localStorage.getItem(LS_KEY)) || []; } 
 function save(noSync){ localStorage.setItem(LS_KEY, JSON.stringify(data)); if(!noSync && window.scheduleSync) scheduleSync(); }
 
 function addStudent(){
+  if(!_gt()){ alert("当前是只读模式，不能新建学员。\n录入请用教练专用链接（带 ?edit=1）。"); return; }
   const name = sName.value.trim();
   if(!name){ alert("请填学员姓名"); return; }
   const st = { id: "S"+Date.now(), name, age: sAge.value||"", gender: sGender.value,
@@ -263,6 +264,7 @@ function addStudent(){
   renderStudents(); renderEntry(); renderOverview();
 }
 function delStudent(id){
+  if(!_gt()){ alert("当前是只读模式，不能删除。\n录入请用教练专用链接（带 ?edit=1）。"); return; }
   if(!confirm("确定删除该学员及全部体测记录？")) return;
   data = data.filter(s=>s.id!==id); save();
   if(current===id) current=null;
@@ -324,6 +326,7 @@ function renderEntry(){
 }
 
 function saveTest(){
+  if(!_gt()){ alert("当前是只读模式，不能录入体测。\n录入请用教练专用链接（带 ?edit=1）。"); return; }
   const st = curStudent();
   if(!st){ alert("请先选择学员"); return; }
   const rec = { date: tDate.value || new Date().toISOString().slice(0,10), m:{}, note: tNote.value.trim() };
@@ -792,8 +795,9 @@ let _syncTimer = null, _syncing = false, _retryN = 0, _booted = false;
 function _dirty(v){ try{ v ? localStorage.setItem(LS_DIRTY,'1') : localStorage.removeItem(LS_DIRTY); }catch(e){} }
 function _isDirty(){ try{ return localStorage.getItem(LS_DIRTY)==='1'; }catch(e){ return false; } }
 function _hhmm(){ const d=new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
-const _EMBED_GT = 'github'.concat('_pat_', '11CKYAWPA0NEFa2Of3p3uk', '_PSs4d0MV53td9VDzlGbVttIJVvsSJBXJr3ltqFmaIYQZ7QOAHTU7CoAZlv2'); // 内置写凭证：所有手机打开即自动同步，无需绑定链接
-function _gt(){ const t=(window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; return t || _EMBED_GT; }
+const _EMBED_GT = 'github'.concat('_pat_', '11CKYAWPA0NEFa2Of3p3uk', '_PSs4d0MV53td9VDzlGbVttIJVvsSJBXJr3ltqFmaIYQZ7QOAHTU7CoAZlv2'); // 内置写凭证（教练专用 ?edit=1 链接才启用）
+const _READONLY = !/(\?|&)edit=1/.test(location.search); // 默认只读：普通链接被转发也改不了云端；仅 ?edit=1 或点过绑定链接可写
+function _gt(){ const t=(window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; if(t) return t; return _READONLY ? '' : _EMBED_GT; }
 
 // 数据一变就排队上传（防抖），页面上不需要点任何按钮
 function scheduleSync(delay){
@@ -851,6 +855,7 @@ function setSync(state){
   const el = document.getElementById('syncStatus');
   const btn = document.getElementById('syncRetry');
   if(!el) return;
+  if(state==='nogt' && _READONLY){ el.textContent='👁 只读模式（仅供查看，不能修改）· 录入请用教练专用链接'; el.style.color='#475569'; if(btn) btn.style.display='none'; return; }
   const last = (function(){ try{ const t=+localStorage.getItem(LS_LASTOK); return t? new Date(t):null; }catch(e){ return null; } })();
   const lastTxt = last ? ('（上次成功 ' + ('0'+last.getHours()).slice(-2)+':'+('0'+last.getMinutes()).slice(-2) + '）') : '';
   const M = {
