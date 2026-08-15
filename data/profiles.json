@@ -496,6 +496,27 @@
     "gender": "女",
     "cls": "启蒙班",
     "createdAt": "2026-08-15",
-    "tests": []
+    "tests": [
+      {
+        "date": "2026-08-15",
+        "m": {
+          "height": 159,
+          "sitReach": 22,
+          "singleStand": 40,
+          "wallSquat": 100,
+          "posture": "正常/正常/正常",
+          "run50": 11.77,
+          "standingJump": 222,
+          "verticalJump": 259,
+          "rope": 167,
+          "swing15": 14,
+          "footwork": 16.14,
+          "serve": 10,
+          "rally": 105,
+          "clear": 8
+        },
+        "note": ""
+      }
+    ]
   }
 ]
