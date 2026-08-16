@@ -696,6 +696,27 @@
     "gender": "男",
     "cls": "启蒙班",
     "createdAt": "2026-08-16",
-    "tests": []
+    "tests": [
+      {
+        "date": "2026-08-16",
+        "m": {
+          "height": 148,
+          "sitReach": 4,
+          "singleStand": 22.18,
+          "wallSquat": 53,
+          "posture": "正常/正常/正常",
+          "run50": 11.86,
+          "standingJump": 170,
+          "verticalJump": 217,
+          "rope": 168,
+          "swing15": 14,
+          "footwork": 18.7,
+          "serve": 4,
+          "rally": 15,
+          "clear": 6
+        },
+        "note": ""
+      }
+    ]
   }
 ]
