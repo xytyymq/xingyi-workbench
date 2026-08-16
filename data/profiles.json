@@ -180,6 +180,26 @@
           "clear": 9
         },
         "note": ""
+      },
+      {
+        "date": "2026-08-16",
+        "m": {
+          "height": 135,
+          "sitReach": 4,
+          "singleStand": 18.32,
+          "wallSquat": 120,
+          "posture": "正常/正常/正常",
+          "run50": 13.93,
+          "standingJump": 109,
+          "verticalJump": 188,
+          "rope": 136,
+          "swing15": 12,
+          "footwork": 18.62,
+          "serve": 6,
+          "rally": 18,
+          "clear": 8
+        },
+        "note": ""
       }
     ]
   },
