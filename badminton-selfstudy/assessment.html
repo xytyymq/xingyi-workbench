@@ -116,6 +116,7 @@
     </div>
 
     <button class="btn" onclick="calcM1()">🎯 生成打法画像报告</button>
+    <button class="btn ghost" onclick="genImage('m1')" style="margin-top:10px">📸 生成数据图（保存 / 发给家长）</button>
 
     <div class="card result" id="m1_r">
       <div class="report-h" id="m1_title"></div>
@@ -148,6 +149,7 @@
       <div id="m2_tech"></div>
     </div>
     <button class="btn" onclick="calcM2()">📊 生成等级评级报告</button>
+    <button class="btn ghost" onclick="genImage('m2')" style="margin-top:10px">📸 生成数据图（保存 / 发给家长）</button>
     <div class="card result" id="m2_r">
       <div class="report-h" id="m2_title"></div>
       <div class="chart-box"><canvas id="m2_chart" height="260"></canvas></div>
@@ -172,6 +174,7 @@
       <div id="m3_qs"></div>
     </div>
     <button class="btn" onclick="calcM3()">🧠 生成人格报告</button>
+    <button class="btn ghost" onclick="genImage('m3')" style="margin-top:10px">📸 生成数据图（保存 / 发给家长）</button>
     <div class="card result" id="m3_r">
       <div class="report-h" id="m3_title"></div>
       <div id="m3_body"></div>
@@ -510,6 +513,25 @@ function calcM3(){
   $('m3_body').innerHTML=html;
   $('m3_r').classList.add('show');
   $('m3_r').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function genImage(m){
+  const el=$('m'+m+'_r');
+  const head=el && el.querySelector('.report-h');
+  if(!head || !head.textContent.trim()){alert('请先点上方“生成报告”按钮，出结果后再生成数据图');return;}
+  const tip=document.createElement('div');
+  tip.textContent='正在生成图片…';
+  tip.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#221c08;color:#fff;padding:12px 18px;border-radius:10px;z-index:999;font-weight:700';
+  document.body.appendChild(tip);
+  setTimeout(()=>{
+    html2canvas(el,{backgroundColor:'#fffdf7',scale:2,useCORS:true,logging:false}).then(cv=>{
+      const a=document.createElement('a');
+      a.download='星羿羽毛球测评_'+m+'_'+Date.now()+'.png';
+      a.href=cv.toDataURL('image/png');
+      a.click();
+      tip.remove();
+    }).catch(e=>{tip.remove();alert('生成图片失败：'+e.message);});
+  },80);
 }
 </script>
 </body>
