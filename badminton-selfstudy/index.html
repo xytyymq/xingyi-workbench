@@ -31,6 +31,11 @@ body{margin:0;background:var(--paper);color:var(--ink);line-height:1.68;
 .masthead h1{position:relative;display:inline-block;margin:0;font-size:clamp(30px,9vw,46px);
   line-height:1.02;letter-spacing:-.01em;font-weight:800}
 .masthead h1::after{content:"";display:block;width:66px;height:5px;background:var(--cork);margin-top:12px;border-radius:3px}
+.assess-fab{position:absolute;top:14px;right:16px;z-index:5;background:var(--cork);color:#221c08;
+  font-weight:800;font-size:13px;letter-spacing:.02em;padding:9px 14px;border-radius:999px;text-decoration:none;
+  box-shadow:0 6px 16px rgba(0,0,0,.22);border:2px solid #221c08}
+.assess-fab:active{transform:scale(.95)}
+@media(max-width:480px){.assess-fab{font-size:12px;padding:7px 11px;top:10px;right:12px}}
 .sub{margin-top:14px;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:600}
 .welcome{margin:14px 0 0;font-size:15px;color:var(--ink-2)}
 .contact{display:inline-flex;align-items:center;gap:4px;margin-top:10px;color:var(--court-d);
@@ -190,6 +195,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   <p class="welcome">欢迎加入星羿毛毛球大队，一起涨球，一起健康生活</p>
   <a class="contact" href="tel:15107920066"><b>15107920066</b>（微信同号）</a>
   <div class="tags"><span>会员增值</span><span>品牌内容</span><span>全 AI 图解</span></div>
+  <a class="assess-fab" href="assessment.html" target="_blank" rel="noopener">🏸 综合评测 ⇗</a>
 </header>
 <nav id="topnav"><button class="tab active" data-cat="home">🏠 首页</button><button class="tab" data-cat="basics">🌱 自检·球感</button><button class="tab" data-cat="techlib">🏸 技术库</button><button class="tab" data-cat="news">📰 羽球大事件</button><button class="tab" data-cat="biz">💼 商务合作</button><button class="tab" data-cat="hire">👥 教练应聘</button></nav>
 
