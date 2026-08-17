@@ -212,6 +212,7 @@
 <script>
 /* ============ 通用 ============ */
 const $ = id => document.getElementById(id);
+let RESULT={};
 function t5(v){return v<=2?'偏软/控球为主':v<=4?'轻微起跳/基础下压':v<=6?'适中下压/具备突击力':v<=8?'强力点杀/起跳下压':'暴力重炮/场上轰炸';}
 
 /* 标签切换 */
@@ -329,6 +330,9 @@ function calcM1(){
   }
   $('m1_body').innerHTML=html;
   $('m1_r').classList.add('show');
+  RESULT.m1={name:body.n,pill:sex+' · '+age+'岁 · BMI '+bmi+' · 臂展差 '+(arm>=0?'+':'')+arm+'cm',
+    dims:M1_DIMS.map((d,i)=>({k:d.k,score:scores[i],desc:d.a[Math.min(4,Math.floor((scores[i]-1)/2))]})),
+    maxDim:M1_DIMS[maxIdx].k,tend:tend,single:body.single,double:body.double,train:body.train,racket:body.racket,shoe:body.shoe,isKid:isKid};
   drawRadar('m1_chart',m1Chart,M1_DIMS.map(d=>d.k),scores,'#ff6a3d');
   m1Chart=m1Chart;
   $('m1_r').scrollIntoView({behavior:'smooth',block:'start'});
@@ -421,6 +425,9 @@ function calcM2(){
   if(exp>=3&&avg<6)html+=`<div class="note">经验系数已计入：该学员打球年限较长但技术均分偏低，可能为"老球油子"——动作习惯需规范化，重点纠正基础动作。</div>`;
   $('m2_body').innerHTML=html;
   $('m2_r').classList.add('show');
+  RESULT.m2={name:lvl.name,pill:'技术均分 '+avg+' · 年限 '+exp+'年 · 频率 '+$('m2_freq').selectedOptions[0].text,
+    rows:M2_TECH.map((t,i)=>({k:t.k,score:scores[i],l:t.l,r:t.r})),lvlDesc:lvl.d,
+    weak:weak.map(w=>({k:w.k,fix:fixMap[w.k]})),shoeTip:shoeTip,lineTip:lineTip,noWeak:(!weak.length||order[0][0]>=7)};
   drawRadar('m2_chart',m2Chart,M2_TECH.map(t=>'#'+(M2_TECH.indexOf(t)+1)),scores,'#3da5ff');
   m2Chart=m2Chart;
   $('m2_r').scrollIntoView({behavior:'smooth',block:'start'});
@@ -534,31 +541,100 @@ function calcM3(){
   html+=`<div class="note">本测试为教练理解成人沟通风格的修炼工具，人格判定为星羿版算法，结果仅供参考。不直接用于 5–12 岁少儿。</div>`;
   $('m3_body').innerHTML=html;
   $('m3_r').classList.add('show');
+  RESULT.m3={name:p.n,role:M3_ROLE,score:score.slice(),s:p.s,weak:p.weak,fix:p.fix,tac:p.tac,train:p.train,eq:p.eq,com:p.com,gd:[p.s,p.tac,p.com,p.train,p.eq],guide:M3_GUIDE};
   $('m3_r').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
+const RF="'PingFang SC','Microsoft YaHei','Hiragino Sans GB',sans-serif";
+const RC={bg:'#fffdf7',ink:'#2a2317',muted:'#8a7f68',main:'#ff6a3d',blue:'#2f6fb0',line:'#e7ddc8',soft:'#f4ecdb'};
+function rr(ctx,x,y,w,h,r){if(w<=0)w=1;ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function wrap(ctx,text,x,y,maxW,lh){if(text==null)return y;const chars=String(text).split('');let line='';let yy=y;for(const ch of chars){const t=line+ch;if(ctx.measureText(t).width>maxW&&line){ctx.fillText(line,x,yy);line=ch;yy+=lh;}else line=t;}if(line){ctx.fillText(line,x,yy);yy+=lh;}return yy;}
+function drawRadar(ctx,cx,cy,rad,labels,data,maxv,color){
+  const n=labels.length;const ang=i=>-Math.PI/2+i*2*Math.PI/n;
+  ctx.strokeStyle=RC.line;ctx.lineWidth=1;
+  for(let g=1;g<=4;g++){ctx.beginPath();for(let i=0;i<n;i++){const r2=rad*g/4;const x=cx+r2*Math.cos(ang(i));const y=cy+r2*Math.sin(ang(i));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();ctx.stroke();}
+  ctx.fillStyle=RC.muted;ctx.font='13px '+RF;
+  for(let i=0;i<n;i++){const x=cx+rad*Math.cos(ang(i));const y=cy+rad*Math.sin(ang(i));ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(x,y);ctx.strokeStyle=RC.line;ctx.stroke();const lx=cx+(rad+16)*Math.cos(ang(i));const ly=cy+(rad+16)*Math.sin(ang(i));ctx.textAlign='center';ctx.fillText(labels[i],lx,ly+4);}
+  ctx.textAlign='left';
+  ctx.beginPath();for(let i=0;i<n;i++){const r2=rad*data[i]/maxv;const x=cx+r2*Math.cos(ang(i));const y=cy+r2*Math.sin(ang(i));i?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();
+  ctx.globalAlpha=0.28;ctx.fillStyle=color;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();
+}
+function sec(ctx,label,text,x,y){ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText(label,x,y);y+=22;ctx.font='14px '+RF;ctx.fillStyle=RC.ink;return wrap(ctx,text,x+10,y,740-x,20)+10;}
+function note(ctx,text,x,y){ctx.font='13px '+RF;ctx.fillStyle=RC.muted;return wrap(ctx,text,x,y,690,18)+12;}
+function drawContent(ctx,W,m,R){
+  ctx.fillStyle=RC.main;ctx.fillRect(0,0,W,96);
+  ctx.fillStyle='#fff';ctx.textAlign='left';ctx.textBaseline='alphabetic';
+  ctx.font='bold 30px '+RF;ctx.fillText('星羿羽毛球综合评测',32,52);
+  ctx.font='16px '+RF;ctx.fillText({m1:'打法天赋测评',m2:'业余等级评级',m3:'羽球人格测试'}[m],32,78);
+  ctx.font='13px '+RF;ctx.textAlign='right';ctx.fillText('xingyi-badminton · 仅供参考',W-28,80);ctx.textAlign='left';
+  let y=122;
+  ctx.font='bold 24px '+RF;ctx.fillStyle=RC.ink;
+  const title=(m==='m1'?'身材画像：'+R.name:(m==='m2'?'综合等级：'+R.name:'你的羽球人格：'+R.name));
+  ctx.fillText(title,30,y);y+=30;
+  if(R.pill){ctx.font='14px '+RF;ctx.fillStyle=RC.muted;y=wrap(ctx,R.pill,30,y+2,W-60,20);}
+  y+=16;
+  if(m==='m1'){
+    drawRadar(ctx,W/2,y+130,118,R.dims.map(d=>d.k),R.dims.map(d=>d.score),10,RC.main);y+=280;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('① 五维能力',30,y);y+=24;
+    R.dims.forEach(d=>{ctx.font='14px '+RF;ctx.fillStyle=RC.ink;ctx.fillText(d.k+'　'+d.score+'/10',30,y);y+=20;ctx.font='13px '+RF;ctx.fillStyle=RC.muted;y=wrap(ctx,d.desc,46,y,W-76,18)+6;});
+    y+=6;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('能力倾向（最强维）',30,y);y+=22;
+    ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'最强项是 '+R.maxDim+'，整体偏向：'+R.tend,40,y,W-80,20)+8;
+    y=sec(ctx,'② 单打战术',R.single,30,y);
+    y=sec(ctx,'③ 双打角色',R.double,30,y);
+    y=sec(ctx,'④ 训练方向',R.train,30,y);
+    y=sec(ctx,'⑤ 装备匹配（'+String(R.pill).split(' ')[0]+'）',R.racket+'　|　球鞋：'+R.shoe,30,y);
+    if(R.isKid){y=note(ctx,'少儿装备降级：少儿拍偏 5U/6U 更护手；球鞋优先缓震+防侧翻。战术简化到启蒙动作（高远球、挑球、基础步伐）。',30,y);}
+  } else if(m==='m2'){
+    drawRadar(ctx,W/2,y+130,118,R.rows.map(r=>r.k.replace(/（.*?）/,'')),R.rows.map(r=>r.score),10,RC.blue);y+=280;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('等级解读',30,y);y+=22;
+    ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,R.lvlDesc,40,y,W-80,20)+8;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('七项技术分布',30,y);y+=22;
+    R.rows.forEach(r=>{ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,r.k+'　'+r.l+' → '+r.r+'　['+r.score+'/10]',40,y,W-80,19)+4;});
+    y+=6;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('短板定位',30,y);y+=22;
+    if(R.noWeak){ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'暂无明显短板，均衡发展 👍',40,y,W-80,20)+8;}
+    else R.weak.forEach(w=>{ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'· '+w.k,40,y,W-80,19)+4;});
+    y+=6;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('专项提升方案',30,y);y+=22;
+    if(R.noWeak){ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'保持全面练习，聚焦临场战术与稳定性精进。',40,y,W-80,20)+8;}
+    else R.weak.forEach(w=>{ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'· '+w.k+'：'+w.fix,40,y,W-80,19)+4;});
+    y+=6;
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('器材优化建议',30,y);y+=22;
+    ctx.font='14px '+RF;ctx.fillStyle=RC.ink;y=wrap(ctx,'球鞋：'+R.shoeTip,40,y,W-80,19)+4;
+    y=wrap(ctx,'球拍/拍线：'+R.lineTip,40,y,W-80,19)+8;
+  } else {
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('五人格倾向分布',30,y);y+=14;
+    const total=R.score.reduce((a,b)=>a+b,0)||1;const col=['#ff6a3d','#2f6fb0','#7a5cff','#1aa179','#e0a32e'];
+    const nm=['赛场指挥官','冷静战术猎手','灵感突击手','全局算计大师','全能战术家'];
+    R.score.forEach((s,i)=>{const pct=Math.round(s/total*100);ctx.font='13px '+RF;ctx.fillStyle=RC.ink;ctx.fillText((i+1)+'. '+nm[i]+'　'+pct+'%',30,y);ctx.fillStyle=RC.soft;rr(ctx,30,y+6,W-60,10,5);ctx.fillStyle=col[i];rr(ctx,30,y+6,(W-60)*pct/100,10,5);y+=30;});
+    y+=6;
+    y=sec(ctx,'特质',R.s,30,y);
+    y=sec(ctx,'短板',R.weak,30,y);
+    y=sec(ctx,'破局',R.fix,30,y);
+    ctx.font='bold 16px '+RF;ctx.fillStyle=RC.main;ctx.fillText('五大维度心法',30,y);y+=22;
+    R.guide.forEach((g,i)=>{ctx.font='14px '+RF;ctx.fillStyle=RC.blue;ctx.fillText('· '+g,30,y);y+=20;ctx.font='13px '+RF;ctx.fillStyle=RC.muted;y=wrap(ctx,R.gd[i],46,y,W-76,18)+6;});
+    y=note(ctx,'本测试为教练理解成人沟通风格的修炼工具，结果仅供参考，不直接用于 5–12 岁少儿。',30,y);
+  }
+  y=note(ctx,'—— 星羿羽毛球馆 · 九江经开区 ——',30,y);
+  return y+20;
+}
 function genImage(m){
-  if(typeof html2canvas==='undefined'){alert('图片组件未加载，请刷新页面重试（建议用 WiFi 或微信内置浏览器打开本页）');return;}
-  const el=$('m'+m+'_r');
-  const head=el && el.querySelector('.report-h');
-  if(!head || !head.textContent.trim()){alert('请先点上方“生成报告”按钮，出结果后再生成数据图');return;}
-  const tip=document.createElement('div');
-  tip.textContent='正在生成图片…';
-  tip.style.cssText='position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:#221c08;color:#fff;padding:12px 18px;border-radius:10px;z-index:999;font-weight:700';
-  document.body.appendChild(tip);
-  try{
-    html2canvas(el,{backgroundColor:'#fffdf7',scale:2,useCORS:true,allowTaint:true,logging:false}).then(cv=>{
-      cv.toBlob(b=>{
-        if(!b){tip.remove();alert('生成图片失败：画布为空');return;}
-        const url=URL.createObjectURL(b);
-        const a=document.createElement('a');
-        a.download='星羿羽毛球测评_'+m+'_'+Date.now()+'.png';
-        a.href=url;document.body.appendChild(a);a.click();a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),4000);
-        tip.remove();
-      },'image/png');
-    }).catch(e=>{tip.remove();alert('生成图片失败：'+((e&&e.message)||e));});
-  }catch(e){tip.remove();alert('生成图片出错：'+((e&&e.message)||e));}
+  const R=RESULT[m];
+  if(!R){alert('请先点上方“生成报告”按钮，出结果后再生成数据图');return;}
+  const W=750;
+  const tmp=document.createElement('canvas');tmp.width=W*2;tmp.height=16000;const tc=tmp.getContext('2d');tc.scale(2,2);
+  const h=drawContent(tc,W,m,R);
+  const cv=document.createElement('canvas');cv.width=W*2;cv.height=Math.ceil(h*2)+40;
+  const ctx=cv.getContext('2d');ctx.scale(2,2);
+  ctx.fillStyle=RC.bg;ctx.fillRect(0,0,W,h+20);
+  drawContent(ctx,W,m,R);
+  cv.toBlob(b=>{
+    if(!b){alert('生成图片失败');return;}
+    const url=URL.createObjectURL(b);const a=document.createElement('a');
+    a.download='星羿羽毛球测评_'+m+'_'+Date.now()+'.png';a.href=url;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+  },'image/png');
 }
 </script>
 </body>
