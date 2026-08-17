@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿羽毛球综合评测 · 自学版</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0f1424; --card:#171d33; --card2:#1e2640; --line:#2a3354;
+    --main:#ff6a3d; --main2:#ffb03d; --blue:#3da5ff; --green:#36d399;
+    --txt:#eaf0ff; --sub:#9aa6c8; --red:#ff5c7a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,#0c1020,#141a30 60%,#0c1020);color:var(--txt);line-height:1.6;}
+  .wrap{max-width:780px;margin:0 auto;padding:18px 14px 60px;}
+  header{text-align:center;padding:26px 10px 14px;}
+  header .logo{font-size:30px;font-weight:800;letter-spacing:1px;
+    background:linear-gradient(90deg,var(--main),var(--main2));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  header .sub{color:var(--sub);font-size:13px;margin-top:4px;}
+  .tabs{display:flex;gap:8px;margin:16px 0 4px;flex-wrap:wrap;justify-content:center;}
+  .tab{flex:1;min-width:110px;padding:11px 6px;border:1px solid var(--line);border-radius:12px;
+    background:var(--card);color:var(--sub);text-align:center;font-size:13.5px;font-weight:600;cursor:pointer;transition:.2s;}
+  .tab.active{background:linear-gradient(135deg,var(--main),var(--main2));color:#1a1206;border-color:transparent;box-shadow:0 6px 18px rgba(255,106,61,.3);}
+  .tab small{display:block;font-weight:400;font-size:11px;opacity:.8;}
+  .panel{display:none;margin-top:16px;}
+  .panel.active{display:block;animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;}
+  .card h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .card h3 .n{display:inline-flex;width:24px;height:24px;border-radius:8px;background:var(--main);color:#1a1206;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+  .row{display:flex;gap:12px;flex-wrap:wrap;}
+  .field{flex:1;min-width:130px;margin-bottom:10px;}
+  label{display:block;font-size:12.5px;color:var(--sub);margin-bottom:5px;}
+  input[type=number],select{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);
+    background:var(--card2);color:var(--txt);font-size:14px;outline:none;}
+  input[type=number]:focus,select:focus{border-color:var(--main);}
+  .slider-box{margin-bottom:16px;}
+  .slider-box .lab{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:4px;}
+  .slider-box .lab b{color:var(--main2);}
+  .slider-box .anchor{display:flex;justify-content:space-between;font-size:10.5px;color:var(--sub);margin-top:2px;}
+  input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:6px;
+    background:linear-gradient(90deg,var(--main),var(--main2));outline:none;margin:6px 0;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;
+    background:#fff;border:3px solid var(--main);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+  input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--main);cursor:pointer;}
+  .btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;cursor:pointer;
+    background:linear-gradient(135deg,var(--main),var(--main2));color:#1a1206;font-size:15px;font-weight:800;margin:6px 0;}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:var(--card2);color:var(--txt);border:1px solid var(--line);font-weight:600;}
+  .result{display:none;}
+  .result.show{display:block;animation:fade .3s ease;}
+  .tag{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;margin:2px 4px 2px 0;}
+  .tag.t1{background:rgba(255,106,61,.18);color:var(--main);}
+  .tag.t2{background:rgba(61,165,255,.18);color:var(--blue);}
+  .tag.t3{background:rgba(54,211,153,.18);color:var(--green);}
+  .report-h{font-size:17px;font-weight:800;margin:14px 0 8px;color:var(--main2);}
+  .block{background:var(--card2);border-left:3px solid var(--main);border-radius:0 10px 10px 0;padding:10px 14px;margin:8px 0;font-size:13.5px;}
+  .block .t{font-weight:800;color:var(--main2);margin-bottom:3px;}
+  .chart-box{background:var(--card2);border-radius:12px;padding:12px;margin:10px 0;}
+  .note{font-size:11.5px;color:var(--sub);background:rgba(61,165,255,.08);border:1px dashed var(--line);border-radius:10px;padding:10px;margin-top:10px;}
+  footer{text-align:center;color:var(--sub);font-size:11px;margin-top:30px;line-height:1.7;}
+  .pill{font-size:11px;color:var(--sub);border:1px solid var(--line);border-radius:20px;padding:2px 9px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:520px){.grid2{grid-template-columns:1fr}.field{min-width:100%}}
+  .seg{display:flex;gap:6px;}
+  .seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--sub);font-size:13px;cursor:pointer;}
+  .seg button.on{background:var(--main);color:#1a1206;border-color:transparent;font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">⭐ 星羿羽毛球综合评测</div>
+    <div class="sub">打法天赋 · 等级评级 · 羽球人格　|　星羿羽毛球馆教练团队自学 + 学员评测工具</div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-m="1">MODULE 01<small>打法天赋测评</small></div>
+    <div class="tab" data-m="2">MODULE 02<small>等级评级</small></div>
+    <div class="tab" data-m="3">MODULE 03<small>羽球人格</small></div>
+  </div>
+
+  <!-- ============ MODULE 01 ============ -->
+  <section class="panel active" id="m1">
+    <div class="card">
+      <h3><span class="n">1</span>基础数据</h3>
+      <div class="row">
+        <div class="field"><label>性别</label>
+          <select id="m1_sex"><option value="男">男</option><option value="女">女</option></select></div>
+        <div class="field"><label>年龄（岁）</label><input type="number" id="m1_age" value="9" min="3" max="99"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>身高（cm）</label><input type="number" id="m1_h" value="135" min="80" max="220"></div>
+        <div class="field"><label>体重（kg）</label><input type="number" id="m1_w" value="30" min="10" max="150"></div>
+        <div class="field"><label>臂展（cm）</label><input type="number" id="m1_a" value="138" min="80" max="230"></div>
+      </div>
+      <div class="field"><label>练习时长（月）</label><input type="number" id="m1_exp" value="6" min="0" max="600"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="n">2</span>五维能力评分（1–10）</h3>
+      <div id="m1_dims"></div>
+    </div>
+
+    <div class="card">
+      <h3><span class="n">3</span>年龄段适配</h3>
+      <div class="seg" id="m1_seg">
+        <button data-v="auto" class="on">自动（按年龄）</button>
+        <button data-v="5">5–7 启蒙</button>
+        <button data-v="8">8–10 技术</button>
+        <button data-v="11">11–12 专项</button>
+      </div>
+      <div class="note" id="m1_agehint" style="margin-top:10px"></div>
+    </div>
+
+    <button class="btn" onclick="calcM1()">🎯 生成打法画像报告</button>
+
+    <div class="card result" id="m1_r">
+      <div class="report-h" id="m1_title"></div>
+      <div class="chart-box"><canvas id="m1_chart" height="260"></canvas></div>
+      <div id="m1_body"></div>
+      <div class="note">⚠️ 少儿评分已按所选年龄段做放宽处理，结论仅供训练方向参考，不给孩子贴标签。报告话术已转为家长易懂版本。</div>
+    </div>
+  </section>
+
+  <!-- ============ MODULE 02 ============ -->
+  <section class="panel" id="m2">
+    <div class="card">
+      <h3><span class="n">1</span>基础信息</h3>
+      <div class="row">
+        <div class="field"><label>打球年限（年）</label><input type="number" id="m2_exp" value="1" min="0" max="80"></div>
+        <div class="field"><label>每周频率</label>
+          <select id="m2_freq"><option value="0">不足 1 次</option><option value="1" selected>1 次</option><option value="2">2–3 次</option><option value="3">4 次以上</option></select></div>
+      </div>
+      <div class="field"><label>参赛经历</label>
+        <select id="m2_comp">
+          <option value="0">从未参赛，纯娱乐打野球</option>
+          <option value="1">社区小型比赛，无名次</option>
+          <option value="2">城市业余赛进入八强</option>
+          <option value="3">市级赛事获奖 / 俱乐部联赛主力</option>
+          <option value="4">省级业余赛事参赛 / 获奖</option>
+        </select></div>
+    </div>
+    <div class="card">
+      <h3><span class="n">2</span>七项技术评分（1–10）</h3>
+      <div id="m2_tech"></div>
+    </div>
+    <button class="btn" onclick="calcM2()">📊 生成等级评级报告</button>
+    <div class="card result" id="m2_r">
+      <div class="report-h" id="m2_title"></div>
+      <div class="chart-box"><canvas id="m2_chart" height="260"></canvas></div>
+      <div id="m2_body"></div>
+    </div>
+  </section>
+
+  <!-- ============ MODULE 03 ============ -->
+  <section class="panel" id="m3">
+    <div class="note" style="margin-bottom:12px">
+      ⚠️ 本模块为<b>成人向人格测试</b>，用于教练理解成人学员 / 家长 / 散客的沟通风格，<b>不直接给 5–12 岁少儿做</b>。每题左右滑动表达偏向。
+    </div>
+    <div class="card">
+      <h3><span class="n">1</span>角色</h3>
+      <div class="seg" id="m3_seg">
+        <button data-v="男" class="on">男球友</button>
+        <button data-v="女">女球友</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3><span class="n">2</span>23 道测评（左 ↔ 右 滑动）</h3>
+      <div id="m3_qs"></div>
+    </div>
+    <button class="btn" onclick="calcM3()">🧠 生成人格报告</button>
+    <div class="card result" id="m3_r">
+      <div class="report-h" id="m3_title"></div>
+      <div id="m3_body"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div>改编自《羽毛球综合评测系统》（外羽精刊）· 星羿羽毛球馆本地化自学版</div>
+    <div>⭐ 教练团队共学 · 使用反馈持续迭代　|　评测结果仅供参考</div>
+  </footer>
+</div>
+
+<script>
+/* ============ 通用 ============ */
+const $ = id => document.getElementById(id);
+function t5(v){return v<=2?'偏软/控球为主':v<=4?'轻微起跳/基础下压':v<=6?'适中下压/具备突击力':v<=8?'强力点杀/起跳下压':'暴力重炮/场上轰炸';}
+
+/* 标签切换 */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); $('m'+t.dataset.m).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+/* ============ MODULE 01 数据 ============ */
+const M1_DIMS=[
+  {k:'爆发力',d:'杀球、起跳',a:['偏软/控球为主','轻微起跳/基础下压','适中下压/具备突击力','强力点杀/起跳下压','暴力重炮/场上轰炸']},
+  {k:'耐力',d:'多拍对抗',a:['易疲劳/速战速决','维持常规局数','多拍均衡/稳定拉锯','充沛/拖垮对手','跑不死/永动机']},
+  {k:'反应速度',d:'接杀连贯',a:['反应较慢/需预判','正常接杀应对','连贯顺畅/快速封网','极速反抽/预判精准','神经级本能反射']},
+  {k:'网前手感',d:'搓放勾挑',a:['控制较粗/防守挑高','基础放网','贴网过球/减速控局','滚网小球/勾对角刁钻','手指极致贴网控制']},
+  {k:'移动速度',d:'步伐快慢',a:['步伐慢/靠覆盖弥补','正常覆盖到位','启动迅速/全场覆盖','快频连贯/快速贴网','场上飞人/瞬间启动']},
+];
+const M1_BODY=[
+  {n:'高瘦型',f:'臂展长/负重小',fit:'拉吊控球、高点封锁',
+   train:'脚下第一步启动与下肢防守连贯',
+   racket:'中杆回弹极快、平衡点适中偏头轻的拉吊控制型（4U），挥速快、操控细腻，发挥长臂展高点控制',
+   shoe:'轻量贴地速度型（前掌薄而灵敏 + 大底高抓地 + 轻量化）',
+   single:'高拉慢吊/控后场突击型｜契合：身高+臂展带来天然视角与高点覆盖，轻盈体型利于长时间拉锯保体能。战术：四角平高球结合大角度劈吊开场，控制对手大范围跑动，待回球半场时迎球点杀突击。',
+   double:'前场组织封网/巡航封锁者｜契合：高瘦+长臂展有效封锁网前白线与中场高球，打断对手出球弧线。战术：多打网前拦截、放网与中场连贯平抽，减少盲目后场连续重杀，为同伴创造攻击落点。'},
+  {n:'高壮型',f:'力量足/对抗强',fit:'后场重炮、压制进攻',
+   train:'下肢抗冲击 + 核心稳定（重杀连贯）',
+   racket:'头重感明显、中杆偏硬的重杀下压型（男 3U/女 4U），偏重拍头提供后场连续下压惯性',
+   shoe:'重载全面缓震型（后跟厚实缓震 + 中底抗扭碳片 + 加宽防侧翻角）',
+   single:'重杀攻坚/压制突击型｜契合：身高+体格支撑带来陡峭击球弧线与极强重杀下沉感，压迫感强。战术：靠高质量高远压紧底线，一旦浮高中场球立即起跳重杀或劈杀陡线，连续压制取胜。',
+   double:'后场重炮/主攻下压杀手｜契合：绝对力量与身体高度，是双打后场天然重炮手。战术：保持后场连续下压，破坏对方防守线，逼迫起半场球，配合前场搭档一击必杀。'},
+  {n:'矮快型',f:'重心低/步频快',fit:'防守反击、网前平抽',
+   train:'高点被动球后退步伐与防守范围扩大',
+   racket:'破风框型、极速挥速速度型轻量拍（4U/5U，手柄偏细），便于手腕手指瞬间发力，提升网前抢扑与平抽',
+   shoe:'轻量贴地速度型（前掌薄而灵敏 + 大底高抓地 + 轻量化）',
+   single:'防守反击/连贯快速型｜契合：重心低、步频快，极快弥补身高带来的后场覆盖劣势，靠高频移动完成接杀变线。战术：接杀时多放网贴网或推两角，快速贴网抢前扑，迫使高个子对手频繁弯腰消耗体力。',
+   double:'网前刺客/前三拍平抽专家｜契合：身形敏捷，网前反应与启动快，在发接发及前三拍较量中占绝对灵力。战术：发接发抓抢前扑、平抽挡推腰，快速引入平抽对抗，尽量避免长时间被动吊后场。'},
+  {n:'矮壮型',f:'爆发强/底盘稳',fit:'中后场跳杀、接杀反抽',
+   train:'高点被动球后退步伐与防守范围扩大（同矮快型短板方向）',
+   racket:'中杆弹性好、攻防兼备均衡型（4U），弹性辅助被动防守借力反弹，中场提供干脆反抽',
+   shoe:'攻防综合稳定型（兼顾前掌启动与后跟缓震，侧重包裹与防滑耐磨）',
+   single:'防守反弹/抓发抓突击型｜契合：扎实底盘让你在防守端极具抗杀能力，结合极强核心爆发力，瞬间完成防守转进攻。战术：守住后场与防守基本盘，多打防守贴网反弹，利用对方质量不高或急躁的攻击做瞬间跳杀反抽。',
+   double:'攻守兼备/中后场硬抗突击手｜契合：底盘扎实抗冲击强，被动接杀稳健度高，中场拦截弹射力十足。战术：接杀多做高质量反抽与快推对角，配合后场跳杀，用频繁高速平抽对抗顶垮对方攻势。'},
+];
+/* 五维排名→打法倾向补充 */
+const M1_TEND={
+  '爆发力':'进攻轰炸型（后场重杀、压制下压）',
+  '网前手感':'细腻控制型（网前小球、节奏掌控）',
+  '移动速度':'拉吊突击型（全场覆盖、快速连贯）',
+  '耐力':'拉吊消耗型（多拍拉锯、拖垮对手）',
+  '反应速度':'连贯防守型（快速封网、接杀反抽）'
+};
+
+/* 渲染 M1 滑块 */
+(function(){
+  let h='';
+  M1_DIMS.forEach((d,i)=>{
+    h+=`<div class="slider-box"><div class="lab"><span>${d.k}（${d.d}）</span><b id="m1v${i}">5</b></div>
+      <input type="range" min="1" max="10" value="5" id="m1s${i}" oninput="$('m1v${i}').textContent=this.value">
+      <div class="anchor"><span>1 ${d.a[0]}</span><span>10 ${d.a[4]}</span></div></div>`;
+  });
+  $('m1_dims').innerHTML=h;
+})();
+
+/* 年龄段适配提示 */
+let M1_AGE_OVERRIDE=null;
+document.querySelectorAll('#m1_seg button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#m1_seg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  M1_AGE_OVERRIDE=b.dataset.v==='auto'?null:+b.dataset.v;
+  updateM1AgeHint();
+});
+function updateM1AgeHint(){
+  const age=M1_AGE_OVERRIDE||+$('m1_age').value||9;
+  let seg=age<=7?'5–7 岁 · 启蒙段':age<=10?'8–10 岁 · 技术段':'11–12 岁 · 专项段（接近成人标准）';
+  if(M1_AGE_OVERRIDE){seg='手动指定：'+seg;}
+  $('m1_agehint').innerHTML='当前适用段：<b style="color:var(--main2)">'+seg+'</b><br>启蒙段放宽（5 分以上即优秀，避免标签化）；技术段按技术完整度对照同龄；专项段接近成人标准。解读强调"进步曲线"而非绝对分数。';
+}
+$('m1_age').oninput=updateM1AgeHint; updateM1AgeHint();
+
+let m1Chart;
+function calcM1(){
+  const sex=$('m1_sex').value, age=M1_AGE_OVERRIDE||+$('m1_age').value||9;
+  const h=+$('m1_h').value, w=+$('m1_w').value, a=+$('m1_a').value, exp=+$('m1_exp').value;
+  const bmi=+(w/((h/100)*(h/100))).toFixed(1);
+  const arm=a-h;
+  const scores=M1_DIMS.map((d,i)=>+$('m1s'+i).value);
+  /* 身材画像：高矮阈值按年龄，壮瘦按 BMI */
+  const tallTh=age<=12?150:168;
+  const stout=bmi>=22;
+  const tall=h>=tallTh;
+  const idx=(tall?(stout?1:0):(stout?3:2)); // 0高瘦 1高壮 2矮快 3矮壮
+  const body=M1_BODY[idx];
+  /* 五维雷达 + 倾向 */
+  const maxIdx=scores.indexOf(Math.max(...scores));
+  const tend=M1_TEND[M1_DIMS[maxIdx].k];
+  /* 少儿放宽提示 */
+  const isKid=age<=12;
+  /* 报告 */
+  $('m1_title').innerHTML='打法画像：'+body.n+'　<span class="pill">'+sex+' · '+age+'岁 · BMI '+bmi+' · 臂展差 '+(arm>=0?'+':'')+arm+'cm</span>';
+  let rows='';
+  M1_DIMS.forEach((d,i)=>{rows+=`<div class="block"><div class="t">${d.k} ${scores[i]}/10</div>${d.a[Math.min(4,Math.floor((scores[i]-1)/2))]}</div>`;});
+  let html='';
+  html+=`<div class="tag t1">身材画像：${body.n}</div><div class="tag t2">特征：${body.f}</div><div class="tag t3">适配：${body.fit}</div>`;
+  html+=`<div class="report-h" style="font-size:14px;margin-top:12px">① 五维能力</div>${rows}`;
+  html+=`<div class="block"><div class="t">能力倾向（最高维）</div>最强项是 <b>${M1_DIMS[maxIdx].k}</b>，整体偏向：<b style="color:var(--main2)">${tend}</b></div>`;
+  html+=`<div class="report-h" style="font-size:14px">② 单打战术</div><div class="block">${body.single}</div>`;
+  html+=`<div class="report-h" style="font-size:14px">③ 双打角色</div><div class="block">${body.double}</div>`;
+  html+=`<div class="report-h" style="font-size:14px">④ 训练方向</div><div class="block"><div class="t">针对 ${body.n}</div>${body.train}；<br>通用：核心爆发力（每周固定 3 次杀球/起跳 + 后场挥拍步伐）；专项防守（接杀挡网、推对角、双打平抽连贯）。</div>`;
+  html+=`<div class="report-h" style="font-size:14px">⑤ 装备匹配（${sex}）</div>`;
+  html+=`<div class="block"><div class="t">球拍</div>${body.racket}</div>`;
+  html+=`<div class="block"><div class="t">球鞋</div>${body.shoe}</div>`;
+  if(isKid){
+    html+=`<div class="note">少儿装备降级建议：少儿拍偏 <b>5U/6U</b> 更护手；球鞋优先 <b>缓震 + 防侧翻</b>。战术建议简化到启蒙动作（高远球、挑球、基础步伐）。</div>`;
+  }
+  $('m1_body').innerHTML=html;
+  $('m1_r').classList.add('show');
+  drawRadar('m1_chart',m1Chart,M1_DIMS.map(d=>d.k),scores,'#ff6a3d');
+  m1Chart=m1Chart;
+  $('m1_r').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* 雷达图通用 */
+function drawRadar(id,chart,labels,data,color){
+  const ctx=$(id).getContext('2d');
+  if(chart) chart.destroy();
+  return new Chart(ctx,{type:'radar',data:{labels,datasets:[{data,
+    backgroundColor:'rgba(255,106,61,.25)',borderColor:color,pointBackgroundColor:color,borderWidth:2}]},
+    options:{scales:{r:{min:0,max:10,ticks:{stepSize:2,color:'#9aa6c8',backdropColor:'transparent'},
+      grid:{color:'#2a3354'},angleLines:{color:'#2a3354'},pointLabels:{color:'#eaf0ff',font:{size:12}}}},plugins:{legend:{display:false}}}});
+}
+
+/* ============ MODULE 02 数据 ============ */
+const M2_TECH=[
+  {k:'反手后场高远球稳定性（被动摆脱）',l:'薄弱',r:'稳定压底线'},
+  {k:'反手网前勾对角细腻度',l:'粗糙',r:'贴网过网'},
+  {k:'接发球路变化意识',l:'球路单一',r:'路数多变'},
+  {k:'双打轮转补位意识',l:'经常卡位',r:'流畅补位'},
+  {k:'网前搓放勾精细控制',l:'失误较多',r:'精准控制'},
+  {k:'中场平抽挡质量与连贯',l:'被动软挡',r:'连贯快顶'},
+  {k:'实战战术与临场调整能力',l:'盲目打球',r:'针对性战术'},
+];
+const M2_LEVELS=[
+  {min:0.5,name:'新手入门（1 级）',d:'基础动作尚未定型，多拍对抗难以持续，优先打磨基础高远与步伐。'},
+  {min:4,name:'初级爱好者（2 级）',d:'动作不规范，后场被动很难摆脱，反手短板明显，以娱乐打野球为主。'},
+  {min:5,name:'入门进阶（3 级）',d:'能稳定对拉高远，网前容易失误，接发球路单一，缺少战术思维。'},
+  {min:6,name:'中级业余（4 级）',d:'基础动作成型，网前有控制，反手短板明显，双打轮转经常出现漏洞。'},
+  {min:7,name:'中高阶业余（5 级）',d:'基础技术熟练，反手可以摆脱，拥有基础战术意识，稳定战胜普通球友。'},
+  {min:8,name:'业余高手（6 级）',d:'各项技术稳定，具备多变线路，双打意识良好，具备参加城市赛事拿分能力。'},
+  {min:9,name:'高水平业余（7–8 级）',d:'技术全面，反手稳定，双打轮转流畅，战术思路成熟，可对抗高水平俱乐部选手。'},
+];
+(function(){
+  let h='';
+  M2_TECH.forEach((t,i)=>{
+    h+=`<div class="slider-box"><div class="lab"><span>${i+1}. ${t.k}</span><b id="m2v${i}">5</b></div>
+      <input type="range" min="1" max="10" value="5" id="m2s${i}" oninput="$('m2v${i}').textContent=this.value">
+      <div class="anchor"><span>${t.l}</span><span>${t.r}</span></div></div>`;
+  });
+  $('m2_tech').innerHTML=h;
+})();
+
+let m2Chart;
+function calcM2(){
+  const scores=M2_TECH.map((t,i)=>+$('m2s'+i).value);
+  const avg=+(scores.reduce((a,b)=>a+b,0)/scores.length).toFixed(1);
+  const exp=+$('m2_exp').value, freq=+$('m2_freq').value, comp=+$('m2_comp').value;
+  /* 等级：以技术平均分映射，叠加经验微调 */
+  let lvlScore=avg;
+  if(exp>=3)lvlScore+=0.3; if(freq>=2)lvlScore+=0.3; if(comp>=3)lvlScore+=0.4;
+  lvlScore=Math.min(10,lvlScore);
+  let lvl=M2_LEVELS[0];
+  for(const L of M2_LEVELS){if(lvlScore>=L.min)lvl=L;}
+  /* 短板：最低两项 */
+  const order=scores.map((v,i)=>[v,i]).sort((a,b)=>a[0]-b[0]);
+  const weak=order.slice(0,2).map(o=>M2_TECH[o[1]]);
+  const strongIdx=order[order.length-1][1];
+  /* 报告 */
+  $('m2_title').innerHTML='综合等级：'+lvl.name+'　<span class="pill">技术均分 '+avg+' · 年限 '+exp+'年 · 频率 '+$('m2_freq').selectedOptions[0].text+'</span>';
+  let rows='';
+  M2_TECH.forEach((t,i)=>{rows+=`<div class="block"><div class="t">${t.k}</div>${t.l}　→　${t.r}　<b style="color:var(--main2)">${scores[i]}/10</b></div>`;});
+  let html='';
+  html+=`<div class="block" style="border-left-color:var(--main2)"><div class="t">等级解读</div>${lvl.d}</div>`;
+  html+=`<div class="report-h" style="font-size:14px">七项技术分布</div>${rows}`;
+  html+=`<div class="block"><div class="t">短板定位（最弱 2 项）</div>`;
+  if(weak.length && order[0][0]>=7){html+='暂无明显短板，均衡发展 👍';}
+  else{weak.forEach(w=>html+=`<div class="tag t1">${w.k}</div>`);}
+  html+=`</div>`;
+  /* 提升 + 器材 */
+  const fixMap={
+    '反手后场高远球稳定性（被动摆脱）':'反手高远多球 + 反手过渡直线/对角定点练习',
+    '反手网前勾对角细腻度':'反手网前勾对角定点多球，强调拍面角度与手指控制',
+    '接发球路变化意识':'接发球套路训练，练习第三拍衔接与线路变化',
+    '双打轮转补位意识':'双打轮转跑位 drill，明确前后场交接点',
+    '网前搓放勾精细控制':'网前搓放勾多球，追求贴网过球与停顿',
+    '中场平抽挡质量与连贯':'中场平抽挡连贯多球，提升出球速度与挡网质量',
+    '实战战术与临场调整能力':'计分对抗 + 赛后复盘，针对性布置战术'
+  };
+  html+=`<div class="report-h" style="font-size:14px">专项提升方案</div><div class="block">`;
+  weak.forEach(w=>{html+=`<div>· <b>${w.k}</b>：${fixMap[w.k]}</div>`;});
+  if(!weak.length||order[0][0]>=7)html+='· 保持全面练习，聚焦临场战术与稳定性精进。';
+  html+=`</div>`;
+  /* 器材建议：结合短板与身材（此处用技术短板给方向） */
+  let shoeTip = '通用：缓震 + 防侧翻全面型';
+  if(scores[0]<5||scores[5]<5) shoeTip='防守/平抽多 → 需要稳定包裹 + 抗扭的中底支撑';
+  let lineTip = weak.some(w=>w.k.includes('反手'))?'建议稍低磅数（22–24 磅）易借力，拍框偏韧':'技术均衡，可上高磅（25–27 磅）提升控制';
+  html+=`<div class="report-h" style="font-size:14px">器材优化建议</div><div class="block"><div class="t">球鞋</div>${shoeTip}</div><div class="block"><div class="t">球拍 / 拍线</div>${lineTip}</div></div>`;
+  if(exp>=3&&avg<6)html+=`<div class="note">经验系数已计入：该学员打球年限较长但技术均分偏低，可能为"老球油子"——动作习惯需规范化，重点纠正基础动作。</div>`;
+  $('m2_body').innerHTML=html;
+  $('m2_r').classList.add('show');
+  drawRadar('m2_chart',m2Chart,M2_TECH.map(t=>'#'+(M2_TECH.indexOf(t)+1)),scores,'#3da5ff');
+  m2Chart=m2Chart;
+  $('m2_r').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ============ MODULE 03 数据 ============ */
+const M3_QS=[
+  ['打完一场高强度球局后','渴望社交复盘聊天','倾向独自安静休息'],
+  ['比赛关键分落后时','主动与搭档沟通加油','独自沉思调整状态'],
+  ['赛场打出高光得分时','大声呐喊/击掌庆祝','内心激动/表面克制'],
+  ['提升球技的主要途径','多打实战交流局','独自定点训练复盘'],
+  ['球场围观观众较多时','人越多我越兴奋发挥好','有人围观会略显拘谨'],
+  ['球友群组织约球活动时','积极响应并积极拉人','按需报名，很少发言'],
+  ['赛前准备重点观察','对手习惯动作/实战失误','推演全局战术套路逻辑'],
+  ['学习羽球新技术时','反复打磨标准动作细节','探索多变线路与出奇战术'],
+  ['预判对手回球路线依据','对手惯用路线/肢体细节','全局博弈逻辑/心理预判'],
+  ['最满意的得分方式','精准落点/稳健四方球','隐蔽假动作/诡异变线'],
+  ['看专业球星赛事时','关注具体步法与发力动作','关注整体节奏切换与战术布局'],
+  ['面对不熟悉的对手时','先打安全球观察实际能力','试探性打出非常规套路'],
+  ['双打搭档连续出现失误时','理性指出问题漏洞','优先照顾搭档情绪'],
+  ['组队约球最看重','球友实力匹配与竞技提升','相处融洽与愉快氛围'],
+  ['对手因心态崩盘频繁失误','抓住短板持续痛击','放缓节奏给对方留面子'],
+  ['俱乐部选拔主力阵容时','纯粹看胜率与实战数据','兼顾团队凝聚力与交情'],
+  ['裁判/球友出现争议判罚','坚持按规则据理力争','息事宁人以和为贵'],
+  ['赛后给予搭档反馈时','直截了当指出软肋','委婉鼓励，侧重肯定'],
+  ['训练/打球计划安排','严格按固定时间/流程进行','随性自由，想到什么练什么'],
+  ['临场面对临时加赛/改场地','感到打乱计划略有烦躁','欣然接受即兴对抗'],
+  ['球拍装备与磅数选择','固定参数不轻易更换','喜欢尝鲜更换不同拍线磅数'],
+  ['赛后复盘与记录习惯','完整记录得失分并制定改进项','打完就翻篇，凭借感觉改进'],
+  ['球包里的装备整理状态','各种物品分类井井有条','塞在一起，拿取方便就行'],
+];
+/* 每题 [左端人格, 右端人格] 计分映射（5种：0指挥官 1猎手 2突击手 3算计 4全能） */
+const M3_MAP=[
+  [0,1],[0,1],[2,1],[0,3],[2,1],[0,1],[1,3],[0,2],[1,3],
+  [3,2],[1,3],[4,2],[0,4],[0,4],[2,4],[3,4],[0,4],[0,4],
+  [0,2],[0,2],[4,2],[3,2],[0,2]
+];
+const M3_PERSONA=[
+  {n:'赛场指挥官',s:'极强秩序感与执行力，战术明确且不脱轨。',
+   weak:'搭档频繁失误或计划受阻时易产生急躁情绪。',
+   fix:'学会"战术降级"，容忍非受迫性失误，适度放松肌肉紧张度。',
+   tac:'高频平快球逼迫对方起半场球，接第三拍封网；主导高压连贯节奏，不给对手喘息；克制防守拖延型，但易被诡异假动作打乱。',
+   train:'标准化定点多球、高强度多拍平抽连贯；下肢快速多步连贯与网前封网反应。',
+   eq:'中杆偏硬、头重感明确的经典性能拍（3U/4U 攻防拍）+ 高磅数 27–29 磅强力硬线；或中杆快弹破风控球拍（4U 速度型/攻防拍）+ 高弹保磅线 24–26 磅。',
+   com:'多用具体客观事实（如"多注意右侧中场"），少用语气情绪词。'},
+  {n:'冷静战术猎手',s:'冷静观察，瞬间精准捕捉对手被动漏洞与站位盲区。',
+   weak:'情绪内敛，双打沟通少，容易让搭档猜不透意图。',
+   fix:'主动开口提醒搭档站位，将个人灵感转化为团队默契。',
+   tac:'网前贴网放球结合快速反手推底线；擅长快慢结合，慢速对拉中突然起跳点杀反抽；克制性子急躁进攻型，但易被体能充沛拉吊型缠住。',
+   train:'网前搓放勾小球专项、被动反手摆脱与对角弹射；手腕手指瞬间爆发力与假动作停顿感。',
+   eq:'挥速快、中杆回弹极佳速度破风型（4U/5U）+ 高弹细线 26–28 磅；或轻量速度型拍（4U/5U）+ 高弹细线 23–25 磅。',
+   com:'赛前约定基本出球分工，发球前用手势简短沟通。'},
+  {n:'灵感突击手',s:'球路极其多变，假动作连贯，击球充满创造性与观赏性。',
+   weak:'注意力易分散，领先时易产生无谓非受迫性失误。',
+   fix:'建立"关键分法则"，18 平后收敛假动作改打基本功。',
+   tac:'网前勾对角结合偷后场打乱预判；靠出其不意变线破坏对手步伐支撑；克制站位僵硬传统型，但被"防守像墙"的稳健型克制。',
+   train:'多角度变线对抗练习、体能储备与核心稳定性；减少出球随意性，提高低级失误控制力。',
+   eq:'平衡点适中、兼具手感与速度的破风速度拍（4U）+ 高弹保磅线 25–27 磅；或轻量化高端前场/速度拍（4U/5U）+ 高弹细线 23–25 磅。',
+   com:'得分后多击掌，用正向情绪反馈维持高昂手感。'},
+  {n:'全局算计大师',s:'算无遗策，能提前预判对手 3 拍后的回球路线。',
+   weak:'容易想太多导致出手犹豫，错过最佳击球点。',
+   fix:'相信第一直觉肌肉记忆，半场球果断出手不犹豫。',
+   tac:'高质量追身发球逼迫回球落入预设线路；精确控制四角落点消耗对手至极限；克制缺乏战术的大力重杀型，但被毫无规律乱打型困扰。',
+   train:'四方球精准落点控制、防守反击追身反抽；中后场快速起跳与连贯贴网出球。',
+   eq:'中杆偏硬、控球落点极精准拉吊控制拍（3U/4U）+ 控制型耐用线 26–28 磅；或控球型高端中杆拍（4U）+ 高弹控制线 24–26 磅。',
+   com:'简短明确告知搭档控制区域，不讲繁复战术理论。'},
+  {n:'羽球全能战术家',s:'心理素质稳定，能根据赛场局势灵活调整心态。',
+   weak:'缺少极具杀伤力招牌杀招，易陷均势拉锯。',
+   fix:'打造至少一项"必杀得分杀手锏"（如高质量网前搓球或跳杀）。',
+   tac:'发网前 T 头球结合偶尔偷后场，保持发球稳定；保持前后场流畅轮转，通过拉吊寻找下压机会；战术适应性强，注重自我失误控制。',
+   train:'基础步法连贯、网前小球与后场高远定点；提高体能储备与实战快节奏对抗。',
+   eq:'全能攻守兼备型球拍（4U 中杆软硬适中）+ 全能型高弹拍线 25–27 磅；或全能轻量控制拍（4U/5U）+ 高弹拍线 23–25 磅。',
+   com:'保持平稳交流，多给予搭档鼓励与积极信号。'},
+];
+const M3_GUIDE=['心智模式与破局法门','球场实战博弈指南','双打搭档与社交手册','进阶训练规划','专属器材选型指导'];
+(function(){
+  let h='';
+  M3_QS.forEach((q,i)=>{
+    h+=`<div class="slider-box"><div class="lab"><span style="color:var(--blue)">◀ ${q[1]}</span><b id="m3v${i}">中立</b><span style="color:var(--main)">${q[2]} ▶</span></div>
+      <input type="range" min="1" max="5" value="3" id="m3s${i}" oninput="m3lab(${i},this.value)"></div>`;
+  });
+  $('m3_qs').innerHTML=h;
+})();
+function m3lab(i,v){const t=['完全偏左','稍偏左','中立','稍偏右','完全偏右'];$('m3v'+i).textContent=t[+v-1];}
+let M3_ROLE='男';
+document.querySelectorAll('#m3_seg button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#m3_seg button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); M3_ROLE=b.dataset.v;
+});
+
+function calcM3(){
+  const score=[0,0,0,0,0];
+  M3_QS.forEach((q,i)=>{
+    const v=+$('m3s'+i).value; // 1..5
+    const bias=v-3; // -2..2
+    if(bias!==0){const p=M3_MAP[i];if(bias<0)score[p[0]]+=-bias;else score[p[1]]+=bias;}
+  });
+  let top=0;score.forEach((s,i)=>{if(s>score[top])top=i;});
+  const p=M3_PERSONA[top];
+  const total=score.reduce((a,b)=>a+b,0)||1;
+  const bars=score.map((s,i)=>`<div class="block"><div class="t">${M3_PERSONA[i].n}</div>倾向度 ${Math.round(s/total*100)}%</div>`).join('');
+  $('m3_title').innerHTML='你的羽球人格：'+p.n+'　<span class="pill">'+M3_ROLE+'球友版</span>';
+  let html='';
+  html+=`<div class="tag t1">特质</div><div class="block">${p.s}</div>`;
+  html+=`<div class="tag t3">短板</div><div class="block">${p.weak}</div>`;
+  html+=`<div class="tag t2">破局</div><div class="block">${p.fix}</div>`;
+  html+=`<div class="report-h" style="font-size:14px">五大维度心法</div>`;
+  const gd=[p.s,p.tac,p.com,p.train,p.eq];
+  M3_GUIDE.forEach((g,i)=>{html+=`<div class="block" style="border-left-color:var(--blue)"><div class="t">${g}</div>${gd[i]}</div>`;});
+  html+=`<div class="report-h" style="font-size:14px">五人格倾向分布</div>${bars}`;
+  html+=`<div class="note">本测试为教练理解成人沟通风格的修炼工具，人格判定为星羿版算法，结果仅供参考。不直接用于 5–12 岁少儿。</div>`;
+  $('m3_body').innerHTML=html;
+  $('m3_r').classList.add('show');
+  $('m3_r').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
