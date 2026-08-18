@@ -840,20 +840,8 @@
       {
         "date": "2026-08-18",
         "m": {
-          "height": 119,
-          "sitReach": 8,
-          "singleStand": 13.87,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 14.12,
-          "standingJump": 141,
-          "verticalJump": 167,
-          "rope": 30,
-          "swing15": 10,
-          "footwork": 24.68,
-          "serve": 2,
-          "rally": 4,
-          "clear": 3
+          "weight": 20,
+          "posture": "正常/正常/正常"
         },
         "note": ""
       }
