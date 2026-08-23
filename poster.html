@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿海报生成器 · 月度考核海报</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+:root{
+  --primary:#0f766e; --primary-light:#14b8a6; --ink:#0f201d; --sub:#5b6b67;
+  --line:#e3ece9; --bg:#f1faf7; --card:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;}
+.topbar{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.topbar h1{font-size:17px;font-weight:800;}
+.topbar .back{font-size:13px;opacity:.9;text-decoration:none;color:#fff;}
+.layout{display:flex;flex-wrap:wrap;gap:18px;padding:18px;align-items:flex-start;}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;flex:1;min-width:300px;box-shadow:0 2px 10px rgba(15,32,29,.05);}
+.panel h2{font-size:14px;margin-bottom:12px;color:var(--primary);}
+.field{margin-bottom:11px;}
+.field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);}
+.field textarea{resize:vertical;min-height:64px;}
+.row{display:flex;gap:8px;}
+.row .field{flex:1;}
+.tpl-btn{font-size:12px;color:var(--primary);background:#ecfeff;border:1px solid #b6f0eb;border-radius:8px;padding:6px 10px;cursor:pointer;margin-top:4px;}
+.actions{display:flex;gap:10px;margin-top:14px;}
+.btn{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;}
+.btn.primary{background:var(--primary);color:#fff;}
+.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+/* 预览 */
+.preview-wrap{flex:1;min-width:300px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+#poster{width:330px;aspect-ratio:9/16;background:linear-gradient(160deg,#fff,#ecfeff);border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(15,118,110,.18);display:flex;flex-direction:column;padding:0;}
+.p-head{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:18px 18px 14px;text-align:center;}
+.p-logo{font-size:13px;font-weight:800;letter-spacing:1px;opacity:.95;}
+.p-title{font-size:23px;font-weight:800;margin-top:6px;}
+.p-sub{font-size:12px;opacity:.92;margin-top:3px;}
+.p-body{flex:1;padding:16px 18px;display:flex;flex-direction:column;gap:12px;}
+.p-name{text-align:center;font-size:17px;font-weight:800;}
+.p-name span{color:var(--primary);}
+.metric{background:#f0f9f6;border:1px solid #d6f3ec;border-radius:12px;padding:10px 12px;}
+.metric .m-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:700;}
+.metric .m-delta{font-size:12px;color:#16a34a;font-weight:800;}
+.m-bar{height:8px;background:#d6f3ec;border-radius:999px;margin-top:7px;position:relative;overflow:hidden;}
+.m-bar i{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--primary-light),var(--primary));border-radius:999px;}
+.m-before{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:5px;}
+.p-comment{background:#fff;border:1px dashed #99f6e4;border-radius:12px;padding:11px 13px;font-size:13px;color:#0f201d;line-height:1.6;}
+.p-comment b{color:var(--primary);}
+.p-foot{text-align:center;font-size:11px;color:var(--sub);padding:10px;border-top:1px solid var(--line);}
+.hint{font-size:11px;color:var(--sub);text-align:center;}
+
+/* 打印 */
+@media print{
+  body *{visibility:hidden;}
+  #poster, #poster *{visibility:visible;}
+  #poster{position:fixed;left:0;top:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none;}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🖼️ 海报生成器 · 月度考核海报</h1>
+  <a class="back" href="peixun.html">← 返回培训配套</a>
+</div>
+
+<div class="layout">
+  <div class="panel">
+    <h2>填写信息（填完右侧实时出图）</h2>
+    <div class="field"><label>学员姓名</label><input id="f_name" value="小宇"></div>
+    <div class="row">
+      <div class="field"><label>班级/组别</label><input id="f_group" value="初级班（启蒙班）"></div>
+      <div class="field"><label>考核月份</label><input id="f_month" value="2026年8月"></div>
+    </div>
+
+    <div class="field"><label>指标一</label>
+      <input id="m1_n" value="高远球到位率" style="margin-bottom:6px;">
+      <div class="row"><input id="m1_b" placeholder="上月%" value="60%"><input id="m1_a" placeholder="本月%" value="82%"></div>
+    </div>
+    <div class="field"><label>指标二</label>
+      <input id="m2_n" value="全场步法评分" style="margin-bottom:6px;">
+      <div class="row"><input id="m2_b" placeholder="上月%" value="65%"><input id="m2_a" placeholder="本月%" value="88%"></div>
+    </div>
+    <div class="field"><label>指标三</label>
+      <input id="m3_n" value="连续对打拍数" style="margin-bottom:6px;">
+      <div class="row"><input id="m3_b" placeholder="上月" value="12拍"><input id="m3_a" placeholder="本月" value="30拍"></div>
+    </div>
+
+    <div class="field"><label>教练评语</label>
+      <textarea id="f_comment">本月进步非常明显！高远球从勉强到位到稳定压后场，步法移动更积极，对打回合数翻倍。保持这个节奏，下月挑战网前小球。</textarea>
+      <button class="tpl-btn" onclick="useTpl()">＋ 插入评语模板</button>
+    </div>
+    <div class="field"><label>教练签名</label><input id="f_coach" value="教练：阿杰"></div>
+
+    <div class="actions">
+      <button class="btn primary" onclick="exportImg()">导出图片</button>
+      <button class="btn ghost" onclick="window.print()">打印 A4</button>
+    </div>
+    <p class="hint">导出为手机竖图(png)；打印自动按 A4 单页。其余 4 类海报 + 5星奖状陆续接入。</p>
+  </div>
+
+  <div class="preview-wrap">
+    <div id="poster">
+      <div class="p-head">
+        <div class="p-logo">⭐ 星羿羽毛球馆</div>
+        <div class="p-title">月度成长报告</div>
+        <div class="p-sub" id="p_sub">2026年8月 · 小宇 · 初级班</div>
+      </div>
+      <div class="p-body">
+        <div class="p-name">本期学员：<span id="p_name">小宇</span></div>
+        <div class="metric" id="k1">
+          <div class="m-top"><span id="k1_n">高远球到位率</span><span class="m-delta" id="k1_d">+22%</span></div>
+          <div class="m-bar"><i id="k1_i" style="width:82%"></i></div>
+          <div class="m-before"><span id="k1_b">上月 60%</span><span id="k1_a">本月 82%</span></div>
+        </div>
+        <div class="metric" id="k2">
+          <div class="m-top"><span id="k2_n">全场步法评分</span><span class="m-delta" id="k2_d">+23%</span></div>
+          <div class="m-bar"><i id="k2_i" style="width:88%"></i></div>
+          <div class="m-before"><span id="k2_b">上月 65%</span><span id="k2_a">本月 88%</span></div>
+        </div>
+        <div class="metric" id="k3">
+          <div class="m-top"><span id="k3_n">连续对打拍数</span><span class="m-delta" id="k3_d">+18拍</span></div>
+          <div class="m-bar"><i id="k3_i" style="width:90%"></i></div>
+          <div class="m-before"><span id="k3_b">上月 12拍</span><span id="k3_a">本月 30拍</span></div>
+        </div>
+        <div class="p-comment"><b>教练说：</b><span id="p_comment">本月进步非常明显！</span></div>
+      </div>
+      <div class="p-foot" id="p_foot">教练：阿杰 · 星羿羽毛球馆</div>
+    </div>
+    <p class="hint">↑ 实时预览（9:16 手机竖图）</p>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const pct = v => { const m = String(v).match(/[\d.]+/); return m ? parseFloat(m[0]) : 0; };
+const delta = (a,b) => {
+  const na=pct(a), nb=pct(b);
+  if(isNaN(na)||isNaN(nb)) return '';
+  const d = nb-na;
+  const unit = String(a).replace(/[\d.\s%拍]/g,'');
+  return (d>=0?'+':'') + d + (/%$/.test(String(b))||/%$/.test(String(a))?'%':unit);
+};
+function barW(a,b){ const na=pct(a),nb=pct(b); const max=Math.max(na,nb,1); return Math.min(100, Math.round(nb/max*100)); }
+
+function render(){
+  $('p_name').textContent = $('f_name').value || '学员';
+  $('p_sub').textContent = `${$('f_month').value||''} · ${$('f_name').value||'学员'} · ${$('f_group').value||''}`;
+  for(let i=1;i<=3;i++){
+    const n=$('m'+i+'_n').value, b=$('m'+i+'_b').value, a=$('m'+i+'_a').value;
+    $('k'+i+'_n').textContent = n||'指标'+(i);
+    $('k'+i+'_b').textContent = '上月 '+b;
+    $('k'+i+'_a').textContent = '本月 '+a;
+    $('k'+i+'_d').textContent = delta(a,b)||'';
+    $('k'+i+'_i').style.width = barW(b,a)+'%';
+  }
+  $('p_comment').textContent = $('f_comment').value;
+  $('p_foot').textContent = ($('f_coach').value||'星羿羽毛球馆')+' · 星羿羽毛球馆';
+}
+['f_name','f_group','f_month','m1_n','m1_b','m1_a','m2_n','m2_b','m2_a','m3_n','m3_b','m3_a','f_comment','f_coach']
+  .forEach(id => $(id).addEventListener('input', render));
+
+const TPPLS = [
+  '本月进步非常明显！动作更规范，回合稳定性提升，继续打磨细节，下月挑战更高难度。',
+  '出勤稳定、态度认真，基本功扎实了不少。建议回家多练步法，潜力很大！',
+  '自信心明显增强，敢打敢拼。技术上还需注意发力节奏，慢慢来，不急。'
+];
+function useTpl(){ $('f_comment').value = TPPLS[Math.floor(Math.random()*TPPLS.length)]; render(); }
+
+function exportImg(){
+  html2canvas($('poster'),{scale:2,backgroundColor:null}).then(cv=>{
+    const a=document.createElement('a');
+    a.download=`月度考核海报_${$('f_name').value||'学员'}.png`;
+    a.href=cv.toDataURL('image/png'); a.click();
+  });
+}
+render();
+</script>
+</body>
+</html>
