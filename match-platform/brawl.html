@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大乱斗 · 星羿赛事</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">🔥 大乱斗</div>
+    <div class="tag">星羿羽毛球馆 · 未来赛事板块 · 以球会友</div>
+  </div>
+  <nav>
+    <button id="nav-setup" onclick="show('setup')">报名签到</button>
+    <button id="nav-play" onclick="show('play')">现场对战</button>
+    <button id="nav-board" onclick="show('board')">常驻榜</button>
+    <button id="nav-award" onclick="show('award')">颁奖图</button>
+  </nav>
+</header>
+<div class="wrap">
+  <a class="back" href="index.html">← 返回选玩法</a>
+  <section id="tab-setup" class="card">
+    <h2>① 报名签到</h2>
+    <div class="row-input">
+      <input type="text" id="pname" placeholder="选手姓名">
+      <select id="pgender"><option value="男">男</option><option value="女">女</option></select>
+      <button class="primary" onclick="addPlayer()">+ 加入</button>
+    </div>
+    <div class="chips" id="plist"></div>
+    <p class="muted">当前到场 <span id="pcount">0</span> 人（建议 8–16 人）</p>
+    <h2 style="margin-top:18px">② 赛事设置</h2>
+    <div class="config">
+      <div><label>单局分制</label><select id="rule"><option value="21x1">21 分一局</option><option value="31x1">31 分一局</option></select></div>
+      <div><label>场地数（0=不分配台号）</label><input type="number" id="courts" value="2" min="0" max="6"></div>
+      <div><label>配对模式</label><select id="mode"><option value="swiss">瑞士轮（按积分配对）</option><option value="pure">纯随机（招牌大乱斗）</option></select></div>
+      <div><label>总轮数</label><input type="number" id="rounds" value="5" min="2" max="10"></div>
+      <div><label>性别让分</label><input type="checkbox" id="handicap" checked style="width:auto;transform:scale(1.4)"></div>
+      <div><label>比赛日期</label><input type="date" id="eventDate"></div>
+    </div>
+    <div style="margin-top:10px"><label class="muted">赛事名称</label><input type="text" id="eventLabel" placeholder="大乱斗常规赛" style="width:100%"></div>
+    <div style="margin-top:14px"><button class="primary" onclick="startEvent()">开始比赛 →</button></div>
+  </section>
+  <section id="tab-play" class="card" style="display:none">
+    <h2 id="roundTitle">对战</h2>
+    <div id="roundBody"></div>
+    <div style="margin:14px 0; display:flex; gap:10px; flex-wrap:wrap">
+      <button class="primary" id="nextBtn" onclick="nextRound()">生成下一轮 →</button>
+      <button class="ghost" id="finishBtn" style="display:none" onclick="finalize()">结算并并入常驻榜 🏆</button>
+    </div>
+    <h2>实时榜</h2>
+    <div class="rank" id="liveRank"></div>
+  </section>
+  <section id="tab-board" class="card" style="display:none">
+    <h2>积分常驻榜</h2>
+    <div class="row-input" style="margin-bottom:12px">
+      <select id="boardScope">
+        <option value="all">总榜</option>
+        <option value="year">年榜</option>
+        <option value="month">月榜</option>
+        <option value="week">周榜</option>
+      </select>
+      <button class="ghost" onclick="renderBoard()">刷新</button>
+      <button class="ghost" onclick="exportBoardImg()">导出榜单图</button>
+      <button class="ghost" onclick="clearBoard()">清空</button>
+    </div>
+    <h2 id="boardTitle" style="font-size:16px;color:#fff"></h2>
+    <div class="board-list" id="boardList"></div>
+  </section>
+  <section id="tab-award" class="card" style="display:none">
+    <h2>颁奖图 / 榜单图</h2>
+    <p class="muted">在「现场对战」点结算后自动生成前三名颁奖图；在「常驻榜」点导出生成榜单图。</p>
+    <div id="svgPreview"></div>
+    <div style="margin-top:12px"><button class="primary" id="svgDownload">下载 PNG</button></div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="award.js"></script>
+<script src="brawl/engine.js"></script>
+<script src="brawl/app.js"></script>
+</body>
+</html>
