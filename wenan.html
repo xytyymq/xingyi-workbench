@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿 · 家长口吻文案库</title>
+<style>
+:root{
+  --primary:#E8632B; --primary-light:#F0844E; --primary-dark:#C44E1C;
+  --bg:#F7F5F2; --card:#FFFFFF; --text:#2C2C2A; --muted:#6B6B66;
+  --border:#ECE7E1; --shadow:0 2px 12px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.topbar{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.topbar h1{font-size:17px;font-weight:800;}
+.topbar .back{font-size:13px;opacity:.95;text-decoration:none;color:#fff;}
+.subbar{background:#fff;border-bottom:1px solid var(--border);padding:10px 16px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.subbar .upd{color:var(--primary-dark);font-weight:700;}
+.search{width:100%;max-width:420px;border:1px solid var(--border);border-radius:10px;padding:8px 12px;font-size:14px;font-family:inherit;}
+.tabs{display:flex;gap:8px;padding:14px 16px 0;flex-wrap:wrap;}
+.tab{background:#fff;border:1px solid var(--border);border-radius:999px;padding:7px 16px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:600;}
+.tab.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.list{padding:14px 16px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;max-width:1100px;margin:0 auto;}
+.item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px;}
+.item .scene{font-size:11px;color:var(--primary-dark);background:#FDEEE6;display:inline-block;padding:2px 9px;border-radius:6px;align-self:flex-start;font-weight:600;}
+.item .txt{font-size:14px;color:var(--text);white-space:pre-line;line-height:1.7;}
+.item .copy{border:none;background:var(--primary);color:#fff;border-radius:9px;padding:8px;font-size:13px;font-weight:700;cursor:pointer;align-self:flex-start;}
+.item .copy.done{background:var(--muted);}
+.empty{text-align:center;color:var(--muted);padding:40px;font-size:14px;}
+.footer{text-align:center;font-size:12px;color:var(--muted);padding:20px;}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:rgba(44,44,42,.92);color:#fff;padding:10px 20px;border-radius:10px;font-size:14px;opacity:0;transition:.25s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>💬 家长口吻文案库</h1>
+  <a class="back" href="peixun.html">← 培训配套</a>
+</div>
+<div class="subbar">
+  <span>家长替我们说话 · 一键复制发朋友圈/家长群</span>
+  <span class="upd">本期更新：2026-08-23 ｜ 共 <b id="cnt">0</b> 条</span>
+</div>
+<div style="padding:12px 16px 0;display:flex;justify-content:center;">
+  <input class="search" id="search" placeholder="搜关键词：进步 / 比赛 / 体验 / 亲子 …">
+</div>
+<div class="tabs" id="tabs">
+  <div class="tab active" data-cat="all">全部</div>
+  <div class="tab" data-cat="日常训练">日常训练</div>
+  <div class="tab" data-cat="成长记录">成长记录</div>
+  <div class="tab" data-cat="活动比赛">活动比赛</div>
+  <div class="tab" data-cat="体验课引流">体验课引流</div>
+  <div class="tab" data-cat="月度5星">月度5星</div>
+</div>
+<div class="list" id="list"></div>
+<div class="footer">由星星整理 · 每周更新 30 条 · 文案风格（家长口吻）反哺自媒体与话术库</div>
+<div class="toast" id="toast">已复制 ✓</div>
+
+<script>
+// ===== 文案数据（方案A：内嵌JSON，每周星星更新）=====
+// 分类：日常训练 / 成长记录 / 活动比赛 / 体验课引流 / 月度5星
+const DATA = [
+  // —— 文档原文 14 条（家长口吻，逐字录入）——
+  {cat:"日常训练", scene:"发朋友圈", t:"今天送娃去星羿练球，看他满场跑一点也不喊累，老母亲甚慰。教练说这孩子步法进步明显，继续加油！"},
+  {cat:"日常训练", scene:"家长群", t:"娃说今天学会了发高远球，回来非拉着我当陪练。兴趣是最好的老师，感谢星羿教练的耐心引导🏸"},
+  {cat:"日常训练", scene:"发朋友圈", t:"每周两节课，风雨无阻。看着孩子从握拍都歪歪扭扭，到现在能打几个回合，这坚持值了。"},
+  {cat:"成长记录", scene:"发朋友圈", t:"翻到三个月前拍的视频，再对比今天的对打，天壤之别。在星羿这一年，孩子长高也长本事了。"},
+  {cat:"成长记录", scene:"家长群", t:"教练发来的月度体测报告，数据涨得喜人。原来每一次挥拍都有痕迹，记录本身就是鼓励。"},
+  {cat:"成长记录", scene:"发朋友圈", t:"今天被老师点名表扬'进步最大'，孩子回家路上一直哼着歌。小小的认可，大大的动力。"},
+  {cat:"活动比赛", scene:"发朋友圈", t:"星羿内部趣味赛，娃拿了'最佳拼搏奖'。不在输赢，在于他敢上场、敢拼，这就够了！"},
+  {cat:"活动比赛", scene:"家长群", t:"周末积分赛太热闹了，孩子们打得不亦乐乎，家长们在场边比娃还激动😂 下次还来！"},
+  {cat:"活动比赛", scene:"发朋友圈", t:"第一次参加正式一点儿的比赛，紧张得小手冰凉，但还是打完了全场。勇敢的宝贝，为你骄傲。"},
+  {cat:"体验课引流", scene:"发朋友圈", t:"带朋友家娃来星羿试了一节课，人家当场就不想走。环境好、教练亲和，强烈安利给附近宝妈们。"},
+  {cat:"体验课引流", scene:"家长群", t:"之前纠结要不要报，试完体验课娃自己说'妈妈我还想来'。听孩子的，安排！"},
+
+  // —— 月度5星 3 条（文档样例扩展）——
+  {cat:"月度5星", scene:"获奖转发", t:"我家娃今天被评为'进步之星'！奖状捧回来那一刻，比我自己拿奖还开心。感谢星羿看见每个孩子的努力🌟"},
+  {cat:"月度5星", scene:"获奖转发", t:"'拼搏之星'花落我家！教练说这孩子训练从来不偷懒。汗水流过的地方，都会开花。"},
+  {cat:"月度5星", scene:"获奖转发", t:"拿到'突破之星'奖状，这个月终于攻克了连续对打！坚持的意义，孩子自己体会到了。"},
+
+  // ===== 以下为星星生成 · 首期补充（2026-08-23）=====
+  // 日常训练 补充（家长口吻）
+  {cat:"日常训练", scene:"发朋友圈", t:"教练说孩子今天主动帮小伙伴捡球，小小年纪有团队精神。球技在练，品格也在养，选星羿没错。"},
+  {cat:"日常训练", scene:"家长群", t:"今天课上学了网前小球，娃回来在客厅拿毛巾当球网比划半天。这沉浸劲儿，老父亲看了想笑又欣慰。"},
+  {cat:"日常训练", scene:"发朋友圈", t:"暑假班连上了两周，晒黑了一个度，但体能明显好了。运动带来的精气神，多少钱都买不来。"},
+  {cat:"日常训练", scene:"家长群", t:"教练一对一纠正动作，比我们瞎教强太多。专业的事交给专业的人，家长只管鼓掌就好👏"},
+  {cat:"日常训练", scene:"发朋友圈", t:"孩子说'今天教练夸我球感好'，从此更爱去了。一句肯定，能顶家长说十句。"},
+  {cat:"日常训练", scene:"家长群", t:"周末早起练球不赖床，意外治好了他的拖延症。运动治百病，此言不虚。"},
+  {cat:"日常训练", scene:"发朋友圈", t:"换了轻一点的拍子，娃发力顺畅多了。星羿教练连装备都帮我们操心，细节见真心。"},
+
+  // 成长记录 补充
+  {cat:"成长记录", scene:"发朋友圈", t:"一年前拍照还够不到球网，现在能标准发球了。时间看得见努力，星羿的档案本记着每一步。"},
+  {cat:"成长记录", scene:"家长群", t:"体测档案更新了，连续对打从8拍到35拍。数字不会骗人，孩子的进步藏在每一拍里。"},
+  {cat:"成长记录", scene:"发朋友圈", t:"从'怕发球'到'抢着发球'，心理素质也练出来了。比起赢球，我更开心他不怕输。"},
+  {cat:"成长记录", scene:"家长群", t:"结课展示那天，孩子完整打完一套动作，底下掌声响起时我眼眶热了。这成长的仪式感，星羿给足了。"},
+  {cat:"成长记录", scene:"发朋友圈", t:"翻教练写的评语，每一句都具体到动作。被认真对待的孩子，眼里有光。"},
+  {cat:"成长记录", scene:"家长群", t:"暑假班结束，娃说'舍不得教练'。能让孩子爱上一项运动并舍不得结束，这课就上值了。"},
+
+  // 活动比赛 补充
+  {cat:"活动比赛", scene:"发朋友圈", t:"星羿亲子羽球日，我和娃混双搭档，被他带飞😂 平时忙没机会这么疯玩，值了！"},
+  {cat:"活动比赛", scene:"家长群", t:"积分赛排行榜出来了，娃名次往前挪了好几名。不是第一也开心，肉眼可见地在变强。"},
+  {cat:"活动比赛", scene:"发朋友圈", t:"友谊赛遇到更强的小朋友，娃输了没哭反而说'我还要练'。输得起，才是真成长。"},
+  {cat:"活动比赛", scene:"家长群", t:"比赛颁奖有专属奖状，孩子贴床头了。仪式感拉满，下个月冲'月度之星'！"},
+  {cat:"活动比赛", scene:"发朋友圈", t:"带朋友家娃来参加开放日，两个小孩当场组队打得不亦乐乎。运动社交，从小培养👬"},
+
+  // 体验课引流 补充
+  {cat:"体验课引流", scene:"发朋友圈", t:"同事家娃沉迷手机，我带他来星羿试了一节，居然放下iPad满场跑。运动果然是电子产品的解药。"},
+  {cat:"体验课引流", scene:"家长群", t:"附近想给孩子报运动的宝妈私我：星羿体验课免费试，环境干净、教练不凶，真心推荐。"},
+  {cat:"体验课引流", scene:"发朋友圈", t:"本来只想让娃减减肥，结果爱上了羽毛球。意外收获一个能陪我打球的搭子，血赚。"},
+  {cat:"体验课引流", scene:"家长群", t:"体验课名额我帮娃同学留了一个，下周一起来。多人拼课更热闹，孩子们也有伴。"},
+  {cat:"体验课引流", scene:"发朋友圈", t:"试听课结束教练给了一份体测小报告，专业度拉满。不是单纯推销，是先让你看清孩子状态。"},
+
+  // 月度5星 补充
+  {cat:"月度5星", scene:"获奖转发", t:"'协作之星'颁给俺家娃，教练说他在训练里总帮队友捡球、喊加油。暖心的孩子，比奖杯更闪光❤️"},
+  {cat:"月度5星", scene:"获奖转发", t:"拿下'潜力之星'！教练说这孩子虽然来得晚但悟性高。起步晚没关系，跑起来就好🚀"},
+  {cat:"月度5星", scene:"获奖转发", t:"'潜力之星'到手，年龄最小却最敢拼。星羿的舞台上，每个孩子都被看见🌟"},
+  {cat:"月度5星", scene:"获奖转发", t:"'协作之星'这个小称号，娃比考满分还高兴。被团队需要，是给孩子最好的自信课。"},
+];
+
+const listEl = document.getElementById('list');
+const tabsEl = document.getElementById('tabs');
+const searchEl = document.getElementById('search');
+const toastEl = document.getElementById('toast');
+document.getElementById('cnt').textContent = DATA.length;
+let curCat = 'all', curKw = '';
+
+function render(){
+  const kw = curKw.trim();
+  const items = DATA.filter(d=>{
+    const okCat = curCat==='all' || d.cat===curCat;
+    const okKw = !kw || (d.t.includes(kw) || d.scene.includes(kw) || d.cat.includes(kw));
+    return okCat && okKw;
+  });
+  listEl.innerHTML = '';
+  if(!items.length){ listEl.innerHTML = '<div class="empty">没有匹配的文案，换个关键词试试～</div>'; return; }
+  items.forEach((d,i)=>{
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `<span class="scene">${d.cat} · ${d.scene}</span><div class="txt">${d.t}</div><button class="copy">复制文案</button>`;
+    el.querySelector('.copy').addEventListener('click', ()=>copy(d.t, el.querySelector('.copy')));
+    listEl.appendChild(el);
+  });
+}
+function copy(text, btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='已复制 ✓'; btn.classList.add('done');
+    toastEl.classList.add('show');
+    setTimeout(()=>{ toastEl.classList.remove('show'); btn.textContent='复制文案'; btn.classList.remove('done'); }, 1500);
+  }).catch(()=>{ alert('复制失败，请手动长按选择'); });
+}
+tabsEl.querySelectorAll('.tab').forEach(t=>t.addEventListener('click', ()=>{
+  tabsEl.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); curCat = t.dataset.cat; render();
+}));
+searchEl.addEventListener('input', e=>{ curKw = e.target.value; render(); });
+render();
+</script>
+</body>
+</html>
