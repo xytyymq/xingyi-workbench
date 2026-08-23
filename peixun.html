@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿培训配套计划 · 学员运营闭环</title>
+<style>
+:root{
+  --primary:#0f766e; --primary-light:#14b8a6; --primary-dark:#0b3d38;
+  --bg:#f1faf7; --card:#ffffff; --text:#0f201d; --muted:#5b6b67;
+  --border:#e3ece9; --green:#16a34a; --amber:#d97706; --gray:#8aa09a;
+  --shadow:0 2px 12px rgba(15,32,29,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.header{background:linear-gradient(135deg,var(--primary-dark),var(--primary) 55%,var(--primary-light));color:#fff;padding:28px 20px 22px;}
+.header h1{font-size:20px;font-weight:800;margin-bottom:6px;}
+.header .flow{font-size:13px;opacity:.95;}
+.header .flow b{font-weight:700;}
+.wrap{max-width:960px;margin:0 auto;padding:16px 16px 40px;}
+.note{background:#ecfeff;border:1px solid #b6f0eb;border-radius:12px;padding:12px 16px;margin:16px 0;font-size:13px;color:#0b3d38;}
+.note b{color:var(--primary-dark);}
+.section-title{font-size:14px;font-weight:800;color:var(--muted);margin:22px 4px 12px;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:"";width:4px;height:16px;background:var(--primary);border-radius:2px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;transition:transform .15s ease-out,box-shadow .15s ease-out;}
+.card:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,32,29,.1);}
+.card .top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.card .ic{font-size:26px;}
+.card h3{font-size:15px;font-weight:800;flex:1;}
+.badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+.b-todo{background:#e3f3f0;color:var(--gray);}
+.b-doing{background:#ccfbf1;color:#0b3d38;}
+.card p{font-size:13px;color:var(--muted);}
+.card p b{color:var(--primary);}
+.tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tag{display:inline-block;font-size:11px;background:#f0f9f6;color:var(--muted);padding:2px 8px;border-radius:6px;}
+.dep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.dep{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+.dep .name{font-size:14px;font-weight:800;}
+.dep .src{font-size:12px;color:var(--muted);margin-top:4px;}
+.progress{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;font-size:13px;}
+.progress .bar{flex:1;height:8px;background:var(--border);border-radius:999px;margin:0 12px;overflow:hidden;}
+.progress .bar i{display:block;height:100%;width:0%;background:var(--primary);border-radius:999px;}
+.footer{text-align:center;font-size:12px;color:var(--gray);margin-top:28px;}
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>星羿培训配套计划</h1>
+  <div class="flow">体验 <b>→</b> 成长 <b>→</b> 荣誉 <b>→</b> 传播 ｜ 5 大模块 · 教练前台傻瓜化</div>
+</div>
+<div class="wrap">
+
+  <div class="note">
+    <b>已确认设计决策：</b> 打卡墙 物理+电子都要 ｜ 海报 竖图+打印双规格 ｜ 使用人 教练+前台 ｜ 数据 bj7 已能出图不改动（海报生成器复用其数据/截图 + gz5 评语，月度5星海报同由此产出）｜ 开工顺序 先总览页、再逐个填
+  </div>
+
+  <div class="progress">
+    <span>整体进度</span>
+    <span class="bar"><i style="width:0%"></i></span>
+    <span>0 / 5</span>
+  </div>
+
+  <div class="section-title">五大落地模块</div>
+  <div class="grid">
+
+    <a class="card" href="poster.html">
+      <div class="top"><span class="ic">🖼️</span><h3>海报生成器</h3><span class="badge b-doing">进行中</span></div>
+      <p>五节点海报（入馆启蒙 / 技能解锁 / 月度考核 / 阶段结课 / 比赛首秀）+ 月度5星海报/奖状（进步/拼搏/突破/协作/潜力）。竖图 9:16 + 打印 A4/A3 双规格，傻瓜化出图。<b>首张「月度考核海报」已可出图 →</b></p>
+      <div class="tags"><span class="tag">复用 bj7 体测</span> <span class="tag">复用 gz5 评语</span> <span class="tag">含5星奖状</span> <span class="tag">独立新页</span></div>
+    </a>
+
+    <div class="card">
+      <div class="top"><span class="ic">💬</span><h3>家长口吻文案库</h3><span class="badge b-todo">待建</span></div>
+      <p>日常训练 / 成长记录 / 活动比赛 / 体验课引流 共 14 条，家长替我们说话，一键复制，反哺自媒体+话术库。</p>
+      <div class="tags"><span class="tag">新建 14条</span> <span class="tag">一键复制</span></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><span class="ic">🏅</span><h3>月度5星评选SOP</h3><span class="badge b-todo">待建</span></div>
+      <p>进步 / 拼搏 / 突破 / 协作 / 潜力 五星评选标准 + 每月流程（5名额/打分）。海报/奖状由海报生成器统一产出，本卡只做规则 + 流程 + 展示墙。</p>
+      <div class="tags"><span class="tag">评选标准</span> <span class="tag">展示墙</span> <span class="tag">海报见P1</span></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><span class="ic">🧱</span><h3>三面打卡墙</h3><span class="badge b-todo">待建</span></div>
+      <p>成长墙 / 风采墙 / 里程碑墙。物理设计图 + 打印文件 + 电子屏轮播页，物理电子都要。</p>
+      <div class="tags"><span class="tag">设计图</span> <span class="tag">打印文件</span> <span class="tag">电子屏</span></div>
+    </div>
+
+    <div class="card">
+      <div class="top"><span class="ic">👨‍👩‍👧</span><h3>亲子活动日SOP</h3><span class="badge b-todo">待建</span></div>
+      <p>签到→热身→教学→趣味赛→颁奖→交流 全流程 + 分工 + 拍照 + 24h 发图包。复用话术库 D3 邀约话术。</p>
+      <div class="tags"><span class="tag">120分钟</span> <span class="tag">复用 D3</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-title">依赖的已有资源</div>
+  <div class="dep-grid">
+    <div class="dep"><div class="name">学员体测档案</div><div class="src">bj7 · 已有 · 已能出图（不改动，海报数据源）</div></div>
+    <div class="dep"><div class="name">教学话术系统</div><div class="src">gz5 · 已有（12套评语模板）</div></div>
+    <div class="dep"><div class="name">自媒体内容规划</div><div class="src">sh5 · 已有（文案风格参考）</div></div>
+    <div class="dep"><div class="name">课程培训体系</div><div class="src">bj2 · 已有（阶段技能清单）</div></div>
+  </div>
+
+  <div class="footer">由星星整理 · 按老板确认顺序逐个落地 · 总览页为地图，模块建成后补入口</div>
+</div>
+</body>
+</html>
