@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿 · 月度5星评选SOP</title>
+<style>
+:root{
+  --primary:#E8632B; --primary-light:#F0844E; --primary-dark:#C44E1C;
+  --bg:#F7F5F2; --card:#FFFFFF; --text:#2C2C2A; --muted:#6B6B66;
+  --border:#ECE7E1; --shadow:0 2px 12px rgba(0,0,0,.06);
+  --gold:#C99A2E;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
+.topbar{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+.topbar h1{font-size:17px;font-weight:800;}
+.topbar .back{font-size:13px;opacity:.95;text-decoration:none;color:#fff;}
+.wrap{max-width:920px;margin:0 auto;padding:16px 16px 50px;}
+.note{background:#FFF8E1;border:1px solid #FFE082;border-radius:12px;padding:12px 16px;margin:14px 0;font-size:13px;color:#7A5B00;}
+.note b{color:var(--primary-dark);}
+.section{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);margin:14px 0;}
+.section h2{font-size:15px;font-weight:700;color:var(--primary-dark);margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.section h2::before{content:"";width:4px;height:16px;background:var(--primary);border-radius:2px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{border:1px solid var(--border);padding:9px 11px;text-align:left;vertical-align:top;}
+th{background:#FDEEE6;color:var(--primary-dark);font-weight:700;}
+td .star{color:var(--gold);font-weight:800;}
+.flow-item{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px dashed var(--border);}
+.flow-item:last-child{border-bottom:none;}
+.flow-item .num{flex:0 0 26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.flow-item .ct{font-size:13px;}
+.flow-item .ct b{color:var(--text);}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:8px;}
+.wall .cell{border:2px dashed var(--border);border-radius:12px;height:120px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;text-align:center;background:#FBFAF8;}
+.btn{display:inline-block;background:var(--primary);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;margin-top:6px;}
+.sub{font-size:12px;color:var(--muted);margin-top:6px;}
+.footer{text-align:center;font-size:12px;color:var(--muted);padding:20px;}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>🏅 月度5星评选 SOP</h1>
+  <a class="back" href="peixun.html">← 培训配套</a>
+</div>
+<div class="wrap">
+
+  <div class="note">
+    <b>定位：</b> 本页只做「评选规则 + 每月流程 + 展示墙」。奖状 / 月度之星海报由 <a href="poster.html" style="color:var(--primary-dark);font-weight:700;">🖼️ 海报生成器</a> 统一产出（选「月度5星」模板，填结果一键出图），不重复造。
+  </div>
+
+  <div class="section">
+    <h2>一、五个奖项与评选标准</h2>
+    <table>
+      <tr><th>奖项</th><th>评选标准（教练观察口径）</th><th>击中家长心理</th></tr>
+      <tr><td><span class="star">★</span> 进步之星</td><td>本月技能数据提升最大（体测档案纵向对比）</td><td>"我家孩子有进步"</td></tr>
+      <tr><td><span class="star">★</span> 拼搏之星</td><td>训练最刻苦、不喊累、出勤全勤</td><td>"孩子肯吃苦"</td></tr>
+      <tr><td><span class="star">★</span> 突破之星</td><td>攻克一个难点（如首次连续对打 / 学会发球）</td><td>"终于突破了"</td></tr>
+      <tr><td><span class="star">★</span> 协作之星</td><td>乐于助人、团队意识强、主动帮队友</td><td>"孩子品格好"</td></tr>
+      <tr><td><span class="star">★</span> 潜力之星</td><td>年龄小 / 来得晚但展现天赋与热情</td><td>"我家孩子有天赋"</td></tr>
+    </table>
+    <p class="sub">每月每奖各 1 名，共 5 名（文档设定）。标准由教练按月打分，避免"轮流坐庄"，以真实观察为准。</p>
+  </div>
+
+  <div class="section">
+    <h2>二、每月评选流程（落地细节）</h2>
+    <div class="flow-item"><div class="num">1</div><div class="ct"><b>月末最后一节课前</b>：教练对照体测档案 + 本月观察，各填 5 个名额候选 + 一句理由（用下方打分表）。</div></div>
+    <div class="flow-item"><div class="num">2</div><div class="ct"><b>月末最后一节课后</b>：5 分钟小型颁奖仪式，老板出镜宣布，气氛拉满。</div></div>
+    <div class="flow-item"><div class="num">3</div><div class="ct"><b>发专属奖状 + 合影</b>：用海报生成器出「月度5星奖状」，私发给家长。</div></div>
+    <div class="flow-item"><div class="num">4</div><div class="ct"><b>更新打卡墙</b>：把当月 5 星照片贴入「月度之星」区（物理墙 + 电子屏同步）。</div></div>
+    <div class="flow-item"><div class="num">5</div><div class="ct"><b>家长转发</b>：附文案库「月度5星」分类里的转发文案，家长拿图就能发朋友圈。</div></div>
+  </div>
+
+  <div class="section">
+    <h2>三、每月打分表（教练填写）</h2>
+    <table>
+      <tr><th>奖项</th><th>获奖学员</th><th>班级</th><th>当选理由（一句话）</th></tr>
+      <tr><td>进步之星</td><td></td><td></td><td></td></tr>
+      <tr><td>拼搏之星</td><td></td><td></td><td></td></tr>
+      <tr><td>突破之星</td><td></td><td></td><td></td></tr>
+      <tr><td>协作之星</td><td></td><td></td><td></td></tr>
+      <tr><td>潜力之星</td><td></td><td></td><td></td></tr>
+    </table>
+    <p class="sub">打印此表贴在教练值班台，每月填一次。填完即可去海报生成器出奖状。</p>
+    <button class="btn" onclick="window.print()">打印打分表 / 评选标准</button>
+  </div>
+
+  <div class="section">
+    <h2>四、展示墙模板（月度之星区）</h2>
+    <p class="sub">三面打卡墙中的「月度之星」区，物理墙贴照片 + 电子屏轮播。版式如下（每格贴一名获奖学员 + 奖项 + 月份）：</p>
+    <div class="wall">
+      <div class="cell">进步之星<br>20XX年X月<br>[学员照片]</div>
+      <div class="cell">拼搏之星<br>20XX年X月<br>[学员照片]</div>
+      <div class="cell">突破之星<br>20XX年X月<br>[学员照片]</div>
+      <div class="cell">协作之星<br>20XX年X月<br>[学员照片]</div>
+      <div class="cell">潜力之星<br>20XX年X月<br>[学员照片]</div>
+    </div>
+    <p class="sub">电子屏版由打卡墙模块统一生成轮播页；物理墙尺寸建议每格 15×20cm，覆膜防污。</p>
+  </div>
+
+  <div class="footer">由星星整理 · 与海报生成器共用视觉 · 评选规则确认后即可执行</div>
+</div>
+</body>
+</html>
