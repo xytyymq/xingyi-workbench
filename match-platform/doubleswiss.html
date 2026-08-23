@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>双瑞士 · 星羿赛事</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared.css">
+<style>
+  .pl{display:flex;justify-content:space-between;align-items:center;background:#1c4034;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:6px 0}
+  .pl .x{color:#ff8a8a;background:none;border:none;font-size:18px;padding:0 6px}
+  .tabs{display:flex;gap:6px;margin:10px 0}
+  .tabs button{background:#1c4034;color:var(--sub);border:1px solid var(--line);padding:8px 14px;border-radius:10px;cursor:pointer}
+  .tabs button.on{background:var(--accent);color:#06231a;font-weight:700}
+  .match .top{display:flex;justify-content:space-between;color:var(--sub);font-size:13px;margin-bottom:6px}
+  .vs{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .team{flex:1}.team .n{font-size:17px;font-weight:700}.team.b{text-align:right}.team .s{font-size:12px;color:var(--gold)}
+  .mid{color:var(--sub);font-size:13px}.res{margin-top:8px;font-size:14px;color:var(--accent)}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+  th{color:var(--sub);font-weight:600}td.name{text-align:left;font-weight:700}.rk1{color:var(--gold)}
+  .award-prev{width:100%;border-radius:12px;border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="brand">🔄 双瑞士</div><div class="tag">星羿羽毛球馆 · 两小时五轮 · 以球会友</div></div>
+  <nav><a class="back" href="index.html" style="color:#cfe9d8;background:#1c4034;padding:8px 14px;border-radius:20px;font-size:14px">← 选玩法</a></nav>
+</header>
+<div class="wrap">
+  <div id="setup"></div>
+  <div id="main" style="display:none"></div>
+</div>
+<div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px"><div class="box" id="modalBox" style="background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;width:100%;max-width:420px"></div></div>
+<div class="toast" id="toast"></div>
+<script src="award.js"></script>
+<script src="doubleswiss/engine.js"></script>
+<script src="doubleswiss/app.js"></script>
+</body>
+</html>
