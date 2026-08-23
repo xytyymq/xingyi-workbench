@@ -6,35 +6,36 @@
 <title>星羿培训配套计划 · 学员运营闭环</title>
 <style>
 :root{
-  --primary:#0f766e; --primary-light:#14b8a6; --primary-dark:#0b3d38;
-  --bg:#f1faf7; --card:#ffffff; --text:#0f201d; --muted:#5b6b67;
-  --border:#e3ece9; --green:#16a34a; --amber:#d97706; --gray:#8aa09a;
-  --shadow:0 2px 12px rgba(15,32,29,.06);
+  --primary:#E8632B; --primary-light:#F0844E; --primary-dark:#C44E1C;
+  --bg:#F7F5F2; --card:#FFFFFF; --text:#2C2C2A; --muted:#6B6B66;
+  --border:#ECE7E1; --green:#1D9E75; --amber:#BA7517; --gray:#9A988F;
+  --shadow:0 2px 12px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;}
-.header{background:linear-gradient(135deg,var(--primary-dark),var(--primary) 55%,var(--primary-light));color:#fff;padding:28px 20px 22px;}
+.header{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:28px 20px 22px;}
 .header h1{font-size:20px;font-weight:800;margin-bottom:6px;}
 .header .flow{font-size:13px;opacity:.95;}
 .header .flow b{font-weight:700;}
 .wrap{max-width:960px;margin:0 auto;padding:16px 16px 40px;}
-.note{background:#ecfeff;border:1px solid #b6f0eb;border-radius:12px;padding:12px 16px;margin:16px 0;font-size:13px;color:#0b3d38;}
+.note{background:#FFF8E1;border:1px solid #FFE082;border-radius:12px;padding:12px 16px;margin:16px 0;font-size:13px;color:#7A5B00;}
 .note b{color:var(--primary-dark);}
 .section-title{font-size:14px;font-weight:800;color:var(--muted);margin:22px 4px 12px;display:flex;align-items:center;gap:8px;}
 .section-title::before{content:"";width:4px;height:16px;background:var(--primary);border-radius:2px;}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
 .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;text-decoration:none;color:inherit;transition:transform .15s ease-out,box-shadow .15s ease-out;}
-.card:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,32,29,.1);}
+.card:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.1);}
 .card .top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .card .ic{font-size:26px;}
 .card h3{font-size:15px;font-weight:800;flex:1;}
 .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;}
-.b-todo{background:#e3f3f0;color:var(--gray);}
-.b-doing{background:#ccfbf1;color:#0b3d38;}
+.b-todo{background:#F1EFE8;color:var(--gray);}
+.b-doing{background:#FDEEE6;color:var(--primary-dark);}
+.b-done{background:#E6F5EE;color:var(--green);}
 .card p{font-size:13px;color:var(--muted);}
-.card p b{color:var(--primary);}
+.card p b{color:var(--primary-dark);}
 .tags{display:flex;flex-wrap:wrap;gap:6px;}
-.tag{display:inline-block;font-size:11px;background:#f0f9f6;color:var(--muted);padding:2px 8px;border-radius:6px;}
+.tag{display:inline-block;font-size:11px;background:#F5F2EE;color:var(--muted);padding:2px 8px;border-radius:6px;}
 .dep-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
 .dep{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
 .dep .name{font-size:14px;font-weight:800;}
@@ -58,8 +59,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
   <div class="progress">
     <span>整体进度</span>
-    <span class="bar"><i style="width:0%"></i></span>
-    <span>0 / 5</span>
+    <span class="bar"><i style="width:60%"></i></span>
+    <span>3 / 5</span>
   </div>
 
   <div class="section-title">五大落地模块</div>
@@ -71,17 +72,17 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="tags"><span class="tag">复用 bj7 体测</span> <span class="tag">复用 gz5 评语</span> <span class="tag">含5星奖状</span> <span class="tag">独立新页</span></div>
     </a>
 
-    <div class="card">
-      <div class="top"><span class="ic">💬</span><h3>家长口吻文案库</h3><span class="badge b-todo">待建</span></div>
-      <p>日常训练 / 成长记录 / 活动比赛 / 体验课引流 共 14 条，家长替我们说话，一键复制，反哺自媒体+话术库。</p>
-      <div class="tags"><span class="tag">新建 14条</span> <span class="tag">一键复制</span></div>
-    </div>
+    <a class="card" href="wenan.html">
+      <div class="top"><span class="ic">💬</span><h3>家长口吻文案库</h3><span class="badge b-done">已上线</span></div>
+      <p>日常训练 / 成长记录 / 活动比赛 / 体验课引流 / 月度5星。家长替我们说话，<b>首期 47 条</b>一键复制，每周星星更新 30 条。</p>
+      <div class="tags"><span class="tag">47条</span> <span class="tag">一键复制</span> <span class="tag">每周+30</span></div>
+    </a>
 
-    <div class="card">
-      <div class="top"><span class="ic">🏅</span><h3>月度5星评选SOP</h3><span class="badge b-todo">待建</span></div>
-      <p>进步 / 拼搏 / 突破 / 协作 / 潜力 五星评选标准 + 每月流程（5名额/打分）。海报/奖状由海报生成器统一产出，本卡只做规则 + 流程 + 展示墙。</p>
-      <div class="tags"><span class="tag">评选标准</span> <span class="tag">展示墙</span> <span class="tag">海报见P1</span></div>
-    </div>
+    <a class="card" href="wuxing.html">
+      <div class="top"><span class="ic">🏅</span><h3>月度5星评选SOP</h3><span class="badge b-done">已上线</span></div>
+      <p>进步 / 拼搏 / 突破 / 协作 / 潜力 五星评选标准 + 每月流程（打分表可打印）+ 展示墙。海报/奖状由海报生成器出。</p>
+      <div class="tags"><span class="tag">评选标准</span> <span class="tag">打分表</span> <span class="tag">海报见P1</span></div>
+    </a>
 
     <div class="card">
       <div class="top"><span class="ic">🧱</span><h3>三面打卡墙</h3><span class="badge b-todo">待建</span></div>
@@ -89,11 +90,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div class="tags"><span class="tag">设计图</span> <span class="tag">打印文件</span> <span class="tag">电子屏</span></div>
     </div>
 
-    <div class="card">
-      <div class="top"><span class="ic">👨‍👩‍👧</span><h3>亲子活动日SOP</h3><span class="badge b-todo">待建</span></div>
-      <p>签到→热身→教学→趣味赛→颁奖→交流 全流程 + 分工 + 拍照 + 24h 发图包。复用话术库 D3 邀约话术。</p>
-      <div class="tags"><span class="tag">120分钟</span> <span class="tag">复用 D3</span></div>
-    </div>
+    <a class="card" href="qinzi.html">
+      <div class="top"><span class="ic">👨‍👩‍👧</span><h3>亲子活动日SOP</h3><span class="badge b-done">已上线</span></div>
+      <p>120分钟流程 + 分工 + 物料（签到礼品非服装）+ 24h 发图包 + 拉新话术。复用话术库 D3 邀约。</p>
+      <div class="tags"><span class="tag">120分钟</span> <span class="tag">复用 D3</span> <span class="tag">已上线</span></div>
+    </a>
 
   </div>
 
