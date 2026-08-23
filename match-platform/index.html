@@ -1,58 +1,69 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f766e" />
-  <title>羽毛球比赛现场管理平台</title>
-  <script src="../gate.js"></script>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="stylesheet" href="css/app.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>星羿赛事 · 比赛现场管理平台</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared.css">
+<style>
+.hero{text-align:center;padding:26px 14px 8px}
+.hero .logo{font-size:46px}
+.hero h1{margin:8px 0 4px;font-size:26px;color:#fff}
+.hero p{color:var(--sub);font-size:14px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;cursor:pointer;text-decoration:none;color:var(--txt);display:block;transition:.15s}
+.tile:hover{border-color:var(--accent);transform:translateY(-2px)}
+.tile .ic{font-size:38px}
+.tile h3{margin:10px 0 4px;font-size:18px;color:#fff}
+.tile .d{font-size:13px;color:var(--sub);line-height:1.5}
+.tile .badge{display:inline-block;background:#1c4034;border:1px solid var(--line);border-radius:14px;padding:2px 10px;font-size:12px;color:var(--gold);margin-top:8px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <header class="app-header">
-    <div class="brand">
-      <span class="logo">🏸</span>
-      <div>
-        <div class="title">羽毛球比赛现场管理平台</div>
-        <div class="subtitle" id="ctxBar">未选择赛事</div>
-        <div class="sync-line">
-          <span id="syncStatus">🔄 正在连接云端…</span>
-          <button id="syncRetry" class="mini-btn" hidden>立即重试</button>
-        </div>
-      </div>
-    </div>
-    <button class="hamburger" id="navToggle" aria-label="菜单">☰</button>
-  </header>
-
-  <nav class="tabbar" id="tabbar">
-    <button class="tab active" data-tab="events">赛事</button>
-    <button class="tab" data-tab="roster">名单</button>
-    <button class="tab" data-tab="checkin">签到</button>
-    <button class="tab" data-tab="group">分组</button>
-    <button class="tab" data-tab="schedule">赛程</button>
-    <button class="tab" data-tab="bracket">对阵图</button>
-    <button class="tab" data-tab="summary">汇总</button>
-    <button class="tab" data-tab="backup">数据备份</button>
-  </nav>
-
-  <main id="view" class="view"><!-- 由 UI.render 填充 --></main>
-
-  <div id="modal" class="modal-mask" hidden>
-    <div class="modal" id="modalCard"></div>
+<header>
+  <div class="brand">⭐ 星羿羽毛球馆</div>
+  <div class="tag">星羿赛事 · 比赛现场管理平台</div>
+</header>
+<div class="wrap">
+  <div class="hero">
+    <div class="logo">🏸</div>
+    <h1>选一场开打</h1>
+    <p>签到 · 配对 · 录分 · 实时榜 · 颁奖图，一站式搞定</p>
   </div>
-
-  <div id="toast" class="toast" hidden></div>
-
-  <script src="js/store.js"></script>
-  <script src="js/csv.js"></script>
-  <script src="js/checkin.js"></script>
-  <script src="js/seeding.js"></script>
-  <script src="js/engine-ko.js"></script>
-  <script src="js/scoring.js"></script>
-  <script src="js/stats.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/sync.js"></script>
+  <div class="grid">
+    <a class="tile" href="brawl.html">
+      <div class="ic">🔥</div>
+      <h3>大乱斗</h3>
+      <div class="d">招牌社交赛。随机配对 + 跨周积分常驻榜，以球会友。</div>
+      <span class="badge">★ 首发</span>
+    </a>
+    <a class="tile" href="doubleswiss.html">
+      <div class="ic">🔄</div>
+      <h3>双瑞士</h3>
+      <div class="d">两小时五轮。按积分配对，强强对话，单场活动最顺。</div>
+      <span class="badge">门店 MVP</span>
+    </a>
+    <a class="tile" href="octa.html">
+      <div class="ic">🎯</div>
+      <h3>八人转</h3>
+      <div class="d">5–8 人轮转。每人恰好搭档他人一次，数学保证公平。</div>
+      <span class="badge">爆款</span>
+    </a>
+    <a class="tile" href="team.html">
+      <div class="ic">🤝</div>
+      <h3>团体赛</h3>
+      <div class="d">两队对抗 / 多队联赛。男单女单男双女双混双自选。</div>
+      <span class="badge">新</span>
+    </a>
+  </div>
+  <p class="muted" style="text-align:center;margin-top:22px">所有赛制支持 21 分 / 31 分一局 · 性别让分开关键 · 数据存本地不丢</p>
+</div>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
 </body>
 </html>
