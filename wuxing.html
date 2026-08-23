@@ -82,46 +82,46 @@ td .star{color:var(--gold);font-weight:800;}
         <td><span class="star">★</span> 进步之星</td>
         <td><input class="inp" id="stu0" list="stuList" placeholder="选/填学员"><datalist id="stuList"></datalist></td>
         <td><select class="inp" id="cls0"><option value="">选班级</option></select></td>
-        <td><select class="inp" id="rsn0"><option value="">选理由口径</option><option>本月技能数据提升最大（体测纵向对比）</option><option>主动加练、跨级突破</option></select></td>
+        <td><select class="inp" id="rsn0"><option value="">选理由口径</option><option>本月技能数据提升最大（体测纵向对比）</option><option>体能/协调性/步伐明显进步</option><option>动作规范度从一般到标准</option><option>主动加练、跨级突破</option><option>上课专注度提升，能跟住节奏</option></select></td>
       </tr>
       <tr>
         <td><span class="star">★</span> 拼搏之星</td>
         <td><input class="inp" list="stuList" id="stu1" placeholder="选/填学员"></td>
         <td><select class="inp" id="cls1"><option value="">选班级</option></select></td>
-        <td><select class="inp" id="rsn1"><option value="">选理由口径</option><option>训练最刻苦、不喊累</option><option>本月全勤、零请假</option></select></td>
+        <td><select class="inp" id="rsn1"><option value="">选理由口径</option><option>训练最刻苦、不喊累</option><option>本月全勤、零请假</option><option>体能再累也坚持完成训练量</option><option>主动要求多球、多练一组</option><option>比赛落后也不放弃，韧性足</option></select></td>
       </tr>
       <tr>
         <td><span class="star">★</span> 突破之星</td>
         <td><input class="inp" list="stuList" id="stu2" placeholder="选/填学员"></td>
         <td><select class="inp" id="cls2"><option value="">选班级</option></select></td>
-        <td><select class="inp" id="rsn2"><option value="">选理由口径</option><option>攻克难点（首次连续对打）</option><option>学会发球 / 掌握新动作</option></select></td>
+        <td><select class="inp" id="rsn2"><option value="">选理由口径</option><option>攻克难点（首次连续对打）</option><option>学会发球 / 掌握新动作</option><option>第一次完成规范高远球发力</option><option>比赛中敢用新技术，不保守</option><option>从不敢接球到主动迎球击球</option></select></td>
       </tr>
       <tr>
         <td><span class="star">★</span> 协作之星</td>
         <td><input class="inp" list="stuList" id="stu3" placeholder="选/填学员"></td>
         <td><select class="inp" id="cls3"><option value="">选班级</option></select></td>
-        <td><select class="inp" id="rsn3"><option value="">选理由口径</option><option>乐于助人、帮队友捡球</option><option>团队意识强、主动带新</option></select></td>
+        <td><select class="inp" id="rsn3"><option value="">选理由口径</option><option>乐于助人、帮队友捡球</option><option>团队意识强、主动带新</option><option>双打/分组对抗时主动沟通</option><option>把自己的球借给忘记带的同学</option><option>赢球不骄傲，输球安慰队友</option></select></td>
       </tr>
       <tr>
         <td><span class="star">★</span> 潜力之星</td>
         <td><input class="inp" list="stuList" id="stu4" placeholder="选/填学员"></td>
         <td><select class="inp" id="cls4"><option value="">选班级</option></select></td>
-        <td><select class="inp" id="rsn4"><option value="">选理由口径</option><option>年龄小但展现天赋</option><option>来得晚但进步飞快、热情高</option></select></td>
+        <td><select class="inp" id="rsn4"><option value="">选理由口径</option><option>年龄小但展现天赋</option><option>来得晚但进步飞快、热情高</option><option>协调性/爆发力/球感超出同龄</option><option>每次课前课后主动加练</option><option>对战术理解快，能举一反三</option></select></td>
       </tr>
     </table>
     <p class="sub">学员从下拉选（也可直接手填名字），班级与理由点选即可，理由选完仍可手动微调。填完点「生成积分表图片」一键出图。</p>
     <button class="btn" onclick="genImage()">📸 生成积分表图片</button>
     <a class="btn" style="background:#8B8B86;" onclick="window.print()">打印打分表</a>
     <div id="imgOut" style="margin-top:14px;display:none;">
-      <canvas id="cv" style="width:100%;max-width:380px;border:1px solid var(--border);border-radius:12px;"></canvas>
+      <canvas id="cv" style="width:100%;max-width:420px;border:1px solid var(--border);border-radius:12px;"></canvas>
       <p class="sub">长按图片即可保存到相册 / 发家长群。也可右键另存。</p>
       <a class="btn" id="dlBtn" download="星羿月度5星积分表.png" style="background:var(--primary-dark);">⬇️ 下载图片</a>
     </div>
   </div>
 
   <script>
-  // 班级下拉选项（课程分级口径：启蒙班=初级班、初级班=中级班）
-  const CLASSES = ['启蒙班（初级班）','初级班（中级班）','成人小班1V4','1V1私教'];
+  // 班级下拉选项（课程分级口径：启蒙班=初级班、初级班=中级班；另增加独立中级班）
+  const CLASSES = ['启蒙班（初级班）','初级班（中级班）','中级班','成人小班1V4','1V1私教'];
   // 学员名单（可选填；默认留空，教练手填或从名单表复制后在此补充）
   const STUDENTS = [];
   function fillSelects(){
@@ -136,47 +136,55 @@ td .star{color:var(--gold);font-weight:800;}
 
   function genImage(){
     const cv=document.getElementById('cv');
-    const dpr=2; const W=380,H=520;
+    const dpr=2; const W=420,H=820;
     cv.width=W*dpr; cv.height=H*dpr;
     const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
     // 背景
     ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,W,H);
     // 顶部品牌条
-    const g=ctx.createLinearGradient(0,0,W,60); g.addColorStop(0,'#E8632B'); g.addColorStop(1,'#F0844E');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,60);
-    ctx.fillStyle='#fff'; ctx.font='bold 19px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('⭐ 星羿月度5星积分表',W/2,38);
+    const g=ctx.createLinearGradient(0,0,W,78); g.addColorStop(0,'#E8632B'); g.addColorStop(1,'#F0844E');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,78);
+    ctx.fillStyle='#fff'; ctx.font='bold 22px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('⭐ 星羿月度5星积分表',W/2,48);
     ctx.textAlign='left';
     // 表格
     const rows=[['进步之星','stu0','cls0','rsn0'],['拼搏之星','stu1','cls1','rsn1'],['突破之星','stu2','cls2','rsn2'],['协作之星','stu3','cls3','rsn3'],['潜力之星','stu4','cls4','rsn4']];
-    const top=80, rh=78, x0=14, lw=W-28;
+    const top=102, rh=132, x0=18, lw=W-36, gap=10;
     ctx.strokeStyle='#ECE7E1'; ctx.lineWidth=1;
     rows.forEach((r,i)=>{
-      const y=top+i*rh;
-      ctx.fillStyle = i%2? '#FBFAF8':'#FFFFFF'; ctx.fillRect(x0,y,lw,rh);
+      const y=top+i*(rh+gap);
+      // 圆角卡片背景
+      ctx.fillStyle = i%2? '#FBFAF8':'#FFFDF8'; roundRect(ctx,x0,y,lw,rh,12); ctx.fill();
       // 奖项
-      ctx.fillStyle='#C99A2E'; ctx.font='bold 14px sans-serif';
-      ctx.fillText('★ '+r[0],x0+10,y+24);
+      ctx.fillStyle='#C44E1C'; ctx.font='bold 17px sans-serif';
+      ctx.fillText('★ '+r[0],x0+14,y+32);
       // 字段
       const stu=document.getElementById(r[1]).value||'—';
       const cls=document.getElementById(r[2]).value||'—';
       const rsn=document.getElementById(r[3]).value||'—';
-      ctx.fillStyle='#2C2C2A'; ctx.font='13px sans-serif';
-      ctx.fillText('学员：'+stu,x0+10,y+46);
-      ctx.fillText('班级：'+cls,x0+10,y+64);
-      // 理由（自动换行）
-      ctx.fillStyle='#6B6B66'; ctx.font='11px sans-serif';
-      wrapText(ctx,'理由：'+rsn,x0+10,y+78,lw-20,13);
+      ctx.fillStyle='#2C2C2A'; ctx.font='14px sans-serif';
+      ctx.fillText('学员：'+stu,x0+14,y+58);
+      ctx.fillText('班级：'+cls,x0+14,y+82);
+      // 理由（自动换行，预留2行空间）
+      ctx.fillStyle='#6B6B66'; ctx.font='12px sans-serif';
+      wrapText(ctx,'理由：'+rsn,x0+14,y+108,lw-28,18);
     });
-    // 边框
-    ctx.strokeStyle='#E8632B'; ctx.lineWidth=2; ctx.strokeRect(x0,top,lw,rh*5);
     // 底部
-    ctx.fillStyle='#6B6B66'; ctx.font='11px sans-serif'; ctx.textAlign='center';
-    ctx.fillText('星羿体育 · 每月评选 · 由星星工作台生成',W/2,H-12);
+    ctx.fillStyle='#9B9B95'; ctx.font='12px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('星羿体育 · 每月评选 · 由星星工作台生成',W/2,H-24);
     ctx.textAlign='left';
     // 输出
     document.getElementById('imgOut').style.display='block';
     document.getElementById('dlBtn').href=cv.toDataURL('image/png');
+  }
+  function roundRect(ctx,x,y,w,h,r){
+    const p=Math.PI;
+    ctx.beginPath();
+    ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r); ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x+r,y+h); ctx.arcTo(x,y+h,x,y+h-r,r);
+    ctx.lineTo(x,y+r); ctx.arcTo(x,y,x+r,y,r);
+    ctx.closePath();
   }
   function wrapText(ctx,text,x,y,maxW,lh){
     let line='',yy=y;
