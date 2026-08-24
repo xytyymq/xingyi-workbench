@@ -152,6 +152,15 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
 .exportbar{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
 .exportbar button{background:var(--court);color:#fff;border:0;border-radius:999px;padding:8px 16px;font-size:13px;cursor:pointer;font-family:inherit}
 
+/* ===== 自测卡 ===== */
+.quiz{max-width:660px}
+.quiz>label{display:block;padding:7px 2px;font-size:13.5px;border-bottom:1px dashed var(--line)}
+.rk{width:100%;accent-color:var(--court);margin-top:5px}
+.qt{font-size:13.5px;margin:12px 0 5px}
+.qt label{display:inline-block;margin:2px 16px 2px 0}
+.qbtn{margin:6px 0 14px;background:var(--court);color:#fff;border:0;border-radius:999px;padding:8px 18px;font-size:13px;cursor:pointer;font-family:inherit}
+.qbtn:active{transform:scale(.96)}
+
 /* ===== motion ===== */
 @keyframes catIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .tech,.card,.extra{animation:catIn .38s var(--ease)}
@@ -183,6 +192,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   .bad,.drill{padding:10px 12px;font-size:13px}
 }
 </style>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="theme-color" content="#1f6b4e">
@@ -201,7 +211,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   <a class="contact" href="tel:15107920066"><b>15107920066</b>（微信同号）</a>
   <div class="tags"><span>会员增值</span><span>品牌内容</span><span>全 AI 图解</span></div>
 </header>
-<nav id="topnav"><button class="tab active" data-cat="home">🏠 首页</button><button class="tab" data-cat="basics">🌱 自检·球感</button><button class="tab" data-cat="techlib">🏸 技术库</button><button class="tab" data-cat="equip">🎒 装备选拍</button><button class="tab" data-cat="protect">🛡 热身防护</button><button class="tab" data-cat="doubles">👫 双打原则</button><button class="tab" data-cat="news">📰 羽球大事件</button><button class="tab" data-cat="biz">💼 商务合作</button><button class="tab" data-cat="hire">👥 教练应聘</button></nav>
+<nav id="topnav"><button class="tab active" data-cat="home">🏠 首页</button><button class="tab" data-cat="basics">🌱 自检·球感</button><button class="tab" data-cat="selftest">🧪 自测</button><button class="tab" data-cat="techlib">🏸 技术库</button><button class="tab" data-cat="equip">🎒 装备选拍</button><button class="tab" data-cat="protect">🛡 热身防护</button><button class="tab" data-cat="doubles">👫 双打原则</button><button class="tab" data-cat="news">📰 羽球大事件</button><button class="tab" data-cat="biz">💼 商务合作</button><button class="tab" data-cat="hire">👥 教练应聘</button></nav>
 
 <!-- ============ 模块 C：单人训练计划 · 周打卡（首页） ============ -->
 <h2><span class="n">C</span>单人训练计划 · 周打卡（首页）</h2>
@@ -283,6 +293,114 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   </div>
 
 </div>
+
+<!-- ============ 模块 A2：自测中心 · 打法天赋 / 等级评级 / 羽球人格 ============ -->
+<h2><span class="n">🧪</span>自测中心（打法天赋 · 等级评级 · 羽球人格）</h2>
+<div class="card">
+  <p class="lead">三分钟认清自己：天赋偏向、当前等级、你是哪种羽球人格。初版按通用标准设计，题目与评级以馆内教练现场把关为准。</p>
+
+  <h3>① 打法天赋自测</h3>
+  <p style="font-size:13px;color:var(--ink-2)">每题 1=很弱，5=很强，按真实感觉拖。</p>
+  <div class="quiz" id="talentQ">
+    <label>绝对力量（杀球/平抽的爆发）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>启动速度（蹬地第一步的快慢）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>身体协调（手脚配合的顺畅度）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>反应灵敏（接杀/网前封网的反应）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>柔韧灵活（大幅救球/转体的幅度）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>无氧耐力（多拍拉锯不喘）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>球感细腻（控球/搓放的手感）<input type="range" min="1" max="5" value="3" class="rk"></label>
+    <label>学习理解（看懂技术、纠错的快慢）<input type="range" min="1" max="5" value="3" class="rk"></label>
+  </div>
+  <button class="qbtn" onclick="calcTalent()">算我的天赋</button>
+  <div class="note" id="talentR" style="display:none"></div>
+
+  <h3>② 等级评级</h3>
+  <p style="font-size:13px;color:var(--ink-2)">勾选你已稳定做到的项（按现有成长等级标准）。</p>
+  <div class="quiz">
+    <label><input type="checkbox" class="lvl" data-l="1"> L1 新手：握拍正确 + 正手颠球 30 个</label>
+    <label><input type="checkbox" class="lvl" data-l="2"> L2 入门：高远 10 拍中 8 拍过底线 + 会用并步移动</label>
+    <label><input type="checkbox" class="lvl" data-l="3"> L3 进阶：吊球落点进前场 + 网前搓球贴网不冒高</label>
+    <label><input type="checkbox" class="lvl" data-l="4"> L4 高手：杀球落点可控 + 双打中前场平抽不被动</label>
+    <label><input type="checkbox" class="lvl" data-l="5"> L5 大神：全场连贯 + 能按对手弱点调整战术</label>
+  </div>
+  <button class="qbtn" onclick="calcLevel()">算我的等级</button>
+  <div class="note" id="levelR" style="display:none"></div>
+
+  <h3>③ 羽球人格</h3>
+  <p style="font-size:13px;color:var(--ink-2)">每题选最像你的一项。</p>
+  <div class="quiz" id="personQ">
+    <p class="qt">1. 场上最让你爽的是？<br>
+      <label><input type="radio" name="p1" value="atk"> 一拍重杀钉地板上</label>
+      <label><input type="radio" name="p1" value="def"> 防住对方重杀再反击</label>
+      <label><input type="radio" name="p1" value="ctl"> 用落点把对手遛到崩溃</label>
+      <label><input type="radio" name="p1" value="all"> 啥都能干、见招拆招</label>
+      <label><input type="radio" name="p1" value="fun"> 出一身汗、交个朋友</label></p>
+    <p class="qt">2. 你更想练成？<br>
+      <label><input type="radio" name="p2" value="atk"> 一锤定音的杀球</label>
+      <label><input type="radio" name="p2" value="def"> 铜墙铁壁的防守</label>
+      <label><input type="radio" name="p2" value="ctl"> 指哪打哪的控球</label>
+      <label><input type="radio" name="p2" value="all"> 攻防一体的全面</label>
+      <label><input type="radio" name="p2" value="fun"> 能打、不受伤、开心</label></p>
+    <p class="qt">3. 比分落后时你倾向于？<br>
+      <label><input type="radio" name="p3" value="atk"> 加力硬抢、搏杀翻盘</label>
+      <label><input type="radio" name="p3" value="def"> 先稳防守、等对方失误</label>
+      <label><input type="radio" name="p3" value="ctl"> 变线变速、打乱对方节奏</label>
+      <label><input type="radio" name="p3" value="all"> 哪弱补哪、灵活应对</label>
+      <label><input type="radio" name="p3" value="fun"> 输了也乐、下局再来</label></p>
+    <p class="qt">4. 你最欣赏的球员类型是？<br>
+      <label><input type="radio" name="p4" value="atk"> 暴力进攻手</label>
+      <label><input type="radio" name="p4" value="def"> 防守反击大师</label>
+      <label><input type="radio" name="p4" value="ctl"> 战术大脑型</label>
+      <label><input type="radio" name="p4" value="all"> 全能六边形战士</label>
+      <label><input type="radio" name="p4" value="fun"> 快乐羽毛球型</label></p>
+    <p class="qt">5. 你打球的主要动力是？<br>
+      <label><input type="radio" name="p5" value="atk"> 赢球、压制对手的爽感</label>
+      <label><input type="radio" name="p5" value="def"> 体能与解压</label>
+      <label><input type="radio" name="p5" value="ctl"> 琢磨技术、精进自我</label>
+      <label><input type="radio" name="p5" value="all"> 全面变强</label>
+      <label><input type="radio" name="p5" value="fun"> 社交、健康、好玩</label></p>
+  </div>
+  <button class="qbtn" onclick="calcPerson()">测我的人格</button>
+  <div class="note" id="personR" style="display:none"></div>
+</div>
+
+<script>
+function calcTalent(){
+  var vs=[].slice.call(document.querySelectorAll("#talentQ .rk")).map(function(e){return +e.value;});
+  var s=vs.reduce(function(a,b){return a+b;},0), t=vs.length*5;
+  var pct=Math.round(s/t*100), lv;
+  if(s<=18) lv="待开发：天赋不是门槛，科学训练都能涨，先从步法和球感打底";
+  else if(s<=30) lv="中等：有亮点也有短板，扬长补短进步最快";
+  else lv="突出：身体条件不错，往专项技术深挖更易出成绩";
+  var box=document.getElementById("talentR");
+  box.style.display="block";
+  box.innerHTML="🧬 天赋总分 "+s+"/40（"+pct+"%）→ <b>"+lv+"</b>。各项里最低分那项，就是你最该先补的短板。";
+}
+function calcLevel(){
+  var chk=[].slice.call(document.querySelectorAll(".lvl")).filter(function(e){return e.checked;});
+  var max=chk.reduce(function(m,e){return Math.max(m,+e.dataset.l);},0);
+  var names=["","L1 新手","L2 入门","L3 进阶","L4 高手","L5 大神"];
+  var tip=["","先练握拍+颠球","加练高远压底线+并步","补吊球与网前搓放","练杀球落点+中前场平抽","打磨全场连贯与战术变化"];
+  var box=document.getElementById("levelR");
+  box.style.display="block";
+  if(max===0){box.innerHTML="还没勾选～先去球场把 L1 握拍和颠球练稳，地基最重要。";return;}
+  box.innerHTML="🏅 你当前约在 <b>"+names[max]+"</b>。下一步重点："+tip[max]+"。勾得越多说明底子越厚，别跳级。";
+}
+function calcPerson(){
+  var map={atk:"进攻猛张飞型",def:"防守铁桶型",ctl:"控球诸葛亮型",all:"全面均衡型",fun:"快乐养生型"};
+  var cnt={atk:0,def:0,ctl:0,all:0,fun:0};
+  for(var i=1;i<=5;i++){var el=document.querySelector('input[name="p'+i+'"]:checked');if(el)cnt[el.value]++;}
+  var best="fun",b=-1;for(var k in cnt){if(cnt[k]>b){b=cnt[k];best=k;}}
+  var desc={atk:"你享受压制与得分，适合把杀球/平抽练到极致，但要注意别盲目起跳、先稳到位再下压。",
+            def:"你天生耐心，防守反击是你的武器，把接杀挡网和挑两腰练精，等对手犯错。",
+            ctl:"你是场地上的大脑，落点线路是你的语言，控球+吊搓+假动作是你的主场。",
+            all:"你啥都想要，全面型最稳也最吃功夫，建议先定一个主项再补其他。",
+            fun:"你打球为健康和快乐，这最好——不受伤、能坚持，水平自然涨。"};
+  var box=document.getElementById("personR");
+  box.style.display="block";
+  box.innerHTML="🎭 你的羽球人格是 <b>"+map[best]+"</b>。"+desc[best];
+}
+</script>
 
 <!-- ============ 顶部模块 B：核心技术库（5 组 19 式） ============ -->
 <h2><span class="n">B</span>核心技术库（5 组 19 式）</h2>
@@ -722,7 +840,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   <div class="note">📌 本板块由星星 AI 每周定时抓取更新；身边有比赛、约球或馆内活动想发上来，联系星羿体育 15107920066（微信同号）。</div>
 </div>
 
-<div class="foot">成人羽毛球自学系统 · 完整版 v8 · 自检+球感 / 技术库(5 组 19 式) / 装备选拍 / 热身防护 / 双打原则 / 单人周打卡 / 品牌反哺(导出即发)<br>星羿羽毛球馆 × 星星 AI 工作台 · 内容融合羽毛球技术体系图解，部分实拍图来自 Unsplash（免费授权）。动作细节以馆内教练现场把关为准。</div>
+<div class="foot">成人羽毛球自学系统 · 完整版 v8.2 · 自检+球感 / 自测中心(天赋·评级·人格) / 技术库(5 组 19 式) / 装备选拍 / 热身防护 / 双打原则 / 单人周打卡 / 品牌反哺(导出即发)<br>星羿羽毛球馆 × 星星 AI 工作台 · 内容融合羽毛球技术体系图解，部分实拍图来自 Unsplash（免费授权）。动作细节以馆内教练现场把关为准。<br><span id="busuanzi_container_site_pv">本站总访问 <span id="busuanzi_value_site_pv"></span> 次</span> · <span id="busuanzi_container_site_uv">访客 <span id="busuanzi_value_site_uv"></span> 人</span></div>
 
 <script>
 function copyText(txt, btn, ok){
@@ -762,7 +880,7 @@ function exportList(){
 </div>
 <script>(function(){
   var h2s=Array.prototype.slice.call(document.querySelectorAll("h2"));
-  var cats=["home","home","basics","techlib","equip","protect","doubles","hidden","hidden","biz","hire","news"];
+  var cats=["home","home","basics","selftest","techlib","equip","protect","doubles","hidden","hidden","biz","hire","news"];
   var secs=h2s.map(function(h2,i){
     var els=[h2];var n=h2.nextElementSibling;var nx=h2s[i+1];
     while(n&&n!==nx){els.push(n);n=n.nextElementSibling;}
