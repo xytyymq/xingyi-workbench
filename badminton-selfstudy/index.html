@@ -160,6 +160,13 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
 .qt label{display:inline-block;margin:2px 16px 2px 0}
 .qbtn{margin:6px 0 14px;background:var(--court);color:#fff;border:0;border-radius:999px;padding:8px 18px;font-size:13px;cursor:pointer;font-family:inherit}
 .qbtn:active{transform:scale(.96)}
+/* ===== 结果图海报 ===== */
+.poster{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 28px rgba(33,31,24,.12);margin:14px 0 6px;overflow:hidden}
+.poster img{width:100%;display:block}
+.poster-actions{display:flex;gap:8px;padding:10px 12px;background:var(--paper-2);border-top:1px solid var(--line)}
+.poster-actions button{flex:1;background:var(--court);color:#fff;border:0;border-radius:999px;padding:8px 0;font-size:13px;cursor:pointer;font-family:inherit}
+.poster-actions button:active{transform:scale(.96)}
+
 
 /* ===== motion ===== */
 @keyframes catIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
@@ -297,7 +304,7 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
 <!-- ============ 模块 A2：自测中心 · 打法天赋 / 等级评级 / 羽球人格 ============ -->
 <h2><span class="n">🧪</span>自测中心（打法天赋 · 等级评级 · 羽球人格）</h2>
 <div class="card">
-  <p class="lead">三分钟认清自己：天赋偏向、当前等级、你是哪种羽球人格。初版按通用标准设计，题目与评级以馆内教练现场把关为准。</p>
+  <p class="lead">三分钟认清自己：天赋偏向、当前等级、你是哪种羽球人格。完成后可<b>生成结果图</b>，长按保存分享。</p>
 
   <h3>① 打法天赋自测</h3>
   <p style="font-size:13px;color:var(--ink-2)">每题 1=很弱，5=很强，按真实感觉拖。</p>
@@ -313,18 +320,22 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   </div>
   <button class="qbtn" onclick="calcTalent()">算我的天赋</button>
   <div class="note" id="talentR" style="display:none"></div>
+  <div class="poster" id="talentP"><img id="talentPI" alt="天赋测评结果图"><div class="poster-actions"><button onclick="downloadImg('talentPI')">保存图片</button><button onclick="shareImg('talentPI')">分享结果</button></div></div>
 
-  <h3>② 等级评级</h3>
-  <p style="font-size:13px;color:var(--ink-2)">勾选你已稳定做到的项（按现有成长等级标准）。</p>
-  <div class="quiz">
-    <label><input type="checkbox" class="lvl" data-l="1"> L1 新手：握拍正确 + 正手颠球 30 个</label>
-    <label><input type="checkbox" class="lvl" data-l="2"> L2 入门：高远 10 拍中 8 拍过底线 + 会用并步移动</label>
-    <label><input type="checkbox" class="lvl" data-l="3"> L3 进阶：吊球落点进前场 + 网前搓球贴网不冒高</label>
-    <label><input type="checkbox" class="lvl" data-l="4"> L4 高手：杀球落点可控 + 双打中前场平抽不被动</label>
-    <label><input type="checkbox" class="lvl" data-l="5"> L5 大神：全场连贯 + 能按对手弱点调整战术</label>
+  <h3>② 业余等级评级</h3>
+  <p style="font-size:13px;color:var(--ink-2)">每项 1=初学，10=稳定，按真实水平打分。</p>
+  <div class="quiz" id="levelQ">
+    <label>反手后场高远球稳定性（被动摆脱）<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>反手网前勾对角细腻度<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>接发球路变化意识<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>网前搓放勾精细控制<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>中场平抽挡质量与连贯<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>实战战术与临场调整能力<input type="range" min="1" max="10" value="5" class="lvls"></label>
+    <label>双打轮转补位意识<input type="range" min="1" max="10" value="5" class="lvls"></label>
   </div>
   <button class="qbtn" onclick="calcLevel()">算我的等级</button>
   <div class="note" id="levelR" style="display:none"></div>
+  <div class="poster" id="levelP"><img id="levelPI" alt="等级评级结果图"><div class="poster-actions"><button onclick="downloadImg('levelPI')">保存图片</button><button onclick="shareImg('levelPI')">分享结果</button></div></div>
 
   <h3>③ 羽球人格</h3>
   <p style="font-size:13px;color:var(--ink-2)">每题选最像你的一项。</p>
@@ -362,46 +373,409 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
   </div>
   <button class="qbtn" onclick="calcPerson()">测我的人格</button>
   <div class="note" id="personR" style="display:none"></div>
+  <div class="poster" id="personP"><img id="personPI" alt="人格测试结果图"><div class="poster-actions"><button onclick="downloadImg('personPI')">保存图片</button><button onclick="shareImg('personPI')">分享结果</button></div></div>
 </div>
 
 <script>
+/* ===== canvas 结果图工具函数 ===== */
+function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+  var words = String(text).split('');
+  var line = '';
+  for(var n=0; n<words.length; n++){
+    var testLine = line + words[n];
+    var metrics = ctx.measureText(testLine);
+    if(metrics.width > maxWidth && line !== ''){
+      ctx.fillText(line, x, y);
+      line = words[n];
+      y += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, y);
+  return y + lineHeight;
+}
+
+function drawRadar(ctx, cx, cy, r, labels, values, maxVal, fillColor, strokeColor){
+  var n = labels.length;
+  ctx.save();
+  // 网格
+  for(var ring=1; ring<=4; ring++){
+    ctx.beginPath();
+    for(var i=0; i<n; i++){
+      var a = -Math.PI/2 + i*2*Math.PI/n;
+      var rr = r*ring/4;
+      var x = cx + Math.cos(a)*rr, y = cy + Math.sin(a)*rr;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = '#E8E8E8';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  // 轴线
+  for(i=0; i<n; i++){
+    var a = -Math.PI/2 + i*2*Math.PI/n;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(a)*r, cy + Math.sin(a)*r);
+    ctx.strokeStyle = '#E8E8E8';
+    ctx.stroke();
+    // 标签
+    var la = a;
+    var lx = cx + Math.cos(la)*(r+24);
+    var ly = cy + Math.sin(la)*(r+24);
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = '#666';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labels[i], lx, ly);
+  }
+  // 数据区域
+  ctx.beginPath();
+  for(i=0; i<n; i++){
+    a = -Math.PI/2 + i*2*Math.PI/n;
+    var v = Math.max(0, Math.min(maxVal, values[i]));
+    var rr = r * v / maxVal;
+    x = cx + Math.cos(a)*rr; y = cy + Math.sin(a)*rr;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // 顶点
+  for(i=0; i<n; i++){
+    a = -Math.PI/2 + i*2*Math.PI/n;
+    v = Math.max(0, Math.min(maxVal, values[i]));
+    rr = r * v / maxVal;
+    x = cx + Math.cos(a)*rr; y = cy + Math.sin(a)*rr;
+    ctx.beginPath();
+    ctx.arc(x,y,3,0,Math.PI*2);
+    ctx.fillStyle = strokeColor;
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawBarChart(ctx, x, y, w, h, labels, values, colors){
+  var n = labels.length, max = Math.max.apply(null, values) || 1;
+  ctx.save();
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  var bw = w / n * 0.6, gap = w / n;
+  for(var i=0; i<n; i++){
+    var bh = h * values[i] / max;
+    var bx = x + gap*i + (gap-bw)/2;
+    var by = y + h - bh;
+    ctx.fillStyle = colors[i];
+    ctx.fillRect(bx, by, bw, bh);
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = 'center';
+    ctx.fillText(labels[i], bx+bw/2, y+h+16);
+    ctx.fillText(Math.round(values[i]*100)+'%', bx+bw/2, by-10);
+  }
+  ctx.restore();
+}
+
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function makeCanvas(width, height, bg){
+  var c = document.createElement('canvas');
+  c.width = width * 2; c.height = height * 2;
+  c.style.width = width + 'px';
+  c.style.height = height + 'px';
+  var ctx = c.getContext('2d');
+  ctx.scale(2,2);
+  ctx.fillStyle = bg || '#FFFFFF';
+  ctx.fillRect(0,0,width,height);
+  return {c:c, ctx:ctx};
+}
+
+function header(ctx, W, title, subtitle){
+  ctx.fillStyle = '#FF6B4A';
+  ctx.fillRect(0,0,W,92);
+  ctx.fillStyle = '#FFFFFF';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = 'bold 26px sans-serif';
+  ctx.fillText(title, 22, 46);
+  ctx.font = '14px sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.9)';
+  ctx.fillText(subtitle, 22, 72);
+  ctx.font = '11px sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillStyle = 'rgba(255,255,255,.75)';
+  ctx.fillText('xingyi-badminton · 仅供参考', W-22, 54);
+}
+
+function footer(ctx, W, H){
+  ctx.strokeStyle = '#EEE';
+  ctx.beginPath(); ctx.moveTo(22,H-46); ctx.lineTo(W-22,H-46); ctx.stroke();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#999';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('—— 星羿羽毛球馆 · 九江经开区 ——', W/2, H-24);
+}
+
+function drawSection(ctx, x, y, title, content, color){
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = color || '#FF6B4A';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(title, x, y);
+  ctx.fillStyle = '#333';
+  ctx.font = '13px sans-serif';
+  return wrapText(ctx, content, x, y+22, 556, 20);
+}
+
+/* ===== ① 打法天赋结果图 ===== */
+function drawTalentImg(values, result){
+  var W=600, H=940, o=makeCanvas(W,H,'#FAFAFA');
+  var ctx=o.ctx;
+  header(ctx,W,'星羿羽毛球综合评测','打法天赋测评');
+
+  ctx.fillStyle = '#222';
+  ctx.font = 'bold 22px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('综合天赋：'+result.label, 22, 122);
+  ctx.fillStyle = '#666';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('总分 '+result.total+'/40（'+result.pct+'%）', 22, 146);
+
+  var labels=['爆发力','移动速度','耐力','网前手感','反应速度'];
+  drawRadar(ctx, 300, 290, 130, labels, values, 5, 'rgba(255,107,74,0.18)', '#FF6B4A');
+
+  // 五维能力列表
+  var dims=[
+    {k:'爆发力',v:values[0],d:'绝对力量与下压能力'},
+    {k:'移动速度',v:values[1],d:'启动与全场到位能力'},
+    {k:'耐力',v:values[2],d:'多拍拉锯体能储备'},
+    {k:'网前手感',v:values[3],d:'控球/搓放细腻度'},
+    {k:'反应速度',v:values[4],d:'接杀与封网反应'}
+  ];
+  var y=430;
+  ctx.fillStyle = '#FF6B4A';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('① 五维能力', 22, y);
+  y+=26;
+  dims.forEach(function(d){
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 13px sans-serif';
+    ctx.fillText(d.k+'  '+d.v+'/5', 22, y);
+    ctx.fillStyle = '#888';
+    ctx.font = '12px sans-serif';
+    ctx.fillText(d.d, 110, y);
+    y+=22;
+  });
+
+  y = drawSection(ctx, 22, y+6, '② 能力倾向', '最强项是 '+result.best+'，整体偏向：'+result.bias+'。最低分 '+result.worst+' 是当前最优先补的短板。', '#FF6B4A');
+  y = drawSection(ctx, 22, y+10, '③ 单打战术', result.singles, '#333');
+  y = drawSection(ctx, 22, y+10, '④ 双打角色', result.doubles, '#333');
+  y = drawSection(ctx, 22, y+10, '⑤ 训练方向', result.train, '#333');
+  y = drawSection(ctx, 22, y+10, '⑥ 装备匹配', result.equip, '#333');
+
+  footer(ctx,W,H);
+  return o.c.toDataURL('image/jpeg',0.92);
+}
+
+/* ===== ② 等级评级结果图 ===== */
+function drawLevelImg(values, result){
+  var W=600, H=1000, o=makeCanvas(W,H,'#FAFAFA');
+  var ctx=o.ctx;
+  header(ctx,W,'星羿羽毛球综合评测','业余等级评级');
+
+  ctx.fillStyle = '#222';
+  ctx.font = 'bold 24px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('综合等级：'+result.name, 22, 122);
+  ctx.fillStyle = '#666';
+  ctx.font = '14px sans-serif';
+  ctx.fillText('技术均分 '+result.avg+' · 按七项核心能力评估', 22, 148);
+
+  var labels=['反手后场高远','反手网前勾对角','接发球路变化','网前搓放勾','中场平抽挡','实战战术调整','双打轮转补位'];
+  drawRadar(ctx, 300, 310, 135, labels, values, 10, 'rgba(59,130,246,0.18)', '#3B82F6');
+
+  var y=470;
+  y = drawSection(ctx, 22, y, '① 等级解读', result.reading, '#3B82F6');
+
+  ctx.fillStyle = '#3B82F6';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('② 七项技术分布', 22, y+10);
+  y+=32;
+  var items=[
+    ['反手后场高远球稳定性','反手后场高远球能稳定压到底线，被动摆脱成功率高'],
+    ['反手网前勾对角细腻度','勾对角贴网且动作隐蔽，能稳定变换网前线路'],
+    ['接发球路变化意识','接发不只会挑高，能根据对手站位选择推/搓/扑/挑'],
+    ['网前搓放勾精细控制','放网贴网、搓球翻滚、勾对角线路精准'],
+    ['中场平抽挡质量与连贯','平抽挡球速快、弧度低、正反手转换顺畅'],
+    ['实战战术与临场调整能力','能按对手弱点调整战术，不盲目打球'],
+    ['双打轮转补位意识','进攻前后站、防守平行站，轮转流畅不撞拍']
+  ];
+  items.forEach(function(it,i){
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 12px sans-serif';
+    ctx.fillText(it[0]+'  '+values[i]+'/10', 22, y);
+    ctx.fillStyle = '#888';
+    ctx.font = '11px sans-serif';
+    y = wrapText(ctx, it[1], 22, y+18, 556, 17);
+    y+=8;
+  });
+
+  y = drawSection(ctx, 22, y, '③ 短板定位', result.weakText, '#3B82F6');
+  y = drawSection(ctx, 22, y+10, '④ 专项提升方案', result.plan, '#333');
+  y = drawSection(ctx, 22, y+10, '⑤ 器材优化建议', result.equip, '#333');
+
+  footer(ctx,W,H);
+  return o.c.toDataURL('image/jpeg',0.92);
+}
+
+/* ===== ③ 羽球人格结果图 ===== */
+function drawPersonImg(values, best, result){
+  var W=600, H=920, o=makeCanvas(W,H,'#FAFAFA');
+  var ctx=o.ctx;
+  header(ctx,W,'星羿羽毛球综合评测','羽球人格测试');
+
+  ctx.fillStyle = '#222';
+  ctx.font = 'bold 26px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('你的羽球人格：'+result.name, 22, 122);
+
+  var labels=['进攻猛张飞','防守铁桶','控球诸葛亮','全面均衡','快乐养生'];
+  var colors=['#EF4444','#3B82F6','#F59E0B','#10B981','#8B5CF6'];
+  drawBarChart(ctx, 40, 170, 520, 180, labels, values, colors);
+
+  var y=400;
+  ctx.fillStyle = '#FF6B4A';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('① 五人格倾向分布', 22, y);
+  y+=26;
+  var order=[['灵感突击手','atk'],['冷静战术猎手','def'],['赛场指挥官','ctl'],['全局算计大师','all'],['快乐打球家','fun']];
+  order.forEach(function(item,idx){
+    var key=item[1], pct=Math.round(values[idx]*100);
+    ctx.fillStyle = '#333';
+    ctx.font = '13px sans-serif';
+    ctx.fillText((idx+1)+'. '+item[0]+'  '+pct+'%', 22, y);
+    y+=22;
+  });
+
+  y = drawSection(ctx, 22, y+6, '② 特质', result.trait, '#FF6B4A');
+  y = drawSection(ctx, 22, y+10, '③ 短板', result.weak, '#333');
+  y = drawSection(ctx, 22, y+10, '④ 破局', result.break, '#333');
+  y = drawSection(ctx, 22, y+10, '⑤ 五大维度心法', result.mind, '#333');
+
+  footer(ctx,W,H);
+  return o.c.toDataURL('image/jpeg',0.92);
+}
+
+/* ===== 交互 ===== */
+function showPoster(id, dataUrl){
+  var box = document.getElementById(id);
+  var img = document.getElementById(id+'I');
+  img.src = dataUrl;
+  box.style.display = 'block';
+  img.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function downloadImg(imgId){
+  var img = document.getElementById(imgId);
+  var a = document.createElement('a');
+  a.href = img.src;
+  a.download = '星羿羽毛球评测_' + imgId.replace('I','') + '.jpg';
+  a.click();
+}
+
+function shareImg(imgId){
+  var img = document.getElementById(imgId);
+  if(navigator.share){
+    fetch(img.src).then(function(r){return r.blob();}).then(function(blob){
+      var file = new File([blob], '星羿羽毛球评测.jpg', {type:'image/jpeg'});
+      navigator.share({title:'我的星羿羽毛球评测结果', files:[file]}).catch(function(){});
+    });
+  } else {
+    alert('请长按图片保存后分享');
+  }
+}
+
 function calcTalent(){
   var vs=[].slice.call(document.querySelectorAll("#talentQ .rk")).map(function(e){return +e.value;});
-  var s=vs.reduce(function(a,b){return a+b;},0), t=vs.length*5;
-  var pct=Math.round(s/t*100), lv;
-  if(s<=18) lv="待开发：天赋不是门槛，科学训练都能涨，先从步法和球感打底";
-  else if(s<=30) lv="中等：有亮点也有短板，扬长补短进步最快";
-  else lv="突出：身体条件不错，往专项技术深挖更易出成绩";
+  var labels=['爆发力','移动速度','耐力','网前手感','反应速度'];
+  var vals=[vs[0], vs[1], vs[5], vs[6], vs[3]]; // 力量、速度、耐力、手感、反应
+  var total=vs.reduce(function(a,b){return a+b;},0), t=vs.length*5;
+  var pct=Math.round(total/t*100);
+  var label, bias, singles, doubles, train, equip;
+  if(total<=18){ label='待开发'; bias='基础优先型，建议先练步法和球感'; singles='先稳高远球压底线，别急着进攻，以多拍过渡为主'; doubles='先练接发和挑两腰，保证不失误再谈配合'; train='从握拍、颠球、启动步、高远球动作定型开始'; equip='选 4U 轻量平衡拍 + 22-24 磅，降低手腕负担'; }
+  else if(total<=30){ label='中等'; bias='有亮点也有短板，扬长补短进步最快'; singles='围绕最强项设计球路，弱项先用过渡球规避'; doubles='明确分工：强前场抢网或强后场下压，互补短板'; train='强项加练成武器，弱项补到不拖后腿'; equip='按打法选拍：进攻强选头重 3U/4U，速度慢选轻量破风框'; }
+  else { label='突出'; bias='身体条件优秀，可往专项技术深挖'; singles='主动加速、重杀点杀结合，争取前三拍建立优势'; doubles='抢攻型前后站，重杀后封网，压制对手结合部'; train='强化多球强度、战术意识和专项体能'; equip='可选头重进攻拍 + 25-27 磅，把力量转化为球速'; }
+  var bestIdx=0, worstIdx=0;
+  for(var i=1;i<vals.length;i++){ if(vals[i]>vals[bestIdx]) bestIdx=i; if(vals[i]<vals[worstIdx]) worstIdx=i; }
+  var result={total:total,pct:pct,label:label,bias:bias,singles:singles,doubles:doubles,train:train,equip:equip,best:labels[bestIdx],worst:labels[worstIdx]};
   var box=document.getElementById("talentR");
   box.style.display="block";
-  box.innerHTML="🧬 天赋总分 "+s+"/40（"+pct+"%）→ <b>"+lv+"</b>。各项里最低分那项，就是你最该先补的短板。";
+  box.innerHTML="🧬 天赋总分 "+total+"/40（"+pct+"%）→ <b>"+label+"</b>。最强项 <b>"+labels[bestIdx]+"</b>，最短板 <b>"+labels[worstIdx]+"</b>。";
+  showPoster('talentP', drawTalentImg(vals, result));
 }
+
 function calcLevel(){
-  var chk=[].slice.call(document.querySelectorAll(".lvl")).filter(function(e){return e.checked;});
-  var max=chk.reduce(function(m,e){return Math.max(m,+e.dataset.l);},0);
-  var names=["","L1 新手","L2 入门","L3 进阶","L4 高手","L5 大神"];
-  var tip=["","先练握拍+颠球","加练高远压底线+并步","补吊球与网前搓放","练杀球落点+中前场平抽","打磨全场连贯与战术变化"];
+  var vs=[].slice.call(document.querySelectorAll("#levelQ .lvls")).map(function(e){return +e.value;});
+  var labels=['反手后场高远','反手网前勾对角','接发球路变化','网前搓放勾','中场平抽挡','实战战术调整','双打轮转补位'];
+  var avg=(vs.reduce(function(a,b){return a+b;},0)/vs.length).toFixed(1);
+  var name, reading, plan, equip, weakText;
+  var lvIdx=Math.floor(avg);
+  if(lvIdx<2){ name='初级业余（1级）'; reading='基础动作还在成型，很多球靠本能接，稳定性不足。别焦虑，先抓高远球和步法。'; plan='高远球动作定型 4 周 → 并步/米字步 3 周 → 挑球+发球 3 周。'; equip='球拍 4U 平衡拍 + 22-24 磅；球鞋选缓震防侧翻全面型。'; }
+  else if(lvIdx<4){ name='入门业余（2级）'; reading='动作框架有了，但被动球和精细技术仍是短板。多练反手区和网前小球。'; plan='反手高远多球 4 周 → 网前搓放勾 4 周 → 双打轮转意识 2 周。'; equip='可尝试稍头重拍 3U/4U + 23-25 磅，提升下压感。'; }
+  else if(lvIdx<6){ name='中级业余（3级）'; reading='基础动作成型，网前有控制，反手和轮转还有提升空间。'; plan='反手被动球多球训练 → 网前一致性（搓/放/勾混合）→ 实战战术演练。'; equip='按打法选拍：进攻型选头重 3U，控制型选 4U 平衡/速度框 + 24-26 磅。'; }
+  else if(lvIdx<8){ name='中高级业余（4级）'; reading='技术较全面，能在实战中主动调整，但高压下失误率和体能分配需打磨。'; plan='强化接发第三拍变化、防守反击转攻、多球高强度对抗。'; equip='可选专业级攻防拍 + 25-27 磅；球鞋侧重启动与抗扭。'; }
+  else { name='高级业余（5级）'; reading='技术成熟、战术清晰，已接近业余顶尖，重点在体能和比赛心理。'; plan='保持训练节奏，多打比赛，针对性打磨 1-2 个杀手锏。'; equip='按个人偏好定制拍线组合，磅数 26-28。'; }
+  var sorted=vs.map(function(v,i){return {v:v,i:i};}).sort(function(a,b){return a.v-b.v;});
+  weakText='· '+labels[sorted[0].i]+'（'+sorted[0].v+'/10）、'+labels[sorted[1].i]+'（'+sorted[1].v+'/10）。这两项低于其他维度，建议优先专项突破。';
+  var result={name:name,avg:avg,reading:reading,weakText:weakText,plan:plan,equip:equip};
   var box=document.getElementById("levelR");
   box.style.display="block";
-  if(max===0){box.innerHTML="还没勾选～先去球场把 L1 握拍和颠球练稳，地基最重要。";return;}
-  box.innerHTML="🏅 你当前约在 <b>"+names[max]+"</b>。下一步重点："+tip[max]+"。勾得越多说明底子越厚，别跳级。";
+  box.innerHTML="🏅 当前约 <b>"+name+"</b>，技术均分 "+avg+"/10。短板："+labels[sorted[0].i]+"、"+labels[sorted[1].i]+"。";
+  showPoster('levelP', drawLevelImg(vs, result));
 }
+
 function calcPerson(){
   var map={atk:"进攻猛张飞型",def:"防守铁桶型",ctl:"控球诸葛亮型",all:"全面均衡型",fun:"快乐养生型"};
+  var display={atk:"灵感突击手",def:"冷静战术猎手",ctl:"赛场指挥官",all:"全局算计大师",fun:"快乐打球家"};
   var cnt={atk:0,def:0,ctl:0,all:0,fun:0};
   for(var i=1;i<=5;i++){var el=document.querySelector('input[name="p'+i+'"]:checked');if(el)cnt[el.value]++;}
-  var best="fun",b=-1;for(var k in cnt){if(cnt[k]>b){b=cnt[k];best=k;}}
-  var desc={atk:"你享受压制与得分，适合把杀球/平抽练到极致，但要注意别盲目起跳、先稳到位再下压。",
-            def:"你天生耐心，防守反击是你的武器，把接杀挡网和挑两腰练精，等对手犯错。",
-            ctl:"你是场地上的大脑，落点线路是你的语言，控球+吊搓+假动作是你的主场。",
-            all:"你啥都想要，全面型最稳也最吃功夫，建议先定一个主项再补其他。",
-            fun:"你打球为健康和快乐，这最好——不受伤、能坚持，水平自然涨。"};
+  var total=cnt.atk+cnt.def+cnt.ctl+cnt.all+cnt.fun;
+  if(total===0){ document.getElementById("personR").style.display="block"; document.getElementById("personR").innerHTML="请先回答 5 道题～"; document.getElementById("personP").style.display="none"; return; }
+  var order=['atk','def','ctl','all','fun'];
+  var values=order.map(function(k){return cnt[k]/total;});
+  var best="fun",b=-1; for(var k in cnt){ if(cnt[k]>b){ b=cnt[k]; best=k; } }
+  var desc={
+    atk:{name:display.atk,trait:"享受压制与得分，进攻欲望强，打球有爆发力。",weak:"容易盲目起跳杀球、忽略落点和连贯。",break:"先到位再下压，杀直线与斜线结合，杀完立刻举拍封网。",mind:"多球重杀+点杀训练；下肢快速多步连贯；网前封网反应。"},
+    def:{name:display.def,trait:"耐心沉稳，防守反击是你的舒适区。",weak:"机会球时不够主动，容易一直被动挨打。",break:"接杀挡网或抽对角后，抓住高球立刻转攻。",mind:"接杀挡网多球；挑两腰稳定性；防守反击第一拍下压。"},
+    ctl:{name:display.ctl,trait:"喜欢用线路和节奏控制对手，是场上的大脑。",weak:"有时想得太多、动作犹豫，错失最佳击球点。",break:"减少多余思考，形成2-3套固定球路，先执行再变化。",mind:"吊球/搓球一致性；假动作与节奏变化；四方球跑动控制。"},
+    all:{name:display.all,trait:"没有明显短板，攻防都能参与。",weak:"全面也意味着没有杀手锏，容易陷入均势。",break:"选定一项主武器（杀球/控球/防守）练到突出，再补其他。",mind:"攻防转换训练；多球综合能力；实战录像复盘。"},
+    fun:{name:display.fun,trait:"打球为了健康、社交和快乐，心态最稳。",weak:"技术进步慢，遇到认真对抗容易吃亏。",break:"每周固定练一项技术，用快乐心态坚持，水平自然涨。",mind:"球感+步法基础；不受伤原则；简单实用的过渡技术。"}
+  };
+  var r=desc[best];
   var box=document.getElementById("personR");
   box.style.display="block";
-  box.innerHTML="🎭 你的羽球人格是 <b>"+map[best]+"</b>。"+desc[best];
+  box.innerHTML="🎭 你的羽球人格是 <b>"+map[best]+"</b>。"+r.trait;
+  showPoster('personP', drawPersonImg(values, best, r));
 }
 </script>
-
 <!-- ============ 顶部模块 B：核心技术库（5 组 19 式） ============ -->
 <h2><span class="n">B</span>核心技术库（5 组 19 式）</h2>
 <div class="module-group" id="techwrap">
