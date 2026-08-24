@@ -370,6 +370,18 @@ svg{width:100%;height:auto;background:var(--paper-2);border:1px solid var(--line
       <label><input type="radio" name="p5" value="ctl"> 琢磨技术、精进自我</label>
       <label><input type="radio" name="p5" value="all"> 全面变强</label>
       <label><input type="radio" name="p5" value="fun"> 社交、健康、好玩</label></p>
+    <p class="qt">6. 你理想的一场胜利是？<br>
+      <label><input type="radio" name="p6" value="atk"> 暴力压制、比分拉开</label>
+      <label><input type="radio" name="p6" value="def"> 缠斗三局、最后逆转</label>
+      <label><input type="radio" name="p6" value="ctl"> 对手被遛到跑不动</label>
+      <label><input type="radio" name="p6" value="all"> 各种场面都稳赢</label>
+      <label><input type="radio" name="p6" value="fun"> 打完很爽、交到朋友</label></p>
+    <p class="qt">7. 你愿意为变强付出？<br>
+      <label><input type="radio" name="p7" value="atk"> 高强度多球、练到累</label>
+      <label><input type="radio" name="p7" value="def"> 耐心打磨、不求快</label>
+      <label><input type="radio" name="p7" value="ctl"> 琢磨录像、抠细节</label>
+      <label><input type="radio" name="p7" value="all"> 系统训练、样样练</label>
+      <label><input type="radio" name="p7" value="fun"> 开心就好、顺其自然</label></p>
   </div>
   <button class="qbtn" onclick="calcPerson()">测我的人格</button>
   <div class="note" id="personR" style="display:none"></div>
@@ -648,7 +660,7 @@ function drawLevelImg(values, result){
 
 /* ===== ③ 羽球人格结果图 ===== */
 function drawPersonImg(values, best, result){
-  var W=600, H=920, o=makeCanvas(W,H,'#FAFAFA');
+  var W=600, H=1180, o=makeCanvas(W,H,'#FAFAFA');
   var ctx=o.ctx;
   header(ctx,W,'星羿羽毛球综合评测','羽球人格测试');
 
@@ -659,26 +671,31 @@ function drawPersonImg(values, best, result){
 
   var labels=['进攻猛张飞','防守铁桶','控球诸葛亮','全面均衡','快乐养生'];
   var colors=['#EF4444','#3B82F6','#F59E0B','#10B981','#8B5CF6'];
-  drawBarChart(ctx, 40, 170, 520, 180, labels, values, colors);
+  drawBarChart(ctx, 40, 170, 520, 170, labels, values, colors);
 
-  var y=400;
+  var y=392;
   ctx.fillStyle = '#FF6B4A';
   ctx.font = 'bold 14px sans-serif';
   ctx.fillText('① 五人格倾向分布', 22, y);
   y+=26;
   var order=[['灵感突击手','atk'],['冷静战术猎手','def'],['赛场指挥官','ctl'],['全局算计大师','all'],['快乐打球家','fun']];
   order.forEach(function(item,idx){
-    var key=item[1], pct=Math.round(values[idx]*100);
+    var pct=Math.round(values[idx]*100);
     ctx.fillStyle = '#333';
     ctx.font = '13px sans-serif';
     ctx.fillText((idx+1)+'. '+item[0]+'  '+pct+'%', 22, y);
     y+=22;
   });
 
-  y = drawSection(ctx, 22, y+6, '② 特质', result.trait, '#FF6B4A');
-  y = drawSection(ctx, 22, y+10, '③ 短板', result.weak, '#333');
-  y = drawSection(ctx, 22, y+10, '④ 破局', result.break, '#333');
-  y = drawSection(ctx, 22, y+10, '⑤ 五大维度心法', result.mind, '#333');
+  y = drawSection(ctx, 22, y+6, '② 代表人物', result.hero, '#FF6B4A');
+  y = drawSection(ctx, 22, y+10, '③ 特质', result.trait, '#333');
+  y = drawSection(ctx, 22, y+10, '④ 短板', result.weak, '#333');
+  y = drawSection(ctx, 22, y+10, '⑤ 破局', result.break, '#333');
+  y = drawSection(ctx, 22, y+10, '⑥ 适合搭档', result.partner, '#333');
+  y = drawSection(ctx, 22, y+10, '⑦ 专属训练', result.train, '#333');
+  y = drawSection(ctx, 22, y+10, '⑧ 装备偏好', result.equip, '#333');
+  y = drawSection(ctx, 22, y+10, '⑨ 进阶路线', result.route, '#333');
+  y = drawSection(ctx, 22, y+10, '⑩ 五大维度心法', result.mind, '#333');
 
   footer(ctx,W,H);
   return o.c.toDataURL('image/jpeg',0.92);
@@ -756,18 +773,63 @@ function calcPerson(){
   var map={atk:"进攻猛张飞型",def:"防守铁桶型",ctl:"控球诸葛亮型",all:"全面均衡型",fun:"快乐养生型"};
   var display={atk:"灵感突击手",def:"冷静战术猎手",ctl:"赛场指挥官",all:"全局算计大师",fun:"快乐打球家"};
   var cnt={atk:0,def:0,ctl:0,all:0,fun:0};
-  for(var i=1;i<=5;i++){var el=document.querySelector('input[name="p'+i+'"]:checked');if(el)cnt[el.value]++;}
+  for(var i=1;i<=7;i++){var el=document.querySelector('input[name="p'+i+'"]:checked');if(el)cnt[el.value]++;}
   var total=cnt.atk+cnt.def+cnt.ctl+cnt.all+cnt.fun;
   if(total===0){ document.getElementById("personR").style.display="block"; document.getElementById("personR").innerHTML="请先回答 5 道题～"; document.getElementById("personP").style.display="none"; return; }
   var order=['atk','def','ctl','all','fun'];
   var values=order.map(function(k){return cnt[k]/total;});
   var best="fun",b=-1; for(var k in cnt){ if(cnt[k]>b){ b=cnt[k]; best=k; } }
   var desc={
-    atk:{name:display.atk,trait:"享受压制与得分，进攻欲望强，打球有爆发力。",weak:"容易盲目起跳杀球、忽略落点和连贯。",break:"先到位再下压，杀直线与斜线结合，杀完立刻举拍封网。",mind:"多球重杀+点杀训练；下肢快速多步连贯；网前封网反应。"},
-    def:{name:display.def,trait:"耐心沉稳，防守反击是你的舒适区。",weak:"机会球时不够主动，容易一直被动挨打。",break:"接杀挡网或抽对角后，抓住高球立刻转攻。",mind:"接杀挡网多球；挑两腰稳定性；防守反击第一拍下压。"},
-    ctl:{name:display.ctl,trait:"喜欢用线路和节奏控制对手，是场上的大脑。",weak:"有时想得太多、动作犹豫，错失最佳击球点。",break:"减少多余思考，形成2-3套固定球路，先执行再变化。",mind:"吊球/搓球一致性；假动作与节奏变化；四方球跑动控制。"},
-    all:{name:display.all,trait:"没有明显短板，攻防都能参与。",weak:"全面也意味着没有杀手锏，容易陷入均势。",break:"选定一项主武器（杀球/控球/防守）练到突出，再补其他。",mind:"攻防转换训练；多球综合能力；实战录像复盘。"},
-    fun:{name:display.fun,trait:"打球为了健康、社交和快乐，心态最稳。",weak:"技术进步慢，遇到认真对抗容易吃亏。",break:"每周固定练一项技术，用快乐心态坚持，水平自然涨。",mind:"球感+步法基础；不受伤原则；简单实用的过渡技术。"}
+    atk:{name:display.atk,
+      hero:"林丹式暴力流——一拍重杀钉地板，凭爆发力直接解决问题。",
+      trait:"享受压制与得分，进攻欲望强，打球有爆发力，越打越兴奋。",
+      weak:"容易盲目起跳杀球、忽略落点和连贯，杀不死就容易被反击。",
+      break:"先到位再下压，杀直线+斜线结合，杀完立刻举拍封网，别站着看。",
+      partner:"配控球型或全面型最稳：你负责进攻终结，搭档帮你调度、补防。",
+      train:"重杀+点杀多球分组；下肢快速启动与蹬转；网前封网反应；核心爆发力。",
+      equip:"头重进攻拍（3U/4U）+ 25-27 磅硬线，把力量转化为球速；鞋要抗扭。",
+      route:"先稳高远压底线→练重杀点杀落点→杀后连贯封网→结合假动作突击。",
+      mind:"多球重杀+点杀；下肢快速多步连贯；网前封网反应与举拍意识。"},
+    def:{name:display.def,
+      hero:"李宗伟式防守反击大师——铜墙铁壁，把对手体力耗到崩溃再反击。",
+      trait:"耐心沉稳，防守反击是你的舒适区，越被动越冷静。",
+      weak:"机会球时不够主动，容易一直被动挨打、错失转攻时机。",
+      break:"接杀挡网或抽对角后，抓住对方回高球立刻转攻，别只接不攻。",
+      partner:"配进攻型最佳：你守他攻，你接杀挡网喂球、他负责下压终结。",
+      train:"接杀挡网多球（直线+对角）；挑两腰稳定性；防守转攻第一拍下压。",
+      equip:"轻量速度拍（4U/5U）+ 24-26 磅弹性线，借力防守、快速举拍。",
+      route:"先稳接杀挡网→练防守挑两腰→防守反击转攻→结合平抽压制。",
+      mind:"接杀挡网多球；挑两腰稳定性；防守反击第一拍下压与连贯。"},
+    ctl:{name:display.ctl,
+      hero:"陶菲克式控球艺术家——用落点和假动作把对手遛到崩溃。",
+      trait:"喜欢用线路和节奏控制对手，是场上的大脑，落点精准。",
+      weak:"有时想得太多、动作犹豫，错失最佳击球点，被快节奏打乱。",
+      break:"减少多余思考，形成 2-3 套固定球路，先执行再变化。",
+      partner:"配进攻型或防守型都行：你调度线路，搭档负责终结或兜底。",
+      train:"吊球/搓球一致性；假动作与节奏变化；四方球跑动控制；网前细腻。",
+      equip:"4U 平衡或速度框 + 24-26 磅，追求控球手感与拍面反馈。",
+      route:"先练吊搓勾贴网→加假动作与节奏变化→四方球控制→实战线路设计。",
+      mind:"吊球/搓球一致性；假动作与节奏变化；四方球跑动与控点。"},
+    all:{name:display.all,
+      hero:"安赛龙式全面六边形——没有明显短板，攻防转换流畅。",
+      trait:"没有明显短板，攻防都能参与，应对各种局面都从容。",
+      weak:"全面也意味着没有杀手锏，容易陷入均势、打不死人。",
+      break:"选定一项主武器（杀球/控球/防守）练到突出，再补其他形成杀招。",
+      partner:"和谁都搭，最好配一个某项特长的，互补出绝对优势。",
+      train:"攻防转换训练；多球综合能力；实战录像复盘找薄弱点。",
+      equip:"按主武器定型：进攻选头重、控制选平衡、速度选破风框，磅数 25-27。",
+      route:"先夯实五项基础→定主武器专项突破→多球高强度对抗→比赛磨心。",
+      mind:"攻防转换训练；多球综合能力；实战录像复盘与短板定位。"},
+    fun:{name:display.fun,
+      hero:"球友型快乐大使——健康第一、友谊第二、输赢随缘。",
+      trait:"打球为了健康、社交和快乐，心态最稳，不容易上头。",
+      weak:"技术进步慢，遇到认真对抗容易吃亏，动作容易变形。",
+      break:"每周固定练一项技术，用快乐心态坚持，水平自然慢慢涨。",
+      partner:"和快乐型或新手搭最放松；想进步就找耐心型老球友带。",
+      train:"球感+步法基础；不受伤原则；简单实用的过渡技术（挑高远放网）。",
+      equip:"4U 轻量平衡拍 + 22-24 磅，好上手、手腕负担小，重点是舒服。",
+      route:"先爱上打球→练会颠球步法→稳定高远球→交到球友一起涨球。",
+      mind:"球感+步法基础；不受伤原则；简单实用的过渡技术与开心坚持。"}
   };
   var r=desc[best];
   var box=document.getElementById("personR");
