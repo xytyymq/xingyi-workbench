@@ -189,18 +189,7 @@
    */
   function seedingOrder(n) {
     const res = new Array(n);
-    let seed = 1;
-    // 递归填：先填 1，再填 n，再对半递归
-    function fill(lo, hi, slots) {
-      if (slots.length === 0) return;
-      if (slots.length === 1) { res[slots[0]] = seed++; return; }
-      const mid = Math.floor(slots.length / 2);
-      res[slots[0]] = seed++;             // 该段顶 = 当前最小种子
-      res[slots[slots.length - 1]] = seed++; // 该段底 = 下一个种子
-      fill(slots.slice(1, mid), slots.slice(mid, slots.length - 1), []);
-      // 简化：用迭代标准表
-    }
-    // 用经典标准种子表生成（更可靠）
+    // 经典标准种子表生成（迭代，1^1 为相邻对手）
     const order = [];
     const total = n;
     const queue = [[0, total - 1]];
