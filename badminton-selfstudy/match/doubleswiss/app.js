@@ -6,7 +6,7 @@
 
   let S = load() || {
     players: [], cfg: { rounds: 5, courts: 2, scoreMode: '21x1', handicapOn: true, date: '', venue: '九江·开发区' },
-    matches: [], partnerHist: {}, byeCounts: {}, started: false, tab: 'schedule'
+    matches: [], roundByes: {}, partnerHist: {}, byeCounts: {}, started: false, tab: 'schedule'
   };
 
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -84,7 +84,9 @@
     let html = '';
     for (let r = 1; r <= maxRound; r++) {
       const ms = S.matches.filter(m => m.round === r).sort((a, b) => (a.court || 0) - (b.court || 0));
-      html += `<div class="card"><h2 style="margin:0 0 8px;font-size:18px">第 ${r} 轮${r === 1 ? '（随机）' : '（按积分）'}</h2>`;
+      const byes = (S.roundByes && S.roundByes[r]) || [];
+      const byeHtml = byes.length ? `<div style="background:#1c4034;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:8px;color:#f5a623;font-size:14px">🛌 本轮休息（轮空）：${byes.map(id => esc(nameOf(id))).join('、')}</div>` : '';
+      html += `<div class="card">${byeHtml}<h2 style="margin:0 0 8px;font-size:18px">第 ${r} 轮${r === 1 ? '（随机）' : '（按积分）'}</h2>`;
       ms.forEach(m => html += matchCard(m));
       html += `</div>`;
     }
@@ -161,6 +163,7 @@
     if (res.error) { toast(res.error); return; }
     res.matches.forEach(m => { m.id = uid('m'); });
     S.matches = res.matches;
+    S.roundByes = { 1: res.byes || [] };
     S.started = true;
     toast('第 1 轮已生成');
     render();
@@ -174,6 +177,8 @@
     if (res.error) { toast(res.error); return; }
     res.matches.forEach(m => { m.id = uid('m'); });
     S.matches = S.matches.concat(res.matches);
+    S.roundByes = S.roundByes || {};
+    S.roundByes[maxRound + 1] = res.byes || [];
     toast('第 ' + (maxRound + 1) + ' 轮已生成');
     render();
   }
