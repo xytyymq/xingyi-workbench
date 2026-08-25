@@ -1,6 +1,6 @@
 /* engine.js — 八人转（Octa-Rotation）核心引擎（纯函数，浏览器/Node 双用）
  * 玩法：5-8 人/组双打轮转，每人恰好与其他每人搭档一次（1-因子分解 / 圆桌法）。
- * 单局金球制（15 或 21 分），性别让分。排名按 胜场 → 净胜分。
+ * 单局金球制（21 或 31 分），性别让分。排名按 胜场 → 净胜分。
  *
  * 数据约定
  *  player = { id, name, gender:'男'|'女'|'' }
@@ -59,7 +59,7 @@
   // 生成完整赛程
   function generateSchedule(players, opts) {
     opts = opts || {};
-    const scoreMode = opts.scoreMode || '15x1';
+    const scoreMode = opts.scoreMode || '21x1';
     const handicapOn = !!opts.handicapOn;
     if (!RULES[scoreMode]) return { error: '未知分制' };
     const rule = RULES[scoreMode];
