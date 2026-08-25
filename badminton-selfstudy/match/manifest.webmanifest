@@ -1,0 +1,12 @@
+{
+  "name": "星羿赛事 · 比赛现场管理平台",
+  "short_name": "星羿赛事",
+  "description": "羽毛球比赛现场管理：签到、配对、录分、实时榜、颁奖图",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#0d1f18",
+  "theme_color": "#16352a",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
