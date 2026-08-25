@@ -48,6 +48,18 @@
     return { aStart: valueFor(typeA, typeB), bStart: 0 };
   }
 
+  // 单项类型判定（MD/WD/XD）
+  function isItemType(t) { return t === 'MD' || t === 'WD' || t === 'XD'; }
+
+  // 个人（单打）性别让分：男强女弱，与双打「男 vs 女」让分幅度一致
+  // 用于 rrko 淘汰赛——种子来自循环赛个人积分榜（gender 为 '男'/'女'）
+  function genderHandicap(gA, gB) {
+    if (gA === gB) return { aStart: 0, bStart: 0 };
+    if (gA === '男' && gB === '女') return { aStart: 0, bStart: 8 };
+    if (gA === '女' && gB === '男') return { aStart: 8, bStart: 0 };
+    return { aStart: 0, bStart: 0 };
+  }
+
   /* 校验并构建搭子
    * configs: [{ aId, bId }]
    * 每个搭子必须有 2 名选手，性别组合必须合法（男双/女双/混双）
@@ -346,9 +358,9 @@
       fromB: fromB ? fromB.id : null
     };
     if (event && event.handicapOn && a && b) {
-      // 按性别让分（搭子赛用 gender 组合；单人也用 gender）
+      // 按参赛单位类型让分：搭子赛用 MD/WD/XD 组合；个人赛（rrko 来自个人积分榜）用性别
       const ta = a.gender, tb = b.gender;
-      const h = handicapStart(ta, tb);
+      const h = (isItemType(ta) && isItemType(tb)) ? handicapStart(ta, tb) : genderHandicap(ta, tb);
       m.aStart = h.aStart; m.bStart = h.bStart;
     }
     return m;
