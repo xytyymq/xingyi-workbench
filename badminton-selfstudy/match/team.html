@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>团体赛 · 星羿赛事</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared.css">
+</head>
+<body>
+<header>
+  <div><div class="brand">🤝 团体赛</div><div class="tag">星羿羽毛球馆 · 未来赛事板块 · 团结拼搏</div></div>
+  <nav><a class="back" href="index.html" style="color:#cfe9d8;background:#1c4034;padding:8px 14px;border-radius:20px;font-size:14px">← 选玩法</a></nav>
+</header>
+<div class="wrap">
+  <section id="tab-setup" class="card">
+    <h2>① 队伍与选手</h2>
+    <div class="row-input">
+      <input type="text" id="tname" placeholder="队伍名称（如 星羿一队）">
+      <button class="primary" onclick="addTeam()">+ 建队</button>
+    </div>
+    <p class="muted">当前 <span id="teamCount">0</span> 支队伍</p>
+    <div id="teamList"></div>
+    <h2 style="margin-top:18px">② 单项设置</h2>
+    <div id="itemList" class="chips"></div>
+    <div class="row-input" style="margin-top:12px">
+      <div style="flex:1"><label class="muted">单局分制</label>
+        <select id="ruleSel" style="width:100%"><option value="21x1">21 分</option><option value="31x1">31 分</option></select></div>
+      <div style="flex:1"><label class="muted">性别让分</label>
+        <select id="handiSel" style="width:100%"><option value="1">开启</option><option value="0">关闭</option></select></div>
+    </div>
+    <p class="muted">默认勾选男单/女单/男双/女双/混双。单/双打选手都在上方队伍池里报名，系统自动按性别挑阵容。</p>
+    <h2 style="margin-top:18px">③ 赛制</h2>
+    <div class="n-pick" id="fmtPick" style="margin-bottom:6px">
+      <div class="np on" data-fmt="league">循环赛（联赛）</div>
+      <div class="np" data-fmt="rrko">循环 + 淘汰</div>
+    </div>
+    <p class="muted" id="fmtHint">多队之间打团体对抗，累计团队分，总分决定名次。</p>
+    <div id="koSizeHint" style="display:none;background:#0d1f1a;border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:10px;font-size:13px;color:var(--sub)">
+      循环+淘汰：先打完联赛排种子，再用队伍打单败 KO 决冠军。
+    </div>
+  </section>
+  <section id="tab-duel" class="card" style="display:none">
+    <h2>两队对抗</h2>
+    <div class="row-input" style="margin-bottom:12px">
+      <select id="duelA"><option value="">选择 A 队</option></select>
+      <span class="muted">VS</span>
+      <select id="duelB"><option value="">选择 B 队</option></select>
+      <button class="primary" onclick="startDuel()">生成对阵</button>
+    </div>
+    <div id="duelBody"></div>
+    <h2 id="duelResult" style="font-size:16px;color:#fff"></h2>
+    <button class="ghost" id="duelAwardBtn" style="display:none" onclick="duelAward()">🏆 生成胜利颁奖图</button>
+  </section>
+  <section id="tab-league" class="card" style="display:none">
+    <h2>联赛积分榜</h2>
+    <p class="muted">勾选参赛队伍：</p>
+    <div id="leagueTeams" class="chips" style="margin-bottom:12px"></div>
+    <button class="ghost" onclick="resetLeague()">清空战绩</button>
+    <div id="leagueBody" style="margin-top:12px"></div>
+    <div id="leagueKoBar" style="margin-top:14px;display:none">
+      <button class="primary" id="enterKOBtn" onclick="enterTeamKO()">进入淘汰赛 →</button>
+    </div>
+  </section>
+  <section id="tab-ko" class="card" style="display:none">
+    <h2>淘汰赛（队伍单败 KO）</h2>
+    <p class="muted">按联赛名次取前 <span id="koSize">8</span> 名，标准种子落位。每轮两队打团体对抗，胜者晋级。</p>
+    <div class="ko-size-pick" id="koSizePick" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="np on" data-size="16">16 强</div>
+      <div class="np" data-size="8">8 强</div>
+      <div class="np" data-size="4">4 强</div>
+      <div class="np" data-size="2">决赛</div>
+    </div>
+    <div id="koBracket"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="primary" id="koFinishBtn" onclick="teamKOFinish()">淘汰赛完成 → 最终名次</button>
+      <button class="ghost" onclick="show('league')">← 返回联赛</button>
+    </div>
+  </section>
+  <section id="tab-award" class="card" style="display:none">
+    <h2>颁奖图</h2>
+    <p class="muted">在「两队对抗」打完点「生成胜利颁奖图」后显示。</p>
+    <div id="svgPreview"></div>
+    <div style="margin-top:12px"><button class="primary" id="svgDownload">下载 PNG</button></div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="award.js"></script>
+<script src="team/engine.js"></script>
+<script src="team/app.js"></script>
+</body>
+</html>
