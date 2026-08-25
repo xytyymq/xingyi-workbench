@@ -169,6 +169,15 @@
       teams.sort((x, y) => teamScore(y) - teamScore(x));
     }
 
+    // 队伍数为奇数：末尾一对（按实力降序后最弱）本轮回合轮空，显式标记（修复 N≡2 mod4 静默丢人）
+    if (teams.length % 2 === 1) {
+      const restTeam = teams.pop();
+      restTeam.forEach(p => {
+        byes.push(p.id);
+        byeCounts[p.id] = (byeCounts[p.id] || 0) + 1;
+      });
+    }
+
     const matches = [];
     let court = 0;
     for (let t = 0; t + 1 < teams.length; t += 2) {
