@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>常规赛 · 星羿赛事</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared.css">
+<style>
+.back{display:inline-block;margin:12px 0 0 14px;color:var(--sub);text-decoration:none;font-size:14px}
+.field{flex:1;min-width:120px}
+.field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px}
+.field input,.field select{width:100%;padding:9px 10px;border-radius:10px;background:#0d1f1a;border:1px solid var(--line);color:var(--txt);font-size:14px}
+.items{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0}
+.item-chk{display:flex;align-items:center;gap:6px;background:#0d1f1a;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:14px}
+.item-chk input{width:16px;height:16px}
+.court-row{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.court-row .vs{color:var(--sub);font-size:12px;flex:0 0 28px;text-align:center}
+.court-row .pair{flex:1;font-size:14px}
+.court-row .pair b{color:#fff}
+.court-row input{width:56px;padding:7px;border-radius:8px;background:#0d1f1a;border:1px solid var(--line);color:var(--txt);text-align:center;font-size:15px}
+.court-row .winbtn{flex:0 0 auto;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:#13362c;color:var(--txt);font-size:13px;cursor:pointer}
+.court-row .winbtn.on{background:var(--accent);color:#042;border-color:var(--accent);font-weight:700}
+.handi{font-size:11px;color:var(--gold)}
+.pill{display:inline-block;background:#13362c;border:1px solid var(--line);border-radius:12px;padding:3px 10px;font-size:12px;color:var(--sub);margin-left:6px}
+.rank-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-bottom:6px}
+.rank-row .rk{width:26px;height:26px;border-radius:50%;background:#13362c;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--gold);flex:0 0 auto}
+.rank-row .nm{flex:1;color:#fff;font-size:15px}
+.rank-row .sc{font-size:13px;color:var(--sub)}
+.rank-row.top .rk{background:var(--accent);color:#042}
+
+/* 搭子页 */
+.wait-col{background:#0d1f1a;border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:10px}
+.wait-col h3{font-size:13px;color:var(--sub);margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.wait-list{display:flex;flex-wrap:wrap;gap:8px;min-height:42px}
+.wait-chip{display:inline-flex;align-items:center;gap:6px;background:#13362c;border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:13px;cursor:pointer;user-select:none}
+.wait-chip.male{color:#9bd1ff}
+.wait-chip.female{color:#ffb6c1}
+.wait-chip.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.wait-chip.locked{opacity:.45;cursor:not-allowed;background:#1a1a1a}
+
+.pair-bucket{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px;margin-bottom:8px}
+.pair-bucket h3{font-size:14px;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center}
+.pair-bucket h3 .ct{color:var(--sub);font-size:12px;font-weight:400}
+.pair-row{display:flex;align-items:center;gap:8px;background:#0d1f1a;border:1px solid var(--line);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:14px}
+.pair-row .nm{flex:1;color:#fff}
+.pair-row .del{background:#7a2326;border:0;color:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+
+.tab-row{display:flex;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:10px 0}
+.tab-row .tab{flex:1;padding:10px;text-align:center;font-size:13px;cursor:pointer;background:#0d1f1a;color:var(--sub)}
+.tab-row .tab.on{background:var(--accent);color:#042;font-weight:700}
+
+.n-pick{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+.n-pick .np{flex:1;min-width:50px;padding:9px 0;text-align:center;background:#0d1f1a;border:1px solid var(--line);border-radius:10px;font-size:14px;cursor:pointer}
+.n-pick .np.on{background:var(--accent);color:#042;border-color:var(--accent);font-weight:700}
+
+.group-card{background:#0d1f1a;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px}
+.group-card h4{margin:0 0 6px;color:var(--accent);font-size:14px}
+.group-card .item-line{font-size:12px;color:var(--sub);margin:2px 0}
+
+.warn{background:#2a1f10;border:1px solid #4a3a1a;color:#f0c674;border-radius:10px;padding:8px 10px;font-size:13px;margin-bottom:8px}
+.ok{background:#0e2a1d;border:1px solid #1c4532;color:#a8e6c1;border-radius:10px;padding:8px 10px;font-size:13px;margin-bottom:8px}
+
+/* === 全场对阵 · 场地总览 === */
+.court-plan{background:#0d1f18;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:14px}
+.court-plan .cp-head{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;color:var(--txt);margin-bottom:10px}
+.court-plan .cp-head .ct{margin-left:auto;color:var(--sub);font-size:12px;background:#1c4034;padding:2px 10px;border-radius:10px}
+.cp-row{display:flex;align-items:center;gap:8px;padding:8px 6px;border-bottom:1px solid #1c3a2e;font-size:13px;cursor:pointer}
+.cp-row:last-child{border-bottom:none}
+.cp-row.done{opacity:.62}
+.cp-row.live .cp-court{box-shadow:0 0 0 2px var(--gold)}
+.cp-row .cp-court{flex:0 0 auto;background:var(--accent);color:#06231a;border-radius:6px;padding:3px 8px;font-weight:800;font-size:12px}
+.cp-row .cp-meta{flex:0 0 auto;color:var(--sub);font-size:11px;min-width:84px}
+.cp-row .cp-team{flex:1;min-width:0;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-row .cp-team.cp-right{text-align:right}
+.cp-row .cp-handi{color:var(--gold);font-weight:800;margin-left:3px;font-size:11px}
+.cp-row .cp-score{flex:0 0 auto;color:var(--sub);font-size:13px;font-weight:700;min-width:54px;text-align:center}
+.cp-row .cp-vs{color:var(--sub)}
+.cp-row .cp-sc.aw{color:var(--accent);font-weight:800}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">⭐ 星羿羽毛球馆</div>
+  <div class="tag">常规赛 · 女双 / 男双 / 混双</div>
+</header>
+<a class="back" href="index.html">← 返回选赛</a>
+<div class="wrap" id="app">
+
+  <!-- 步骤1：报名 -->
+  <section id="stepSignup">
+    <h2 style="color:#fff;font-size:18px;margin:16px 0 8px">① 选手报名</h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+      <div class="field" style="flex:2;min-width:140px"><label>姓名</label><input id="pName" placeholder="如 伟"></div>
+      <div class="field" style="flex:1;min-width:90px"><label>性别</label>
+        <select id="pGender"><option value="男">男</option><option value="女">女</option></select>
+      </div>
+      <button class="btn" id="addPlayer">+ 添加</button>
+    </div>
+    <div id="playerList" style="margin-top:10px"></div>
+    <p class="muted" style="font-size:12px;margin:8px 0">提示：男双需男选手≥2、女双需女选手≥2、混双需男女各≥1。下一步固定搭子。</p>
+    <div style="margin-top:14px"><button class="btn" id="goPair" style="display:none">下一步：搭子配置 →</button></div>
+  </section>
+
+  <!-- 步骤2：固定搭子 -->
+  <section id="stepPair" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">② 固定搭子</h2>
+    <p class="muted" style="font-size:12px;margin:0 0 10px">点两个选手配成一对（顺序不限），自动按性别判男双/女双/混双。也可以点「自动搭伙」让系统按性别两两凑。</p>
+
+    <div class="wait-col">
+      <h3>男选手 <span style="font-size:11px">点选</span></h3>
+      <div id="waitMale" class="wait-list"></div>
+    </div>
+    <div class="wait-col">
+      <h3>女选手 <span style="font-size:11px">点选</span></h3>
+      <div id="waitFemale" class="wait-list"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+      <button class="btn" id="autoPair">⚡ 自动搭伙</button>
+      <button class="btn ghost" id="clearPairs">清空搭子</button>
+      <button class="btn ghost" id="backSignup2">← 返回报名</button>
+    </div>
+    <p id="pairErr" class="warn" style="display:none;margin-top:10px"></p>
+
+    <div id="pairBuckets" style="margin-top:14px"></div>
+
+    <div style="margin-top:14px"><button class="btn" id="goGroup">下一步：分组 →</button></div>
+  </section>
+
+  <!-- 步骤3：分组 -->
+  <section id="stepGroup" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">③ 分组</h2>
+
+    <div class="tab-row">
+      <div class="tab on" data-mode="random">随机</div>
+      <div class="tab" data-mode="autoN">自动 N 组</div>
+      <div class="tab" data-mode="manual">手动分组</div>
+    </div>
+
+    <div id="groupRandom" class="group-pane">
+      <p class="muted" style="font-size:12px">随机把搭子打散分 2 组（多搭子自动扩到 3 组以保证每组 ≥2 对）。</p>
+      <button class="btn" id="doRandom" style="margin-top:8px">🎲 随机分组</button>
+    </div>
+
+    <div id="groupAutoN" class="group-pane" style="display:none">
+      <p class="muted" style="font-size:12px">固定组数（2/3/4/5/6 组），搭子循环填充。</p>
+      <div class="n-pick" id="nPick">
+        <div class="np on" data-n="2">2 组</div>
+        <div class="np" data-n="3">3 组</div>
+        <div class="np" data-n="4">4 组</div>
+        <div class="np" data-n="5">5 组</div>
+        <div class="np" data-n="6">6 组</div>
+      </div>
+      <button class="btn" id="doAutoN" style="margin-top:4px">📐 按 N 组生成</button>
+    </div>
+
+    <div id="groupManual" class="group-pane" style="display:none">
+      <p class="muted" style="font-size:12px">每对搭子右侧下拉选组（A~F），不选的会进「未分组」。</p>
+      <div id="manualRows" style="margin-top:10px"></div>
+    </div>
+
+    <div id="groupResult" style="margin-top:14px"></div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="goConfig">下一步：单项+赛制 →</button>
+      <button class="btn ghost" id="backPair">← 返回搭子</button>
+    </div>
+  </section>
+
+  <!-- 步骤4：单项+赛制 -->
+  <section id="stepConfig" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">④ 赛制与分制</h2>
+
+    <h3 style="color:var(--sub);font-size:14px;margin:4px 0 6px">比赛模式</h3>
+    <div class="n-pick" id="fmtPick" style="margin-bottom:4px">
+      <div class="np on" data-fmt="rr">小组循环赛</div>
+      <div class="np" data-fmt="ko">单淘汰赛</div>
+      <div class="np" data-fmt="rrko">循环+淘汰</div>
+    </div>
+    <p class="muted" id="fmtHint" style="font-size:12px;margin:2px 0 12px">小组循环：搭子分组打循环，按积分排名次。</p>
+
+    <div id="fmtRR">
+      <h3 style="color:var(--sub);font-size:14px;margin:6px 0 6px">单项（循环赛用）</h3>
+      <div class="items" id="itemChecks">
+      <label class="item-chk"><input type="checkbox" value="MD" checked> 男双</label>
+      <label class="item-chk"><input type="checkbox" value="WD" checked> 女双</label>
+      <label class="item-chk"><input type="checkbox" value="XD" checked> 混双</label>
+    </div>
+    </div><!-- /fmtRR -->
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="field"><label>单局分制</label>
+        <select id="cfgScore"><option value="21x1">21 分一局</option><option value="31x1">31 分一局</option></select>
+      </div>
+      <div class="field"><label>性别让分</label>
+        <select id="cfgHandi"><option value="on">开启</option><option value="off">关闭</option></select>
+      </div>
+    </div>
+
+    <div id="koSizeHint" style="display:none;background:#0d1f1a;border:1px solid var(--line);border-radius:10px;padding:10px;margin:12px 0;font-size:13px;color:var(--sub)">
+      淘汰赛将直接用全部搭子建单败树，胜者晋级、败者淘汰（半决赛负方争季军）。下方选参赛规模：
+      <div class="ko-size-pick" id="koSizePick2" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <div class="np on" data-size="16">16 强</div>
+        <div class="np" data-size="8">8 强</div>
+        <div class="np" data-size="4">4 强</div>
+        <div class="np" data-size="2">决赛</div>
+      </div>
+    </div>
+
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="genBtn">生成对阵</button>
+      <button class="btn ghost" id="backGroup">← 返回分组</button>
+    </div>
+  </section>
+
+  <!-- 步骤5：对阵+录分 -->
+  <section id="stepMatch" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">⑤ 对阵与录分</h2>
+    <div id="warnBox"></div>
+    <div id="matchList"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="finishBtn">结算名次 + 颁奖图</button>
+      <button class="btn ghost" id="backConfig">← 返回配置</button>
+    </div>
+  </section>
+
+  <!-- 步骤6：名次+颁奖 -->
+  <section id="stepRank" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">⑥ 个人名次</h2>
+    <div id="rankList"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="koBtn" style="display:none">进入淘汰赛 →</button>
+      <button class="btn" id="awardBtn">生成颁奖图</button>
+      <button class="btn ghost" id="newMatch">再办一场</button>
+    </div>
+  </section>
+
+  <!-- 步骤7：淘汰赛 -->
+  <section id="stepKO" style="display:none">
+    <h2 style="color:#fff;font-size:18px;margin:18px 0 8px">⑦ 淘汰赛（单败 KO）</h2>
+    <p class="muted" style="font-size:12px;margin:0 0 10px">按循环赛名次取前 <span id="koSize">16</span> 名，标准种子落位（1v16、2v15…）。每轮胜者自动晋级下一轮。</p>
+    <div class="ko-size-pick" id="koSizePick" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <div class="np on" data-size="16">16 强</div>
+      <div class="np" data-size="8">8 强</div>
+      <div class="np" data-size="4">4 强</div>
+    </div>
+    <div id="koBracket"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" id="koFinishBtn">淘汰赛完成 → 最终名次</button>
+      <button class="btn ghost" id="backRank">← 返回名次</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- 颁奖图弹窗 -->
+<div id="awardModal" style="display:none;position:fixed;inset:0;background:#000a;z-index:50;padding:16px;overflow:auto">
+  <div style="max-width:520px;margin:0 auto">
+    <div id="awardImg" style="border-radius:14px;overflow:hidden"></div>
+    <div style="text-align:center;margin-top:12px;display:flex;gap:10px;justify-content:center">
+      <button class="btn" id="awardNew">🔄 再办一场</button>
+      <button class="btn ghost" id="awardDownload">下载 PNG</button>
+      <button class="btn ghost" id="awardClose">关闭</button>
+    </div>
+  </div>
+</div>
+
+<script src="award.js"></script>
+<script src="regular/engine.js"></script>
+<script src="regular/app.js"></script>
+</body>
+</html>
