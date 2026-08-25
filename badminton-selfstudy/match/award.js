@@ -18,7 +18,7 @@
     const venue = opts.venue || '星羿羽毛球馆 · 九江开发区';
     const W = 1080, H = 1350;
     const deck = [
-      { x: 340, y: 650, w: 400, h: 470, c: '#C9A24B' },
+      { x: 340, y: 610, w: 400, h: 510, c: '#C9A24B' },
       { x: 90, y: 810, w: 340, h: 310, c: '#9AA7B4' },
       { x: 650, y: 810, w: 340, h: 310, c: '#B5793B' }
     ];
@@ -50,7 +50,7 @@
       <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t.bg1}"/><stop offset="1" stop-color="${t.bg2}"/></linearGradient></defs>
       <rect width="${W}" height="${H}" fill="url(#bg)"/>
       ${racket(150, 150, -22, t.accent)}${racket(930, 150, 22, t.accent2)}
-      <text x="${W / 2}" y="96" font-size="34" font-weight="600" text-anchor="middle" fill="${t.accent}" letter-spacing="6">⭐ 星羿羽毛球馆 · 未来赛事板块</text>
+      <text x="${W / 2}" y="96" font-size="34" font-weight="600" text-anchor="middle" fill="${t.accent}" letter-spacing="6">⭐ 星羿羽毛球馆 · 赛事颁奖</text>
       <text x="${W / 2}" y="180" font-size="78" font-weight="900" text-anchor="middle" fill="#ffffff" letter-spacing="4">${escapeXml(title)}</text>
       <text x="${W / 2}" y="236" font-size="32" text-anchor="middle" fill="${t.accent2}" letter-spacing="3">${escapeXml(opts.tag || '以球会友 · 积分常驻')}</text>
       <line x1="360" y1="268" x2="720" y2="268" stroke="${t.accent}" stroke-width="3" stroke-opacity=".5"/>
@@ -84,7 +84,7 @@
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
       <defs><linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${t.bg1}"/><stop offset="1" stop-color="${t.bg2}"/></linearGradient></defs>
       <rect width="${W}" height="${H}" fill="url(#bg)"/>
-      <text x="${W / 2}" y="92" font-size="38" font-weight="700" text-anchor="middle" fill="${t.accent}" letter-spacing="2">⭐ 星羿羽毛球馆 · 未来赛事板块</text>
+      <text x="${W / 2}" y="92" font-size="38" font-weight="700" text-anchor="middle" fill="${t.accent}" letter-spacing="2">⭐ 星羿羽毛球馆 · 积分常驻榜</text>
       <text x="${W / 2}" y="170" font-size="68" font-weight="900" text-anchor="middle" fill="#ffffff">${escapeXml(title)}</text>
       <text x="${W / 2}" y="226" font-size="34" text-anchor="middle" fill="${t.accent2}">${escapeXml(scope)}</text>
       ${body}
