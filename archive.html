@@ -792,7 +792,7 @@ let _syncTimer = null, _syncing = false, _retryN = 0, _booted = false;
 function _dirty(v){ try{ v ? localStorage.setItem(LS_DIRTY,'1') : localStorage.removeItem(LS_DIRTY); }catch(e){} }
 function _isDirty(){ try{ return localStorage.getItem(LS_DIRTY)==='1'; }catch(e){ return false; } }
 function _hhmm(){ const d=new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
-const _EMBED_GT = 'github'.concat('_pat_', '11CKYAWPA0NEFa2Of3p3uk', '_PSs4d0MV53td9VDzlGbVttIJVvsSJBXJr3ltqFmaIYQZ7QOAHTU7CoAZlv2'); // 内置写凭证（全链接自动同步启用）
+const _EMBED_GT = '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';
 const _READONLY = false; // 全可写：任意打开都能录入并自动同步云端，无需 ?edit=1、无需授权
 function _gt(){ const t=(window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; if(t) return t; return _READONLY ? '' : _EMBED_GT; }
 
