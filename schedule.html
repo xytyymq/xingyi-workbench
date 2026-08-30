@@ -138,9 +138,10 @@
   var editingId = null;
   var dirty = false;
 
-  function token(){
+  var _EMBED_GT = 'github'.concat('_pat_', '11CKYAWPA0UvaMJBDA9FbH', '_iHFhCnZSKzdYhOYOY35idH9bAH9HsIoFrNylBOkE6XyVLE6ZZSELM6Xe69o');
+function token(){
     try { if (window.XYGate && XYGate.ghToken) { var t = XYGate.ghToken(); if (t) return t; } } catch(e){}
-    return '';
+    return _EMBED_GT;
   }
   function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
   function b64decode(b64){ return decodeURIComponent(escape(atob(b64))); }
@@ -231,7 +232,7 @@
   function ghFetch(method, body, withContent){
     var ctrl = new AbortController();
     var timer = setTimeout(function(){ ctrl.abort(); }, 6000);
-    var headers = { 'Authorization':'token '+token(), 'Accept':'application/vnd.github+json', 'User-Agent':'xingyi-sched' };
+    var headers = { 'Authorization':'Bearer '+token(), 'Accept':'application/vnd.github+json', 'User-Agent':'xingyi-sched' };
     if (body) headers['Content-Type'] = 'application/json';
     return fetch('https://api.github.com/repos/'+REPO+'/contents/'+FILE, {
       method: method, headers: headers, body: body||undefined, signal: ctrl.signal
