@@ -16,7 +16,6 @@
   button { border:0; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer; background:var(--brand); color:#fff; }
   button.secondary { background:#e2e8f0; color:var(--text); }
   button.danger { background:#fee2e2; color:var(--err); }
-  button:disabled { opacity:.6; cursor:not-allowed; }
   .status { margin-left:auto; font-size:12px; padding:4px 10px; border-radius:20px; background:#f1f5f9; }
   .status.ok { background:#dcfce7; color:#166534; }
   .status.warn { background:#fef9c3; color:#854d0e; }
@@ -60,205 +59,37 @@
   </div>
 </div>
 <script>
-const LS_KEY = 'xy_schedule_editor_v1';
+const LS_KEY = 'xy_schedule_editor_v2';
 const DEFAULT_DATA = {
   "courses": [
-    {
-      "id": "S10_msojiyf2ngk",
-      "day": 1,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "杜渝彬",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S11_msojiyf2o3n",
-      "day": 1,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S12_msojiyf2sy2",
-      "day": 1,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S20_msojiyf23mf",
-      "day": 2,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S21_msojiyf2kxj",
-      "day": 2,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S22_msojiyf23l2",
-      "day": 2,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "陶思辰、邓安淇、彭佳妤",
-      "note": ""
-    },
-    {
-      "id": "S30_msojiyf2eg2",
-      "day": 3,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S31_msojiyf29d9",
-      "day": 3,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S32_msojiyf27iq",
-      "day": 3,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "朱思然",
-      "note": ""
-    },
-    {
-      "id": "S40_msojiyf26su",
-      "day": 4,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S41_msojiyf29tw",
-      "day": 4,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S42_msojiyf28ea",
-      "day": 4,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "陶思辰、邓安淇、沈熠南、彭佳妤",
-      "note": ""
-    },
-    {
-      "id": "S50_msojiyf23he",
-      "day": 5,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S51_msojiyf2pjc",
-      "day": 5,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "",
-      "note": ""
-    },
-    {
-      "id": "S52_msojiyf2vvy",
-      "day": 5,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "洪振兴、洪振宇、黄文皓",
-      "note": ""
-    },
-    {
-      "id": "S60_msojiyf2lvl",
-      "day": 6,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "谢宸睿、刘曾熙、刘曾宇、陈梓诺",
-      "note": ""
-    },
-    {
-      "id": "S61_msojiyf29wu",
-      "day": 6,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "山译博、易子文、周语安、高梓杰、洪振兴、洪振宇",
-      "note": ""
-    },
-    {
-      "id": "S62_msojiyf23ah",
-      "day": 6,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "陶思辰、沈熠南、熊沁杰尼、徐宁远、杨启悦、桂浩然",
-      "note": ""
-    },
-    {
-      "id": "S70_msojiyf2i2f",
-      "day": 7,
-      "time": "10:00-11:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "谢宸睿、刘曾熙、刘曾宇、陈梓诺、廖梓涵",
-      "note": ""
-    },
-    {
-      "id": "S71_msojiyf2dqi",
-      "day": 7,
-      "time": "16:00-17:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "易子文、吴宇楠、高梓杰、洪振兴、洪振宇、杨启悦、朱思然",
-      "note": ""
-    },
-    {
-      "id": "S72_msojiyf2lsi",
-      "day": 7,
-      "time": "18:00-19:30",
-      "name": "常规训练",
-      "coach": "",
-      "students": "梁晟宇、桂浩然、黄文皓",
-      "note": ""
-    }
+    {"id":"S10","day":1,"time":"10:00-11:30","name":"常规训练","coach":"杜渝彬","students":"","note":""},
+    {"id":"S11","day":1,"time":"16:00-17:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S12","day":1,"time":"18:00-19:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S20","day":2,"time":"10:00-11:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S21","day":2,"time":"16:00-17:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S22","day":2,"time":"18:00-19:30","name":"常规训练","coach":"","students":"陶思辰、邓安淇、彭佳妤","note":""},
+    {"id":"S30","day":3,"time":"10:00-11:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S31","day":3,"time":"16:00-17:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S32","day":3,"time":"18:00-19:30","name":"常规训练","coach":"","students":"朱思然","note":""},
+    {"id":"S40","day":4,"time":"10:00-11:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S41","day":4,"time":"16:00-17:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S42","day":4,"time":"18:00-19:30","name":"常规训练","coach":"","students":"陶思辰、邓安淇、沈熠南、彭佳妤","note":""},
+    {"id":"S50","day":5,"time":"10:00-11:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S51","day":5,"time":"16:00-17:30","name":"常规训练","coach":"","students":"","note":""},
+    {"id":"S52","day":5,"time":"18:00-19:30","name":"常规训练","coach":"","students":"洪振兴、洪振宇、黄文皓","note":""},
+    {"id":"S60","day":6,"time":"10:00-11:30","name":"常规训练","coach":"","students":"谢宸睿、刘曾熙、刘曾宇、陈梓诺","note":""},
+    {"id":"S61","day":6,"time":"16:00-17:30","name":"常规训练","coach":"","students":"山译博、易子文、周语安、高梓杰、洪振兴、洪振宇","note":""},
+    {"id":"S62","day":6,"time":"18:00-19:30","name":"常规训练","coach":"","students":"陶思辰、沈熠南、熊沁杰尼、徐宁远、杨启悦、桂浩然","note":""},
+    {"id":"S70","day":7,"time":"10:00-11:30","name":"常规训练","coach":"","students":"谢宸睿、刘曾熙、刘曾宇、陈梓诺、廖梓涵","note":""},
+    {"id":"S71","day":7,"time":"16:00-17:30","name":"常规训练","coach":"","students":"易子文、吴宇楠、高梓杰、洪振兴、洪振宇、杨启悦、朱思然","note":""},
+    {"id":"S72","day":7,"time":"18:00-19:30","name":"常规训练","coach":"","students":"梁晟宇、桂浩然、黄文皓","note":""}
   ]
 };
 
 const times = [
-  {id:'S{day}0', label:'早', time:'10:00-11:30'},
-  {id:'S{day}1', label:'午', time:'16:00-17:30'},
-  {id:'S{day}2', label:'晚', time:'18:00-19:30'}
+  {label:'早', time:'10:00-11:30'},
+  {label:'午', time:'16:00-17:30'},
+  {label:'晚', time:'18:00-19:30'}
 ];
 const days = ['周一','周二','周三','周四','周五','周六','周日'];
 let courses = [];
@@ -285,26 +116,23 @@ function saveLocal(){
   setStatus('已自动保存 '+new Date().toLocaleTimeString(), 'ok');
 }
 
-function normId(c){ return (c.id||'').split('_')[0]; }
 function courseId(day, idx){ return 'S'+day+idx; }
 function getStudents(day, idx){
-  const c = courses.find(x=>normId(x)===courseId(day,idx));
+  const c = courses.find(x=>x.id===courseId(day,idx));
   return c ? c.students.replace(/[、,]+$/,'') : '';
 }
 function setStudents(day, idx, text){
   const id = courseId(day,idx);
-  let c = courses.find(x=>normId(x)===id);
+  let c = courses.find(x=>x.id===id);
   if(!c){ c={id:id,day:parseInt(day),time:times[idx].time,name:'常规训练',coach:'',students:'',note:''}; courses.push(c); }
-  // normalize separators to 、
-  c.students = text.split(/[,，、
-]+/).filter(Boolean).join('、')+'、';
+  c.students = text.split(/[,，、\n]+/).filter(Boolean).join('、')+'、';
   saveLocal();
   render();
 }
 
 function render(){
   let html = '<table><thead><tr><th class="time">时段</th>';
-  days.forEach((d,i)=>html+='<th>'+d+'</th>');
+  days.forEach(d=>html+='<th>'+d+'</th>');
   html += '</tr></thead><tbody>';
   [0,1,2].forEach(idx=>{
     html += '<tr><td class="time">'+times[idx].label+'<br><small>'+times[idx].time+'</small></td>';
@@ -317,27 +145,27 @@ function render(){
   html += '</tbody></table>';
   document.getElementById('tableWrap').innerHTML = html;
 }
-function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function onCellBlur(el){ setStudents(el.dataset.day, el.dataset.idx, el.innerText); }
 function onCellKey(e, el){ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } }
 
 function exportCSV(){
-  let csv = '时段,周一,周二,周三,周四,周五,周六,周日
-';
+  const rows = [];
+  rows.push('时段,周一,周二,周三,周四,周五,周六,周日');
   [0,1,2].forEach(idx=>{
-    let row = [times[idx].label+' '+times[idx].time];
+    const row = [times[idx].label+' '+times[idx].time];
     for(let day=1; day<=7; day++) row.push(getStudents(day,idx).replace(/、/g,';'));
-    csv += row.join(',')+'
-';
+    rows.push(row.join(','));
   });
-  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const csv = rows.join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
   const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='星羿课程表.csv'; a.click();
 }
 function importCSV(input){
   const file = input.files[0]; if(!file) return;
   const reader = new FileReader();
   reader.onload = e=>{
-    const lines = e.target.result.replace(/^\uFEFF/,'').split('\n').filter(x=>x.trim());
+    const lines = e.target.result.replace(/^﻿/,'').split('\n').filter(x=>x.trim());
     if(lines.length<4){ alert('CSV格式不对'); return; }
     [0,1,2].forEach((idx, i)=>{
       const cols = lines[i+1].split(',');
@@ -352,7 +180,7 @@ function importCSV(input){
   input.value='';
 }
 
-async function ghFetch(method, body=null){
+async function ghFetch(method, body){
   const headers = {'Authorization':'Bearer '+token(),'Accept':'application/vnd.github+json','User-Agent':'xingyi-sched'};
   if(body) headers['Content-Type']='application/json';
   const res = await fetch('https://api.github.com/repos/xytyymq/xingyi-workbench/contents/data/schedule.json', {method, headers, body});
@@ -361,7 +189,6 @@ async function ghFetch(method, body=null){
 }
 async function uploadCloud(){
   setStatus('正在上传…','warn');
-  // update default structure with current courses
   const payload = {courses:courses.map(c=>{c.day=parseInt(c.day); return c;})};
   const body = JSON.stringify(payload);
   const get = await ghFetch('GET');
@@ -379,7 +206,15 @@ async function downloadCloud(){
     try{
       const txt = decodeURIComponent(escape(atob(get.data.content)));
       const obj = JSON.parse(txt);
-      if(obj.courses){ courses=obj.courses; cloudSha=get.data.sha; saveLocal(); render(); setStatus('已恢复云端版本','ok'); return; }
+      if(obj.courses){
+        // map cloud courses (ids may have random suffix) back to clean S{day}{idx} ids
+        const mapped = obj.courses.map(c=>{
+          const m = (c.id||'').match(/^S(\d)(\d)/);
+          const clean = m ? ('S'+m[1]+m[2]) : courseId(c.day, 0);
+          return {id:clean, day:parseInt(c.day), time:c.time, name:c.name, coach:c.coach||'', students:c.students||'', note:c.note||''};
+        });
+        courses = mapped; cloudSha=get.data.sha; saveLocal(); render(); setStatus('已恢复云端版本','ok'); return;
+      }
     }catch(e){}
   }
   setStatus('拉取失败 '+get.status,'err');
