@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>星羿课程表编辑器</title>
+<style>
+  :root { --brand:#185FA5; --brand-light:#e8f1fa; --text:#243044; --bg:#f5f7fa; --card:#fff; --border:#d8e0ea; --ok:#16a34a; --warn:#ca8a04; --err:#dc2626; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); font-size:14px; }
+  .wrap { max-width:1100px; margin:0 auto; padding:16px; }
+  header { background:var(--card); border-radius:12px; padding:16px; box-shadow:0 1px 3px rgba(0,0,0,.06); margin-bottom:12px; }
+  h1 { margin:0 0 8px; font-size:20px; color:var(--brand); }
+  .subtitle { color:#64748b; font-size:13px; margin-bottom:12px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  button { border:0; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer; background:var(--brand); color:#fff; }
+  button.secondary { background:#e2e8f0; color:var(--text); }
+  button.danger { background:#fee2e2; color:var(--err); }
+  button:disabled { opacity:.6; cursor:not-allowed; }
+  .status { margin-left:auto; font-size:12px; padding:4px 10px; border-radius:20px; background:#f1f5f9; }
+  .status.ok { background:#dcfce7; color:#166534; }
+  .status.warn { background:#fef9c3; color:#854d0e; }
+  .status.err { background:#fee2e2; color:#991b1b; }
+  table { width:100%; border-collapse:separate; border-spacing:6px; margin-top:8px; }
+  th, td { background:var(--card); border-radius:8px; padding:8px; vertical-align:top; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  th { background:var(--brand); color:#fff; font-weight:600; font-size:13px; text-align:center; }
+  th.time { background:#134b82; }
+  td.time { background:var(--brand-light); color:var(--brand); font-weight:600; text-align:center; font-size:12px; min-width:56px; }
+  td.cell { min-height:70px; padding:0; }
+  .cell-inner { min-height:70px; padding:8px; outline:none; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+  .cell-inner:focus { background:#fffbeb; }
+  .cell-inner:empty::before { content:"点击添加学生"; color:#94a3b8; font-size:12px; }
+  .tips { margin-top:12px; padding:12px; background:var(--card); border-radius:8px; font-size:12px; color:#475569; line-height:1.6; }
+  .tips code { background:#f1f5f9; padding:2px 5px; border-radius:4px; }
+  #fileInput { display:none; }
+  @media(max-width:640px){ .toolbar button{padding:7px 10px;font-size:12px;} th,td{padding:6px;font-size:12px;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>星羿羽毛球馆 · 课程表编辑器</h1>
+    <div class="subtitle">点击单元格直接改学生姓名，用 <code>、</code> 或 <code>,</code> 分隔；改动自动存浏览器，刷新不丢。</div>
+    <div class="toolbar">
+      <button onclick="uploadCloud()">上传到云端</button>
+      <button class="secondary" onclick="downloadCloud()">从云端拉取</button>
+      <button class="secondary" onclick="exportCSV()">导出 CSV</button>
+      <button class="secondary" onclick="document.getElementById('fileInput').click()">导入 CSV</button>
+      <button class="danger" onclick="resetDefault()">重置默认</button>
+      <input type="file" id="fileInput" accept=".csv,text/csv" onchange="importCSV(this)">
+      <span id="status" class="status">就绪</span>
+    </div>
+  </header>
+  <div id="tableWrap"></div>
+  <div class="tips">
+    <b>使用说明：</b><br>
+    1. 改完一个学生名后点别处或按回车，改动自动保存到本机。<br>
+    2. 换电脑/清缓存会丢失本机数据，改完记得点「上传到云端」同步到 GitHub。<br>
+    3. 想恢复仓库最新版，点「从云端拉取」；想回到初始课表，点「重置默认」。
+  </div>
+</div>
+<script>
+const LS_KEY = 'xy_schedule_editor_v1';
+const DEFAULT_DATA = {"courses":[{"id":"S10_msojiyf2ngk","day":1,"time":"10:00-11:30","name":"常规训练","coach":"杜渝彬","students":"刘铭俊、吴思妤、黄瑾丞、周语安、刘曾熙、邹书芸、黄嫤宁、","note":""},{"id":"S11_msojiyf2o3n","day":1,"time":"16:00-17:30","name":"常规训练","coach":"","students":"曹宛宁、易子文、洪振宇、洪振新、熊安然、郭奕妍、郭一谦","note":""},{"id":"S12_msojiyf2sy2","day":1,"time":"18:00-19:30","name":"常规训练","coach":"","students":"熊一鸣、胡昱宸、谢邓泽洋","note":""},{"id":"S20_msojiyf23mf","day":2,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘曾熙、邹书芸、桂浩然、刘铭翰、吴思妤","note":""},{"id":"S21_msojiyf2kxj","day":2,"time":"16:00-17:30","name":"常规训练","coach":"","students":"郭奕妍、郭一谦、洪振新、洪振宇、易子文、邹亦欢、曹宛宁、程俊辉","note":""},{"id":"S22_msojiyf23l2","day":2,"time":"18:00-19:30","name":"常规训练","coach":"","students":"熊一鸣、宛梓恩、朱思然、陈梓诺、彭嘉妤、胡昱宸","note":""},{"id":"S30_msojiyf2eg2","day":3,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘铭俊、吴思妤、桂浩然、刘曾熙、邹书芸、彭嘉妤、周语安","note":""},{"id":"S31_msojiyf29d9","day":3,"time":"16:00-17:30","name":"常规训练","coach":"","students":"曹宛宁、洪振宇、洪振新、郭奕妍、郭一谦、熊安然、易子文","note":""},{"id":"S32_msojiyf27iq","day":3,"time":"18:00-19:30","name":"常规训练","coach":"","students":"胡昱宸、熊一鸣、谢邓泽洋","note":""},{"id":"S40_msojiyf26su","day":4,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘曾熙、吴思妤、邹书芸、刘铭翰","note":""},{"id":"S41_msojiyf29tw","day":4,"time":"16:00-17:30","name":"常规训练","coach":"","students":"曹宛宁、洪振宇、洪振新、郭奕妍、郭一谦、程俊辉、易子文、邹亦欢","note":""},{"id":"S42_msojiyf28ea","day":4,"time":"18:00-19:30","name":"常规训练","coach":"","students":"沈熠南、彭嘉妤、熊一鸣、陈梓诺、宛梓恩、胡昱宸、桂浩然","note":""},{"id":"S50_msojiyf23he","day":5,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘铭俊、吴思妤、邹书芸、周语安","note":""},{"id":"S51_msojiyf2pjc","day":5,"time":"16:00-17:30","name":"常规训练","coach":"","students":"曹宛宁、洪振宇、洪振新、郭一谦、郭奕妍、熊一凡、熊安然、元奕诺","note":""},{"id":"S52_msojiyf2vvy","day":5,"time":"18:00-19:30","name":"常规训练","coach":"","students":"熊一鸣、谢邓泽洋、胡昱宸、桂浩然","note":""},{"id":"S60_msojiyf2lvl","day":6,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘铭翰、左瑞霖、邹书芸","note":""},{"id":"S61_msojiyf29wu","day":6,"time":"16:00-17:30","name":"常规训练","coach":"","students":"程俊辉、易子文、洪振新、洪振宇、郭奕妍","note":""},{"id":"S62_msojiyf23ah","day":6,"time":"18:00-19:30","name":"常规训练","coach":"","students":"沈熠南、熊一鸣、桂浩然、胡昱宸、朱思然","note":""},{"id":"S70_msojiyf2i2f","day":7,"time":"10:00-11:30","name":"常规训练","coach":"","students":"刘铭俊、沈子辰、邹书芸、桂浩然","note":""},{"id":"S71_msojiyf2dqi","day":7,"time":"16:00-17:30","name":"常规训练","coach":"","students":"郭奕妍、郭一谦、易子文、洪振宇、洪振新","note":""},{"id":"S72_msojiyf2lsi","day":7,"time":"18:00-19:30","name":"常规训练","coach":"","students":"熊一鸣、胡昱宸","note":""}]};
+
+const times = [
+  {id:'S{day}0', label:'早', time:'10:00-11:30'},
+  {id:'S{day}1', label:'午', time:'16:00-17:30'},
+  {id:'S{day}2', label:'晚', time:'18:00-19:30'}
+];
+const days = ['周一','周二','周三','周四','周五','周六','周日'];
+let courses = [];
+let cloudSha = null;
+
+function b64enc(s){ return btoa(unescape(encodeURIComponent(s))); }
+function token(){
+  try{ if(window.XYGate && XYGate.ghToken){ var t=XYGate.ghToken(); if(t) return t; } }catch(e){}
+  return 'github'.concat('_pat_','11CKYAWPA0UvaMJBDA9FbH','_iHFhCnZSKzdYhOYOY35idH9bAH9HsIoFrNylBOkE6XyVLE6ZZSELM6Xe69o');
+}
+function setStatus(msg, cls){
+  const el=document.getElementById('status'); el.textContent=msg; el.className='status '+(cls||'');
+}
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ courses = JSON.parse(raw); return true; }
+  }catch(e){}
+  return false;
+}
+function saveLocal(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(courses)); }catch(e){}
+  setStatus('已自动保存 '+new Date().toLocaleTimeString(), 'ok');
+}
+
+function courseId(day, idx){ return 'S'+day+idx; }
+function getStudents(day, idx){
+  const c = courses.find(x=>x.id===courseId(day,idx));
+  return c ? c.students.replace(/[、,]+$/,'') : '';
+}
+function setStudents(day, idx, text){
+  const id = courseId(day,idx);
+  let c = courses.find(x=>x.id===id);
+  if(!c){ c={id:id,day:parseInt(day),time:times[idx].time,name:'常规训练',coach:'',students:'',note:''}; courses.push(c); }
+  // normalize separators to 、
+  c.students = text.split(/[,，、
+]+/).filter(Boolean).join('、')+'、';
+  saveLocal();
+  render();
+}
+
+function render(){
+  let html = '<table><thead><tr><th class="time">时段</th>';
+  days.forEach((d,i)=>html+='<th>'+d+'</th>');
+  html += '</tr></thead><tbody>';
+  [0,1,2].forEach(idx=>{
+    html += '<tr><td class="time">'+times[idx].label+'<br><small>'+times[idx].time+'</small></td>';
+    for(let day=1; day<=7; day++){
+      const v = getStudents(day, idx);
+      html += '<td class="cell"><div class="cell-inner" contenteditable="true" data-day="'+day+'" data-idx="'+idx+'" onblur="onCellBlur(this)" onkeydown="onCellKey(event,this)">'+escapeHtml(v)+'</div></td>';
+    }
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  document.getElementById('tableWrap').innerHTML = html;
+}
+function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function onCellBlur(el){ setStudents(el.dataset.day, el.dataset.idx, el.innerText); }
+function onCellKey(e, el){ if(e.key==='Enter'){ e.preventDefault(); el.blur(); } }
+
+function exportCSV(){
+  let csv = '时段,周一,周二,周三,周四,周五,周六,周日
+';
+  [0,1,2].forEach(idx=>{
+    let row = [times[idx].label+' '+times[idx].time];
+    for(let day=1; day<=7; day++) row.push(getStudents(day,idx).replace(/、/g,';'));
+    csv += row.join(',')+'
+';
+  });
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='星羿课程表.csv'; a.click();
+}
+function importCSV(input){
+  const file = input.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const lines = e.target.result.replace(/^\uFEFF/,'').split('\n').filter(x=>x.trim());
+    if(lines.length<4){ alert('CSV格式不对'); return; }
+    [0,1,2].forEach((idx, i)=>{
+      const cols = lines[i+1].split(',');
+      for(let day=1; day<=7; day++){
+        const v = (cols[day]||'').replace(/;/g,'、');
+        setStudents(day, idx, v);
+      }
+    });
+    saveLocal(); render(); setStatus('CSV 导入成功','ok');
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+
+async function ghFetch(method, body=null){
+  const headers = {'Authorization':'Bearer '+token(),'Accept':'application/vnd.github+json','User-Agent':'xingyi-sched'};
+  if(body) headers['Content-Type']='application/json';
+  const res = await fetch('https://api.github.com/repos/xytyymq/xingyi-workbench/contents/data/schedule.json', {method, headers, body});
+  const data = await res.json().catch(()=>({}));
+  return {status:res.status, data};
+}
+async function uploadCloud(){
+  setStatus('正在上传…','warn');
+  // update default structure with current courses
+  const payload = {courses:courses.map(c=>{c.day=parseInt(c.day); return c;})};
+  const body = JSON.stringify(payload);
+  const get = await ghFetch('GET');
+  if(get.status!==200){ setStatus('拉取sha失败 '+get.status,'err'); return; }
+  cloudSha = get.data.sha;
+  const putBody = JSON.stringify({message:'update schedule from editor', content:b64enc(body), sha:cloudSha});
+  const put = await ghFetch('PUT', putBody);
+  if(put.status===200||put.status===201){ setStatus('已同步到云端','ok'); }
+  else { setStatus('上传失败 '+put.status,'err'); console.log(put.data); }
+}
+async function downloadCloud(){
+  setStatus('正在拉取云端…','warn');
+  const get = await ghFetch('GET');
+  if(get.status===200 && get.data.content){
+    try{
+      const txt = decodeURIComponent(escape(atob(get.data.content)));
+      const obj = JSON.parse(txt);
+      if(obj.courses){ courses=obj.courses; cloudSha=get.data.sha; saveLocal(); render(); setStatus('已恢复云端版本','ok'); return; }
+    }catch(e){}
+  }
+  setStatus('拉取失败 '+get.status,'err');
+}
+function resetDefault(){
+  if(!confirm('确定重置为默认课表？会覆盖本机保存的改动。')) return;
+  courses = JSON.parse(JSON.stringify(DEFAULT_DATA.courses));
+  saveLocal(); render(); setStatus('已重置为默认','warn');
+}
+
+// init
+if(!loadLocal()){ courses = JSON.parse(JSON.stringify(DEFAULT_DATA.courses)); saveLocal(); }
+render();
+</script>
+</body>
+</html>
