@@ -285,14 +285,15 @@ function saveLocal(){
   setStatus('已自动保存 '+new Date().toLocaleTimeString(), 'ok');
 }
 
+function normId(c){ return (c.id||'').split('_')[0]; }
 function courseId(day, idx){ return 'S'+day+idx; }
 function getStudents(day, idx){
-  const c = courses.find(x=>x.id===courseId(day,idx));
+  const c = courses.find(x=>normId(x)===courseId(day,idx));
   return c ? c.students.replace(/[、,]+$/,'') : '';
 }
 function setStudents(day, idx, text){
   const id = courseId(day,idx);
-  let c = courses.find(x=>x.id===id);
+  let c = courses.find(x=>normId(x)===id);
   if(!c){ c={id:id,day:parseInt(day),time:times[idx].time,name:'常规训练',coach:'',students:'',note:''}; courses.push(c); }
   // normalize separators to 、
   c.students = text.split(/[,，、
