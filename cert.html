@@ -301,6 +301,20 @@ const AWARD_CATS = {
   ],
   '一分钟跳绳': [
     ['活力跳绳小能手','80 个'],['敏捷跳跃小达人','100 个'],['体能飞跃小先锋','130 个'],['极速跳绳小健将','180 个'],['体能巅峰小精英','200 个']
+  ],
+  '单打发球': [
+    ['初鸣发球','','刚掌握，能稳定把球发过网'],
+    ['稳落发球','','成功率过半，落点基本到位'],
+    ['准星发球','','成功率不错，经常落到目标区域'],
+    ['灵耀发球','','发球成功率高，长短可以变化'],
+    ['金冠发球','','发球成功率顶尖，很少失误']
+  ],
+  '双打发球': [
+    ['启跃发球','','可以完成双打发球，少出界'],
+    ['平顺发球','','过半成功率，安全过网不失误'],
+    ['网捷发球','','成功率良好，网前小球质量稳定'],
+    ['锐捷发球','','高成功率，能控制边线落点'],
+    ['星耀发球','','满分级发球，失误极少，威胁十足']
   ]
 };
 let curAwardCat=null;
@@ -313,9 +327,11 @@ function renderAwardCats(){
   box.querySelectorAll('.cats button').forEach(b=>{ b.onclick=()=>{ curAwardCat=b.dataset.c; renderAwardCats(); }; });
   if(curAwardCat){
     const lv=AWARD_CATS[curAwardCat]; const lvEl=box.querySelector('#awardLevels');
-    lv.forEach(([name,n])=>{
-      const btn=document.createElement('button'); btn.innerHTML=`${name}<span class="n">${n}</span>`;
-      btn.onclick=()=>{ document.getElementById('f-award').value=`${curAwardCat} · ${name}（${n}）`; render(); };
+    lv.forEach(([name,n,desc])=>{
+      const btn=document.createElement('button');
+      btn.innerHTML = n ? `${name}<span class="n">${n}</span>` : name;
+      if(desc) btn.title = desc;
+      btn.onclick=()=>{ const val = n ? `${curAwardCat} · ${name}（${n}）` : `${curAwardCat} · ${name}`; document.getElementById('f-award').value=val; render(); };
       lvEl.appendChild(btn);
     });
   }
