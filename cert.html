@@ -288,7 +288,7 @@ const TPLS=[
 const tplBox=document.getElementById('tpls');
 TPLS.forEach(t=>{ const b=document.createElement('button'); b.textContent=t.length>10?t.slice(0,10)+'…':t; b.title=t; b.onclick=()=>{document.getElementById('f-comment').value=b.title;render();}; tplBox.appendChild(b); });
 
-// 奖项名称分级库（4 大类 × 5 级，含达标数）
+// 奖项名称分级库（7 大类 × 5 级；前 5 类带达标数，发球类带描述）
 const AWARD_CATS = {
   '定点高远球': [
     ['高远启萌小能手','5 个'],['精准击球小达人','10 个'],['高远落点小先锋','20 个'],['稳定高远小健将','30 个'],['高远精准小精英','50 个']
@@ -301,6 +301,9 @@ const AWARD_CATS = {
   ],
   '一分钟跳绳': [
     ['活力跳绳小能手','80 个'],['敏捷跳跃小达人','100 个'],['体能飞跃小先锋','130 个'],['极速跳绳小健将','180 个'],['体能巅峰小精英','200 个']
+  ],
+  '手抛接球': [
+    ['手抛接球小能手','10 个'],['手抛接球进步之星','20 个'],['手抛接球优秀学员','30 个'],['手抛接球活力小将','40 个'],['手抛接球潜力之星','50 个']
   ],
   '单打发球': [
     ['初鸣发球','','刚掌握，能稳定把球发过网'],
