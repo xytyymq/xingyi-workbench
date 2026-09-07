@@ -363,7 +363,7 @@
 
 <script>
 (function(){
-  var role = XYGate.role();
+  var role = (typeof XYGate !== 'undefined' && XYGate.role) ? XYGate.role() : 'boss';
   var badge = document.getElementById('roleBadge');
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
   badge.textContent = names[role] || '老板';
