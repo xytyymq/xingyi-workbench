@@ -57,6 +57,13 @@
   .lb-row .sc{font-weight:800;color:var(--teal-700);font-size:15px;}
   .lb-row .sc small{color:var(--muted);font-weight:600;font-size:11px;margin-left:2px;}
   .lb-empty{color:var(--muted);font-size:12.5px;text-align:center;padding:16px;}
+  /* 榜单折叠：前三常驻，其余默认收起 */
+  .lb-fold{ text-align:center; margin-top:2px; }
+  .lb-fold button{ border:1.5px dashed var(--line); background:#fff; color:var(--teal-700); font-family:inherit;
+    font-size:12.5px; font-weight:600; padding:8px 14px; border-radius:20px; cursor:pointer; width:100%; transition:.15s; }
+  .lb-fold button:hover{ border-color:var(--teal-400); background:var(--teal-50,#f0fdfa); }
+  .lb-rest{ display:none; margin-top:8px; }
+  .lb-rest .lb-row{ opacity:.92; }
 
   /* 录入表单角色提示 */
   .role-note{font-size:12px;color:#9a4a28;background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:8px 11px;margin-top:9px;line-height:1.6;}
@@ -103,7 +110,7 @@
       <optgroup label="👨‍🏫 教练一键分">
         <option value="课堂进步明显">课堂进步明显</option>
         <option value="主动帮忙/收球">主动帮忙 / 收球</option>
-        <option value="课后打卡发视频">课后打卡发视频</option>
+        <option value="课后作业打卡(拍视频)">课后作业打卡（拍视频）</option>
         <option value="带朋友来体验">带朋友来体验</option>
       </optgroup>
       <optgroup label="🎖️ 段位晋升">
@@ -175,7 +182,7 @@
       <tr><th>行为</th><th>分值</th></tr>
       <tr><td>课堂进步明显</td><td class="pts">+5</td></tr>
       <tr><td>主动帮忙 / 收球</td><td class="pts">+5</td></tr>
-      <tr><td>课后打卡发视频</td><td class="pts">+10</td></tr>
+      <tr><td>课后作业打卡（拍视频）</td><td class="pts">+10</td></tr>
       <tr><td>带朋友来体验</td><td class="pts">+30</td></tr>
     </table>
 
@@ -274,7 +281,7 @@ function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;
 // 事由 → 建议分值（与页面「积分政策」定稿一致；兑换类自动带负分）
 const REASON_POINTS={
   // 教练一键分
-  '课堂进步明显':5,'主动帮忙/收球':5,'课后打卡发视频':10,'带朋友来体验':30,
+  '课堂进步明显':5,'主动帮忙/收球':5,'课后作业打卡(拍视频)':10,'带朋友来体验':30,
   // 段位晋升
   '段位晋升一级':200,
   // 前台核验分
@@ -298,7 +305,8 @@ function onReasonChange(){
   if(sel.value && REASON_POINTS[sel.value]!==undefined){ d.value=REASON_POINTS[sel.value]; }
 }
 
-// 榜单
+// 榜单（前三常驻，其余折叠；可展开看完整 20 名）
+let boardExpanded=false;
 async function loadBoard(){
   const box=document.getElementById('boardBox');
   const note=document.getElementById('boardNote');
@@ -313,17 +321,31 @@ async function loadBoard(){
     const sum={};
     arr.forEach(function(it){ const n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
     const list=Object.keys(sum).map(function(n){return {name:n,sc:sum[n]};}).sort(function(a,b){return b.sc-a.sc;}).slice(0,20);
-    box.innerHTML=list.map(function(it,i){
+    function rowHTML(it,i){
       const cls=i<3?(' top'+(i+1)):'';
       return '<div class="lb-row'+cls+'"><div class="rk">'+(i+1)+'</div>'
         +'<div class="nm">'+esc(it.name)+'</div>'
         +'<div class="sc">'+it.sc+'<small>分</small></div></div>';
-    }).join('');
+    }
+    const top=rowHTML(list[0],0)+rowHTML(list[1],1)+rowHTML(list[2],2);
+    let rest='', fold='';
+    if(list.length>3){
+      rest='<div class="lb-rest"'+(boardExpanded?' style="display:block;"':'')+'>'
+        +list.slice(3).map(rowHTML).join('')+'</div>';
+      fold='<div class="lb-fold"><button onclick="toggleBoard(this)">'
+        +(boardExpanded?'▲ 收起完整榜单':'▼ 展开完整榜单（'+(list.length-3)+' 名）')
+        +'</button></div>';
+    }
+    box.innerHTML=top+rest+fold;
     note.textContent='共 '+Object.keys(sum).length+' 位学员上榜 · 实时同步';
   }catch(e){
     box.innerHTML='<div class="lb-empty">加载失败：'+esc(e.message)+'<br>点「刷新」重试。</div>';
     note.textContent='加载失败';
   }
+}
+function toggleBoard(btn){
+  boardExpanded=!boardExpanded;
+  loadBoard();
 }
 
 // 本地兜底

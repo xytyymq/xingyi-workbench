@@ -387,7 +387,7 @@
     return r.json();
   }).then(function(arr){
     if(!Array.isArray(arr)) throw new Error('bad');
-    var low=arr.filter(function(s){return Number(s.remaining)<=10;}).length;
+    var low=arr.filter(function(s){return !s.isYearCard && Number(s.remaining)<=10;}).length;
     lowEl.textContent='剩≤10课: '+low+'人';
     sub.textContent = low>0 ? '⚠️ 共 '+low+' 位学员，点开处理' : '目前无预警 ✅';
   }).catch(function(){

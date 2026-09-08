@@ -166,7 +166,7 @@ function daysSince(dateStr){
   const today=new Date(); today.setHours(0,0,0,0);
   return Math.floor((today-d)/86400000);
 }
-function isLow(s){ return Number(s.remaining)<=10; }
+function isLow(s){ return !s.isYearCard && Number(s.remaining)<=10; }
 function isIdle(s){ const n=daysSince(s.lastAttend); return n!==null && n>=15; }
 
 // ===== 读取（授权走 API 实时，无缓存；未授权走 Pages 只读，有约 10 分钟 CDN 缓存）=====
@@ -350,19 +350,24 @@ function renderAll(){
     ? '⚠️ 共 '+low.length+' 位学员剩余 ≤10 课，建议本周跟进续费'
     : '✅ 当前无课时预警学员';
 
-  // 总表（按剩余课时由小到大，余课最少的预警排最前）
-  const sorted=currentStudents.slice().sort(function(a,b){return Number(a.remaining)-Number(b.remaining);});
+  // 总表（非年卡按剩余课时由小到大；年卡置底，余课最少的预警排最前）
+  const sorted=currentStudents.slice().sort(function(a,b){
+    if(a.isYearCard && !b.isYearCard) return 1;
+    if(!a.isYearCard && b.isYearCard) return -1;
+    return Number(a.remaining)-Number(b.remaining);
+  });
   const box=document.getElementById('rosterBox');
   if(!sorted.length){ box.innerHTML='<div class="none">暂无学员，请在下方导入或添加。</div>'; }
   else{
     box.innerHTML='<table class="roster"><thead><tr><th>学员</th><th>剩余课时</th><th>状态</th><th></th></tr></thead><tbody>'
       + sorted.map(function(s){
           const lowTag=isLow(s)?'<span class="tag low">剩'+s.remaining+'</span>':'';
-          const okTag=isLow(s)?'':'<span class="tag ok">正常</span>';
+          const yearTag=s.isYearCard?'<span class="tag ok">年卡</span>':'';
+          const okTag=(!isLow(s)&&!s.isYearCard)?'<span class="tag ok">正常</span>':'';
           return '<tr>'
             + '<td class="nm">'+esc(s.name)+'</td>'
-            + '<td>'+Number(s.remaining)+' 课</td>'
-            + '<td>'+lowTag+okTag+'</td>'
+            + '<td>'+(s.isYearCard?'不限':(Number(s.remaining)+' 课'))+'</td>'
+            + '<td>'+lowTag+yearTag+okTag+'</td>'
             + '<td><button class="del-btn" onclick="deleteStudent(\''+s.id+'\')">删除</button></td>'
             + '</tr>';
         }).join('')

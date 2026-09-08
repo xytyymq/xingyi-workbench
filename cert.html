@@ -141,11 +141,22 @@
       <div class="field">
         <label>奖项类型</label>
         <select id="f-type">
-          <option value="定级通过">定级通过</option>
-          <option value="月度之星" selected>月度之星</option>
-          <option value="进步之星">进步之星</option>
-          <option value="比赛获奖">比赛获奖</option>
-          <option value="结业证书">结业证书</option>
+          <optgroup label="技能定级证书">
+            <option value="定级通过">定级通过</option>
+          </optgroup>
+          <optgroup label="段位晋升证书">
+            <option value="羽芽段位">羽芽段位</option>
+            <option value="羽翼段位">羽翼段位</option>
+            <option value="羽翔段位">羽翔段位</option>
+            <option value="羽跃段位">羽跃段位</option>
+            <option value="羽冠段位">羽冠段位</option>
+          </optgroup>
+          <optgroup label="日常荣誉">
+            <option value="月度之星" selected>月度之星</option>
+            <option value="进步之星">进步之星</option>
+            <option value="比赛获奖">比赛获奖</option>
+            <option value="结业证书">结业证书</option>
+          </optgroup>
           <option value="自定义">自定义</option>
         </select>
       </div>
@@ -160,8 +171,8 @@
       <input type="text" id="f-type-custom" placeholder="如：暑期集训全能王 / 双打默契之星 / 年度小球王">
     </div>
 
-    <div class="field">
-      <label>奖项名称（可手填 / 可快捷选）</label>
+    <div class="field" id="awardFieldWrap">
+      <label>奖项名称（可手填 / 可快捷选）<span id="rankAwardTip" style="display:none;font-weight:500;color:#c67a00;margin-left:4px;">（段位证书已自动套用，可留空）</span></label>
       <input type="text" id="f-award" value="2026 暑期集训 · 进步之星" placeholder="如：2026春季联赛 男子单打 冠军">
       <div class="award-cats" id="awardCats"></div>
     </div>
@@ -451,7 +462,17 @@ function render(){
 
   document.getElementById('c-name').textContent=name;
   document.getElementById('c-type').textContent=type;
-  document.getElementById('c-award').innerHTML=`在 <span class="hl">${award}</span> 中表现优异`;
+  // 段位证书：缎带显示段位名，正文用晋升句式（无需在「XX 中表现优异」里再套段位）
+  const RANK={
+    '羽芽段位':'🌱 羽芽段位','羽翼段位':'🪶 羽翼段位','羽翔段位':'🕊️ 羽翔段位',
+    '羽跃段位':'🚀 羽跃段位','羽冠段位':'👑 羽冠段位'
+  };
+  if(RANK[type]){
+    // 段位证书：固定晋升句式，不拼接「奖项名称」（该输入框在段位证书下已隐藏）
+    document.getElementById('c-award').innerHTML=`经星羿段位考核评定，正式晋升为 <span class="hl">${RANK[type]}</span>`;
+  }else{
+    document.getElementById('c-award').innerHTML=`在 <span class="hl">${award}</span> 中表现优异`;
+  }
   document.getElementById('c-comment').textContent=comment;
   document.getElementById('c-date').textContent=fmtDate(date);
   document.getElementById('c-sign').textContent=sign;
@@ -485,12 +506,33 @@ document.querySelectorAll('#themes .sw').forEach(sw=>sw.onclick=()=>{
   sw.classList.add('active'); curTheme=sw.dataset.theme; render();
 });
 
-// 奖项类型“自定义”时显示可编辑文本框
+// 奖项类型联动
 const typeSel=document.getElementById('f-type');
 const typeCustomWrap=document.getElementById('typeCustomWrap');
 const typeCustom=document.getElementById('f-type-custom');
-function syncTypeCustom(){ typeCustomWrap.style.display = typeSel.value==='自定义' ? 'block' : 'none'; }
-typeSel.addEventListener('change',()=>{ syncTypeCustom(); typeCustom.focus(); render(); });
+const awardFieldWrap=document.getElementById('awardFieldWrap');
+const rankAwardTip=document.getElementById('rankAwardTip');
+const RANK_SET=['羽芽段位','羽翼段位','羽翔段位','羽跃段位','羽冠段位'];
+function isRankType(v){ return RANK_SET.indexOf(v)>=0; }
+function syncTypeCustom(){
+  const v=typeSel.value;
+  typeCustomWrap.style.display = v==='自定义' ? 'block' : 'none';
+  const isRank=isRankType(v);
+  if(awardFieldWrap) awardFieldWrap.style.display = isRank ? 'none' : 'block';
+  // 段位证书时给出默认评语（只在不含默认文案时替换，避免覆盖用户输入）
+  if(isRank){
+    const cm=document.getElementById('f-comment');
+    if(cm && cm.value.indexOf('段位')<0 && cm.value.indexOf('成功晋升')<0){
+      const map={'羽芽段位':'恭喜成功晋升羽芽段位！从零到一，你迈出了羽毛球的第一步，继续坚持！',
+        '羽翼段位':'恭喜成功晋升羽翼段位！动作越来越有模有样，稳稳升级，下一段羽翔在等你～',
+        '羽翔段位':'恭喜成功晋升羽翔段位！技术全面开花，训练从不含糊，为你骄傲！',
+        '羽跃段位':'恭喜成功晋升羽跃段位！一步一个脚印练出来的实力，距离顶冠只差一步～',
+        '羽冠段位':'恭喜成功晋升羽冠段位！五级全项顶尖，成功登顶羽冠，你是全场最亮的星！'};
+      cm.value=map[v]||cm.value;
+    }
+  }
+}
+typeSel.addEventListener('change',()=>{ syncTypeCustom(); render(); });
 typeCustom.addEventListener('input',render);
 
 // 监听输入
