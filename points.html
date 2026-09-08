@@ -63,6 +63,7 @@
   .xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:26px 14px 30px;line-height:1.9;}
   .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
 </style>
+<script src="xy-auth.js"></script>
 </head>
 <body>
 
@@ -99,22 +100,47 @@
     <label>事由（选一项自动带分值）</label>
     <select id="pReason" onchange="onReasonChange()">
       <option value="">— 请选择 —</option>
-      <option value="消正课1节">消正课1节</option>
-      <option value="月度满勤">月度满勤</option>
-      <option value="当月无爽约/迟到">当月无爽约/迟到</option>
-      <option value="连续出勤满4周">连续出勤满4周</option>
-      <option value="单周消课≥3节">单周消课≥3节</option>
-      <option value="自主加练1次">自主加练1次</option>
-      <option value="参加开放日/训练营">参加开放日/训练营</option>
-      <option value="带好友来体验">带好友来体验</option>
-      <option value="好友报名正课">好友报名正课</option>
-      <option value="好友续费">好友续费</option>
-      <option value="老带新组团同报">老带新组团同报</option>
-      <option value="朋友圈/小红书打卡@球馆">朋友圈/小红书打卡@球馆</option>
-      <option value="到期前续费">到期前续费</option>
-      <option value="升级高阶课程包">升级高阶课程包</option>
-      <option value="体测晋级一级">体测晋级一级</option>
-      <option value="赛事获奖">赛事获奖</option>
+      <optgroup label="👨‍🏫 教练一键分">
+        <option value="课堂进步明显">课堂进步明显</option>
+        <option value="主动帮忙/收球">主动帮忙 / 收球</option>
+        <option value="课后打卡发视频">课后打卡发视频</option>
+        <option value="带朋友来体验">带朋友来体验</option>
+      </optgroup>
+      <optgroup label="🎖️ 段位晋升">
+        <option value="段位晋升一级">段位晋升一级</option>
+      </optgroup>
+      <optgroup label="📋 前台核验分">
+        <option value="购买/续费年卡">购买 / 续费年卡</option>
+        <option value="转介绍成交">转介绍成交</option>
+        <option value="朋友圈晒训练图">朋友圈晒训练图</option>
+      </optgroup>
+      <optgroup label="⚙️ 自动分（系统发，仅漏发时补录）">
+        <option value="到课1节">到课 1 节</option>
+        <option value="当月全勤">当月全勤</option>
+        <option value="连续出勤满4周">连续出勤满 4 周</option>
+        <option value="续费成功">续费成功</option>
+      </optgroup>
+      <optgroup label="🎁 兑换特权（扣分）">
+        <option value="兑换·免一次热身跑/免体能">免一次热身跑 / 免体能</option>
+        <option value="兑换·选下节课热身游戏">选下节课热身游戏</option>
+        <option value="兑换·当一次裁判·记分员">当一次裁判 · 记分员</option>
+        <option value="兑换·教练陪练10分钟">教练陪练 10 分钟</option>
+        <option value="兑换·荣誉墙加一颗星">荣誉墙加一颗星</option>
+        <option value="兑换·挑战教练3分制一场">挑战教练 3 分制一场</option>
+      </optgroup>
+      <optgroup label="🏸 兑换实物（扣分）">
+        <option value="兑换·星星贴纸">星星贴纸</option>
+        <option value="兑换·羽毛球手胶">羽毛球手胶 1 条</option>
+        <option value="兑换·训练球1桶">训练球 1 桶</option>
+        <option value="兑换·球线1根">球线 1 根</option>
+        <option value="兑换·随机玩具">随机玩具 1 个</option>
+        <option value="兑换·定制球包">定制球包 1 个</option>
+      </optgroup>
+      <optgroup label="🎟️ 兑换大奖 / 体验券（扣分）">
+        <option value="兑换·内部赛免费报名">内部赛免费报名</option>
+        <option value="兑换·亲子日免费名额">亲子日免费名额</option>
+        <option value="兑换·专业球拍">专业球拍 1 把</option>
+      </optgroup>
       <option value="其他">其他（手动填分）</option>
     </select>
     <div class="grid2">
@@ -247,12 +273,26 @@ function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''
 function _role(){ return (window.XYGate && XYGate.role) ? XYGate.role() : 'boss'; }
 function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
 
-// 事由 → 建议分值
+// 事由 → 建议分值（与页面「积分政策」定稿一致；兑换类自动带负分）
 const REASON_POINTS={
-  '消正课1节':10,'月度满勤':50,'当月无爽约/迟到':30,'连续出勤满4周':30,'单周消课≥3节':20,
-  '自主加练1次':5,'参加开放日/训练营':15,'带好友来体验':30,'好友报名正课':100,'好友续费':50,
-  '老带新组团同报':60,'朋友圈/小红书打卡@球馆':20,'到期前续费':80,'升级高阶课程包':120,
-  '体测晋级一级':40,'赛事获奖':60,'其他':0
+  // 教练一键分
+  '课堂进步明显':5,'主动帮忙/收球':5,'课后打卡发视频':10,'带朋友来体验':30,
+  // 段位晋升
+  '段位晋升一级':200,
+  // 前台核验分
+  '购买/续费年卡':500,'转介绍成交':100,'朋友圈晒训练图':20,
+  // 自动分（系统发放，此处仅漏发补录用）
+  '到课1节':10,'当月全勤':50,'连续出勤满4周':30,'续费成功':100,
+  // 兑换特权
+  '兑换·免一次热身跑/免体能':-50,'兑换·选下节课热身游戏':-100,'兑换·当一次裁判·记分员':-150,
+  '兑换·教练陪练10分钟':-200,'兑换·荣誉墙加一颗星':-250,'兑换·挑战教练3分制一场':-300,
+  // 兑换实物
+  '兑换·星星贴纸':-80,'兑换·羽毛球手胶':-200,'兑换·训练球1桶':-500,'兑换·球线1根':-700,
+  '兑换·随机玩具':-900,'兑换·定制球包':-1200,
+  // 兑换大奖 / 体验券
+  '兑换·内部赛免费报名':-1500,'兑换·亲子日免费名额':-2000,'兑换·专业球拍':-3000,
+  // 其他
+  '其他':0
 };
 function onReasonChange(){
   const sel=document.getElementById('pReason');
@@ -289,7 +329,10 @@ async function loadBoard(){
 }
 
 // 本地兜底
-function saveLocalP(rec){ try{ const a=JSON.parse(localStorage.getItem(LS_P)||'[]'); a.push(rec); localStorage.setItem(LS_P,JSON.stringify(a)); }catch(e){} }
+// 每条待传记录带 _id，上传成功后只移除自己那一条（不能整体清空，否则会丢掉旧的待传数据）
+function uidP(){ return 'P'+Date.now()+Math.random().toString(36).slice(2,7); }
+function saveLocalP(rec){ try{ rec._id=rec._id||uidP(); const a=JSON.parse(localStorage.getItem(LS_P)||'[]'); a.push(rec); localStorage.setItem(LS_P,JSON.stringify(a)); }catch(e){} }
+function removeLocalP(id){ try{ const a=loadLocalP().filter(function(x){ return x._id!==id; }); localStorage.setItem(LS_P,JSON.stringify(a)); }catch(e){} }
 function loadLocalP(){ try{ return JSON.parse(localStorage.getItem(LS_P)||'[]')||[]; }catch(e){ return []; } }
 function clearLocalP(){ try{ localStorage.removeItem(LS_P); }catch(e){} }
 function refreshRetryBtn(){ const n=loadLocalP().length; const b=document.getElementById('pRetryBtn'); if(b) b.style.display=n>0?'inline-block':'none'; }
@@ -313,6 +356,19 @@ async function pushP(gt,rec){
   }catch(e){ clearTimeout(pt); return false; }
 }
 
+// 重复录入检测：云端是否已有「同一学员 + 同一事由 + 同一日期」的记录
+async function hasDup(rec){
+  try{
+    const r=await fetch(POINTS_VIEW+'?t='+Date.now(),{cache:'no-store'});
+    if(!r.ok) return false;
+    const arr=await r.json();
+    if(!Array.isArray(arr)) return false;
+    return arr.some(function(x){
+      return (x.name||'')===rec.name && (x.reason||'')===rec.reason && (x.date||'')===rec.date;
+    });
+  }catch(e){ return false; }
+}
+
 function clearP(){ ['pName','pMemo'].forEach(function(id){ const el=document.getElementById(id); if(el) el.value=''; }); document.getElementById('pReason').value=''; document.getElementById('pDelta').value=''; }
 
 async function savePoint(){
@@ -323,16 +379,25 @@ async function savePoint(){
     memo:document.getElementById('pMemo').value.trim(),
     by:document.getElementById('pBy').value.trim(),
     date:document.getElementById('pDate').value||new Date().toISOString().slice(0,10),
+    _id:uidP(),
     createdAt:new Date().toISOString()
   };
   if(!rec.name){ alert('请填学员姓名'); return; }
   if(isNaN(rec.delta)||rec.delta===0){ alert('请填写分值（正数为加、负数为扣）'); return; }
-  const btn=document.getElementById('pSaveBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='上传中…';
+  const btn=document.getElementById('pSaveBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='处理中…';
+  // 重复录入保护：同一学员、同一天、同一事由已存在时先确认
+  try{
+    if(await hasDup(rec)){
+      btn.disabled=false; btn.textContent=old;
+      if(!confirm('⚠️ '+rec.name+' 在 '+rec.date+' 已经录过「'+rec.reason+'」了。\n同一学员同一天同一事由通常只需录一次，确定还要再录吗？')){ return; }
+      btn.disabled=true; btn.textContent='上传中…';
+    } else { btn.textContent='上传中…'; }
+  }catch(e){ btn.textContent='上传中…'; }
   const gt=_gt();
   if(!gt){ saveLocalP(rec); btn.disabled=false; btn.textContent=old; refreshRetryBtn(); setPStatus('📱 本机未授权写云端：已先存本机，点开授权链接后可重传。','#b45309'); alert('本机未授权，已先存本机。'); return; }
   try{
     const ok=await pushP(gt,rec);
-    if(ok){ alert('✅ 已保存到云端，积分榜实时更新！'); clearP(); clearLocalP(); refreshRetryBtn(); setPStatus('✅ 已上传云端 · '+new Date().toLocaleString('zh-CN'),'#0f766e'); loadBoard(); }
+    if(ok){ alert('✅ 已保存到云端，积分榜实时更新！'); clearP(); removeLocalP(rec._id); refreshRetryBtn(); setPStatus('✅ 已上传云端 · '+new Date().toLocaleString('zh-CN'),'#0f766e'); loadBoard(); }
     else { saveLocalP(rec); refreshRetryBtn(); setPStatus('⚠️ 上传失败（网络受限），已存本机，稍后可重传。','#b91c1c'); alert('⚠️ 上传失败，已存本机。'); }
   }catch(e){ saveLocalP(rec); refreshRetryBtn(); setPStatus('⚠️ 上传出错，已存本机：'+e.message,'#b91c1c'); alert('上传出错：'+e.message); }
   finally{ btn.disabled=false; btn.textContent=old; }
