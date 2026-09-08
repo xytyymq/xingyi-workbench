@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿球馆 · 家长消息</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#f1faf7;color:#0f201d;line-height:1.7;padding-bottom:50px;}
+  :root{--ink:#0f201d;--sub:#5b6b67;--muted:#8aa09a;--teal-900:#0b3d38;--teal-700:#0f766e;--teal-500:#14b8a6;--teal-100:#d6f3ec;--mint-50:#f1faf7;--card:#fff;--line:#e3ece9;--coral:#ef7d4f;--coral-soft:#fdeee6;--gold:#e0a93b;--good:#16a34a;}
+  .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(255,255,255,.93);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+  .xy-topbar .brand .em{margin-right:5px;}
+  .xy-topbar a.back{font-size:12.5px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:5px 11px;border-radius:20px;}
+  .hero{background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));color:#fff;padding:26px 18px 18px;position:relative;overflow:hidden;}
+  .hero::after{content:"";position:inset:0;position:absolute;pointer-events:none;opacity:.10;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+  .hero>*{position:relative;z-index:1;}
+  .hero h1{font-size:20px;font-weight:800;}
+  .hero p{font-size:12.5px;opacity:.92;margin-top:5px;}
+  .container{max-width:680px;margin:0 auto;padding:14px 12px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px 14px;margin-bottom:13px;box-shadow:0 2px 10px rgba(15,32,29,.06);}
+  .card h2{font-size:15px;color:var(--teal-700);margin:0 0 9px;display:flex;align-items:center;gap:7px;}
+  .card h2 .num{background:var(--teal-700);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+  label{font-size:12.5px;color:#475569;display:block;margin:9px 0 3px;}
+  select,input{width:100%;padding:9px 10px;border:1px solid #cbd5db;border-radius:8px;font-size:13.5px;background:#fff;color:#1f2933;font-family:inherit;}
+  .btn{display:block;width:100%;padding:11px;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;margin-top:11px;font-family:inherit;}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:active{background:var(--teal-900);}
+  .btn-text{background:transparent;color:var(--teal-700);border:none;padding:8px 0;font-size:12.5px;font-weight:700;text-decoration:underline;cursor:pointer;}
+  .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
+  .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
+
+  /* 消息卡 */
+  .msg-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 13px 11px;margin-bottom:11px;box-shadow:0 2px 8px rgba(15,32,29,.05);}
+  .msg-card.done{background:#f4fbf7;border-color:#bfe6cf;}
+  .msg-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px;}
+  .msg-name{font-size:15px;font-weight:800;color:var(--teal-900);}
+  .msg-tag{font-size:11px;color:var(--sub);background:var(--mint-50);border:1px solid var(--line);border-radius:20px;padding:2px 9px;}
+  .msg-sent{margin-left:auto;font-size:11.5px;font-weight:800;color:var(--good);}
+  .msg-body{width:100%;min-height:132px;border:1px solid var(--line);border-radius:9px;padding:10px;font-size:13px;line-height:1.85;color:#1f2933;font-family:inherit;background:#fbfdfc;resize:vertical;}
+  .msg-body:focus{outline:none;border-color:var(--teal-500);background:#fff;}
+  .btn-copy{margin-top:9px;width:100%;padding:10px;border:none;border-radius:9px;font-size:13.5px;font-weight:700;background:var(--teal-700);color:#fff;cursor:pointer;font-family:inherit;}
+  .btn-copy:active{background:var(--teal-900);}
+  .msg-card.done .btn-copy{background:var(--teal-100);color:var(--teal-700);}
+  .stat{font-size:12.5px;color:var(--sub);margin-top:6px;}
+  .stat b{color:var(--coral);font-size:14px;}
+  .empty{text-align:center;color:var(--muted);font-size:13px;padding:26px 10px;}
+  .xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:26px 14px 30px;line-height:1.9;}
+</style>
+</head>
+<body>
+
+<div class="xy-topbar">
+  <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+  <a class="back" href="index.html">返回工作台</a>
+</div>
+
+<div class="hero">
+  <h1>📨 家长消息</h1>
+  <p>课后训练反馈，一键复制发给家长 · 当日达</p>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2><span class="num">📅</span>选择日期</h2>
+    <select id="dateSel" onchange="onDateChange()"></select>
+    <div class="stat" id="statBox">加载中…</div>
+    <label>搜索学员</label>
+    <input id="searchBox" type="text" placeholder="输入姓名快速定位" oninput="render()">
+    <div class="tip">消息内容可直接在框里修改，改完再复制发出去。复制后卡片会变绿标记「已发送」。</div>
+    <button class="btn-text" onclick="clearSent()">🧹 清除本日已发送标记</button>
+  </div>
+
+  <div id="listBox"><div class="empty">从云端加载中…</div></div>
+
+</div>
+
+<footer class="xy-footer">
+  🏸 星羿羽毛球馆 · 家长消息<br>
+  数据来自《学员上课记录》，每天自动更新<br>
+  <span id="updNote"></span>
+</footer>
+
+<script>
+var DATA = null, CUR = null;
+var LS = 'xy_parentmsg_sent_';
+
+function sentKey(d){ return LS + d; }
+function getSent(d){
+  try { return JSON.parse(localStorage.getItem(sentKey(d)) || '[]'); } catch(e){ return []; }
+}
+function markSent(d, name){
+  var s = getSent(d);
+  if (s.indexOf(name) < 0){ s.push(name); localStorage.setItem(sentKey(d), JSON.stringify(s)); }
+}
+function clearSent(){
+  if (!CUR) return;
+  localStorage.removeItem(sentKey(CUR));
+  render();
+}
+
+function copyText(t){
+  if (navigator.clipboard && window.isSecureContext){
+    return navigator.clipboard.writeText(t);
+  }
+  return new Promise(function(resolve, reject){
+    var ta = document.createElement('textarea');
+    ta.value = t;
+    ta.contentEditable = 'true';
+    ta.readOnly = false;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, 999999);
+    try {
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      ok ? resolve() : reject(new Error('execCommand 失败'));
+    } catch(e){
+      document.body.removeChild(ta);
+      reject(e);
+    }
+  });
+}
+
+function onCopy(i, name){
+  var ta = document.getElementById('msg-' + i);
+  var txt = ta ? ta.value : '';
+  copyText(txt).then(function(){
+    markSent(CUR, name);
+    render();
+  }).catch(function(){
+    alert('复制失败，请长按文本框手动全选复制');
+  });
+}
+
+function onDateChange(){
+  CUR = document.getElementById('dateSel').value;
+  render();
+}
+
+function fmtD(d){
+  var p = String(d || '').replace('月','.').replace('日','').replace('-','.').split('.');
+  if (p.length >= 2 && !isNaN(parseInt(p[0]))){ return parseInt(p[0]) + '月' + parseInt(p[1]) + '日'; }
+  return d || '';
+}
+
+function render(){
+  var box = document.getElementById('listBox');
+  var all = (DATA && DATA.messages && DATA.messages[CUR]) || [];
+  var sent = getSent(CUR);
+  var kw = (document.getElementById('searchBox').value || '').trim();
+
+  var items = all.filter(function(it){
+    if (!kw) return true;
+    return (it.names || []).join('').indexOf(kw) >= 0
+        || (it.class || '').indexOf(kw) >= 0
+        || (it.coach || '').indexOf(kw) >= 0;
+  });
+
+  var doneCnt = all.filter(function(it){ return sent.indexOf((it.names||[]).join('、')) >= 0; }).length;
+  document.getElementById('statBox').innerHTML =
+      fmtD(CUR) + ' 共 <b>' + all.length + '</b> 条，已发 <b>' + doneCnt + '</b> 条' +
+      (kw ? '，筛选后 ' + items.length + ' 条' : '');
+
+  if (!items.length){
+    box.innerHTML = '<div class="empty">' + (kw ? '没有匹配的学员' : '这一天还没有上课记录') + '</div>';
+    return;
+  }
+
+  var html = '';
+  items.forEach(function(it){
+    var key = (it.names || []).join('、');
+    var isSent = sent.indexOf(key) >= 0;
+    var idx = all.indexOf(it);
+    var tags = '';
+    if (it.class) tags += '<span class="msg-tag">' + it.class + '</span>';
+    if (it.coach) tags += '<span class="msg-tag">教练 ' + it.coach + '</span>';
+    html += '<div class="msg-card' + (isSent ? ' done' : '') + '">'
+         +   '<div class="msg-head">'
+         +     '<span class="msg-name">' + key + '</span>' + tags
+         +     (isSent ? '<span class="msg-sent">✅ 已发送</span>' : '')
+         +   '</div>'
+         +   '<textarea class="msg-body" id="msg-' + idx + '">' + (it.msg || '') + '</textarea>'
+         +   '<button class="btn-copy" onclick="onCopy(' + idx + ',\'' + key.replace(/'/g,"") + '\')">'
+         +     (isSent ? '🔁 再次复制' : '📋 复制并发给家长')
+         +   '</button>'
+         + '</div>';
+  });
+  box.innerHTML = html;
+}
+
+async function load(){
+  var box = document.getElementById('listBox');
+  try {
+    var res = await fetch('data/parent-msg.json?t=' + Date.now(), {cache:'no-store'});
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    DATA = await res.json();
+  } catch(e){
+    box.innerHTML = '<div class="empty">数据加载失败：' + e.message + '<br>请稍后刷新重试</div>';
+    document.getElementById('statBox').textContent = '加载失败';
+    return;
+  }
+  var dates = DATA.dates || [];
+  if (!dates.length){
+    box.innerHTML = '<div class="empty">暂无可发送的消息</div>';
+    document.getElementById('statBox').textContent = '暂无数据';
+    return;
+  }
+  var sel = document.getElementById('dateSel');
+  sel.innerHTML = dates.map(function(d){
+    return '<option value="' + d + '">' + fmtD(d) + (d === DATA.latest ? '（最新）' : '') + '</option>';
+  }).join('');
+  CUR = DATA.latest && dates.indexOf(DATA.latest) >= 0 ? DATA.latest : dates[0];
+  sel.value = CUR;
+  document.getElementById('updNote').textContent = '数据更新于 ' + (DATA.updated || '-');
+  render();
+}
+
+load();
+</script>
+</body>
+</html>
