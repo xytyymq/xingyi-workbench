@@ -58,12 +58,21 @@
       '</div>' +
       '<div id="xyAuthMsg" style="font-size:12px;margin-top:9px;color:#0f766e;"></div>' +
       '<details style="margin-top:10px;"><summary style="font-size:12px;color:#0f766e;cursor:pointer;font-weight:700;">令牌去哪里拿？（点开看步骤）</summary>' +
-      '<div style="font-size:12px;color:#5b6b67;line-height:1.8;margin-top:7px;">' +
-      '1. 电脑打开 github.com 登录<br>' +
-      '2. 右上角头像 → Settings → Developer settings<br>' +
-      '3. Personal access tokens → Tokens (classic) → Generate new token<br>' +
-      '4. 勾选 <b>repo</b>（完整仓库权限），生成后复制 ghp_ 开头那串<br>' +
-      '5. 粘到上面输入框保存即可，只需做一次</div></details>' +
+      '<div style="font-size:12px;color:#5b6b67;line-height:1.85;margin-top:7px;">' +
+      '<b style="color:#0f766e;">【推荐】Fine-grained token（更安全，泄露损失小）</b><br>' +
+      '1. github.com 登录 → 头像 → Settings → Developer settings<br>' +
+      '2. 左侧 Personal access tokens → <b>Fine-grained tokens</b> → Generate new token<br>' +
+      '3. Repository access 选 <b>Only select repositories</b> → 勾选 xingyi-workbench<br>' +
+      '4. Permissions 里展开 Repository permissions → <b>Contents</b> 设为 <b>Read and write</b><br>' +
+      '5. 生成后复制 <b>github_pat_</b> 开头那串<br><br>' +
+      '<b>【备选】Classic token</b><br>' +
+      '1. Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b><br>' +
+      '2. Generate new token (classic) → 勾选 <b>repo</b><br>' +
+      '3. 复制 <b>ghp_</b> 开头的完整 40 位字符串<br><br>' +
+      '<span style="color:#b3261e;font-weight:700;">⚠️ 容易踩的坑</span><br>' +
+      '· <b>必须完整复制</b>：ghp_ 是 40 位，少了就是被截断<br>' +
+      '· 令牌<b>只在关闭页面前可见一次</b>，忘存就得重新生成<br>' +
+      '· 别粘 QQ/微信后再复制，容易被换行截断</div></details>' +
       '</div>';
 
     document.body.appendChild(fab);
@@ -87,14 +96,122 @@
     };
     mask.onclick = function (e) { if (e.target === mask) mask.style.display = 'none'; };
     document.getElementById('xyAuthClose').onclick = function () { mask.style.display = 'none'; };
+    var GH_TIMEOUT = 15000;
+
+    // 令牌合法性与权限验证（前端直连 GitHub API，令牌不出本机）
+    function validateToken(tk, cb) {
+      var done = false;
+      function finish(ok, info) { if (!done) { done = true; cb(ok, info); } }
+      var timer = setTimeout(function () { finish(null, '验证超时，请检查网络后重试'); }, GH_TIMEOUT);
+
+      function ping(ev) {
+        var xhr = ev.target;
+        clearTimeout(timer);
+        try {
+          if (xhr.status === 200) {
+            var u = JSON.parse(xhr.responseText || '{}');
+            finish(true, { login: u.login || '', name: u.name || '' });
+          } else if (xhr.status === 401) {
+            finish(false, '❌ 令牌无效或已过期（GitHub 返回 401）');
+          } else if (xhr.status === 403) {
+            finish(false, '⚠️ 令牌有效但被限流，请稍后再试');
+          } else {
+            finish(false, '❌ 验证失败（HTTP ' + xhr.status + '）');
+          }
+        } catch (e) {
+          finish(false, '❌ 响应解析失败：' + e.message);
+        }
+      }
+
+      try {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', 'https://api.github.com/user', true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + tk);
+        xhr.setRequestHeader('Accept', 'application/vnd.github+json');
+        xhr.onload = ping;
+        xhr.onerror = function () { clearTimeout(timer); finish(null, '网络不通，无法验证（请检查网络）'); };
+        xhr.send();
+      } catch (e) {
+        clearTimeout(timer); finish(false, '❌ 验证异常：' + e.message);
+      }
+    }
+
+    // 格式预检：classic ghp_ 为 40 位，fine-grained github_pat_ 更长
+    function preCheck(tk) {
+      if (!/^ghp_[A-Za-z0-9]{36}$/.test(tk)) {
+        if (/^ghp_[A-Za-z0-9]+$/.test(tk)) {
+          return { ok: false, msg: '❌ 令牌长度不对：当前 ' + tk.length + ' 位，' +
+            'GitHub classic 令牌应为 40 位（ghp_ + 36 位）。<br>多半是<b>复制时被截断</b>，请回 GitHub 重新完整复制。' };
+        }
+        if (/^github_pat_[A-Za-z0-9_]+$/.test(tk)) {
+          return { ok: true, msg: '' };
+        }
+        return { ok: false, msg: '❌ 格式不对：应以 <b>ghp_</b> 或 <b>github_pat_</b> 开头。' };
+      }
+      return { ok: true, msg: '' };
+    }
+
+    var busy = false;
+
     document.getElementById('xyAuthSave').onclick = function () {
+      if (busy) return;
       var v = (document.getElementById('xyAuthInput').value || '').trim();
+      var msg = document.getElementById('xyAuthMsg');
       if (!v) { alert('请先粘贴令牌'); return; }
-      XYGate.setToken(v);
-      paint();
-      alert('✅ 授权成功！现在保存数据会自动同步到云端。');
-      mask.style.display = 'none';
-      try { location.reload(); } catch (e) { }
+
+      var pc = preCheck(v);
+      if (!pc.ok) {
+        msg.innerHTML = pc.msg;
+        msg.style.color = '#b3261e';
+        return;
+      }
+
+      busy = true;
+      var btn = document.getElementById('xyAuthSave');
+      var old = btn.textContent;
+      btn.textContent = '验证中…';
+      btn.disabled = true;
+      msg.style.color = '#5b6b67';
+      msg.innerHTML = '正在连接 GitHub 验证令牌…';
+
+      validateToken(v, function (ok, info) {
+        busy = false;
+        btn.textContent = old;
+        btn.disabled = false;
+        if (ok === true) {
+          XYGate.setToken(v);
+          paint();
+          msg.style.color = '#0f766e';
+          msg.innerHTML = '✅ 验证通过！账号 <b>' + (info.login || '') + '</b>，' +
+            '现在保存数据会自动写入云端。';
+          setTimeout(function () {
+            mask.style.display = 'none';
+            try { location.reload(); } catch (e) { }
+          }, 900);
+        } else if (ok === null) {
+          msg.style.color = '#9a4a28';
+          msg.innerHTML = '⚠️ ' + info + '<br>可先点「保存令牌」跳过验证本机保存，但建议联网后再验一次。';
+          // 网络不通时提供离线保存入口
+          var wrap = document.getElementById('xyAuthOfflineWrap');
+          if (!wrap) {
+            wrap = document.createElement('div');
+            wrap.id = 'xyAuthOfflineWrap';
+            wrap.style.cssText = 'margin-top:8px;';
+            wrap.innerHTML = '<button id="xyAuthForceSave" style="width:100%;padding:9px;border:1px dashed #14b8a6;' +
+              'border-radius:9px;background:#f2fffb;color:#0f766e;font-weight:700;font-size:13px;cursor:pointer;' +
+              'font-family:inherit;">仍然保存到本机（离线可用）</button>';
+            if (msg.parentNode) msg.parentNode.insertBefore(wrap, msg.nextSibling);
+            document.getElementById('xyAuthForceSave').onclick = function () {
+              XYGate.setToken(v); paint();
+              alert('✅ 已保存到本机。联网后请重新验证一次，确保令牌有效。');
+              mask.style.display = 'none';
+            };
+          }
+        } else {
+          msg.style.color = '#b3261e';
+          msg.innerHTML = info;
+        }
+      });
     };
     document.getElementById('xyAuthClear').onclick = function () {
       XYGate.clearToken();
