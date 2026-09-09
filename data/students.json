@@ -1095,21 +1095,6 @@
     "isYearCard": true
   },
   {
-    "id": "S075",
-    "name": "东哥",
-    "class": "",
-    "enroll": "2025-11-04",
-    "expire": "",
-    "total": 0,
-    "remaining": 2,
-    "parent": "",
-    "phone": "15107929579",
-    "status": "在读",
-    "lastAttend": "",
-    "card": "储值卡",
-    "isYearCard": false
-  },
-  {
     "id": "S076",
     "name": "楠哥",
     "class": "",
