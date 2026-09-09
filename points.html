@@ -64,6 +64,11 @@
   .lb-fold button:hover{ border-color:var(--teal-400); background:var(--teal-50,#f0fdfa); }
   .lb-rest{ display:none; margin-top:8px; }
   .lb-rest .lb-row{ opacity:.92; }
+  .lb-tabs{display:flex;gap:8px;margin:8px 0 4px;}
+  .lb-tab{flex:1;padding:9px 6px;border:1.5px solid var(--line);background:#fff;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;color:var(--muted);cursor:pointer;}
+  .lb-tab.active{background:var(--teal-600,#0d9488);color:#fff;border-color:var(--teal-600,#0d9488);}
+  .lb-star{display:none;background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1px solid #fed7aa;border-radius:11px;padding:10px 12px;margin:4px 0 8px;font-size:13px;color:#9a3412;line-height:1.5;}
+  .lb-star b{color:#ea580c;}
 
   /* 录入表单角色提示 */
   .role-note{font-size:12px;color:#9a4a28;background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:8px 11px;margin-top:9px;line-height:1.6;}
@@ -93,6 +98,11 @@
       <button class="btn-text" onclick="loadBoard()">🔄 刷新</button>
     </div>
     <p class="note" id="boardNote">从云端加载中…</p>
+    <div class="lb-tabs">
+      <button class="lb-tab active" data-p="all" onclick="switchPeriod('all')">🏆 总榜</button>
+      <button class="lb-tab" data-p="month" onclick="switchPeriod('month')">📅 本月榜</button>
+    </div>
+    <div id="monthStar" class="lb-star"></div>
     <div id="boardBox" class="lb"></div>
   </div>
 
@@ -307,6 +317,12 @@ function onReasonChange(){
 
 // 榜单（前三常驻，其余折叠；可展开看完整 20 名）
 let boardExpanded=false;
+let currentPeriod='all';
+function switchPeriod(p){
+  currentPeriod=p;
+  document.querySelectorAll('.lb-tab').forEach(function(b){ b.classList.toggle('active', b.dataset.p===p); });
+  loadBoard();
+}
 async function loadBoard(){
   const box=document.getElementById('boardBox');
   const note=document.getElementById('boardNote');
@@ -318,10 +334,17 @@ async function loadBoard(){
     if(!r.ok){ if(r.status===404){ box.innerHTML='<div class="lb-empty">暂无积分记录，去录入第一笔 🏆</div>'; note.textContent='暂无记录'; return; } throw new Error('HTTP '+r.status); }
     const arr=await r.json();
     if(!Array.isArray(arr)||!arr.length){ box.innerHTML='<div class="lb-empty">暂无积分记录，去录入第一笔 🏆</div>'; note.textContent='暂无记录'; return; }
+
+    // 本月口径
+    const now=new Date();
+    const ym=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
+    const src = currentPeriod==='month' ? arr.filter(function(it){ return (it.date||'').indexOf(ym)===0; }) : arr;
+
     const sum={};
-    arr.forEach(function(it){ const n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
+    src.forEach(function(it){ const n=(it.name||'匿名').trim(); sum[n]=(sum[n]||0)+(Number(it.delta)||0); });
     const list=Object.keys(sum).map(function(n){return {name:n,sc:sum[n]};}).sort(function(a,b){return b.sc-a.sc;}).slice(0,20);
     function rowHTML(it,i){
+      if(!it) return '';
       const cls=i<3?(' top'+(i+1)):'';
       return '<div class="lb-row'+cls+'"><div class="rk">'+(i+1)+'</div>'
         +'<div class="nm">'+esc(it.name)+'</div>'
@@ -336,8 +359,21 @@ async function loadBoard(){
         +(boardExpanded?'▲ 收起完整榜单':'▼ 展开完整榜单（'+(list.length-3)+' 名）')
         +'</button></div>';
     }
-    box.innerHTML=top+rest+fold;
-    note.textContent='共 '+Object.keys(sum).length+' 位学员上榜 · 实时同步';
+    if(!list.length){ box.innerHTML='<div class="lb-empty">本月还没有积分记录 📭</div>'; }
+    else { box.innerHTML=top+rest+fold; }
+
+    // 本月进步最快（始终基于本月数据）
+    const msum={};
+    arr.forEach(function(it){ if((it.date||'').indexOf(ym)===0){ const n=(it.name||'匿名').trim(); msum[n]=(msum[n]||0)+(Number(it.delta)||0); } });
+    const mlist=Object.keys(msum).map(function(n){return {name:n,sc:msum[n]};}).sort(function(a,b){return b.sc-a.sc;});
+    const star=document.getElementById('monthStar');
+    if(mlist.length && mlist[0].sc>0){
+      star.style.display='block';
+      star.innerHTML='🚀 本月进步最快：<b>'+esc(mlist[0].name)+'</b> 本月已累计 +'+mlist[0].sc+' 分'
+        +(mlist[1]?('，紧追 <b>'+esc(mlist[1].name)+'</b> +'+mlist[1].sc+' 分'):'');
+    } else { star.style.display='none'; }
+
+    note.textContent='共 '+Object.keys(sum).length+' 位学员上榜'+(currentPeriod==='month'?' · 本月':'');
   }catch(e){
     box.innerHTML='<div class="lb-empty">加载失败：'+esc(e.message)+'<br>点「刷新」重试。</div>';
     note.textContent='加载失败';
