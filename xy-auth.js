@@ -136,6 +136,67 @@
       }
     }
 
+    // 写权限预检：令牌有效后，对 data/students.json 做一次幂等"原地重写"PUT，
+    // 真实探测 fine-grained 令牌是否拥有 Repository→Contents→Read and write 权限。
+    // 401/403 → 拦截并给修复指引；超时/网络/解析异常 → 降级放行（避免误杀），但提示留意。
+    function verifyWritePermission(tk, cb) {
+      var REPO = 'xytyymq/xingyi-workbench';
+      var PATH = 'data/students.json';
+      var base = 'https://api.github.com/repos/' + REPO + '/contents/' + PATH;
+      var done = false;
+      function finish(ok, msg) { if (!done) { done = true; cb(ok, msg); } }
+      var timer = setTimeout(function () {
+        finish(true, '写入权限联网校验超时，已放行；首次保存数据后请留意是否成功写入云端。');
+      }, GH_TIMEOUT);
+
+      function putBack(meta) {
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open('PUT', base, true);
+        xhr2.setRequestHeader('Authorization', 'Bearer ' + tk);
+        xhr2.setRequestHeader('Accept', 'application/vnd.github+json');
+        xhr2.setRequestHeader('Content-Type', 'application/json');
+        xhr2.onload = function () {
+          clearTimeout(timer);
+          if (xhr2.status === 200 || xhr2.status === 201) {
+            finish(true, '云端写入权限已确认');
+          } else if (xhr2.status === 409) {
+            finish(true, '云端写入权限正常（检测到并发更新，已放行）。');
+          } else if (xhr2.status === 403) {
+            finish(false, '⛔ 该令牌<b>没有云端写入权限（或触发限流）</b>。<br>请到 GitHub 给此令牌（fine-grained）授权 <b>Repository permissions → Contents → Read and write</b>，或改用带 repo 权限的 classic 令牌（ghp_ 开头）。<br>否则保存的数据写不进云端。');
+          } else if (xhr2.status === 401) {
+            finish(false, '⛔ 令牌已失效（401），请重新生成后再试。');
+          } else {
+            finish(true, '写入校验返回 HTTP ' + xhr2.status + '，已放行；首次保存后请留意写入结果。');
+          }
+        };
+        xhr2.onerror = function () { clearTimeout(timer); finish(true, '写入校验网络异常，已放行；首次保存后留意写入结果。'); };
+        xhr2.send(JSON.stringify({
+          message: 'xy-auth write-permission probe (idempotent no-op rewrite)',
+          content: meta.content,
+          sha: meta.sha,
+          branch: 'main'
+        }));
+      }
+
+      var xhr1 = new XMLHttpRequest();
+      xhr1.open('GET', base + '?ref=main', true);
+      xhr1.setRequestHeader('Authorization', 'Bearer ' + tk);
+      xhr1.setRequestHeader('Accept', 'application/vnd.github+json');
+      xhr1.onload = function () {
+        if (xhr1.status !== 200) {
+          clearTimeout(timer);
+          if (xhr1.status === 404) { finish(true, '未找到探测文件，已放行；首次保存后留意写入结果。'); return; }
+          finish(true, '读取探测文件异常(HTTP ' + xhr1.status + ')，已放行；首次保存后留意写入结果。'); return;
+        }
+        var meta;
+        try { meta = JSON.parse(xhr1.responseText); } catch (e) { clearTimeout(timer); finish(true, '探测文件解析异常，已放行；首次保存后留意写入结果。'); return; }
+        if (!meta || !meta.sha || !meta.content) { clearTimeout(timer); finish(true, '探测文件结构异常，已放行；首次保存后留意写入结果。'); return; }
+        putBack(meta);
+      };
+      xhr1.onerror = function () { clearTimeout(timer); finish(true, '写入校验网络异常，已放行；首次保存后留意写入结果。'); };
+      xhr1.send();
+    }
+
     // 格式预检：classic ghp_ 为 40 位，fine-grained github_pat_ 更长
     function preCheck(tk) {
       if (!/^ghp_[A-Za-z0-9]{36}$/.test(tk)) {
@@ -179,8 +240,12 @@
         btn.textContent = old;
         btn.disabled = false;
         if (ok === true) {
-          XYGate.setToken(v);
-          paint();
+          // 令牌有效，进一步校验云端写入权限（fine-grained 可能无 contents:write）
+          msg.innerHTML = '令牌有效，正在校验云端写入权限…';
+          verifyWritePermission(v, function (wok, wmsg) {
+            if (!wok) { msg.style.color = '#b3261e'; msg.innerHTML = wmsg; return; }
+            XYGate.setToken(v);
+            paint();
           msg.style.color = '#0f766e';
           msg.innerHTML = '✅ 验证通过！账号 <b>' + (info.login || '') + '</b>，' +
             '现在保存数据会自动写入云端。';
@@ -188,6 +253,7 @@
             mask.style.display = 'none';
             try { location.reload(); } catch (e) { }
           }, 900);
+          });
         } else if (ok === null) {
           msg.style.color = '#9a4a28';
           msg.innerHTML = '⚠️ ' + info + '<br>可先点「保存令牌」跳过验证本机保存，但建议联网后再验一次。';
