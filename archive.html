@@ -128,6 +128,11 @@ svg{width:100%;height:auto;display:block;}
   <!-- 学员管理 -->
   <div class="card">
     <h2><span class="num">①</span>学员档案</h2>
+    <div style="margin-bottom:8px;">
+      <input id="listSearch" placeholder="🔍 搜索学员姓名…" style="width:100%;padding:9px 10px;border:1px solid #cbd5db;border-radius:8px;font-size:14px;box-sizing:border-box;">
+      <div id="listTip" style="font-size:12px;color:#94a3b8;margin:6px 2px;"></div>
+      <button id="expandList" style="width:100%;padding:9px;margin-top:4px;border:1px solid #cbd5db;border-radius:8px;background:#fff;color:#0f766e;font-weight:600;cursor:pointer;font-size:14px;">展开全部</button>
+    </div>
     <div id="studentList"></div>
     <div class="grid2">
       <input id="sName" placeholder="学员姓名">
@@ -271,14 +276,34 @@ function delStudent(id){
 function selectStudent(id){ current=id; renderStudentSelect(); renderStudents(); renderEntry(); renderOverview(); }
 function curStudent(){ return data.find(s=>s.id===current); }
 
+let listQ = '', listExpanded = false;
+function latestTestDate(s){
+  let ds = (s.tests||[]).map(t=>t.date||'').filter(Boolean);
+  if(ds.length) return ds.sort().slice(-1)[0];
+  return s.createdAt || '';
+}
 function renderStudents(){
   const box = studentList;
-  if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; }
-  else { box.innerHTML = data.map(s=>`
+  if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; renderStudentSelect(); return; }
+  let arr = data.slice();
+  if(listQ){
+    arr = arr.filter(s => (s.name||'').indexOf(listQ) >= 0);
+  } else {
+    arr.sort((a,b)=> (latestTestDate(b)||'').localeCompare(latestTestDate(a)||''));
+    if(!listExpanded) arr = arr.slice(0, 3);
+  }
+  const tip = document.getElementById('listTip');
+  if(tip) tip.textContent = listQ ? ('匹配 '+arr.length+' 人') : ('默认显示体测时间最新的前 3 名，其余点「展开全部」或搜索');
+  const btn = document.getElementById('expandList');
+  if(btn){
+    if(listQ){ btn.style.display='none'; }
+    else { btn.style.display=''; btn.textContent = listExpanded ? '收起（仅留前 3 名）▲' : ('展开全部 '+data.length+' 人 ▾'); }
+  }
+  box.innerHTML = arr.map(s=>`
     <div class="student ${s.id===current?'active':''}" onclick="selectStudent('${s.id}')">
-      <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测</div></div>
+      <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测${latestTestDate(s)?' · 最近 '+latestTestDate(s):''}</div></div>
       <button class="del" onclick="event.stopPropagation();delStudent('${s.id}')">删除</button>
-    </div>`).join(""); }
+    </div>`).join("");
   renderStudentSelect();
 }
 
@@ -902,6 +927,14 @@ async function getCloud(){
 window.addEventListener('online', function(){ if(_isDirty()){ _retryN=0; scheduleSync(800); } });
 document.addEventListener('visibilitychange', function(){ if(!document.hidden && _isDirty()){ _retryN=0; scheduleSync(800); } });
 setInterval(function(){ if(_isDirty() && !_syncing) runSync(); }, 180000);
+
+// 学员档案列表：搜索 / 展开全部（折叠找人）
+(function(){
+  const q = document.getElementById('listSearch');
+  const ex = document.getElementById('expandList');
+  if(q) q.addEventListener('input', e=>{ listQ = e.target.value.trim(); renderStudents(); });
+  if(ex) ex.addEventListener('click', ()=>{ listExpanded = !listExpanded; renderStudents(); });
+})();
 </script>
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 学员体测档案<br><a href="index.html" target="_blank" rel="noopener">返回工作台</a></footer>
 </body>
