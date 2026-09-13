@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-fetch_records.py — 从腾讯文档《星羿·学员体测档案》第1子表取数，转成 gen_parent_msg.py 要的 CSV。
-列映射：上课日期->日期, 姓名->学员, 班级->班级, 教练->教练, 进步点->今日进步, 待加强->下节课重点
+fetch_records.py — 从腾讯文档《学员上课记录》(file_id=BqnMnjsuhwOQ，在腾讯文档里标题显示为"日期"，即工作台运营模块"学员上课记录·去填写/查看"指向的表) 取数，转成 gen_parent_msg.py 要的 CSV。
+列映射：日期->日期, 学员->学员, 班级->班级, 教练->教练, 进步点->今日进步, 待加强->下节课重点
 依赖：同目录的 tencentdocs.py（腾讯文档 MCP CLI，票据由宿主注入）。
 """
 import subprocess, json, time, urllib.request, zipfile, io, xml.etree.ElementTree as ET, os, csv, sys, re
 
 SKILL = "C:/Users/Administrator/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin/5.5.1-wb.37570276.g9af62480.h1a8f7c37fe76/skills/tencent-docs"
 PY = "C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe"
-FILE_ID = "BCmMnaVvBTRo"  # 星羿·学员体测档案
+FILE_ID = "BqnMnjsuhwOQ"  # 学员上课记录（腾讯文档标题"日期"，运营模块数据源）
 OUT = "class_records.csv"
 
 NS = '{http://schemas.openxmlformats.org/spreadsheetml/2006/main}'
@@ -69,7 +69,7 @@ def xlsx_rows(data):
                 d[ci] = cell_val(c, ss)
                 maxc = max(maxc, ci)
             grid.append([d.get(i, '') for i in range(maxc + 1)])
-        if grid and any('学员ID' in (h or '') for h in grid[0]):
+        if grid and any('学员' in (h or '') for h in grid[0]):
             target = grid
             break
     if not target:
@@ -88,7 +88,7 @@ def xlsx_rows(data):
     return target[0], target[1:]
 
 def main():
-    print("导出《星羿·学员体测档案》...")
+    print("导出《学员上课记录》...")
     data = export_and_download(FILE_ID)
     hdr, rows = xlsx_rows(data)
     # 定位源列
@@ -98,9 +98,9 @@ def main():
                 if h.strip() == n:
                     return i
         return -1
-    c_date = idx("上课日期")
-    c_name = idx("姓名")
-    c_id = idx("学员ID")
+    c_date = idx("日期")
+    c_name = idx("学员")
+    c_id = idx("学员ID", "姓名")
     c_class = idx("班级")
     c_coach = idx("教练")
     c_good = idx("进步点", "今日进步")
