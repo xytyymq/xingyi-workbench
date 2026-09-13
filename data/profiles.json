@@ -1,1376 +1,3755 @@
 [
-  {
-    "id": "S1786265852785",
-    "name": "易子文",
-    "age": "9",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-09",
-    "tests": [
-      {
-        "date": "2026-08-09",
-        "m": {
-          "height": 137,
-          "weight": 28.3,
-          "sitReach": 1,
-          "singleStand": 38,
-          "wallSquat": 100,
-          "posture": "正常/正常/正常",
-          "run50": 27.56,
-          "standingJump": 144,
-          "verticalJump": 196,
-          "rope": 198,
-          "swing15": 12,
-          "footwork": 15.53,
-          "reaction": 0.97,
-          "serve": 9,
-          "rally": 30,
-          "clear": 10
-        },
-        "note": ""
-      },
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 140,
-          "sitReach": 2,
-          "singleStand": 53,
-          "wallSquat": 80,
-          "posture": "正常/正常/正常",
-          "run50": 15.91,
-          "standingJump": 142,
-          "verticalJump": 202,
-          "rope": 202,
-          "swing15": 17,
-          "footwork": 18.54,
-          "serve": 9,
-          "rally": 12,
-          "clear": 8
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786265905931",
-    "name": "郭一谦",
-    "age": "9",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-09",
-    "tests": [
-      {
-        "date": "2026-08-09",
-        "m": {
-          "height": 135,
-          "weight": 34.5,
-          "sitReach": 3,
-          "singleStand": 38,
-          "wallSquat": 100,
-          "posture": "正常/正常/正常",
-          "run50": 28.22,
-          "standingJump": 107,
-          "verticalJump": 113,
-          "rope": 98,
-          "swing15": 10,
-          "footwork": 17.53,
-          "reaction": 0.9,
-          "serve": 9,
-          "rally": 30,
-          "clear": 10
-        },
-        "note": ""
-      },
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 136,
-          "sitReach": 5,
-          "singleStand": 31,
-          "wallSquat": 70,
-          "posture": "正常/正常/正常",
-          "run50": 13.77,
-          "standingJump": 137,
-          "verticalJump": 193,
-          "rope": 120,
-          "swing15": 14,
-          "footwork": 18.06,
-          "serve": 8,
-          "rally": 19,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786265930178",
-    "name": "梁晟宇",
-    "age": "6",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-09",
-    "tests": [
-      {
-        "date": "2026-08-09",
-        "m": {
-          "height": 122,
-          "weight": 27,
-          "sitReach": 3,
-          "singleStand": 24,
-          "wallSquat": 84,
-          "posture": "正常/正常/正常",
-          "run50": 30.99,
-          "standingJump": 117,
-          "verticalJump": 173,
-          "rope": 20,
-          "swing15": 6,
-          "footwork": 24.9,
-          "reaction": 1.48,
-          "serve": 1,
-          "rally": 2,
-          "clear": 6
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786627682438",
-    "name": "杨启悦",
-    "age": "9",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-13",
-    "tests": [
-      {
-        "date": "2026-08-14",
-        "m": {
-          "posture": "正常/正常/正常"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786760108691",
-    "name": "邹书芸",
-    "age": "7",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 135,
-          "weight": 40,
-          "sitReach": 4,
-          "singleStand": 10,
-          "wallSquat": 46,
-          "posture": "正常/正常/正常",
-          "run50": 14.37,
-          "standingJump": 99,
-          "verticalJump": 184,
-          "rope": 144,
-          "swing15": 10,
-          "footwork": 16.61,
-          "serve": 6,
-          "rally": 12,
-          "clear": 9
-        },
-        "note": ""
-      },
-      {
-        "date": "2026-08-16",
-        "m": {
-          "height": 135,
-          "sitReach": 4,
-          "singleStand": 18.32,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 13.93,
-          "standingJump": 109,
-          "verticalJump": 188,
-          "rope": 136,
-          "swing15": 12,
-          "footwork": 18.62,
-          "serve": 6,
-          "rally": 18,
-          "clear": 8
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767262274",
-    "name": "刘铭燇",
-    "age": "11",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 157.5,
-          "sitReach": -20,
-          "singleStand": 31,
-          "wallSquat": 88,
-          "posture": "正常/正常/正常",
-          "run50": 12.48,
-          "standingJump": 141,
-          "verticalJump": 216,
-          "rope": 174,
-          "swing15": 13,
-          "footwork": 24.91,
-          "serve": 5,
-          "rally": 8,
-          "clear": 9
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767390915",
-    "name": "沈永佳",
-    "age": "9",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 131.5,
-          "sitReach": 11,
-          "singleStand": 6.35,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 11.45,
-          "standingJump": 153,
-          "verticalJump": 190,
-          "rope": 132,
-          "swing15": 14,
-          "footwork": 18.69,
-          "serve": 8,
-          "rally": 27,
-          "clear": 9
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767546613",
-    "name": "宛梓恩",
-    "age": "11",
-    "gender": "男",
+ {
+  "id": "SDEMO",
+  "name": "示例学员(可删)",
+  "age": "8",
+  "gender": "男",
+  "cls": "初级班",
+  "createdAt": "2026-08-05",
+  "tests": [
+   {
+    "date": "2026-07-10",
+    "m": {
+     "height": 120,
+     "weight": 24,
+     "sitReach": 8,
+     "singleStand": 30,
+     "wallSquat": 40,
+     "posture": "正常/正常/正常",
+     "run50": 11,
+     "standingJump": 125,
+     "verticalJump": 24,
+     "rope": 85,
+     "swing15": 24,
+     "footwork": 19,
+     "serve": 0.9,
+     "rally": 6,
+     "clear": 6
+    },
+    "note": "基线测试"
+   },
+   {
+    "date": "2026-08-05",
+    "m": {
+     "height": 121,
+     "weight": 24.5,
+     "sitReach": 11,
+     "singleStand": 45,
+     "wallSquat": 55,
+     "posture": "正常/正常/正常",
+     "run50": 9.8,
+     "standingJump": 140,
+     "verticalJump": 28,
+     "rope": 105,
+     "swing15": 29,
+     "footwork": 16,
+     "serve": 0.75,
+     "rally": 8,
+     "clear": 9
+    },
+    "note": "一个月后进步明显"
+   }
+  ],
+  "lessons": []
+ },
+ {
+  "id": "Sbea8e15b988549",
+  "name": "杨济鸿",
+  "age": "",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 128,
+     "sitReach": 5,
+     "singleStand": 22.53,
+     "wallSquat": 39.46,
+     "run50": 15.46,
+     "standingJump": 123,
+     "verticalJump": 182,
+     "rope": 102,
+     "swing15": 13,
+     "footwork": 22.24,
+     "serve": 6,
+     "rally": 3
+    },
+    "note": ""
+   }
+  ],
+  "lessons": []
+ },
+ {
+  "id": "Se3395646b06048",
+  "name": "陈梓诺",
+  "age": "10",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 144,
+     "sitReach": 6,
+     "singleStand": 18.72,
+     "wallSquat": 120,
+     "run50": 13.75,
+     "standingJump": 130,
+     "verticalJump": 208,
+     "rope": 161,
+     "swing15": 10,
+     "footwork": 22.94,
+     "serve": 8,
+     "rally": 12
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "前后场步伐连贯性好",
+    "bad": "发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "Sd1f293c4d7264f",
+  "name": "邓泽兮",
+  "age": "7",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 123,
+     "sitReach": -3,
+     "singleStand": 18.98,
+     "wallSquat": 78.39,
+     "run50": 13.46,
+     "standingJump": 116,
+     "verticalJump": 176,
+     "rope": 153,
+     "swing15": 13,
+     "footwork": 21.96,
+     "serve": 5,
+     "rally": 10
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-09-01",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球发力很好，步伐连贯",
+    "bad": "后场两点还需加强，高远球击球还要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球发力很好",
+    "bad": "高远球击球动作还需纠正，后撤步太慢了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-10",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "上网步伐连贯",
+    "bad": "高远球挥拍还需加强，容易切拍",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "Sfff048e01bdf44",
+  "name": "邹亦欢",
+  "age": "9",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 138,
+     "sitReach": 20,
+     "singleStand": 10,
+     "wallSquat": 120,
+     "run50": 13.29,
+     "standingJump": 129,
+     "verticalJump": 195,
+     "rope": 157,
+     "swing15": 10,
+     "footwork": 19.96,
+     "serve": 4,
+     "rally": 17
+    },
+    "note": ""
+   }
+  ],
+  "lessons": []
+ },
+ {
+  "id": "S97b8cf013fa240",
+  "name": "朱思然",
+  "age": "8",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 138,
+     "sitReach": -4,
+     "singleStand": 11.43,
+     "wallSquat": 16.94,
+     "run50": 13.01,
+     "standingJump": 142,
+     "verticalJump": 196,
+     "rope": 120,
+     "swing15": 13,
+     "footwork": 20.14,
+     "serve": 2,
+     "rally": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "击球更稳定了",
+    "bad": "太久没训练时不时空球",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳很好",
+    "bad": "正手击球、打球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-08",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳还可以",
+    "bad": "高远球击球，发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "Se031df3e767d4c",
+  "name": "熊沁杰妮",
+  "age": "8",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 144,
+     "sitReach": 12,
+     "singleStand": 20.67,
+     "wallSquat": 120,
+     "run50": 14.28,
+     "standingJump": 125,
+     "verticalJump": 212,
+     "rope": 115,
+     "swing15": 12,
+     "footwork": 20.24,
+     "serve": 2,
+     "rally": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": []
+ },
+ {
+  "id": "S2ef60138b3c343",
+  "name": "高梓杰",
+  "age": "10",
+  "gender": "",
+  "cls": "",
+  "createdAt": "2026-08-30",
+  "tests": [
+   {
+    "date": "2026-08-30",
+    "m": {
+     "height": 151,
+     "sitReach": -4,
+     "singleStand": 7.42,
+     "wallSquat": 40.38,
+     "standingJump": 76,
+     "verticalJump": 202,
+     "rope": 105,
+     "swing15": 10,
+     "footwork": 25.22,
+     "serve": 2,
+     "rally": 2
+    },
+    "note": ""
+   }
+  ],
+  "lessons": []
+ },
+ {
+  "id": "S1786265905931",
+  "name": "郭一谦",
+  "age": "9",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-09",
+  "tests": [
+   {
+    "date": "2026-08-09",
+    "m": {
+     "height": 135,
+     "weight": 34.5,
+     "sitReach": 3,
+     "singleStand": 38,
+     "wallSquat": 100,
+     "posture": "正常/正常/正常",
+     "run50": 28.22,
+     "standingJump": 107,
+     "verticalJump": 113,
+     "rope": 98,
+     "swing15": 10,
+     "footwork": 17.53,
+     "reaction": 0.9,
+     "serve": 9,
+     "rally": 30,
+     "clear": 10
+    },
+    "note": ""
+   },
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 136,
+     "sitReach": 5,
+     "singleStand": 31,
+     "wallSquat": 70,
+     "posture": "正常/正常/正常",
+     "run50": 13.77,
+     "standingJump": 137,
+     "verticalJump": 193,
+     "rope": 120,
+     "swing15": 14,
+     "footwork": 18.06,
+     "serve": 8,
+     "rally": 19,
+     "clear": 7
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-09",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远击球更加稳定",
+    "bad": "网前放网不稳",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐正手前后场步伐速度可观，弟弟转身挥拍标准",
+    "bad": "姐姐后场高远很少转身，弟弟击球球感还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "姐姐(妍)步伐不稳定，弟弟(谦)跳绳一直没突破",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786802608376",
+  "name": "郭奕妍",
+  "age": "",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 159,
+     "sitReach": 22,
+     "singleStand": 40,
+     "wallSquat": 100,
+     "posture": "正常/正常/正常",
+     "run50": 11.77,
+     "standingJump": 222,
+     "verticalJump": 259,
+     "rope": 167,
+     "swing15": 14,
+     "footwork": 16.14,
+     "serve": 10,
+     "rally": 105,
+     "clear": 8
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-09",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远击球更加稳定",
+    "bad": "网前放网不稳",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐正手前后场步伐速度可观，弟弟转身挥拍标准",
+    "bad": "姐姐后场高远很少转身，弟弟击球球感还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "姐姐(妍)步伐不稳定，弟弟(谦)跳绳一直没突破",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786265852785",
+  "name": "易子文",
+  "age": "9",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-09",
+  "tests": [
+   {
+    "date": "2026-08-09",
+    "m": {
+     "height": 137,
+     "weight": 28.3,
+     "sitReach": 1,
+     "singleStand": 38,
+     "wallSquat": 100,
+     "posture": "正常/正常/正常",
+     "run50": 27.56,
+     "standingJump": 144,
+     "verticalJump": 196,
+     "rope": 198,
+     "swing15": 12,
+     "footwork": 15.53,
+     "reaction": 0.97,
+     "serve": 9,
+     "rally": 30,
+     "clear": 10
+    },
+    "note": ""
+   },
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 140,
+     "sitReach": 2,
+     "singleStand": 53,
+     "wallSquat": 80,
+     "posture": "正常/正常/正常",
+     "run50": 15.91,
+     "standingJump": 142,
+     "verticalJump": 202,
+     "rope": 202,
+     "swing15": 17,
+     "footwork": 18.54,
+     "serve": 9,
+     "rally": 12,
+     "clear": 8
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-09",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远步伐更好一些",
+    "bad": "网前放网击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "正手击球球感很好",
+    "bad": "正手发球球感不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-08",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远击球发力更加通透",
+    "bad": "挥拍不到位，高远击球点偏低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场两点步伐速度更快",
+    "bad": "高远击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "身体柔韧性太差",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场点位到达速度提升",
+    "bad": "高远时不时会有空拍",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "反手位高远击球老师空拍",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786265930178",
+  "name": "梁晟宇",
+  "age": "6",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-09",
+  "tests": [
+   {
+    "date": "2026-08-09",
+    "m": {
+     "height": 122,
+     "weight": 27,
+     "sitReach": 3,
+     "singleStand": 24,
+     "wallSquat": 84,
+     "posture": "正常/正常/正常",
+     "run50": 30.99,
+     "standingJump": 117,
+     "verticalJump": 173,
+     "rope": 20,
+     "swing15": 6,
+     "footwork": 24.9,
+     "reaction": 1.48,
+     "serve": 1,
+     "rally": 2,
+     "clear": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-09",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高原动作更加标准",
+    "bad": "击球球感不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "握拍姿势正确",
+    "bad": "跳绳还需加强，高远球挥拍还需连贯",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "挥拍姿势连贯",
+    "bad": "高远球和发球都要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球比之前好一点",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "抛接球还可以",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767858999",
+  "name": "吴思妤",
+  "age": "12",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 166.5,
+     "sitReach": 25,
+     "singleStand": 20,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 12.12,
+     "standingJump": 150,
+     "verticalJump": 227,
+     "rope": 197,
+     "swing15": 15,
+     "footwork": 13.68,
+     "serve": 8,
+     "rally": 35,
+     "clear": 10
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-14",
     "cls": "中级班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 165,
-          "sitReach": 0,
-          "singleStand": 4,
-          "wallSquat": 132,
-          "posture": "正常/正常/正常",
-          "run50": 10.58,
-          "standingJump": 175,
-          "verticalJump": 234,
-          "rope": 157,
-          "swing15": 13,
-          "footwork": 14.62,
-          "serve": 8,
-          "rally": 14,
-          "clear": 10
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767725272",
-    "name": "桂浩然",
-    "age": "12",
-    "gender": "男",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场步伐更加快快速",
+    "bad": "正反手挑球多数不到位",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
     "cls": "中级班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 149,
-          "sitReach": 10,
-          "singleStand": 88,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 11.75,
-          "standingJump": 139,
-          "verticalJump": 206,
-          "rope": 136,
-          "swing15": 14,
-          "footwork": 14.52,
-          "serve": 5,
-          "rally": 19,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767858999",
-    "name": "吴思妤",
-    "age": "12",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 166.5,
-          "sitReach": 25,
-          "singleStand": 20,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 12.12,
-          "standingJump": 150,
-          "verticalJump": 227,
-          "rope": 197,
-          "swing15": 15,
-          "footwork": 13.68,
-          "serve": 8,
-          "rally": 35,
-          "clear": 10
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786767999102",
-    "name": "江锦城",
-    "age": "7",
-    "gender": "男",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "身体柔韧性不是很好",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
     "cls": "中级班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 129,
-          "sitReach": 6,
-          "singleStand": 8,
-          "wallSquat": 57,
-          "posture": "正常/正常/正常",
-          "run50": 12.85,
-          "standingJump": 140,
-          "verticalJump": 186,
-          "rope": 163,
-          "swing15": 15,
-          "footwork": 13.07,
-          "serve": 9,
-          "rally": 15,
-          "clear": 9
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "SDEMO",
-    "name": "示例学员(可删)",
-    "age": "8",
-    "gender": "男",
-    "cls": "初级班",
-    "createdAt": "2026-08-05",
-    "tests": [
-      {
-        "date": "2026-07-10",
-        "m": {
-          "height": 120,
-          "weight": 24,
-          "sitReach": 8,
-          "singleStand": 30,
-          "wallSquat": 40,
-          "posture": "正常/正常/正常",
-          "run50": 11,
-          "standingJump": 125,
-          "verticalJump": 24,
-          "rope": 85,
-          "swing15": 24,
-          "footwork": 19,
-          "reaction": 0.9,
-          "serve": 6,
-          "rally": 12,
-          "clear": 6
-        },
-        "note": "基线测试"
-      },
-      {
-        "date": "2026-08-05",
-        "m": {
-          "height": 121,
-          "weight": 24.5,
-          "sitReach": 11,
-          "singleStand": 45,
-          "wallSquat": 55,
-          "posture": "正常/正常/正常",
-          "run50": 9.8,
-          "standingJump": 140,
-          "verticalJump": 28,
-          "rope": 105,
-          "swing15": 29,
-          "footwork": 16,
-          "reaction": 0.75,
-          "serve": 8,
-          "rally": 18,
-          "clear": 9
-        },
-        "note": "一个月后进步明显"
-      }
-    ]
-  },
-  {
-    "id": "S1786801958192",
-    "name": "洪振新",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 133,
-          "sitReach": -4,
-          "singleStand": 6,
-          "wallSquat": 50,
-          "posture": "正常/正常/正常",
-          "run50": 15.1,
-          "standingJump": 132,
-          "verticalJump": 193,
-          "rope": 130,
-          "swing15": 13,
-          "footwork": 27.13,
-          "serve": 5,
-          "rally": 7,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786802227429",
-    "name": "洪振宇",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 155,
-          "sitReach": -3,
-          "singleStand": 10,
-          "wallSquat": 80,
-          "posture": "正常/正常/正常",
-          "run50": 14.91,
-          "standingJump": 151,
-          "verticalJump": 220,
-          "rope": 190,
-          "swing15": 15,
-          "footwork": 17.28,
-          "serve": 8,
-          "rally": 2,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786265894859",
-    "name": "郭奕妍",
-    "age": "11",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-09",
-    "tests": [
-      {
-        "date": "2026-08-09",
-        "m": {
-          "height": 158,
-          "weight": 36.5,
-          "sitReach": 4,
-          "singleStand": 38,
-          "wallSquat": 100,
-          "posture": "正常/正常/正常",
-          "run50": 29.82,
-          "standingJump": 211,
-          "verticalJump": 247,
-          "rope": 156,
-          "swing15": 11,
-          "footwork": 17.62,
-          "reaction": 0.82,
-          "serve": 6,
-          "rally": 40,
-          "clear": 10
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786802608376",
-    "name": "郭奕妍",
-    "age": "",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 159,
-          "sitReach": 22,
-          "singleStand": 40,
-          "wallSquat": 100,
-          "posture": "正常/正常/正常",
-          "run50": 11.77,
-          "standingJump": 222,
-          "verticalJump": 259,
-          "rope": 167,
-          "swing15": 14,
-          "footwork": 16.14,
-          "serve": 10,
-          "rally": 105,
-          "clear": 8
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786802756104",
-    "name": "熊安然",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 125,
-          "sitReach": 8,
-          "singleStand": 12,
-          "wallSquat": 50,
-          "posture": "正常/正常/正常",
-          "run50": 16.57,
-          "standingJump": 139,
-          "verticalJump": 181,
-          "rope": 189,
-          "swing15": 10,
-          "footwork": 20.32,
-          "serve": 6,
-          "rally": 3,
-          "clear": 9
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786802854629",
-    "name": "熊一凡",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 127,
-          "sitReach": 7,
-          "singleStand": 8,
-          "wallSquat": 60,
-          "posture": "正常/正常/正常",
-          "run50": 18.48,
-          "standingJump": 125,
-          "verticalJump": 178,
-          "rope": 100,
-          "swing15": 5,
-          "footwork": 28.11,
-          "serve": 9,
-          "rally": 15,
-          "clear": 6
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786803136645",
-    "name": "徐梓宸",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 137,
-          "sitReach": 8,
-          "singleStand": 28,
-          "wallSquat": 60,
-          "posture": "正常/正常/正常",
-          "run50": 15.31,
-          "standingJump": 130,
-          "verticalJump": 198,
-          "rope": 228,
-          "swing15": 17,
-          "footwork": 18.35,
-          "serve": 9,
-          "rally": 33,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786803291012",
-    "name": "胡昱宸",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 140,
-          "sitReach": 5,
-          "singleStand": 11,
-          "wallSquat": 56,
-          "posture": "正常/正常/正常",
-          "run50": 15.52,
-          "standingJump": 135,
-          "verticalJump": 196,
-          "rope": 147,
-          "swing15": 14,
-          "footwork": 24.05,
-          "serve": 4,
-          "rally": 12,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786803353886",
-    "name": "吴泓睿",
-    "age": "",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-15",
-    "tests": [
-      {
-        "date": "2026-08-15",
-        "m": {
-          "height": 133,
-          "sitReach": 2,
-          "singleStand": 5,
-          "wallSquat": 30,
-          "posture": "正常/正常/正常",
-          "run50": 17.5,
-          "standingJump": 86,
-          "verticalJump": 183,
-          "rope": 25,
-          "swing15": 7,
-          "footwork": 39.74,
-          "serve": 1,
-          "rally": 4,
-          "clear": 2
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786856100835",
-    "name": "元奕诺",
-    "age": "10",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-16",
-    "tests": [
-      {
-        "date": "2026-08-16",
-        "m": {
-          "height": 148,
-          "sitReach": 4,
-          "singleStand": 22.18,
-          "wallSquat": 53,
-          "posture": "正常/正常/正常",
-          "run50": 11.86,
-          "standingJump": 170,
-          "verticalJump": 217,
-          "rope": 168,
-          "swing15": 14,
-          "footwork": 18.7,
-          "serve": 4,
-          "rally": 15,
-          "clear": 6
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786856203040",
-    "name": "刘铭翰",
-    "age": "7",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-16",
-    "tests": [
-      {
-        "date": "2026-08-16",
-        "m": {
-          "height": 129,
-          "sitReach": 5,
-          "singleStand": 36.87,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 12.23,
-          "standingJump": 148,
-          "verticalJump": 187,
-          "rope": 140,
-          "swing15": 13,
-          "footwork": 20.77,
-          "serve": 2,
-          "rally": 21,
-          "clear": 5
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786856369960",
-    "name": "周语安",
-    "age": "7",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-16",
-    "tests": [
-      {
-        "date": "2026-08-16",
-        "m": {
-          "height": 128,
-          "sitReach": 4,
-          "singleStand": 28.33,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 14.06,
-          "standingJump": 111,
-          "verticalJump": 185,
-          "rope": 164,
-          "swing15": 13,
-          "footwork": 17.78,
-          "serve": 4,
-          "rally": 6,
-          "clear": 6
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1786880965781",
-    "name": "曹宛宁",
-    "age": "",
-    "gender": "女",
-    "cls": "初级班",
-    "createdAt": "2026-08-16",
-    "tests": [
-      {
-        "date": "2026-08-16",
-        "m": {
-          "height": 135,
-          "sitReach": 0,
-          "singleStand": 19.97,
-          "wallSquat": 72,
-          "posture": "正常/正常/正常",
-          "run50": 13.24,
-          "standingJump": 138,
-          "verticalJump": 190,
-          "rope": 177,
-          "swing15": 13,
-          "footwork": 17.98,
-          "serve": 7,
-          "rally": 39,
-          "clear": 9
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787043877871",
-    "name": "程俊辉",
-    "age": "5",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-18",
-    "tests": [
-      {
-        "date": "2026-08-18",
-        "m": {
-          "weight": 20,
-          "posture": "正常/正常/正常"
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787043933196",
-    "name": "彭嘉妤",
-    "age": "11",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-18",
-    "tests": [
-      {
-        "date": "2026-08-18",
-        "m": {
-          "height": 157,
-          "sitReach": 4,
-          "singleStand": 12.58,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 13.39,
-          "standingJump": 138,
-          "verticalJump": 225,
-          "rope": 153,
-          "swing15": 11,
-          "footwork": 23.72,
-          "serve": 6,
-          "rally": 13,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787131546988",
-    "name": "徐恩凌",
-    "age": "8",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-19",
-    "tests": [
-      {
-        "date": "2026-08-19",
-        "m": {
-          "height": 132,
-          "sitReach": 4,
-          "singleStand": 8.57,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 14.71,
-          "standingJump": 127,
-          "verticalJump": 188,
-          "swing15": 10,
-          "footwork": 24.11,
-          "serve": 2,
-          "rally": 3,
-          "clear": 2
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787131612089",
-    "name": "徐贝凌",
-    "age": "10",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-19",
-    "tests": [
-      {
-        "date": "2026-08-19",
-        "m": {
-          "height": 139,
-          "sitReach": 6,
-          "singleStand": 15.65,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 13.24,
-          "standingJump": 145,
-          "verticalJump": 207,
-          "swing15": 10,
-          "footwork": 18.67,
-          "serve": 4,
-          "rally": 11,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787559605910",
-    "name": "杨济鸿",
-    "age": "7",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-24",
-    "tests": [
-      {
-        "date": "2026-08-24",
-        "m": {
-          "height": 128,
-          "sitReach": 5,
-          "singleStand": 22.53,
-          "wallSquat": 39.46,
-          "posture": "正常/正常/正常",
-          "run50": 15.46,
-          "standingJump": 123,
-          "verticalJump": 182,
-          "rope": 102,
-          "swing15": 13,
-          "footwork": 22.24,
-          "serve": 6,
-          "rally": 3,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787649189888",
-    "name": "杨济鸿",
-    "age": "8",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-25",
-    "tests": [
-      {
-        "date": "2026-08-25",
-        "m": {
-          "height": 128,
-          "sitReach": 5,
-          "singleStand": 22.53,
-          "wallSquat": 39.46,
-          "posture": "正常/正常/正常",
-          "run50": 15.46,
-          "standingJump": 123,
-          "verticalJump": 182,
-          "rope": 102,
-          "swing15": 13,
-          "footwork": 22.24,
-          "serve": 6,
-          "rally": 3,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787820493803",
-    "name": "陈梓诺",
-    "age": "10",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-27",
-    "tests": [
-      {
-        "date": "2026-08-27",
-        "m": {
-          "height": 144,
-          "sitReach": 6,
-          "singleStand": 18.72,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 13.75,
-          "standingJump": 130,
-          "verticalJump": 208,
-          "rope": 161,
-          "swing15": 10,
-          "footwork": 22.24,
-          "serve": 6,
-          "rally": 3,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787820674418",
-    "name": "邓泽兮",
-    "age": "7",
-    "gender": "男",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-27",
-    "tests": [
-      {
-        "date": "2026-08-27",
-        "m": {
-          "height": 123,
-          "sitReach": -3,
-          "singleStand": 18.98,
-          "wallSquat": 78.39,
-          "posture": "正常/正常/正常",
-          "run50": 13.46,
-          "standingJump": 116,
-          "verticalJump": 176,
-          "rope": 153,
-          "swing15": 13,
-          "footwork": 21.96,
-          "serve": 8,
-          "rally": 12,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787820786914",
-    "name": "邹亦欢",
-    "age": "9",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-27",
-    "tests": [
-      {
-        "date": "2026-08-27",
-        "m": {
-          "height": 138,
-          "sitReach": 20,
-          "singleStand": 10,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 13.29,
-          "standingJump": 129,
-          "verticalJump": 195,
-          "rope": 157,
-          "swing15": 10,
-          "footwork": 19.96,
-          "serve": 4,
-          "rally": 17,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787820918342",
-    "name": "朱思然",
-    "age": "8",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-27",
-    "tests": [
-      {
-        "date": "2026-08-27",
-        "m": {
-          "height": 138,
-          "sitReach": -4,
-          "singleStand": 11.43,
-          "wallSquat": 16.94,
-          "posture": "正常/正常/正常",
-          "run50": 13.01,
-          "standingJump": 142,
-          "verticalJump": 196,
-          "rope": 120,
-          "swing15": 13,
-          "footwork": 20.14,
-          "serve": 2,
-          "rally": 6,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1787922057640",
-    "name": "熊沁杰妮",
-    "age": "8",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-08-28",
-    "tests": [
-      {
-        "date": "2026-08-28",
-        "m": {
-          "height": 144,
-          "sitReach": 12,
-          "singleStand": 20.67,
-          "wallSquat": 120,
-          "posture": "正常/正常/正常",
-          "run50": 14.28,
-          "standingJump": 125,
-          "verticalJump": 212,
-          "rope": 115,
-          "swing15": 12,
-          "footwork": 20.24,
-          "serve": 2,
-          "rally": 6,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "Sbea8e15b988549",
-    "name": "杨济鸿",
-    "age": "",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 128,
-          "sitReach": 5,
-          "singleStand": 22.53,
-          "wallSquat": 39.46,
-          "run50": 15.46,
-          "standingJump": 123,
-          "verticalJump": 182,
-          "rope": 102,
-          "swing15": 13,
-          "footwork": 22.24,
-          "serve": 6,
-          "rally": 3,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "Se3395646b06048",
-    "name": "陈梓诺",
-    "age": "10",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 144,
-          "sitReach": 6,
-          "singleStand": 18.72,
-          "wallSquat": 120,
-          "run50": 13.75,
-          "standingJump": 130,
-          "verticalJump": 208,
-          "rope": 161,
-          "swing15": 10,
-          "footwork": 22.94,
-          "serve": 8,
-          "rally": 12,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "Sd1f293c4d7264f",
-    "name": "邓泽兮",
-    "age": "7",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 123,
-          "sitReach": -3,
-          "singleStand": 18.98,
-          "wallSquat": 78.39,
-          "run50": 13.46,
-          "standingJump": 116,
-          "verticalJump": 176,
-          "rope": 153,
-          "swing15": 13,
-          "footwork": 21.96,
-          "serve": 5,
-          "rally": 10,
-          "clear": 3
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "Sfff048e01bdf44",
-    "name": "邹亦欢",
-    "age": "9",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 138,
-          "sitReach": 20,
-          "singleStand": 10,
-          "wallSquat": 120,
-          "run50": 13.29,
-          "standingJump": 129,
-          "verticalJump": 195,
-          "rope": 157,
-          "swing15": 10,
-          "footwork": 19.96,
-          "serve": 4,
-          "rally": 17,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S97b8cf013fa240",
-    "name": "朱思然",
-    "age": "8",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 138,
-          "sitReach": -4,
-          "singleStand": 11.43,
-          "wallSquat": 16.94,
-          "run50": 13.01,
-          "standingJump": 142,
-          "verticalJump": 196,
-          "rope": 120,
-          "swing15": 13,
-          "footwork": 20.14,
-          "serve": 2,
-          "rally": 6,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "Se031df3e767d4c",
-    "name": "熊沁杰妮",
-    "age": "8",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 144,
-          "sitReach": 12,
-          "singleStand": 20.67,
-          "wallSquat": 120,
-          "run50": 14.28,
-          "standingJump": 125,
-          "verticalJump": 212,
-          "rope": 115,
-          "swing15": 12,
-          "footwork": 20.24,
-          "serve": 2,
-          "rally": 6,
-          "clear": 4
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S2ef60138b3c343",
-    "name": "高梓杰",
-    "age": "10",
-    "gender": "",
-    "cls": "",
-    "createdAt": "2026-08-30",
-    "tests": [
-      {
-        "date": "2026-08-30",
-        "m": {
-          "height": 151,
-          "sitReach": -4,
-          "singleStand": 7.42,
-          "wallSquat": 40.38,
-          "standingJump": 76,
-          "verticalJump": 202,
-          "rope": 105,
-          "swing15": 10,
-          "footwork": 25.22,
-          "serve": 2,
-          "rally": 2,
-          "clear": 2
-        },
-        "note": ""
-      }
-    ]
-  },
-  {
-    "id": "S1788871436634",
-    "name": "魏君诺",
-    "age": "",
-    "gender": "女",
-    "cls": "启蒙班",
-    "createdAt": "2026-09-08",
-    "tests": [
-      {
-        "date": "2026-09-08",
-        "m": {
-          "height": 110,
-          "sitReach": 18,
-          "singleStand": 23.59,
-          "wallSquat": 75.77,
-          "posture": "正常/正常/正常",
-          "run50": 17.93,
-          "standingJump": 122,
-          "verticalJump": 152,
-          "rope": 42,
-          "rally": 3
-        },
-        "note": ""
-      }
-    ]
-  }
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "步伐更加简洁快速",
+    "bad": "手臂力量略欠缺",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远对拉落点到位",
+    "bad": "四点跑位偏慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前后场步伐更快",
+    "bad": "网前失误较多",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "反手位后场拉球经常不到位",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "对抗意识更好",
+    "bad": "回中太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "原地启动更快",
+    "bad": "高远球不够高，像平高",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767546613",
+  "name": "宛梓恩",
+  "age": "11",
+  "gender": "男",
+  "cls": "中级班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 165,
+     "sitReach": 0,
+     "singleStand": 4,
+     "wallSquat": 132,
+     "posture": "正常/正常/正常",
+     "run50": 10.58,
+     "standingJump": 175,
+     "verticalJump": 234,
+     "rope": 157,
+     "swing15": 13,
+     "footwork": 14.62,
+     "serve": 8,
+     "rally": 14,
+     "clear": 10
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前后场步伐更加快速标准",
+    "bad": "高远球击球点太矮",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "身体柔韧性太差",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "击球落点更到位",
+    "bad": "步伐偏慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远对拉落点更到位",
+    "bad": "后撤转胯步伐太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球落点稳定",
+    "bad": "网前失误多",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前场两点网前更熟练",
+    "bad": "后退速度慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前场两点网前更熟练",
+    "bad": "后退速度慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "对拉高远到位",
+    "bad": "对抗接发太靠后",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更好",
+    "bad": "脚步慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "对抗时步伐更好",
+    "bad": "对抗速度比多球训练速度慢太多",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "多球训练更连贯",
+    "bad": "正手挥拍有时候不转身",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-08",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球很好",
+    "bad": "高远球击球掉肘，握拍动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-10",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球发力很好",
+    "bad": "握拍还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786856369960",
+  "name": "周语安",
+  "age": "7",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-16",
+  "tests": [
+   {
+    "date": "2026-08-16",
+    "m": {
+     "height": 128,
+     "sitReach": 4,
+     "singleStand": 28.33,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 14.06,
+     "standingJump": 111,
+     "verticalJump": 185,
+     "rope": 164,
+     "swing15": 13,
+     "footwork": 17.78,
+     "serve": 4,
+     "rally": 6,
+     "clear": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "击球稳定性提高很大",
+    "bad": "挥拍转身速度偏慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "身体柔韧性较弱",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "挥拍速度更快",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "启蒙–初级考核通过",
+    "bad": "发球要多练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球动作很好",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S220735737471295",
+  "name": "邹书云",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手后场高远球落点更加到位",
+    "bad": "跑位步伐比较慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "跳绳速度比较慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "发球不稳定要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球落点更到位",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球击球稳定",
+    "bad": "发球发不远要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球击球好很多",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "右边发球进步很多，更到位",
+    "bad": "今天高远球退步了，击球点变矮了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场两点高远有进步",
+    "bad": "脚步太慢了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-10",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球挥拍动作连贯",
+    "bad": "上网步伐小碎步太多，蹬转挥拍动作要改进",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767390915",
+  "name": "沈永佳",
+  "age": "9",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 131.5,
+     "sitReach": 11,
+     "singleStand": 6.35,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 11.45,
+     "standingJump": 153,
+     "verticalJump": 190,
+     "rope": 132,
+     "swing15": 14,
+     "footwork": 18.69,
+     "serve": 8,
+     "rally": 27,
+     "clear": 9
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-15",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "跳绳带多加练习",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767725272",
+  "name": "桂浩然",
+  "age": "12",
+  "gender": "男",
+  "cls": "中级班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 149,
+     "sitReach": 10,
+     "singleStand": 88,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 11.75,
+     "standingJump": 139,
+     "verticalJump": 206,
+     "rope": 136,
+     "swing15": 14,
+     "footwork": 14.52,
+     "serve": 5,
+     "rally": 19,
+     "clear": 7
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-15",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "发球待多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-08",
+    "cls": "基础班",
+    "coach": "周震1",
+    "score": "优秀",
+    "good": "全场四点步伐更迅速",
+    "bad": "后场两点高远球质量待提高",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球好",
+    "bad": "动作有一点点迟钝，慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "中级班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "网前小球更好",
+    "bad": "后场高远老是打不到后场",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球失误减少很多",
+    "bad": "反手位击球脚太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "步伐很连贯",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "步伐很好",
+    "bad": "发球动作还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S183031997315938",
+  "name": "刘铭俊",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "体重大，身体柔韧性太差",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更到位",
+    "bad": "步伐太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球落点更到位",
+    "bad": "发球偷懒，不甩臂",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球进步很好",
+    "bad": "反手位高远球步伐要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786856203040",
+  "name": "刘铭翰",
+  "age": "7",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-16",
+  "tests": [
+   {
+    "date": "2026-08-16",
+    "m": {
+     "height": 129,
+     "sitReach": 5,
+     "singleStand": 36.87,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 12.23,
+     "standingJump": 148,
+     "verticalJump": 187,
+     "rope": 140,
+     "swing15": 13,
+     "footwork": 20.77,
+     "serve": 2,
+     "rally": 21,
+     "clear": 5
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "身体柔韧性不行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前后场移动速度比较快",
+    "bad": "经常忘记蹬转",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球挥拍标准",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更好",
+    "bad": "高远球会空球",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球更远了",
+    "bad": "发球要多练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786856100835",
+  "name": "元奕诺",
+  "age": "10",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-16",
+  "tests": [
+   {
+    "date": "2026-08-16",
+    "m": {
+     "height": 148,
+     "sitReach": 4,
+     "singleStand": 22.18,
+     "wallSquat": 53,
+     "posture": "正常/正常/正常",
+     "run50": 11.86,
+     "standingJump": 170,
+     "verticalJump": 217,
+     "rope": 168,
+     "swing15": 14,
+     "footwork": 18.7,
+     "serve": 4,
+     "rally": 15,
+     "clear": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "发球不行，多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球更稳定",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球很好",
+    "bad": "发球动作还需规范",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786880965781",
+  "name": "曹宛宁",
+  "age": "",
+  "gender": "女",
+  "cls": "初级班",
+  "createdAt": "2026-08-16",
+  "tests": [
+   {
+    "date": "2026-08-16",
+    "m": {
+     "height": 135,
+     "sitReach": 0,
+     "singleStand": 19.97,
+     "wallSquat": 72,
+     "posture": "正常/正常/正常",
+     "run50": 13.24,
+     "standingJump": 138,
+     "verticalJump": 190,
+     "rope": 177,
+     "swing15": 13,
+     "footwork": 17.98,
+     "serve": 7,
+     "rally": 39,
+     "clear": 9
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球稳定性还可以",
+    "bad": "握拍姿势不标准",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场球更加到位",
+    "bad": "正手击球转身不彻底",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球球感很好",
+    "bad": "握拍有点不熟悉",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球好很多",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球每个都可以打到",
+    "bad": "发球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "握拍动作比之前好一点了",
+    "bad": "颠球球感还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球稳定性好",
+    "bad": "发球有待加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S7321045140750",
+  "name": "徐梓辰",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远挥拍动作标准",
+    "bad": "蹬转动作不是很标准",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-08",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "网前放网动作更加连贯",
+    "bad": "后退步伐偏慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球动作更加规范",
+    "bad": "后场步伐移动太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "架拍动作很标准",
+    "bad": "高远球击球不太稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "架拍动作很好",
+    "bad": "击球稳定性不是很好",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球好很多",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "击球球感好一点了",
+    "bad": "发球还需加强练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-04",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球有进步",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球动作更连贯",
+    "bad": "发球有待加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S39613654409225",
+  "name": "振洪宇 振洪新",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球落点更到位，弟弟高远动作更完善",
+    "bad": "哥哥架拍太低，弟弟蹬转不太行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥(宇)高远球落点更加到位，弟弟(新)高远球挥拍更加标准",
+    "bad": "哥哥(宇)后场步伐太慢，弟弟(新)转身不够彻底",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥体测成绩优异，弟弟体测成绩良好",
+    "bad": "哥哥发球不稳定，弟弟高原动作不够规范",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥高远球落点更到位，弟弟高原动作更加完善",
+    "bad": "哥哥架拍太低，弟弟挥拍转身不行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球击球球感更好，弟弟跳绳比之前好一点",
+    "bad": "哥哥架拍老是掉肘，弟弟握拍总是要提醒",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥击球球感较好，弟弟握拍动作正确",
+    "bad": "哥哥架拍动作掉肘，弟弟击球动作不够规范",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人击球好一点",
+    "bad": "哥哥击球有时会掉肘，弟弟击球动作还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人击球都较好",
+    "bad": "哥哥击球掉肘，握拍动作需调整，弟弟发球动作不熟悉",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球击球好很多，弟弟颠球较稳定",
+    "bad": "哥哥握拍和高远球发力还需加强，弟弟握拍还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "洪振宇击球球感好",
+    "bad": "洪振宇击球吊肘，握拍需要提醒，击球容易打偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "颠球更多了",
+    "bad": "高远击球率下降了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥发球能过线，弟弟发球能发过网",
+    "bad": "哥哥颠球还需加强，弟弟发球稳定性还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥发球能发过网，弟弟发球比之前好一点",
+    "bad": "哥哥发球高度不够，弟弟发球稳定性不足",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球很好，弟弟发球比之前好",
+    "bad": "哥哥发球不够高，弟弟高远球动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球有进步，弟弟高远球比之前好一点",
+    "bad": "哥哥发球发的太低，还需加强，弟弟发球稳定性还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人发球都有进步",
+    "bad": "两人后撤步太慢，蹬转不正确",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786802854629",
+  "name": "熊一凡",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 127,
+     "sitReach": 7,
+     "singleStand": 8,
+     "wallSquat": 60,
+     "posture": "正常/正常/正常",
+     "run50": 18.48,
+     "standingJump": 125,
+     "verticalJump": 178,
+     "rope": 100,
+     "swing15": 5,
+     "footwork": 28.11,
+     "serve": 9,
+     "rally": 15,
+     "clear": 6
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远挥拍标准",
+    "bad": "蹬转挥拍有待加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远挥拍标准",
+    "bad": "高远球击球点太矮",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "高远击球不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "挥拍发力更好",
+    "bad": "跳绳需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球击球好很多",
+    "bad": "颠球失误太多",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场两点步伐进步很大",
+    "bad": "高远击球点偏低了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球失误减少很多",
+    "bad": "反手位击球脚太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "网前小球更好",
+    "bad": "后场高远老是打不到后场",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-31",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786803291012",
+  "name": "胡昱宸",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 140,
+     "sitReach": 5,
+     "singleStand": 11,
+     "wallSquat": 56,
+     "posture": "正常/正常/正常",
+     "run50": 15.52,
+     "standingJump": 135,
+     "verticalJump": 196,
+     "rope": 147,
+     "swing15": 14,
+     "footwork": 24.05,
+     "serve": 4,
+     "rally": 12,
+     "clear": 4
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "原地高远球击球点更好",
+    "bad": "握拍老是要纠正",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "挥拍动作标准",
+    "bad": "击球感太差",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远击球稳定性更好",
+    "bad": "高远挥拍击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "击球球感更好",
+    "bad": "发球方向不行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "颠球可以有20多个了",
+    "bad": "高远球还是很不稳，手指老是不握紧拍子",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "",
+    "bad": "",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786803353886",
+  "name": "吴泓睿",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 133,
+     "sitReach": 2,
+     "singleStand": 5,
+     "wallSquat": 30,
+     "posture": "正常/正常/正常",
+     "run50": 17.5,
+     "standingJump": 86,
+     "verticalJump": 183,
+     "rope": 25,
+     "swing15": 7,
+     "footwork": 39.74,
+     "serve": 1,
+     "rally": 4,
+     "clear": 2
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球比较稳定",
+    "bad": "体重太大得多锻炼",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球动作落点很好",
+    "bad": "不会跳绳得多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球球感很好",
+    "bad": "后撤步太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球落点更到位",
+    "bad": "发球要多练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "颠球更多了",
+    "bad": "高远击球率下降了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S97318110151487",
+  "name": "黄文杰",
+  "age": "",
+  "gender": "",
+  "cls": "一对一基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-08",
+    "cls": "一对一基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "网前放网球落点更到位",
+    "bad": "后场到网前步伐速度须待提升",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S131352473473858",
+  "name": "左瑞霖",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-08",
+    "cls": "基础班",
+    "coach": "周震1",
+    "score": "优秀",
+    "good": "高远球架拍框架更稳定",
+    "bad": "发力轨迹需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S269679693861859",
+  "name": "沈熠南",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-08",
+    "cls": "基础班",
+    "coach": "周震1",
+    "score": "优秀",
+    "good": "发球失误减少",
+    "bad": "高远球发力待加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "颠球很好",
+    "bad": "后场两点步伐还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球很好",
+    "bad": "发球动作还需规范",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786802756104",
+  "name": "熊安然",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 125,
+     "sitReach": 8,
+     "singleStand": 12,
+     "wallSquat": 50,
+     "posture": "正常/正常/正常",
+     "run50": 16.57,
+     "standingJump": 139,
+     "verticalJump": 181,
+     "rope": 189,
+     "swing15": 10,
+     "footwork": 20.32,
+     "serve": 6,
+     "rally": 3,
+     "clear": 9
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "前后场步伐更加标准",
+    "bad": "击球球感偏差",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "发球动作不够规范",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "挥拍动作连贯流畅",
+    "bad": "架拍的时候总是低点位架拍",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球比之前好一点",
+    "bad": "高远球击球掉肘，颠球还需加强练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳较好",
+    "bad": "发球稳定性不足",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球比以前好一点",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1787043877871",
+  "name": "程俊辉",
+  "age": "5",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-18",
+  "tests": [
+   {
+    "date": "2026-08-18",
+    "m": {
+     "weight": 20,
+     "posture": "正常/正常/正常"
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "高远球击球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球好很好",
+    "bad": "跳绳需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球好一点",
+    "bad": "发球还需加强练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳比之前好一点",
+    "bad": "颠球还需加强练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳比之前好很多",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球比之前好多了",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球比之前好多了",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳有进步",
+    "bad": "高远球击球和发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S31496553798096",
+  "name": "彭佳妤",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-01",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球比之前好",
+    "bad": "高远球发力还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-04",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "定点高远球击球有进步",
+    "bad": "发球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-08",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球有进步",
+    "bad": "发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S34452859722874",
+  "name": "叶明哲",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "姐姐前后场更连贯，弟弟高远更能用上转身的力量",
+    "bad": "姐姐网前击球点太低了，弟弟颠球还不稳定",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥发球能发过网，弟弟发球比之前好一点",
+    "bad": "哥哥发球高度不够，弟弟发球稳定性不足",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场两点高远有进步",
+    "bad": "脚步太慢了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-31",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786760108691",
+  "name": "邹书芸",
+  "age": "7",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 135,
+     "weight": 40,
+     "sitReach": 4,
+     "singleStand": 10,
+     "wallSquat": 46,
+     "posture": "正常/正常/正常",
+     "run50": 14.37,
+     "standingJump": 99,
+     "verticalJump": 184,
+     "rope": 144,
+     "swing15": 10,
+     "footwork": 16.61,
+     "serve": 6,
+     "rally": 12,
+     "clear": 9
+    },
+    "note": ""
+   },
+   {
+    "date": "2026-08-16",
+    "m": {
+     "height": 135,
+     "sitReach": 4,
+     "singleStand": 18.32,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 13.93,
+     "standingJump": 109,
+     "verticalJump": 188,
+     "rope": 136,
+     "swing15": 12,
+     "footwork": 18.62,
+     "serve": 6,
+     "rally": 18,
+     "clear": 8
+    },
+    "note": ""
+   }
+  ],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手后场高远球落点更加到位",
+    "bad": "跑位步伐比较慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩良好",
+    "bad": "跳绳速度比较慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "体测成绩优异",
+    "bad": "发球不稳定要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球落点更到位",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球击球稳定",
+    "bad": "发球发不远要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "高远球击球好很多",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手挑球更加稳定动作到位",
+    "bad": "发球要多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-23",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场正手击球稳定",
+    "bad": "发球要多加练习，发球方向老是偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "右边发球进步很多，更到位",
+    "bad": "今天高远球退步了，击球点变矮了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场吊球衔接前场连贯",
+    "bad": "步伐慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "后场两点高远有进步",
+    "bad": "脚步太慢了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "发球更稳定",
+    "bad": "后退速度太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球还可以",
+    "bad": "正手击球、发球动作还需改进",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "发球失误率低",
+    "bad": "高远球侧身动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球很稳定",
+    "bad": "发球动作还需更规范，前后场步伐还需连贯",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S253993315956363",
+  "name": "洪振宇 洪振新",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-08-14",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥(宇)高远球落点更加到位，弟弟(新)高远球挥拍更加标准",
+    "bad": "哥哥(宇)后场步伐太慢，弟弟(新)转身不够彻底",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-15",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥体测成绩优异，弟弟体测成绩良好",
+    "bad": "哥哥发球不稳定，弟弟高原动作不够规范",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-16",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "哥哥高远球落点更到位，弟弟高原动作更加完善",
+    "bad": "哥哥架拍太低，弟弟挥拍转身不行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-17",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球落点更到位，弟弟高远动作更完善",
+    "bad": "哥哥架拍太低，弟弟蹬转不太行",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-18",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球击球球感更好，弟弟跳绳比之前好一点",
+    "bad": "哥哥架拍老是掉肘，弟弟握拍总是要提醒",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥击球球感较好，弟弟握拍动作正确",
+    "bad": "哥哥架拍动作掉肘，弟弟击球动作不够规范",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-19",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人击球好一点",
+    "bad": "哥哥击球有时会掉肘，弟弟击球动作还需多加练习",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-20",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人击球都较好",
+    "bad": "哥哥击球掉肘，握拍动作需调整，弟弟发球动作不熟悉",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-21",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球击球好很多，弟弟颠球较稳定",
+    "bad": "哥哥握拍和高远球发力还需加强，弟弟握拍还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "洪振宇击球球感好",
+    "bad": "洪振宇击球吊肘，握拍需要提醒，击球容易打偏",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-22",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "正手击球动作更美观",
+    "bad": "挥拍速度太慢老是空拍和击球点太低",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-24",
+    "cls": "基础班",
+    "coach": "杜愈滨1",
+    "score": "优秀",
+    "good": "颠球更多了",
+    "bad": "高远击球率下降了",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-25",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥发球能过线，弟弟发球能发过网",
+    "bad": "哥哥颠球还需加强，弟弟发球稳定性还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-26",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥发球能发过网，弟弟发球比之前好一点",
+    "bad": "哥哥发球高度不够，弟弟发球稳定性不足",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-27",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球很好，弟弟发球比之前好",
+    "bad": "哥哥发球不够高，弟弟高远球动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-28",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球有进步，弟弟高远球比之前好一点",
+    "bad": "哥哥发球发的太低，还需加强，弟弟发球稳定性还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-29",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "两人发球都有进步",
+    "bad": "两人后撤步太慢，蹬转不正确",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-30",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "俩人发球都好很多",
+    "bad": "俩人后撤步太慢，蹬转还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-08-31",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "俩人发球有进步",
+    "bad": "哥哥后撤步、上网步伐太慢，弟弟后撤步、上网步伐太慢",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-04",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "俩人发球有进步",
+    "bad": "哥哥发球还需加强，弟弟高远球击球脚下动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥高远球落点很好，弟弟高远球挥拍很连贯",
+    "bad": "哥哥发球还需加强，弟弟发球、高远球动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "哥哥前后场步伐连贯，弟弟高远击球还可以",
+    "bad": "哥哥上网步伐还需加强，弟弟发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S24408752364762",
+  "name": "邓安淇",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-01",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "前后场步伐很连贯",
+    "bad": "蹬转动作还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-03",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "颠球很好",
+    "bad": "正手发球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-08",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "球感很好",
+    "bad": "步伐还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-10",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "球感很好",
+    "bad": "蹬转挥拍衔接上网动作还不连贯",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S104924219303607",
+  "name": "陶思晨",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-01",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "后撤步高远球击球很好",
+    "bad": "网前放网还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S81024054819565",
+  "name": "黄文皓",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-04",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球挥拍连贯",
+    "bad": "高远球击球还需加强",
+    "feedback": ""
+   },
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球击球发力很好",
+    "bad": "发球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S186626602998718",
+  "name": "刘曾熙 刘曾宇",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-05",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "姐姐发球很好，弟弟前后场步伐连贯",
+    "bad": "姐姐步伐训练还需加强，弟弟高远球击球还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S247704149714121",
+  "name": "廖梓涵",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球动作连贯",
+    "bad": "发球还需多加练习",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S197355659408473",
+  "name": "刘曾熙",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "姐姐高远球很好，弟弟步伐很连贯，发力很好",
+    "bad": "姐姐步伐太慢了，弟弟高远球挥拍还需规范",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S41380740541844",
+  "name": "熊一鸣",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-06",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "前后场步伐很连贯",
+    "bad": "上网跨步还需加强",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S246958614346998",
+  "name": "邓琬妮",
+  "age": "",
+  "gender": "",
+  "cls": "基础班",
+  "createdAt": "",
+  "tests": [],
+  "lessons": [
+   {
+    "date": "2026-09-08",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "跳绳有进步",
+    "bad": "多进行球感练习，发球、高远球还需加强练习",
+    "feedback": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786627682438",
+  "name": "杨启悦",
+  "age": "9",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-13",
+  "tests": [
+   {
+    "date": "2026-08-14",
+    "m": {
+     "posture": "正常/正常/正常"
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767262274",
+  "name": "刘铭燇",
+  "age": "11",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 157.5,
+     "sitReach": -20,
+     "singleStand": 31,
+     "wallSquat": 88,
+     "posture": "正常/正常/正常",
+     "run50": 12.48,
+     "standingJump": 141,
+     "verticalJump": 216,
+     "rope": 174,
+     "swing15": 13,
+     "footwork": 24.91,
+     "serve": 5,
+     "rally": 8,
+     "clear": 9
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786767999102",
+  "name": "江锦城",
+  "age": "7",
+  "gender": "男",
+  "cls": "中级班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 129,
+     "sitReach": 6,
+     "singleStand": 8,
+     "wallSquat": 57,
+     "posture": "正常/正常/正常",
+     "run50": 12.85,
+     "standingJump": 140,
+     "verticalJump": 186,
+     "rope": 163,
+     "swing15": 15,
+     "footwork": 13.07,
+     "serve": 9,
+     "rally": 15,
+     "clear": 9
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786801958192",
+  "name": "洪振新",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 133,
+     "sitReach": -4,
+     "singleStand": 6,
+     "wallSquat": 50,
+     "posture": "正常/正常/正常",
+     "run50": 15.1,
+     "standingJump": 132,
+     "verticalJump": 193,
+     "rope": 130,
+     "swing15": 13,
+     "footwork": 27.13,
+     "serve": 5,
+     "rally": 7,
+     "clear": 4
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786802227429",
+  "name": "洪振宇",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 155,
+     "sitReach": -3,
+     "singleStand": 10,
+     "wallSquat": 80,
+     "posture": "正常/正常/正常",
+     "run50": 14.91,
+     "standingJump": 151,
+     "verticalJump": 220,
+     "rope": 190,
+     "swing15": 15,
+     "footwork": 17.28,
+     "serve": 8,
+     "rally": 2,
+     "clear": 7
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1786803136645",
+  "name": "徐梓宸",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-15",
+  "tests": [
+   {
+    "date": "2026-08-15",
+    "m": {
+     "height": 137,
+     "sitReach": 8,
+     "singleStand": 28,
+     "wallSquat": 60,
+     "posture": "正常/正常/正常",
+     "run50": 15.31,
+     "standingJump": 130,
+     "verticalJump": 198,
+     "rope": 228,
+     "swing15": 17,
+     "footwork": 18.35,
+     "serve": 9,
+     "rally": 33,
+     "clear": 7
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1787043933196",
+  "name": "彭嘉妤",
+  "age": "11",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-18",
+  "tests": [
+   {
+    "date": "2026-08-18",
+    "m": {
+     "height": 157,
+     "sitReach": 4,
+     "singleStand": 12.58,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 13.39,
+     "standingJump": 138,
+     "verticalJump": 225,
+     "rope": 153,
+     "swing15": 11,
+     "footwork": 23.72,
+     "serve": 6,
+     "rally": 13,
+     "clear": 4
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1787131546988",
+  "name": "徐恩凌",
+  "age": "8",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-19",
+  "tests": [
+   {
+    "date": "2026-08-19",
+    "m": {
+     "height": 132,
+     "sitReach": 4,
+     "singleStand": 8.57,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 14.71,
+     "standingJump": 127,
+     "verticalJump": 188,
+     "swing15": 10,
+     "footwork": 24.11,
+     "serve": 2,
+     "rally": 3,
+     "clear": 2
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1787131612089",
+  "name": "徐贝凌",
+  "age": "10",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-08-19",
+  "tests": [
+   {
+    "date": "2026-08-19",
+    "m": {
+     "height": 139,
+     "sitReach": 6,
+     "singleStand": 15.65,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 13.24,
+     "standingJump": 145,
+     "verticalJump": 207,
+     "swing15": 10,
+     "footwork": 18.67,
+     "serve": 4,
+     "rally": 11,
+     "clear": 3
+    },
+    "note": ""
+   }
+  ]
+ },
+ {
+  "id": "S1788871436634",
+  "name": "魏君诺",
+  "age": "",
+  "gender": "女",
+  "cls": "启蒙班",
+  "createdAt": "2026-09-08",
+  "tests": [
+   {
+    "date": "2026-09-08",
+    "m": {
+     "height": 110,
+     "sitReach": 18,
+     "singleStand": 23.59,
+     "wallSquat": 75.77,
+     "posture": "正常/正常/正常",
+     "run50": 17.93,
+     "standingJump": 122,
+     "verticalJump": 152,
+     "rope": 42,
+     "rally": 3
+    },
+    "note": ""
+   }
+  ]
+ }
 ]
