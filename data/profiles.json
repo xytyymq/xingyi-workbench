@@ -2523,6 +2523,26 @@
     "gender": "男",
     "cls": "初级班",
     "createdAt": "2026-09-13",
-    "tests": []
+    "tests": [
+      {
+        "date": "2026-09-13",
+        "m": {
+          "height": 172,
+          "sitReach": 13.5,
+          "singleStand": 194.59,
+          "wallSquat": 600,
+          "posture": "正常/正常/正常",
+          "run50": 11.59,
+          "standingJump": 220,
+          "verticalJump": 257.5,
+          "rope": 168,
+          "swing15": 10,
+          "serve": 6,
+          "rally": 39,
+          "clear": 10
+        },
+        "note": ""
+      }
+    ]
   }
 ]
