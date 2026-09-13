@@ -156,7 +156,22 @@ def main():
             rows.append({k: (r[i] if i < len(r) else "") for k, i in cmap.items()})
 
     existing, sha = load_existing(args.token)
-    messages = existing.get("messages", {})
+    # 规范化历史 key：把 "9 10" / "2026-09-10" / "9.10" 等统一成 "M.D"（如 "9.10"），
+    # 避免同一天出现多个日期键导致前端下拉重复、显示异常（"9 10" 无法被 fmtD 识别）。
+    raw_msgs = existing.get("messages", {})
+    norm_msgs = {}
+    for k, v in raw_msgs.items():
+        m, d = parse_date(k)
+        nk = fmt_key(m, d) if m else k
+        if nk in norm_msgs:
+            seen = {(e.get("names") or [""])[0] for e in norm_msgs[nk]}
+            for e in v:
+                if (e.get("names") or [""])[0] not in seen:
+                    norm_msgs[nk].append(e)
+        else:
+            norm_msgs[nk] = list(v)
+    existing["messages"] = norm_msgs
+    messages = norm_msgs
     added = 0
 
     for d in rows:
@@ -176,7 +191,13 @@ def main():
         entry = {"names": [names_str], "class": cls, "coach": coach,
                  "good": good, "bad": bad, "msg": msg_text}
         msgs = messages.setdefault(key, [])
-        if not any((e.get("names") or [""])[0] == names_str for e in msgs):
+        replaced = False
+        for i, e in enumerate(msgs):
+            if (e.get("names") or [""])[0] == names_str:
+                msgs[i] = entry  # CSV 数据含 good/bad 结构化字段，优先覆盖历史 entry
+                replaced = True
+                break
+        if not replaced:
             msgs.append(entry)
             added += 1
 
