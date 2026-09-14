@@ -2568,7 +2568,27 @@
     "gender": "女",
     "cls": "初级班",
     "createdAt": "2026-09-14",
-    "tests": []
+    "tests": [
+      {
+        "date": "2026-09-06",
+        "m": {
+          "height": 156,
+          "weight": 43.5,
+          "sitReach": 0.6,
+          "singleStand": 21.7,
+          "wallSquat": 38.66,
+          "posture": "正常/正常/正常",
+          "run50": 15.84,
+          "standingJump": 153,
+          "verticalJump": 210,
+          "rope": 112,
+          "swing15": 9,
+          "rally": 4,
+          "clear": 5
+        },
+        "note": ""
+      }
+    ]
   },
   {
     "id": "S104924219303607",
