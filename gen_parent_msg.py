@@ -52,6 +52,12 @@ def map_cols(header):
 
 def parse_date(s):
     s = str(s).strip()
+    # Excel 序列号日期（如 46275 = 2026-09-10）
+    if re.fullmatch(r"\d{4,5}", s):
+        n = int(s)
+        if 40000 <= n <= 60000:
+            dt = datetime.date(1899, 12, 30) + datetime.timedelta(days=n)
+            return dt.month, dt.day
     # 完整日期：2026-09-12 / 2026/9/12 / 2026年9月12日（先吞掉4位年份）
     m = re.search(r'(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})', s)
     if m:
@@ -184,6 +190,7 @@ def main():
             continue
         cls = (d.get("class") or "基础班").strip() or "基础班"
         coach = (d.get("coach") or "").strip()
+        coach = re.sub(r"\d+$", "", coach).strip()  # 清洗录入尾随数字（如 张玉玲1 -> 张玉玲）
         good = (d.get("good") or "").strip()
         bad = (d.get("bad") or "").strip()
         key = fmt_key(month, day)
