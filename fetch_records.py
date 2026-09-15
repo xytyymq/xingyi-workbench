@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 fetch_records.py — 从腾讯文档《学员上课记录》(file_id=BqnMnjsuhwOQ，在腾讯文档里标题显示为"日期"，即工作台运营模块"学员上课记录·去填写/查看"指向的表) 取数，转成 gen_parent_msg.py 要的 CSV。
-列映射：日期->日期, 学员->学员, 班级->班级, 教练->教练, 进步点->今日进步, 待加强->下节课重点
+列映射：日期->日期, 学员->学员, 班级->班级, 教练->教练, 进步点->今日进步, 待加强->下节课重点, 时段->时段
 依赖：同目录的 tencentdocs.py（腾讯文档 MCP CLI，票据由宿主注入）。
 """
 import subprocess, json, time, urllib.request, zipfile, io, xml.etree.ElementTree as ET, os, csv, sys, re
@@ -105,21 +105,47 @@ def main():
     c_coach = idx("教练")
     c_good = idx("进步点", "今日进步")
     c_bad = idx("待加强", "下节课重点")
+    c_slot = idx("时段", "时间段", "时间")
     if c_date < 0:
         print("错误：未找到 上课日期 列，表头=", hdr)
         sys.exit(1)
     with open(OUT, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["日期", "学员", "班级", "教练", "今日进步", "下节课重点"])
+        w.writerow(["日期", "学员", "班级", "教练", "今日进步", "下节课重点", "时段"])
         n = 0
         for r in rows[1:]:
             if not any(r):
                 continue
             g = lambda i: r[i] if 0 <= i < len(r) else ""
             name = g(c_name) or g(c_id)
-            w.writerow([g(c_date), name, g(c_class), g(c_coach), g(c_good), g(c_bad)])
+            slot = normalize_slot(g(c_slot))
+            w.writerow([g(c_date), name, g(c_class), g(c_coach), g(c_good), g(c_bad), slot])
             n += 1
     print(f"已生成 {OUT}，数据行数：{n}")
+
+# 六个标准时段（方案B 定义）
+SLOT_STD = ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1"]
+def normalize_slot(s):
+    s = (s or "").strip()
+    if not s:
+        return ""
+    t = s.replace(" ", "")
+    # 精确命中
+    if t in SLOT_STD:
+        return t
+    # 容错常见变体
+    rules = [
+        ("早上10", "早上10点"), ("10点", "早上10点"), ("上午10", "早上10点"),
+        ("下午2", "下午2点"), ("2点", "下午2点"), ("下午14", "下午2点"),
+        ("下午4", "下午4点"), ("4点", "下午4点"), ("下午16", "下午4点"),
+        ("下午6", "下午6点"), ("6点", "下午6点"), ("晚上6", "下午6点"), ("晚6", "下午6点"),
+        ("1v4", "成人班1V4"), ("1V4", "成人班1V4"), ("一对四", "成人班1V4"), ("1对4", "成人班1V4"),
+        ("1v1", "成人班1V1"), ("1V1", "成人班1V1"), ("一对一", "成人班1V1"), ("1对1", "成人班1V1"),
+    ]
+    for k, v in rules:
+        if k in t:
+            return v
+    return s  # 无法识别则原样保留（便于发现脏数据）
 
 if __name__ == "__main__":
     main()
