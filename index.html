@@ -1,414 +1,835 @@
 <!DOCTYPE html>
+
 <html lang="zh-CN">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
 <title>星羿羽毛球馆 · 全馆工作台</title>
+
   <style>
+
   :root{
+
     --ink:#0f201d; --sub:#5b6b67; --muted:#8aa09a;
+
     --teal-900:#0b3d38; --teal-700:#0f766e; --teal-500:#14b8a6; --teal-100:#d6f3ec;
+
     --mint-50:#f1faf7; --card:#ffffff; --line:#e3ece9;
+
     --coral:#ef7d4f; --coral-soft:#fdeee6;
+
     --gold:#e0a93b; --good:#16a34a; --bad:#dc2626;
+
     --radius:16px; --shadow:0 2px 10px rgba(15,32,29,.06);
+
   }
+
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
   html{-webkit-text-size-adjust:100%}
+
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+
     background:var(--mint-50);color:var(--ink);line-height:1.65;font-size:15px;}
 
+
+
   .xy-topbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+
     padding:10px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+
   .xy-topbar .brand{font-weight:800;font-size:14px;color:var(--teal-700);letter-spacing:.3px;}
+
   .xy-topbar .brand .em{margin-right:5px;}
+
   .xy-topbar .tag{font-size:11px;color:var(--teal-700);background:var(--teal-100);padding:4px 10px;border-radius:20px;font-weight:700;}
 
+
+
   .xy-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));
+
     color:#fff;padding:32px 20px 28px;}
+
   .xy-hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.10;
+
     background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.7) 22px 23px);}
+
   .xy-hero>*{position:relative;z-index:1;}
+
   .xy-hero h1{margin:0;font-size:clamp(21px,5.6vw,27px);font-weight:800;letter-spacing:.5px;animation:fadeUp .5s ease-out both;}
+
   .xy-hero p{margin:9px 0 0;font-size:13px;opacity:.92;animation:fadeUp .5s .08s ease-out both;}
+
   .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px;animation:fadeUp .5s .16s ease-out both;}
+
   .quick a{flex:1;min-width:90px;text-align:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
+
     color:#fff;text-decoration:none;padding:9px 8px;border-radius:12px;font-size:12.5px;font-weight:700;backdrop-filter:blur(4px);transition:.2s;}
+
   .quick a:active{background:rgba(255,255,255,.3);}
+
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+
 
   .xy-wrap{max-width:680px;margin:0 auto;}
 
+
+
   .xy-sec{margin:26px 16px 0;}
+
   .xy-sec-title{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--teal-700);margin:0 0 12px;}
+
   .xy-sec-title .bar{width:4px;height:18px;background:var(--coral);border-radius:3px;}
+
   .xy-sec-title .hint{font-size:11.5px;font-weight:600;color:var(--muted);margin-left:auto;}
 
+
+
   /* today zone */
+
   .today-strip{display:flex;gap:10px;flex-wrap:wrap;}
+
   .today-badge{flex:1;min-width:100px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+
     padding:12px 10px;text-align:center;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s;}
+
   .today-badge:active{transform:translateY(-1px);}
+
   .today-badge .tb-num{font-size:13px;font-weight:800;color:var(--sub);line-height:1.3;}
+
   .today-badge .tb-label{font-size:11px;color:var(--muted);margin-top:2px;}
+
   .today-badge.warn{border-color:var(--coral);background:var(--coral-soft);}
+
   .today-badge.warn .tb-num{color:var(--coral);}
+
   .today-badge.good{border-color:var(--good);background:#f0fdf4;}
+
   .today-badge.good .tb-num{color:var(--good);}
+
   .auto-bar{margin-top:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;
+
     padding:8px 12px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--sub);}
+
   .auto-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:4px;vertical-align:middle;}
+
   .auto-dot.on{background:var(--good);}
 
+
+
   /* 课程预警窗口（快捷入口内，课程表下方） */
+
   .warn-window{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;
+
     background:linear-gradient(135deg,#fff,#fdeee6);border:1.5px solid var(--coral);border-radius:14px;
+
     padding:12px 14px;text-decoration:none;box-shadow:var(--shadow);transition:transform .15s;}
+
   .warn-window:active{transform:translateY(-1px);}
+
   .ww-left{display:flex;align-items:center;gap:10px;}
+
   .ww-icon{font-size:24px;}
+
   .ww-title{font-weight:800;font-size:14.5px;color:var(--coral);}
+
   .ww-sub{font-size:11px;color:var(--sub);}
+
   .ww-right{display:flex;flex-direction:column;gap:4px;align-items:flex-end;}
+
   .ww-pill{font-size:11px;font-weight:700;color:var(--bad);background:#fff;border:1px solid #f3c9b8;border-radius:20px;padding:3px 9px;white-space:nowrap;}
+
   .ww-pill.warn{color:var(--coral);}
 
+
+
   /* flow */
+
   .flow{position:relative;padding-left:30px;}
+
   .flow::before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:2px;background:linear-gradient(var(--teal-500),var(--line));}
+
   .step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+
     padding:14px 15px;margin-bottom:12px;box-shadow:var(--shadow);transition:transform .15s ease-out,box-shadow .15s ease-out;}
+
   .step::before{content:"";position:absolute;left:-23px;top:20px;width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid var(--teal-500);}
+
   .step:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,32,29,.1);}
+
   .step.core{border-color:var(--coral);box-shadow:0 4px 16px rgba(239,125,79,.18);}
+
   .step.core::before{border-color:var(--coral);background:var(--coral);}
+
   .step .num{display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:50%;
+
     background:var(--teal-700);color:#fff;font-size:12px;font-weight:800;margin-right:8px;vertical-align:middle;}
+
   .step .st-name{font-weight:800;font-size:15px;}
+
   .step .st-desc{color:var(--sub);font-size:12.5px;margin:5px 0 10px;}
+
   .pill{display:inline-block;color:#fff;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;vertical-align:middle;}
+
   .pill.core{background:var(--coral);margin-left:6px;}
+
   .pill.teal{background:var(--teal-700);}
+
   .open-btn{display:inline-block;width:100%;text-align:center;background:var(--teal-700);color:#fff;
+
     text-decoration:none;padding:10px;border-radius:11px;font-size:14px;font-weight:700;transition:.2s;}
+
   .open-btn:active{background:var(--teal-900);}
+
   .open-btn.accent{background:var(--coral);}
+
   .open-btn.accent:active{filter:brightness(.94);}
 
+
+
   /* grid tools */
+
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
   .tool{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:15px 13px;
+
     box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .15s ease-out,box-shadow .15s ease-out;}
+
   .tool:active{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,32,29,.1);}
+
   .tool .ico{font-size:26px;}
+
   .tool .t-name{font-weight:800;font-size:14.5px;margin-top:5px;color:var(--ink);}
+
   .tool .t-use{color:var(--sub);font-size:11.5px;flex:1;margin:5px 0 9px;line-height:1.55;}
+
   .tool .t-when{font-size:11px;color:var(--teal-700);background:var(--teal-100);border-radius:8px;padding:4px 8px;margin-bottom:9px;}
+
   .tool a.go{text-align:center;background:var(--teal-100);color:var(--teal-700);border:1px solid var(--teal-500);
+
     text-decoration:none;padding:9px;border-radius:10px;font-size:13px;font-weight:700;transition:.2s;}
+
   .tool a.go:active{background:var(--teal-500);color:#fff;}
 
+
+
   /* hub for data cards */
+
   .hub{background:linear-gradient(135deg,var(--teal-900),#115e59);color:#fff;border-radius:var(--radius);padding:18px 16px;box-shadow:var(--shadow);}
+
   .hub h3{margin:0 0 4px;font-size:15px;}
+
   .hub h3.sub{margin-top:14px;font-size:13px;opacity:.85;}
+
   .hub p{margin:0 0 12px;font-size:12.5px;opacity:.9;}
+
   .hub a{display:block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);
+
     color:#fff;text-decoration:none;padding:11px;border-radius:11px;font-weight:700;font-size:13.5px;margin-bottom:9px;transition:.2s;}
+
   .hub a:last-child{margin-bottom:0;}
+
   .hub a:active{background:rgba(255,255,255,.26);}
+
   .hub hr{border:none;border-top:1px solid rgba(255,255,255,.18);margin:12px 0 10px;}
 
+
+
   /* finance card */
+
   .fin-card{background:var(--card);border:1px solid var(--gold);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);}
+
   .fin-card h3{font-size:14px;color:var(--ink);margin:0 0 4px;}
+
   .fin-card p{font-size:12px;color:var(--sub);margin:0 0 10px;}
+
   .fin-card a{display:inline-block;background:var(--gold);color:#fff;text-decoration:none;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:700;}
 
+
+
   .xy-footer{margin:34px 16px 42px;text-align:center;color:var(--muted);font-size:11.5px;line-height:1.95;}
+
   .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
+
   .xy-footer b{color:var(--teal-700);}
+
   svg{display:block;max-width:100%;}
 
+
+
   /* 角色可见性控制 */
+
   body.xy-role-coach .boss-only, body.xy-role-admin .boss-only { display:none !important; }
+
   .role-badge{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:700;margin-left:4px;}
+
   .role-badge.boss{background:var(--coral);color:#fff;}
+
   .role-badge.coach{background:var(--teal-100);color:var(--teal-700);}
+
   .role-badge.admin{background:var(--gold);color:#fff;}
 
 
 
+
+
+
+
   /* 数据分组折叠 */
+
   .data-group{margin-bottom:8px;}
+
   .data-group-head{display:flex;align-items:center;justify-content:space-between;
+
     background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);
+
     color:#fff;padding:11px 14px;border-radius:11px;font-size:13px;font-weight:700;cursor:pointer;user-select:none;transition:.15s;}
+
   .data-group-head:active{background:rgba(255,255,255,.22);}
+
   .data-group-head .dg-icon{transition:transform .2s;font-size:10px;margin-left:8px;}
+
   .data-group-body{display:none;padding-top:5px;}
+
   .data-group.open .data-group-body{display:block;}
+
   .data-group.open .data-group-head .dg-icon{transform:rotate(180deg);}
+
   .data-group-body a{display:block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+
     color:#fff;text-decoration:none;padding:10px 14px;border-radius:9px;font-weight:600;font-size:12.5px;margin-bottom:5px;transition:.15s;}
+
   .data-group-body a:active{background:rgba(255,255,255,.22);}
+
   .data-group-body a:last-child{margin-bottom:0;}
+
   .data-group-count{font-size:10.5px;opacity:.7;font-weight:400;}
 
+
+
 </style>
+
 <script src="xy-auth.js"></script>
+
 </head>
+
 <body>
 
+
+
 <div class="xy-topbar">
+
   <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
+
   <span class="tag" style="margin-right:6px;">全馆总入口</span>
+
   <span class="role-badge" id="roleBadge">老板</span>
+
   <a href="guide.html" target="_blank" rel="noopener" style="font-size:11px;color:var(--teal-700);text-decoration:none;font-weight:700;background:var(--teal-100);padding:4px 10px;border-radius:20px;">📖 手册</a>
+
 </div>
 
+
+
 <header class="xy-hero">
+
   <h1>招生 · 教学 · 自媒体 · 经营</h1>
+
   <p>从邀约到续费，一套流程走完 · 一个工作台管全馆</p>
+
   <div class="quick">
+
     <a href="#flow">📋 招生流程</a>
+
     <a href="#teach">🎓 教学运营</a>
+
     <a href="#data">📊 数据报表</a>
+
     <a href="points.html" target="_blank" rel="noopener">🏆 学员积分</a>
+
     <a href="parent-msg.html" target="_blank" rel="noopener">📨 家长消息</a>
+
     <a href="peixun.html" target="_blank" rel="noopener">🗂️ 培训配套</a>
+
     <a href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank" rel="noopener">📦 库存管理</a>
+
   </div>
+
 </header>
+
+
 
 <div class="xy-wrap">
 
+
+
   <!-- 2. 快捷入口 -->
+
   <section class="xy-sec" id="today">
+
     <div class="xy-sec-title"><span class="bar"></span>快捷入口<span class="hint">每日必看</span></div>
+
     <div class="today-strip">
+
       <a class="today-badge" href="schedule-editor.html" target="_blank" rel="noopener">
+
         <div class="tb-num">课程表</div>
+
         <div class="tb-label">点开查看与编辑本周排课</div>
+
       </a>
+
       <a class="today-badge" href="parent-msg.html" target="_blank" rel="noopener">
+
         <div class="tb-num">家长消息</div>
+
         <div class="tb-label">课后反馈一键复制发给家长</div>
+
       </a>
+
     </div>
+
     <div class="auto-bar">
+
       自动化状态：<span><span class="auto-dot on"></span>课前提醒 7:30</span>
+
       <span><span class="auto-dot on"></span>续费预警 8:00</span>
+
       <span><span class="auto-dot on"></span>文案库 每15天</span>
+
     </div>
+
     <a class="warn-window" href="warning.html" target="_blank" rel="noopener">
+
       <div class="ww-left">
+
         <div class="ww-icon">🚨</div>
+
         <div>
+
           <div class="ww-title">课程预警</div>
+
           <div class="ww-sub" id="warnHomeSub">剩余课时 ≤10 课预警</div>
+
         </div>
+
       </div>
+
       <div class="ww-right">
+
         <span class="ww-pill" id="warnLow">剩≤10课: –</span>
+
       </div>
+
     </a>
+
   </section>
+
+
 
   <!-- 2. 招生转化流程 -->
+
   <section class="xy-sec" id="flow">
+
     <div class="xy-sec-title"><span class="bar"></span>招生转化流程<span class="hint">按顺序点</span></div>
+
     <div class="flow">
+
       <div class="step">
+
         <span class="num">1</span><span class="st-name">邀约转化</span>
+
         <div class="st-desc">邀家长来定级测试 · 话术 · 6 大异议应对 · 续费策略</div>
+
         <a class="open-btn" href="invite.html" target="_blank" rel="noopener">打开 · 定级测试邀约简报</a>
+
       </div>
+
       <div class="step">
+
         <span class="num">2</span><span class="st-name">现场考核</span>
+
         <div class="st-desc">对照分级标准现场打分 · 升学硬指标速查</div>
+
         <a class="open-btn" href="chart.html" target="_blank" rel="noopener">打开 · 现场考核速查图</a>
+
       </div>
+
       <div class="step core">
+
         <span class="num">3</span><span class="st-name">体测档案<span class="pill core">核心</span></span>
+
         <div class="st-desc">记录每次体测 · 进步趋势图 · 一键生成发给家长的成果图</div>
+
         <a class="open-btn accent" href="archive.html" target="_blank" rel="noopener">打开 · 学员体测档案</a>
+
       </div>
+
       <div class="step">
+
         <span class="num">4</span><span class="st-name">成果交付</span>
+
         <div class="st-desc">给孩子发定级荣誉证书 · 增强成就感、促发朋友圈</div>
+
         <a class="open-btn" href="cert.html" target="_blank" rel="noopener">打开 · 荣誉证书</a>
+
       </div>
+
       <div class="step">
+
         <span class="num">5</span><span class="st-name">续费承接</span>
+
         <div class="st-desc">用体测数据 + 分班方案自然导向续费，回到第 ① 步异议应对</div>
+
         <a class="open-btn" href="invite.html" target="_blank" rel="noopener">回到 · 邀约简报（异议应对）</a>
+
       </div>
+
     </div>
+
   </section>
+
+
 
   <!-- 3. 自媒体 & 增长 -->
+
   <section class="xy-sec" id="growth">
+
     <div class="xy-sec-title"><span class="bar"></span>自媒体 & 增长<span class="hint">拉新 · 转化 · 裂变</span></div>
+
     <div class="grid">
+
       <div class="tool">
+
         <div class="ico">📱</div>
+
         <div class="t-name">自媒体内容规划</div>
+
         <div class="t-use">抖音/小红书定位 · 选题库 · 脚本模板 · 发布排期</div>
+
         <div class="t-when">拍视频/排内容前翻</div>
+
         <a class="go" href="media.html" target="_blank" rel="noopener">打开</a>
+
       </div>
+
       <div class="tool">
+
         <div class="ico">📚</div>
+
         <div class="t-name">AI 文案库</div>
+
         <div class="t-use">每 15 天自动生成新文案 · 朋友圈/小红书/抖音直接取用</div>
+
         <div class="t-when">需要文案时打开</div>
+
         <a class="go" href="media.html?tab=ailib" target="_blank" rel="noopener">打开</a>
+
       </div>
+
     </div>
+
   </section>
+
+
 
   <!-- 4. 教学运营 -->
+
   <section class="xy-sec" id="teach">
+
     <div class="xy-sec-title"><span class="bar"></span>教学运营<span class="hint">教练 · 教务日常</span></div>
+
     <div class="grid">
+
       <div class="tool">
+
         <div class="ico">🗣️</div>
+
         <div class="t-name">教学话术系统</div>
+
         <div class="t-use">教练/沟通话术：邀约 · 续费 · 投诉 · 进步反馈</div>
+
         <div class="t-when">跟家长沟通前查一句</div>
+
         <a class="go" href="scripts.html" target="_blank" rel="noopener">打开</a>
+
       </div>
+
       <div class="tool">
+
         <div class="ico">📚</div>
+
         <div class="t-name">课程培训体系</div>
+
         <div class="t-use">启蒙/初级/中级/精英分级标准原文与升学硬指标</div>
+
         <div class="t-when">查分级标准、定班依据</div>
+
         <a class="go" href="course.html" target="_blank" rel="noopener">打开</a>
+
       </div>
+
       <div class="tool">
+
         <div class="ico">📐</div>
+
         <div class="t-name">考核速查图</div>
+
         <div class="t-use">四级技术指标 · 现场打分对照 · 升学门槛</div>
+
         <div class="t-when">现场考核时</div>
+
         <a class="go" href="chart.html" target="_blank" rel="noopener">打开</a>
+
+      </div>
+
+      <div class="tool">
+
+        <div class="ico">👨‍🏫</div>
+
+        <div class="t-name">教练工作台</div>
+
+        <div class="t-use">考核标准 · 价格速查 · 促出勤话术 · 课堂自评指南</div>
+
+        <div class="t-when">教练日常打开</div>
+
+        <a class="go" href="coach.html" target="_blank" rel="noopener">打开</a>
+
       </div>
       <div class="tool">
-        <div class="ico">👨‍🏫</div>
-        <div class="t-name">教练工作台</div>
-        <div class="t-use">考核标准 · 价格速查 · 促出勤话术 · 课堂自评指南</div>
-        <div class="t-when">教练日常打开</div>
-        <a class="go" href="coach.html" target="_blank" rel="noopener">打开</a>
+        <div class="ico">📊</div>
+        <div class="t-name">教练课时统计</div>
+        <div class="t-use">教练 × 日期 × 时段 三维课时统计 · 2026年9月起 · 每日 20:40 自动更新</div>
+        <div class="t-when">查教练排班 / 课时量</div>
+        <a class="go" href="coach-lessons.html" target="_blank" rel="noopener">打开</a>
       </div>
+
     </div>
+
   </section>
+
+
 
   <!-- 4.5 赛事 & 活动 -->
+
   <section class="xy-sec" id="match">
+
     <div class="xy-sec-title"><span class="bar"></span>赛事 & 活动<span class="hint">积分赛 · 现场记分</span></div>
+
     <div class="grid">
+
       <div class="tool">
+
         <div class="ico">🏆</div>
+
         <div class="t-name">赛事总览 & 现场平台</div>
+
         <div class="t-use">积分赛 / 随机大乱斗 · 分组 · 记分 · 对阵图 · 颁奖图片</div>
+
         <div class="t-when">办赛 / 训练赛时打开</div>
+
         <a class="go" href="saishi.html" target="_blank" rel="noopener">打开</a>
+
       </div>
+
     </div>
+
   </section>
+
+
 
   <!-- 5. 数据 & 报表 -->
+
   <section class="xy-sec" id="data">
+
     <div class="xy-sec-title"><span class="bar"></span>数据 & 报表<span class="hint">点击展开</span></div>
+
     <div class="hub">
+
       <h3>所有业务数据真源，手机电脑实时共享</h3>
 
+
+
       <div class="data-group open">
+
         <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+
           核心数据表 <span class="data-group-count">2 张</span>
+
           <span class="dg-icon">▼</span>
+
         </div>
+
         <div class="data-group-body">
+
           <a href="schedule-editor.html" target="_blank" rel="noopener">🗓️ 课程表（可编辑）</a>
+
           <a href="https://docs.qq.com/sheet/DQkNtTW5hVnZCVFJv" target="_blank" rel="noopener">📊 学员体测档案</a>
+
         </div>
+
       </div>
+
+
 
       <div class="data-group">
+
         <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+
           运营记录 <span class="data-group-count">4 项</span>
+
           <span class="dg-icon">▼</span>
+
         </div>
+
         <div class="data-group-body">
+
           <a href="work-report.html" target="_blank" rel="noopener">📝 员工工作日报</a>
+
           <a href="https://docs.qq.com/sheet/DQnFuTW5qc3Vod09R" target="_blank" rel="noopener">🧒 学员上课记录</a>
+
           <a href="https://docs.qq.com/sheet/DQm5GZVdlblBka0xo" target="_blank" rel="noopener">📱 自媒体文案库（自动生成）</a>
+
           <a href="work-report.html" target="_blank" rel="noopener">📈 学生动态管理图</a>
+
         </div>
+
       </div>
+
+
 
       <div class="data-group boss-only">
+
         <div class="data-group-head" onclick="this.parentElement.classList.toggle('open')">
+
           系统管理 <span class="data-group-count">老板</span>
+
           <span class="dg-icon">▼</span>
+
         </div>
+
         <div class="data-group-body">
+
           <a href="https://xingyi-auth-logger-q7tyq9xg.edgeone.cool?eo_token=4ca2b11aff5758056e0cb19b14f77aee&eo_time=1786193438" target="_blank" rel="noopener">🔐 授权日志</a>
+
         </div>
+
       </div>
+
     </div>
+
   </section>
+
+
 
   <!-- 6. 财务管理 -->
+
   <section class="xy-sec boss-only" id="finance" style="display:none;">
+
     <div class="xy-sec-title"><span class="bar"></span>财务管理</div>
+
     <div class="grid">
+
       <div class="tool">
+
         <div class="ico">📦</div>
+
         <div class="t-name">库存管理</div>
+
         <div class="t-use">进货/销货各记一笔，每日 8:30 自动统计库存，低于警戒线标红提醒</div>
+
         <div class="t-when">进出货时随手记</div>
+
         <a class="go" href="https://docs.qq.com/sheet/DQnVWTnRJWE1ZbEJ0" target="_blank" rel="noopener">打开</a>
+
       </div>
+
     </div>
+
   </section>
 
+
+
   <footer class="xy-footer">
+
     🏸 星羿羽毛球馆 · AI 全馆工作台（全馆唯一总入口）<br>
+
     可添加到手机主屏幕，像 App 一样随时打开<br>
+
     已上线页面：招生流程 / 教学运营 / 数据报表 / 赛事 / 库存管理<br>
+
     <b>站点永久链接：https://xytyymq.github.io/xingyi-workbench/</b>
+
   </footer>
+
 </div>
 
+
+
 <script>
+
 (function(){
+
   var role = (typeof XYGate !== 'undefined' && XYGate.role) ? XYGate.role() : 'boss';
+
   var badge = document.getElementById('roleBadge');
+
   var names = {boss:'👑 老板', coach:'👨‍🏫 教练', admin:'📋 教务'};
+
   badge.textContent = names[role] || '老板';
+
   badge.className = 'role-badge ' + role;
+
 })();
 
+
+
 // 首页课程预警窗口实时计数（读 Pages 静态地址，无 404 误报）
+
 (function loadWarnHome(){
+
   var lowEl=document.getElementById('warnLow'),
+
       sub=document.getElementById('warnHomeSub');
+
   if(!lowEl) return;
+
   var VIEW='https://xytyymq.github.io/xingyi-workbench/data/students.json';
+
   fetch(VIEW+'?t='+Date.now(),{cache:'no-store'}).then(function(r){
+
     if(!r.ok) throw new Error('HTTP '+r.status);
+
     return r.json();
+
   }).then(function(arr){
+
     if(!Array.isArray(arr)) throw new Error('bad');
+
     var low=arr.filter(function(s){return !s.isYearCard && Number(s.remaining)<=10;}).length;
+
     lowEl.textContent='剩≤10课: '+low+'人';
+
     sub.textContent = low>0 ? '⚠️ 共 '+low+' 位学员，点开处理' : '目前无预警 ✅';
+
   }).catch(function(){
+
     lowEl.textContent='剩≤10课: –';
+
     sub.textContent='去录入学员课时表';
+
   });
+
 })();
+
 </script>
+
 </body>
+
 </html>
+
