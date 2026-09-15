@@ -46,13 +46,13 @@
 <div class="sec"><h2 id="matrixTitle">按日期 × 时段 明细</h2><div id="matrix"></div></div>
 
 <script>
-const DATA = {"updated": "2026-09-15 20:13", "slots": ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1", "未录"], "coaches": {"杜渝彬": {"total": 138, "byDate": {"8.8": 2, "8.9": 3, "8.14": 12, "8.15": 13, "8.16": 10, "8.17": 8, "8.18": 7, "8.19": 10, "8.20": 8, "8.21": 9, "8.22": 10, "8.23": 5, "8.24": 8, "8.25": 7, "8.26": 4, "8.27": 5, "8.28": 7, "8.29": 3, "8.30": 5, "8.31": 2}, "bySlot": {"未录": 138}}, "周震": {"total": 3, "byDate": {"8.8": 3}, "bySlot": {"未录": 3}}, "张玉玲": {"total": 109, "byDate": {"8.17": 5, "8.18": 4, "8.19": 8, "8.20": 4, "8.21": 4, "8.22": 2, "8.23": 1, "8.25": 1, "8.26": 2, "8.27": 1, "8.28": 4, "8.29": 1, "8.30": 3, "8.31": 1, "9.1": 4, "9.3": 5, "9.4": 4, "9.5": 11, "9.6": 9, "9.8": 5, "9.10": 4, "9.11": 5, "9.12": 9, "9.13": 12}, "bySlot": {"未录": 109}}}, "dates": ["8.8", "8.9", "8.14", "8.15", "8.16", "8.17", "8.18", "8.19", "8.20", "8.21", "8.22", "8.23", "8.24", "8.25", "8.26", "8.27", "8.28", "8.29", "8.30", "8.31", "9.1", "9.3", "9.4", "9.5", "9.6", "9.8", "9.10", "9.11", "9.12", "9.13"], "unknownDates": 0};
+const DATA = {"updated": "2026-09-15 20:37", "scopeFrom": "2026-09-01", "slots": ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1", "未录"], "coaches": {"张玉玲": {"total": 68, "byDate": {"9.1": 4, "9.3": 5, "9.4": 4, "9.5": 11, "9.6": 9, "9.8": 5, "9.10": 4, "9.11": 5, "9.12": 9, "9.13": 12}, "bySlot": {"未录": 68}}, "未填教练": {"total": 4, "byDate": {"9.15": 4}, "bySlot": {"未录": 4}}}, "dates": ["9.1", "9.3", "9.4", "9.5", "9.6", "9.8", "9.10", "9.11", "9.12", "9.13", "9.15"], "unknownDates": 0, "skippedPre": 182};
 const SLOTS = DATA.slots.filter(s=>s!=="未录");
 const SLOT_COLORS = {"早上10点":"#0f9d58","下午2点":"#34c759","下午4点":"#ffb020","下午6点":"#ff7a18","成人班1V4":"#5b8def","成人班1V1":"#9b6dff"};
 function fmtD(k){const p=k.split(".");return p.length===2?p[0]+"月"+p[1]+"日":k;}
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
-document.getElementById("meta").textContent = "更新于 "+DATA.updated+" · 共 "+DATA.dates.length+" 个上课日 · 数据来源《学员上课记录》";
+document.getElementById("meta").textContent = "更新于 "+DATA.updated+" · 共 "+DATA.dates.length+" 个上课日 · 统计区间：2026年9月起 · 数据来源《学员上课记录》";
 
 // 教练下拉
 const sel=document.getElementById("coachSel");
@@ -124,10 +124,17 @@ function renderMatrix(filter){
 function render(filter){
   renderKpis(filter);renderCross(filter);renderMatrix(filter);
 }
-// 未录提示
+// 未录 / 口径 提示
+let warns=[];
 const unTotal=Object.values(DATA.coaches).reduce((a,c)=>a+(c.bySlot["未录"]||0),0);
 if(unTotal>0){
-  document.getElementById("warn").innerHTML=`<div class="note">⚠️ 当前有 ${unTotal} 节课时尚未录入「时段」（源表《学员上课记录》未填时段列）。教练补录时段后，三维统计自动生效。</div>`;
+  warns.push(`⚠️ 当前有 ${unTotal} 节课时尚未录入「时段」（源表《学员上课记录》未填时段列）。教练补录时段后，三维统计自动生效。`);
+}
+if(DATA.skippedPre>0){
+  warns.push(`📅 已按口径仅统计 2026年9月 起的课时，更早的 ${DATA.skippedPre} 节已排除。`);
+}
+if(warns.length){
+  document.getElementById("warn").innerHTML=warns.map(w=>`<div class="note">${w}</div>`).join("");
 }
 render("__ALL__");
 </script>
