@@ -22,6 +22,9 @@ REPO = "xytyymq/xingyi-workbench"
 
 SLOT_STD = ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1"]
 
+# 统计口径：只统计 2026-09-01 及以后的课时（老板要求）
+CUTOFF = date(2026, 9, 1)
+
 # 教练名归一：去尾随数字 + 音近异写别名（以排课表 schedule.json 干净名为准）
 COACH_ALIAS = {
     "杜愈滨": "杜渝彬", "杜愈滨1": "杜渝彬",
@@ -55,6 +58,22 @@ def parse_date(s):
     if m:
         return f"{int(m.group(1))}.{int(m.group(2))}"
     return s or "未知"
+
+def to_abs(s):
+    """把日期列解析为绝对日期 date（用于按 2026-09-01 口径过滤）；无法解析返回 None。"""
+    s = str(s).strip()
+    if re.fullmatch(r"\d{4,5}", s):  # Excel 序列号 46275
+        try:
+            return date(1899, 12, 30) + timedelta(days=int(s))
+        except Exception:
+            pass
+    m = re.search(r"(\d{4})[-/.年](\d{1,2})[-/.月](\d{1,2})", s)
+    if m:
+        return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+    m = re.search(r"(\d{1,2})[.月/ ](\d{1,2})", s)  # M.D / M月D / M/D
+    if m:
+        return date(2026, int(m.group(1)), int(m.group(2)))
+    return None
 
 def norm_slot(s):
     s = (s or "").strip()
@@ -167,7 +186,7 @@ const SLOT_COLORS = {"早上10点":"#0f9d58","下午2点":"#34c759","下午4点"
 function fmtD(k){const p=k.split(".");return p.length===2?p[0]+"月"+p[1]+"日":k;}
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
-document.getElementById("meta").textContent = "更新于 "+DATA.updated+" · 共 "+DATA.dates.length+" 个上课日 · 数据来源《学员上课记录》";
+document.getElementById("meta").textContent = "更新于 "+DATA.updated+" · 共 "+DATA.dates.length+" 个上课日 · 统计区间：2026年9月起 · 数据来源《学员上课记录》";
 
 // 教练下拉
 const sel=document.getElementById("coachSel");
@@ -239,10 +258,17 @@ function renderMatrix(filter){
 function render(filter){
   renderKpis(filter);renderCross(filter);renderMatrix(filter);
 }
-// 未录提示
+// 未录 / 口径 提示
+let warns=[];
 const unTotal=Object.values(DATA.coaches).reduce((a,c)=>a+(c.bySlot["未录"]||0),0);
 if(unTotal>0){
-  document.getElementById("warn").innerHTML=`<div class="note">⚠️ 当前有 ${unTotal} 节课时尚未录入「时段」（源表《学员上课记录》未填时段列）。教练补录时段后，三维统计自动生效。</div>`;
+  warns.push(`⚠️ 当前有 ${unTotal} 节课时尚未录入「时段」（源表《学员上课记录》未填时段列）。教练补录时段后，三维统计自动生效。`);
+}
+if(DATA.skippedPre>0){
+  warns.push(`📅 已按口径仅统计 2026年9月 起的课时，更早的 ${DATA.skippedPre} 节已排除。`);
+}
+if(warns.length){
+  document.getElementById("warn").innerHTML=warns.map(w=>`<div class="note">${w}</div>`).join("");
 }
 render("__ALL__");
 </script>
@@ -280,13 +306,19 @@ def main():
     coaches = {}
     dates_set = set()
     unknowns = 0
+    skipped_pre = 0  # 早于 2026-09-01 被排除的课时
     for r in data:
         g = lambda i: r[i] if 0 <= i < len(r) else ""
         coach = norm_coach(g(ci_coach))
+        ad = to_abs(g(ci_date))
+        if ad is None:
+            unknowns += 1
+            continue
+        if ad < CUTOFF:
+            skipped_pre += 1
+            continue
         d = parse_date(g(ci_date))
         slot = norm_slot(g(ci_slot)) or "未录"
-        if d == "未知":
-            unknowns += 1
         dates_set.add(d)
         c = coaches.setdefault(coach, {"total": 0, "byDate": {}, "bySlot": {}})
         c["total"] += 1
@@ -301,15 +333,17 @@ def main():
 
     out = {
         "updated": datetime.datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "scopeFrom": "2026-09-01",
         "slots": SLOT_STD + ["未录"],
         "coaches": coaches,
         "dates": dates,
         "unknownDates": unknowns,
+        "skippedPre": skipped_pre,
     }
     os.makedirs(os.path.dirname(OUT_JSON), exist_ok=True)
     json.dump(out, open(OUT_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     html = write_html(out)
-    print(f"✅ 生成 coach-lessons.json + coach-lessons.html | 教练 {len(coaches)} 人 | 总课时 {sum(c['total'] for c in coaches.values())} 节 | 时段未录 {sum(c['bySlot'].get('未录',0) for c in coaches.values())} 节")
+    print(f"✅ 生成 coach-lessons.json + coach-lessons.html | 教练 {len(coaches)} 人 | 总课时 {sum(c['total'] for c in coaches.values())} 节 | 时段未录 {sum(c['bySlot'].get('未录',0) for c in coaches.values())} 节 | 排除9月前 {skipped_pre} 节")
     if unknowns:
         print(f"⚠️ {unknowns} 条日期无法解析，请检查源数据")
     push_bytes(json.dumps(out, ensure_ascii=False, indent=1).encode("utf-8"), "data/coach-lessons.json", "chore: 更新教练课时统计 coach-lessons.json")
