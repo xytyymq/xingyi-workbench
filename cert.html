@@ -105,7 +105,7 @@
   .cert .seal{ position:absolute; right:96px; bottom:150px; width:170px; height:170px; }
   .cert .footer{ position:absolute; bottom:60px; left:0; right:0; text-align:center; font-size:22px; color:var(--primary); font-weight:700; letter-spacing:2px; }
   .cert .watermark{ position:absolute; bottom:120px; left:0; right:0; text-align:center; font-size:18px; color:#c2d4e6; letter-spacing:3px; }
-  .cert .qr-wrap{ position:absolute; bottom:110px; left:0; right:0; text-align:center; display:none; }
+  .cert .qr-wrap{ position:absolute; bottom:170px; left:0; right:0; text-align:center; display:none; }
   .cert .qr-wrap img{ width:130px; height:130px; border-radius:10px; background:#fff; padding:6px; box-shadow:0 4px 14px rgba(0,0,0,.08); object-fit:contain; }
   .cert .qr-wrap .qr-cap{ font-size:16px; color:#5a6b7c; margin-top:6px; font-weight:600; }
   /* 装饰层 */
@@ -432,7 +432,7 @@ function renderDeco(){
   if(on.trophy) h+=trophy(150,1150,1.5,t.accent);
   if(on.balloon){ h+=balloon(940,300,1.4,t.pink)+balloon(1000,420,1.1,t.accent2)+balloon(880,180,1,t.primary2); }
   if(on.cloud){ h+=cloud(220,1180,1.4,'#fff')+cloud(860,1200,1.1,'#fff'); }
-  if(on.kid) h+=kid(160,720,1.0,t.primary);
+  if(on.kid) h+=kid(200,560,0.85,t.primary);
   document.getElementById('decoLayer').innerHTML=h;
 }
 function renderSeal(){
