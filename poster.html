@@ -9,6 +9,7 @@
 :root{
   --primary:#0f766e; --primary-light:#14b8a6; --ink:#0f201d; --sub:#5b6b67;
   --line:#e3ece9; --bg:#f1faf7; --card:#fff;
+  --coral:#ef7d4f; --coral-ink:#c2410c; --coral-sub:#7c2d12;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;}
@@ -29,9 +30,15 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .btn{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;}
 .btn.primary{background:var(--primary);color:#fff;}
 .btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+/* 转介绍录入区 */
+.ref-box{background:#fffbeb;border:1px solid #fde68a;border-radius:11px;padding:11px;margin-top:4px;}
+.ref-toggle{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#92400e;font-weight:800;cursor:pointer;margin-bottom:7px;}
+.ref-toggle input{width:auto;margin:0;}
+.ref-box .field{margin-bottom:7px;}
+.ref-box .field:last-child{margin-bottom:0;}
 /* 预览 */
 .preview-wrap{flex:1;min-width:300px;display:flex;flex-direction:column;align-items:center;gap:10px;}
-#poster{width:330px;aspect-ratio:9/16;background:linear-gradient(160deg,#fff,#ecfeff);border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(15,118,110,.18);display:flex;flex-direction:column;padding:0;}
+#poster{width:330px;background:linear-gradient(160deg,#fff,#ecfeff);border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(15,118,110,.18);display:flex;flex-direction:column;padding:0;}
 .p-head{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:18px 18px 14px;text-align:center;}
 .p-logo{font-size:13px;font-weight:800;letter-spacing:1px;opacity:.95;}
 .p-title{font-size:23px;font-weight:800;margin-top:6px;}
@@ -47,6 +54,13 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .m-before{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:5px;}
 .p-comment{background:#fff;border:1px dashed #99f6e4;border-radius:12px;padding:11px 13px;font-size:13px;color:#0f201d;line-height:1.6;}
 .p-comment b{color:var(--primary);}
+.p-ref{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px dashed var(--coral);border-radius:12px;padding:10px 12px;}
+.p-ref .pr-title{font-size:13px;font-weight:800;color:var(--coral-ink);text-align:center;}
+.p-ref .pr-text{font-size:11.5px;color:var(--coral-sub);line-height:1.5;margin:6px 0;text-align:center;}
+.p-ref .pr-row{display:flex;gap:10px;align-items:stretch;}
+.p-ref .pr-qr{flex:1;background:#fff;border:1px solid #fed7aa;border-radius:9px;padding:8px;text-align:center;font-size:10px;color:#9a3412;line-height:1.4;}
+.p-ref .pr-code{flex:1;background:#fff;border:1px solid #fed7aa;border-radius:9px;padding:8px;text-align:center;font-size:10px;color:#9a3412;}
+.p-ref .pr-code b{font-size:15px;color:var(--coral-ink);display:block;margin-top:2px;letter-spacing:1px;}
 .p-foot{text-align:center;font-size:11px;color:var(--sub);padding:10px;border-top:1px solid var(--line);}
 .hint{font-size:11px;color:var(--sub);text-align:center;}
 
@@ -54,7 +68,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 @media print{
   body *{visibility:hidden;}
   #poster, #poster *{visibility:visible;}
-  #poster{position:fixed;left:0;top:0;width:100%;height:100%;aspect-ratio:auto;border-radius:0;box-shadow:none;}
+  #poster{position:fixed;left:0;top:0;width:100%;height:auto;aspect-ratio:auto;border-radius:0;box-shadow:none;}
 }
 </style>
 </head>
@@ -66,31 +80,41 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 <div class="layout">
   <div class="panel">
-    <h2>填写信息（填完右侧实时出图）</h2>
-    <div class="field"><label>学员姓名</label><input id="f_name" value="小宇"></div>
+    <h2>填写信息（选完右侧实时出图）</h2>
+    <div class="field"><label>学员姓名</label>
+      <select id="f_name"><option>小宇</option><option value="__custom__">✏️ 自定义…</option></select>
+    </div>
     <div class="row">
-      <div class="field"><label>班级/组别</label><input id="f_group" value="初级班（启蒙班）"></div>
-      <div class="field"><label>考核月份</label><input id="f_month" value="2026年8月"></div>
+      <div class="field"><label>班级/组别</label><select id="f_group"></select></div>
+      <div class="field"><label>考核月份</label><select id="f_month"></select></div>
     </div>
 
     <div class="field"><label>指标一</label>
-      <input id="m1_n" value="高远球到位率" style="margin-bottom:6px;">
+      <select id="m1_n" style="margin-bottom:6px;"></select>
       <div class="row"><input id="m1_b" placeholder="上月%" value="60%"><input id="m1_a" placeholder="本月%" value="82%"></div>
     </div>
     <div class="field"><label>指标二</label>
-      <input id="m2_n" value="全场步法评分" style="margin-bottom:6px;">
+      <select id="m2_n" style="margin-bottom:6px;"></select>
       <div class="row"><input id="m2_b" placeholder="上月%" value="65%"><input id="m2_a" placeholder="本月%" value="88%"></div>
     </div>
     <div class="field"><label>指标三</label>
-      <input id="m3_n" value="连续对打拍数" style="margin-bottom:6px;">
+      <select id="m3_n" style="margin-bottom:6px;"></select>
       <div class="row"><input id="m3_b" placeholder="上月" value="12拍"><input id="m3_a" placeholder="本月" value="30拍"></div>
     </div>
 
     <div class="field"><label>教练评语</label>
       <textarea id="f_comment">本月进步非常明显！高远球从勉强到位到稳定压后场，步法移动更积极，对打回合数翻倍。保持这个节奏，下月挑战网前小球。</textarea>
-      <button class="tpl-btn" onclick="useTpl()">＋ 插入评语模板</button>
+      <select id="f_tpl" class="tpl-btn" style="margin-top:6px;">
+        <option value="">＋ 选择评语模板插入</option>
+      </select>
     </div>
-    <div class="field"><label>教练签名</label><input id="f_coach" value="教练：阿杰"></div>
+    <div class="field"><label>教练签名</label><select id="f_coach"></select></div>
+
+    <div class="field ref-box">
+      <label class="ref-toggle"><input type="checkbox" id="f_ref_on" checked> 海报显示「邀请好友」转介绍信息</label>
+      <div class="field"><input id="f_ref_text" value="见证成长，一起上场！带好友来星羿免费体验，双方各得专属成长礼"></div>
+      <div class="field"><input id="f_ref_code" placeholder="试课券码（如 TRY0825，可空）"></div>
+    </div>
 
     <div class="actions">
       <button class="btn primary" onclick="exportImg()">导出图片</button>
@@ -119,11 +143,19 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
           <div class="m-before"><span id="k2_b">上月 65%</span><span id="k2_a">本月 88%</span></div>
         </div>
         <div class="metric" id="k3">
-          <div class="m-top"><span id="k3_n">连续对打拍数</span><span class="m-delta" id="k3_d">+18拍</span></div>
+          <div class="m-top"><span id="k3_n">连续对打拍数</span><span class="m-delta" id="k3_d">+18拍"></span></div>
           <div class="m-bar"><i id="k3_i" style="width:90%"></i></div>
           <div class="m-before"><span id="k3_b">上月 12拍</span><span id="k3_a">本月 30拍</span></div>
         </div>
         <div class="p-comment"><b>教练说：</b><span id="p_comment">本月进步非常明显！</span></div>
+        <div class="p-ref" id="p_ref">
+          <div class="pr-title">🤝 邀请好友 · 同享成长礼</div>
+          <div class="pr-text" id="p_ref_text"></div>
+          <div class="pr-row">
+            <div class="pr-qr">📱 二维码位<br><span>贴场馆 / 试课预约二维码</span></div>
+            <div class="pr-code">试课券码<br><b id="p_ref_code">—</b></div>
+          </div>
+        </div>
       </div>
       <div class="p-foot" id="p_foot">教练：阿杰 · 星羿羽毛球馆</div>
     </div>
@@ -143,6 +175,47 @@ const delta = (a,b) => {
 };
 function barW(a,b){ const na=pct(a),nb=pct(b); const max=Math.max(na,nb,1); return Math.min(100, Math.round(nb/max*100)); }
 
+/* ===== 下拉数据源 ===== */
+const CLASSES = ['初级班（启蒙班）','中级班','精英班','少儿班','成人班','体验班'];
+const MONTHS  = (()=>{ const a=[]; for(let m=1;m<=12;m++) a.push('2026年'+m+'月'); return a; })();
+const METRICS = ['高远球到位率','全场步法评分','连续对打拍数','发球得分率','网前小球成功率','接杀球能力','体能耐力','专注度 / 课堂表现','移动速度'];
+const COACHES = ['教练：阿杰','教练：杜渝彬','教练：张玉玲','教练：周震'];
+const COMMENTS = [
+  '本月进步非常明显！动作更规范，回合稳定性提升，继续打磨细节，下月挑战更高难度。',
+  '出勤稳定、态度认真，基本功扎实了不少。建议回家多练步法，潜力很大！',
+  '自信心明显增强，敢打敢拼。技术上还需注意发力节奏，慢慢来，不急。',
+  '步法移动更积极，覆盖面积变大。下一步重点练启动第一步和回中意识。',
+  '高远球从勉强到位到稳定压后场，控球感进步明显，保持多球训练。',
+  '网前手感细腻了不少，搓放质量提高。继续练假动作和连贯上网。',
+  '比赛首秀敢上场、不怯场，难能可贵！把训练成果带到实战，会越来越稳。',
+  '综合表现稳步上升，身体协调性和球感都在长。按节奏来，下阶段冲更高目标。'
+];
+
+function fillSelect(id, arr, def){
+  const sel = $(id); sel.innerHTML = '';
+  arr.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+  if(def!=null && arr.includes(def)) sel.value = def;
+}
+function fillTpl(){
+  const tp = $('f_tpl');
+  COMMENTS.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent = c.length>16? c.slice(0,16)+'…' : c; tp.appendChild(o); });
+}
+/* 学员姓名下拉：拉 data/students.json 的 name 列表 */
+function loadStudents(){
+  fetch('data/students.json?t='+Date.now(), {cache:'no-store'}).then(r=> r.ok? r.json() : Promise.reject())
+    .then(arr=>{
+      const sel = $('f_name');
+      const names = [...new Set((arr||[]).map(s=>s&&s.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'zh'));
+      const cur = sel.value;
+      sel.innerHTML = '';
+      names.forEach(n=>{ const o=document.createElement('option'); o.value=n; o.textContent=n; sel.appendChild(o); });
+      const oc=document.createElement('option'); oc.value='__custom__'; oc.textContent='✏️ 自定义…'; sel.appendChild(oc);
+      if(cur && [...sel.options].some(x=>x.value===cur)) sel.value = cur;
+      render();
+    })
+    .catch(()=>{ /* 加载失败保留默认 option，不阻断 */ });
+}
+
 function render(){
   $('p_name').textContent = $('f_name').value || '学员';
   $('p_sub').textContent = `${$('f_month').value||''} · ${$('f_name').value||'学员'} · ${$('f_group').value||''}`;
@@ -156,16 +229,18 @@ function render(){
   }
   $('p_comment').textContent = $('f_comment').value;
   $('p_foot').textContent = ($('f_coach').value||'星羿羽毛球馆')+' · 星羿羽毛球馆';
+  // 转介绍区块
+  const showRef = $('f_ref_on').checked;
+  $('p_ref').style.display = showRef ? 'block' : 'none';
+  if(showRef){
+    $('p_ref_text').textContent = $('f_ref_text').value || '';
+    $('p_ref_code').textContent = $('f_ref_code').value || '—';
+  }
 }
-['f_name','f_group','f_month','m1_n','m1_b','m1_a','m2_n','m2_b','m2_a','m3_n','m3_b','m3_a','f_comment','f_coach']
-  .forEach(id => $(id).addEventListener('input', render));
 
-const TPPLS = [
-  '本月进步非常明显！动作更规范，回合稳定性提升，继续打磨细节，下月挑战更高难度。',
-  '出勤稳定、态度认真，基本功扎实了不少。建议回家多练步法，潜力很大！',
-  '自信心明显增强，敢打敢拼。技术上还需注意发力节奏，慢慢来，不急。'
-];
-function useTpl(){ $('f_comment').value = TPPLS[Math.floor(Math.random()*TPPLS.length)]; render(); }
+/* 评语模板下拉：选中即插入 textarea 并复位 */
+function useTpl(sel){ if(!sel.value) return; $('f_comment').value = sel.value; sel.value=''; render(); }
+$('f_tpl').addEventListener('change', e=> useTpl(e.target));
 
 function exportImg(){
   html2canvas($('poster'),{scale:2,backgroundColor:null}).then(cv=>{
@@ -174,6 +249,20 @@ function exportImg(){
     a.href=cv.toDataURL('image/png'); a.click();
   });
 }
+
+/* 初始化 */
+fillSelect('f_group', CLASSES, '初级班（启蒙班）');
+fillSelect('f_month', MONTHS, '2026年8月');
+fillSelect('m1_n', METRICS, '高远球到位率');
+fillSelect('m2_n', METRICS, '全场步法评分');
+fillSelect('m3_n', METRICS, '连续对打拍数');
+fillSelect('f_coach', COACHES, '教练：阿杰');
+fillTpl();
+loadStudents();
+
+['f_name','f_group','f_month','m1_n','m1_b','m1_a','m2_n','m2_b','m2_a','m3_n','m3_b','m3_a','f_comment','f_coach','f_ref_text','f_ref_code']
+  .forEach(id => { $(id).addEventListener('input', render); $(id).addEventListener('change', render); });
+$('f_ref_on').addEventListener('change', render);
 render();
 </script>
 </body>
