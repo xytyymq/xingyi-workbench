@@ -58,9 +58,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .p-ref .pr-title{font-size:13px;font-weight:800;color:var(--coral-ink);text-align:center;}
 .p-ref .pr-text{font-size:11.5px;color:var(--coral-sub);line-height:1.5;margin:6px 0;text-align:center;}
 .p-ref .pr-row{display:flex;gap:10px;align-items:stretch;}
-.p-ref .pr-qr{flex:1;background:#fff;border:1px solid #fed7aa;border-radius:9px;padding:8px;text-align:center;font-size:10px;color:#9a3412;line-height:1.4;}
-.p-ref .pr-code{flex:1;background:#fff;border:1px solid #fed7aa;border-radius:9px;padding:8px;text-align:center;font-size:10px;color:#9a3412;}
-.p-ref .pr-code b{font-size:15px;color:var(--coral-ink);display:block;margin-top:2px;letter-spacing:1px;}
+.p-ref .pr-qr{flex:1;background:#fff;border:1px solid #fed7aa;border-radius:9px;padding:8px;text-align:center;display:flex;align-items:center;justify-content:center;}
+.p-ref .pr-qr img{width:78px;height:78px;object-fit:contain;border-radius:6px;}
+.p-ref .pr-tip{flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:10px;color:#9a3412;line-height:1.4;text-align:center;}
+.p-ref .pr-tip b{font-size:12px;color:var(--coral-ink);display:block;}
 .p-foot{text-align:center;font-size:11px;color:var(--sub);padding:10px;border-top:1px solid var(--line);}
 .hint{font-size:11px;color:var(--sub);text-align:center;}
 
@@ -113,7 +114,6 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     <div class="field ref-box">
       <label class="ref-toggle"><input type="checkbox" id="f_ref_on" checked> 海报显示「邀请好友」转介绍信息</label>
       <div class="field"><input id="f_ref_text" value="见证成长，一起上场！带好友来星羿免费体验，双方各得专属成长礼"></div>
-      <div class="field"><input id="f_ref_code" placeholder="试课券码（如 TRY0825，可空）"></div>
     </div>
 
     <div class="actions">
@@ -152,8 +152,8 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
           <div class="pr-title">🤝 邀请好友 · 同享成长礼</div>
           <div class="pr-text" id="p_ref_text"></div>
           <div class="pr-row">
-            <div class="pr-qr">📱 二维码位<br><span>贴场馆 / 试课预约二维码</span></div>
-            <div class="pr-code">试课券码<br><b id="p_ref_code">—</b></div>
+            <div class="pr-qr"><img id="p_ref_qr" src="assets/qrcode-wechat.jpg" alt="扫码咨询"></div>
+            <div class="pr-tip"><b>扫码咨询 / 预约试课</b><span>星羿羽毛球馆 · 九江开发区</span></div>
           </div>
         </div>
       </div>
@@ -234,7 +234,6 @@ function render(){
   $('p_ref').style.display = showRef ? 'block' : 'none';
   if(showRef){
     $('p_ref_text').textContent = $('f_ref_text').value || '';
-    $('p_ref_code').textContent = $('f_ref_code').value || '—';
   }
 }
 
@@ -260,7 +259,7 @@ fillSelect('f_coach', COACHES, '教练：阿杰');
 fillTpl();
 loadStudents();
 
-['f_name','f_group','f_month','m1_n','m1_b','m1_a','m2_n','m2_b','m2_a','m3_n','m3_b','m3_a','f_comment','f_coach','f_ref_text','f_ref_code']
+['f_name','f_group','f_month','m1_n','m1_b','m1_a','m2_n','m2_b','m2_a','m3_n','m3_b','m3_a','f_comment','f_coach','f_ref_text']
   .forEach(id => { $(id).addEventListener('input', render); $(id).addEventListener('change', render); });
 $('f_ref_on').addEventListener('change', render);
 render();
