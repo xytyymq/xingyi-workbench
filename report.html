@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>校长日报分析 · 星羿全馆工作台</title>
+<style>
+  :root{
+    --blue:#2E5AAC; --blue-d:#1E3F78; --green:#1B5E20; --green-bg:#E8F5E9;
+    --red:#B71C1C; --red-bg:#FFEBEE; --yellow:#795500; --yellow-bg:#FFF8E1;
+    --ink:#1A2233; --muted:#5A6478; --line:#E3E8F2; --bg:#F4F6FB; --card:#FFFFFF;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:40px}
+  header{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;padding:20px 16px 18px;border-radius:0 0 18px 18px}
+  header h1{font-size:20px;display:flex;align-items:center;gap:8px}
+  header .sub{font-size:12px;opacity:.85;margin-top:6px}
+  .wrap{padding:14px;max-width:640px;margin:0 auto}
+  .light-hero{background:var(--card);border-radius:16px;padding:18px;text-align:center;box-shadow:0 2px 10px rgba(30,63,120,.08);margin-top:-26px;position:relative}
+  .light-dot{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px}
+  .light-hero .verdict{font-size:18px;font-weight:700}
+  .light-hero .when{font-size:12px;color:var(--muted);margin-top:4px}
+  .card{background:var(--card);border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 2px 10px rgba(30,63,120,.06)}
+  .card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .item{display:flex;gap:8px;padding:8px 10px;border-radius:10px;font-size:13.5px;line-height:1.55;margin-bottom:6px;align-items:flex-start}
+  .item.red{background:var(--red-bg);color:var(--red)}
+  .item.yellow{background:var(--yellow-bg);color:var(--yellow)}
+  .item.green{background:var(--green-bg);color:var(--green)}
+  .item b{font-weight:700}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .kpi{background:#F7F9FE;border-radius:12px;padding:10px 8px;text-align:center}
+  .kpi .n{font-size:20px;font-weight:800;color:var(--blue)}
+  .kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .bar-wrap{margin-top:10px}
+  .bar-bg{height:10px;background:#E9EEF8;border-radius:6px;overflow:hidden}
+  .bar-fg{height:100%;background:linear-gradient(90deg,#4CAF50,var(--blue));border-radius:6px;transition:width .6s}
+  .bar-txt{font-size:12px;color:var(--muted);margin-top:5px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:11.5px}
+  td.up{color:var(--green);font-weight:600}
+  td.down{color:var(--red);font-weight:600}
+  .muted{color:var(--muted);font-size:12.5px}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:10px 0}
+  .foot{margin-top:18px;text-align:center;font-size:11px;color:#9AA3B8}
+  .todo{background:#FFF8E1;border:1px dashed #E6C200}
+  .todo li{margin:6px 0 6px 18px;font-size:13.5px;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+  <h1>🚦 校长日报分析</h1>
+  <div class="sub">招生 · 教练 · 财务 三线监督 · 每晚 23:11 自动生成（次日 8:00 补拉）</div>
+</header>
+<div class="wrap">
+  <div class="light-hero">
+    <div class="light-dot" id="heroDot">⚪</div>
+    <div class="verdict" id="heroVerdict">加载中…</div>
+    <div class="when" id="heroWhen"></div>
+  </div>
+
+  <div class="card">
+    <h2>🚨 今日红黄绿灯</h2>
+    <div id="lights"></div>
+  </div>
+
+  <div class="card">
+    <h2>📣 招生漏斗</h2>
+    <div class="kpis" id="funnelKpis"></div>
+    <div class="bar-wrap">
+      <div class="bar-bg"><div class="bar-fg" id="goalBar" style="width:0%"></div></div>
+      <div class="bar-txt" id="goalTxt">月报名目标 10 人</div>
+    </div>
+    <div id="staleLeads" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <h2>💰 财务统计</h2>
+    <div class="kpis" id="finKpis"></div>
+    <div style="margin-top:12px;overflow-x:auto"><table id="finTable"></table></div>
+  </div>
+
+  <div class="card">
+    <h2>👔 教练管理</h2>
+    <div id="coachBlock"></div>
+  </div>
+
+  <div class="card todo">
+    <h2>⚡ 老板待办（需你决策）</h2>
+    <ul id="bossTodos"></ul>
+  </div>
+
+  <div class="card">
+    <h2>🛰️ 数据交叉校验</h2>
+    <div id="crossCheck"></div>
+  </div>
+
+  <div class="card">
+    <h2>📞 家长回访抽查（今日建议）</h2>
+    <div id="callback"></div>
+  </div>
+
+  <div class="card">
+    <h2>📈 周报 · 近 7 天</h2>
+    <div style="overflow-x:auto"><table id="weekTable"></table></div>
+    <div id="weekSummary" style="margin-top:10px"></div>
+  </div>
+
+  <div class="foot">星羿体育 · 见证每一次成长<br>数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录</div>
+</div>
+<script>
+const LIGHT_META={red:{c:"var(--red)",bg:"var(--red-bg)",ico:"🔴",t:"红灯 · 今天要过问"},
+  yellow:{c:"var(--yellow)",bg:"var(--yellow-bg)",ico:"🟡",t:"黄灯 · 留意关注"},
+  green:{c:"var(--green)",bg:"var(--green-bg)",ico:"🟢",t:"绿灯 · 一切正常"}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function item(l,txt){const m=LIGHT_META[l]||LIGHT_META.green;return `<div class="item ${l}">${m.ico} <span>${esc(txt)}</span></div>`}
+fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
+  document.getElementById("heroWhen").textContent=`报告时间：${esc(d.generated_at||"")} · 数据截止：${esc(d.data_date||"")}`;
+  const top=d.overall||"green",m=LIGHT_META[top];
+  const dot=document.getElementById("heroDot");dot.style.background=m.bg;dot.textContent=m.ico;
+  document.getElementById("heroVerdict").textContent=m.t;
+  document.getElementById("heroVerdict").style.color=m.c;
+  document.getElementById("lights").innerHTML=(d.lights||[]).map(x=>item(x.level,x.text)).join("")||'<div class="empty">今日无异常</div>';
+  const f=d.funnel||{};
+  document.getElementById("funnelKpis").innerHTML=
+    `<div class="kpi"><div class="n">${f.new_leads_today??0}</div><div class="l">今日新线索</div></div>
+     <div class="kpi"><div class="n">${f.trial_arrive_rate??"–"}</div><div class="l">试课到场率(红线80%)</div></div>
+     <div class="kpi"><div class="n">${f.month_signups??0}<span style="font-size:12px;color:var(--muted)">/10</span></div><div class="l">本月报名</div></div>`;
+  const pct=Math.min(100,Math.round(((f.month_signups??0)/10)*100));
+  document.getElementById("goalBar").style.width=pct+"%";
+  document.getElementById("goalTxt").textContent=`月报名进度 ${f.month_signups??0}/10 人（${pct}%）· ${f.month_pace_note||""}`;
+  document.getElementById("staleLeads").innerHTML=(d.stale_leads&&d.stale_leads.length)
+    ?`<div class="item red">⏰ <span><b>超48h未跟进（${d.stale_leads.length}）：</b>${esc(d.stale_leads.map(x=>`${x.name}(${x.days}天)`).join("、"))}</span></div>`
+    :'<div class="item green">✅ <span>线索全部在 48h 跟进时限内</span></div>';
+  const fin=d.finance||{};
+  document.getElementById("finKpis").innerHTML=
+    `<div class="kpi"><div class="n" style="color:var(--green)">¥${fin.today_income??0}</div><div class="l">今日收入</div></div>
+     <div class="kpi"><div class="n" style="color:var(--red)">¥${fin.today_expense??0}</div><div class="l">今日支出</div></div>
+     <div class="kpi"><div class="n">¥${fin.month_net??0}</div><div class="l">本月净额</div></div>`;
+  if(d.week_rows&&d.week_rows.length){
+    document.getElementById("finTable").innerHTML=
+      `<tr><th>日期</th><th>线索</th><th>试课</th><th>报名</th><th>开课</th><th>收入</th><th>支出</th></tr>`+
+      d.week_rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${r.leads??0}</td><td>${r.trials??0}</td><td class="${(r.signups??0)>0?"up":""}">${r.signups??0}</td><td>${r.classes??0}</td><td class="up">${r.income??0}</td><td class="down">${r.expense??0}</td></tr>`).join("");
+  }
+  document.getElementById("coachBlock").innerHTML=(d.coach&&d.coach.length)?d.coach.map(x=>item(x.level,x.text)).join(""):'<div class="empty">暂无教练数据</div>';
+  document.getElementById("bossTodos").innerHTML=(d.boss_todos&&d.boss_todos.length)
+    ?d.boss_todos.map(t=>`<li>${esc(t)}</li>`).join(""):'<li style="color:var(--muted)">暂无待决策事项 ✅</li>';
+  document.getElementById("crossCheck").innerHTML=(d.cross_check&&d.cross_check.length)?d.cross_check.map(x=>item(x.level,x.text)).join(""):'<div class="empty">暂无</div>';
+  document.getElementById("callback").innerHTML=d.callback
+    ?`<div class="item yellow">📞 <span>今日随机抽查建议（核校长反馈是否属实）：<b>${esc(d.callback)}</b></span></div>`
+    :'<div class="empty">近 7 天无上课记录，暂无抽查对象</div>';
+  if(d.week_summary)document.getElementById("weekSummary").innerHTML=`<div class="muted">${esc(d.week_summary)}</div>`;
+}).catch(e=>{document.getElementById("heroVerdict").textContent="数据加载失败，稍后重试";console.error(e)});
+</script>
+</body>
+</html>
