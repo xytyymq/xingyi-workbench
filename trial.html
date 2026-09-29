@@ -124,7 +124,7 @@
 
 <script>
 // ====== 配置：试课系统换地址/正式上线时，只改下面两行 ======
-const TRIAL_API = "https://b39dd08b9c314a8197105acd44262a81.app.workbuddy.host";
+const TRIAL_API = "https://9246686b99f94d038839d47cccf66e4c.app.workbuddy.host";
 const TRIAL_KEY = "xingyi2026";
 // ==========================================================
 
@@ -160,8 +160,8 @@ async function loadAll() {
     // 预约列表
     bookBox.innerHTML = list.length
       ? list.map(b =>
-          '<div class="row"><span class="k">' + esc(b.childId) +
-          '<br><span class="meta">' + fmtTime(b.createdAt) + "</span></span>" +
+          '<div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
+          '<br><span class="meta">' + (b.phone ? '📞 ' + esc(b.phone) + ' · ' : '') + fmtTime(b.createdAt) + "</span></span>" +
           '<span class="v">' + esc(b.time) + statusTag(b.status) + "</span></div>").join("")
       : '<p class="muted">还没有预约。把试课页发给家长，他们点选时段提交后，这里立刻出现。</p>';
 
