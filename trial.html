@@ -70,6 +70,29 @@
     font-size:12.5px;color:#8a3a12;}
   .meta{font-size:11px;color:var(--muted);}
   #updatedAt{font-size:11px;color:var(--muted);text-align:center;margin-top:14px;}
+
+  .rep-btn{font-size:11px;font-weight:700;color:#fff;background:var(--teal-700);border:none;
+    border-radius:20px;padding:5px 12px;cursor:pointer;margin-left:8px;}
+  .rep-btn.ghost{background:var(--teal-100);color:var(--teal-700);}
+  .row-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .modal-mask{display:none;position:fixed;inset:0;background:rgba(15,32,29,.45);z-index:100;
+    align-items:flex-end;justify-content:center;}
+  .modal-mask.open{display:flex;}
+  .modal{background:var(--card);width:100%;max-width:680px;max-height:88vh;overflow-y:auto;
+    border-radius:20px 20px 0 0;padding:18px 18px 28px;}
+  .modal h3{margin:0 0 4px;font-size:16px;color:var(--teal-700);}
+  .modal .sub{font-size:12px;color:var(--muted);margin:0 0 14px;}
+  .f-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .f-item label{display:block;font-size:11.5px;font-weight:700;color:var(--sub);margin-bottom:4px;}
+  .f-item input,.f-item select,.f-item textarea{width:100%;border:1px solid var(--line);border-radius:10px;
+    padding:9px 10px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:var(--ink);}
+  .f-item input:focus,.f-item select:focus,.f-item textarea:focus{border-color:var(--teal-500);}
+  .f-full{grid-column:1/-1;}
+  .f-sec{grid-column:1/-1;font-size:12px;font-weight:800;color:var(--coral);margin-top:4px;}
+  .f-actions{display:flex;gap:10px;margin-top:16px;}
+  .f-actions button{flex:1;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;}
+  .f-actions .save{background:var(--teal-700);color:#fff;}
+  .f-actions .cancel{background:var(--mint-50);color:var(--sub);border:1px solid var(--line);}
   </style>
 </head>
 <body>
@@ -122,6 +145,36 @@
   <p id="updatedAt"></p>
 </div>
 
+<!-- 写体测报告弹窗 -->
+<div class="modal-mask" id="repModal">
+  <div class="modal">
+    <h3>📝 填写体测报告</h3>
+    <p class="sub" id="repWho">—</p>
+    <div class="f-grid">
+      <div class="f-sec">静态体测</div>
+      <div class="f-item"><label>身高（cm）</label><input id="fHeight" inputmode="decimal" placeholder="如 122"></div>
+      <div class="f-item"><label>体重（kg）</label><input id="fWeight" inputmode="decimal" placeholder="如 23"></div>
+      <div class="f-item"><label>柔韧性</label>
+        <select id="fFlex"><option value="">未测</option><option>优</option><option>良</option><option>待提升</option></select></div>
+      <div class="f-item"><label>测评日期</label><input id="fDate" type="date"></div>
+      <div class="f-sec">动态体测</div>
+      <div class="f-item"><label>1 分钟跳绳（个）</label><input id="fRope" inputmode="numeric" placeholder="如 85"></div>
+      <div class="f-item"><label>步法敏捷</label>
+        <select id="fFoot"><option value="">未测</option><option>优</option><option>良</option><option>待提升</option></select></div>
+      <div class="f-item"><label>协调性球感</label>
+        <select id="fCoord"><option value="">未测</option><option>优</option><option>良</option><option>待提升</option></select></div>
+      <div class="f-item"><label>力量</label>
+        <select id="fStr"><option value="">未测</option><option>优</option><option>良</option><option>待提升</option></select></div>
+      <div class="f-item f-full"><label>教练建议（家长可见）</label>
+        <textarea id="fNote" rows="3" placeholder="如：协调性很好，建议每天跳绳 100 个补力量，适合先报启蒙班打基础。"></textarea></div>
+    </div>
+    <div class="f-actions">
+      <button class="cancel" onclick="closeRepModal()">取消</button>
+      <button class="save" onclick="saveReport()">✅ 提交报告</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ====== 配置：试课系统换地址/正式上线时，只改下面两行 ======
 const TRIAL_API = "https://9246686b99f94d038839d47cccf66e4c.app.workbuddy.host";
@@ -162,23 +215,30 @@ async function loadAll() {
       ? list.map(b =>
           '<div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
           '<br><span class="meta">' + (b.phone ? '📞 ' + esc(b.phone) + ' · ' : '') + fmtTime(b.createdAt) + "</span></span>" +
-          '<span class="v">' + esc(b.time) + statusTag(b.status) + "</span></div>").join("")
+          '<span class="v"><span class="row-actions">' + esc(b.time) + statusTag(b.status) +
+          '<button class="rep-btn" onclick="openRepModal(\'' + esc(b.childId) + '\',\'' + esc(b.name || "") + '\')">📝 报告</button>' +
+          "</span></span></div>").join("")
       : '<p class="muted">还没有预约。把试课页发给家长，他们点选时段提交后，这里立刻出现。</p>';
 
-    // 报告列表
+    // 报告列表（含名字反查 + 编辑入口）
     const reps = rj.reports || {};
+    const nameOf = id => { const b = list.find(x => x.childId === id); return b ? (b.name || id) : id; };
     const ids = Object.keys(reps);
     repBox.innerHTML = ids.length
       ? ids.map(id => {
           const rp = reps[id] || {};
-          const rows = Object.entries(rp)
-            .filter(([k]) => k !== "updatedAt")
-            .map(([k, v]) => '<div class="row"><span class="k">' + esc(k) +
-              '</span><span class="v">' + esc(typeof v === "object" ? JSON.stringify(v) : v) + "</span></div>").join("");
-          return '<div class="row" style="display:block"><span class="k">🧒 ' + esc(id) +
-            ' <span class="tag">' + fmtTime(rp.updatedAt) + "</span></span>" + rows + "</div>";
+          const entries = rp.entries || [];
+          const last = entries[entries.length - 1] || {};
+          const summary = entries.length
+            ? '身高 ' + esc(last.height || "—") + ' · 跳绳 ' + esc(last.rope || "—") +
+              ' · 协调 ' + esc(last.coord || "—") + (last.note ? '<br><span class="meta">💬 ' + esc(last.note) + "</span>" : "")
+            : "（旧版单条报告）" + fmtTime(rp.updatedAt);
+          return '<div class="row" style="display:block"><span class="k">🧒 ' + esc(nameOf(id)) +
+            ' <span class="tag">' + (entries.length ? entries.length + " 次测评" : "1 条") + "</span>" +
+            ' <button class="rep-btn ghost" onclick="openRepModal(\'' + esc(id) + '\',\'' + esc(nameOf(id)) + '\')">✏️ 补填/修改</button></span>' +
+            '<div class="meta">' + (entries.length ? "最近测评 " + esc(last.date || fmtTime(rp.updatedAt)) + "<br>" : "") + summary + "</div></div>";
         }).join("")
-      : '<p class="muted">还没有体测报告。教练在试课系统「报告」页提交后，这里会出现。</p>';
+      : '<p class="muted">还没有体测报告。点上方预约记录里的「📝 报告」，试课后 1 分钟填完，家长端立刻可见。</p>';
 
     document.getElementById("updatedAt").textContent =
       "更新于 " + new Date().toLocaleTimeString("zh-CN") + " · 数据源：试课系统后端";
@@ -191,6 +251,51 @@ async function loadAll() {
 
 loadAll();
 setInterval(loadAll, 30000);
+
+// ====== 写体测报告 ======
+let repChildId = null;
+function openRepModal(childId, name) {
+  repChildId = childId;
+  document.getElementById("repWho").textContent = "孩子：" + (name || childId) + "（编号 " + childId + "）· 提交后家长端「报告/成长」页立刻可见";
+  document.getElementById("fDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("repModal").classList.add("open");
+}
+function closeRepModal() { document.getElementById("repModal").classList.remove("open"); }
+
+async function saveReport() {
+  if (!repChildId) return;
+  const v = id => document.getElementById(id).value.trim();
+  const entry = {
+    date: v("fDate") || new Date().toISOString().slice(0, 10),
+    height: v("fHeight"), weight: v("fWeight"), flexibility: v("fFlex"),
+    rope: v("fRope"), footwork: v("fFoot"), coord: v("fCoord"), strength: v("fStr"),
+    note: v("fNote")
+  };
+  if (!entry.height && !entry.rope && !entry.coord && !entry.note) {
+    alert("至少填一项（身高 / 跳绳 / 协调性 / 建议）"); return;
+  }
+  try {
+    // 拉旧报告，把本次追加到 entries 历史（家长端成长页按次展示）
+    let old = null;
+    try {
+      const r = await fetch(TRIAL_API + "/api/report?childId=" + encodeURIComponent(repChildId));
+      if (r.ok) { const j = await r.json(); old = j.report || null; }
+    } catch (e) { /* 拉不到就当首次 */ }
+    const entries = (old && old.entries) ? old.entries : [];
+    entries.push(entry);
+    const payload = { entries, updatedAt: new Date().toISOString() };
+    const p = await fetch(TRIAL_API + "/api/report", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ childId: repChildId, report: payload })
+    });
+    if (!p.ok) throw new Error("HTTP " + p.status);
+    closeRepModal();
+    alert("✅ 报告已提交，家长端立刻可见");
+    loadAll();
+  } catch (e) {
+    alert("⚠️ 提交失败（" + e.message + "），请检查后端地址或稍后重试");
+  }
+}
 </script>
 </body>
 </html>
