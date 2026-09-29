@@ -180,7 +180,7 @@
 
   .pill.teal{background:var(--teal-700);}
 
-  .open-btn{display:inline-block;width:100%;text-align:center;background:var(--teal-700);color:#fff;
+  .open-btn{display:block;width:100%;text-align:center;background:var(--teal-700);color:#fff;
 
     text-decoration:none;padding:10px;border-radius:11px;font-size:14px;font-weight:700;transition:.2s;}
 
@@ -189,6 +189,7 @@
   .open-btn.accent{background:var(--coral);}
 
   .open-btn.accent:active{filter:brightness(.94);}
+  .open-btn+.open-btn{margin-top:8px;}
 
 
 
@@ -401,12 +402,13 @@
 
       </a>
 
-    </div>
-
       <a class="today-badge" href="trial.html" target="_blank" rel="noopener">
         <div class="tb-num">试课看板</div>
         <div class="tb-label">家长预约实时汇总</div>
       </a>
+
+    </div>
+
     <div class="auto-bar">
 
       自动化状态：<span><span class="auto-dot on"></span>课前提醒 7:30</span>
