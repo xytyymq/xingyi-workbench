@@ -1,0 +1,13 @@
+{
+  "name": "星羿试课 · 家长端",
+  "short_name": "星羿试课",
+  "description": "星羿羽毛球馆试课系统家长端",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0F2C52",
+  "theme_color": "#1A56A8",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
