@@ -1,0 +1,34 @@
+{
+  "backupAt": "2026-09-29T16:27:16.888Z",
+  "source": "https://b39dd08b9c314a8197105acd44262a81.app.workbuddy.host",
+  "bookings": {
+    "count": 3,
+    "bookings": [
+      {
+        "childId": "c1511319342",
+        "id": 1790697898995,
+        "time": "周日 16:00",
+        "status": "待到店",
+        "createdAt": "2026-09-29T16:04:58.995Z"
+      },
+      {
+        "childId": "小星",
+        "id": 1790697097384,
+        "time": "周日 16:00",
+        "status": "待到店",
+        "createdAt": "2026-09-29T15:51:37.384Z"
+      },
+      {
+        "childId": "С��",
+        "id": 1790697062581,
+        "time": "���� 10:00",
+        "status": "待到店",
+        "createdAt": "2026-09-29T15:51:02.581Z"
+      }
+    ]
+  },
+  "reports": {
+    "count": 0,
+    "reports": {}
+  }
+}
