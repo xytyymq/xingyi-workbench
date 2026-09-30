@@ -26,6 +26,7 @@
   .xy-topbar .tag{font-size:11px;color:var(--teal-700);background:var(--teal-100);padding:4px 10px;border-radius:20px;font-weight:700;}
   .xy-topbar a.back{font-size:11px;color:var(--sub);text-decoration:none;font-weight:700;
     background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:20px;}
+  .xy-topbar .logout{margin-left:10px;font-size:11px;font-weight:700;color:#fff;background:var(--coral);border:none;border-radius:20px;padding:4px 12px;cursor:pointer;}
 
   .xy-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 55%,var(--teal-500));
     color:#fff;padding:26px 20px 24px;}
@@ -93,14 +94,47 @@
   .f-actions button{flex:1;border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;}
   .f-actions .save{background:var(--teal-700);color:#fff;}
   .f-actions .cancel{background:var(--mint-50);color:var(--sub);border:1px solid var(--line);}
+
+  /* ===== 鉴权门（B方案） ===== */
+  body.locked .xy-topbar, body.locked .xy-hero, body.locked .xy-wrap { display:none; }
+  #authGate{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--teal-900),var(--teal-700) 60%,var(--teal-500));padding:24px;}
+  #authGate.show{display:flex;}
+  .auth-card{width:100%;max-width:360px;background:var(--card);border-radius:20px;padding:26px 22px 24px;box-shadow:0 12px 40px rgba(0,0,0,.25);text-align:center;}
+  .auth-card .logo{font-size:34px;margin-bottom:6px;}
+  .auth-card h2{margin:0 0 4px;font-size:18px;color:var(--teal-700);}
+  .auth-card .sub{margin:0 0 18px;font-size:12px;color:var(--muted);}
+  .auth-card input{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;
+    outline:none;background:#fff;color:var(--ink);text-align:center;letter-spacing:1px;}
+  .auth-card input:focus{border-color:var(--teal-500);}
+  .auth-card input:disabled{background:var(--mint-50);color:var(--muted);}
+  .auth-card button{width:100%;margin-top:14px;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;
+    background:var(--teal-700);color:#fff;cursor:pointer;}
+  .auth-card button:disabled{background:var(--muted);cursor:not-allowed;}
+  .auth-card .aerr{margin-top:12px;font-size:12.5px;color:var(--bad);min-height:18px;}
+  .auth-card .alock{font-size:13px;color:var(--coral);font-weight:700;margin-top:8px;}
   </style>
 </head>
 <body>
+
+<!-- ===== 鉴权门（B方案）：未登录遮罩整个看板 ===== -->
+<div id="authGate">
+  <div class="auth-card">
+    <div class="logo">🏸</div>
+    <h2>星羿工作台 · 内部入口</h2>
+    <p class="sub">请输入管理口令以查看试课看板</p>
+    <input id="authPwd" type="password" placeholder="管理口令" autocomplete="off" />
+    <button id="authBtn" onclick="tryAuth()">🔓 进入看板</button>
+    <div class="aerr" id="authErr"></div>
+    <div class="alock" id="authLock" style="display:none"></div>
+  </div>
+</div>
 
 <div class="xy-topbar">
   <span class="brand"><span class="em">🏸</span>星羿 · 全馆工作台</span>
   <span class="tag">📞 试课看板</span>
   <a class="back" href="index.html">← 返回总览</a>
+  <button class="logout" onclick="logout()">🚪 退出</button>
 </div>
 
 <header class="xy-hero">
@@ -180,6 +214,7 @@
 // ====== 配置：试课系统换地址/正式上线时，只改下面两行 ======
 const TRIAL_API = "https://9246686b99f94d038839d47cccf66e4c.app.workbuddy.host";
 const TRIAL_KEY = "xingyi2026";
+const TRIAL_PWD = "Xingyiyumaoqiuguan";
 // ==========================================================
 
 const fmtTime = s => s ? s.replace("T", " ").slice(5, 16) : "";
@@ -254,8 +289,90 @@ async function loadAll() {
   }
 }
 
-loadAll();
-setInterval(loadAll, 30000);
+// ====== 鉴权门（B方案） ======
+const AUTH_KEY = "xy_trial_auth_v1";
+const LOCK_KEY = "xy_trial_lock_v1";
+const FAIL_KEY = "xy_trial_fail_v1";
+const LOCK_MS = 10 * 60 * 1000;
+let appTimer = null;
+
+function showGate() {
+  document.body.classList.add("locked");
+  document.getElementById("authGate").classList.add("show");
+  document.getElementById("authPwd").value = "";
+  document.getElementById("authErr").textContent = "";
+  document.getElementById("authPwd").focus();
+}
+function hideGate() {
+  document.body.classList.remove("locked");
+  document.getElementById("authGate").classList.remove("show");
+}
+function startApp() {
+  hideGate();
+  loadAll();
+  appTimer = setInterval(loadAll, 30000);
+}
+function lockView(until) {
+  const inp = document.getElementById("authPwd");
+  const btn = document.getElementById("authBtn");
+  inp.disabled = true; btn.disabled = true;
+  const tick = () => {
+    const left = until - Date.now();
+    if (left <= 0) {
+      localStorage.removeItem(LOCK_KEY); localStorage.removeItem(FAIL_KEY);
+      inp.disabled = false; btn.disabled = false;
+      document.getElementById("authLock").textContent = "";
+      document.getElementById("authErr").textContent = "已解锁，请重新输入口令";
+      return;
+    }
+    const m = Math.floor(left / 60000), s = Math.floor((left % 60000) / 1000);
+    document.getElementById("authLock").textContent = "🔒 输错次数过多，已锁定 " + m + " 分 " + (s < 10 ? "0" : "") + s + " 秒";
+    setTimeout(tick, 1000);
+  };
+  tick();
+}
+function checkLock() {
+  const until = parseInt(localStorage.getItem(LOCK_KEY) || "0", 10);
+  if (until && Date.now() < until) { lockView(until); return true; }
+  if (until && Date.now() >= until) { localStorage.removeItem(LOCK_KEY); localStorage.removeItem(FAIL_KEY); }
+  return false;
+}
+function tryAuth() {
+  const inp = document.getElementById("authPwd");
+  const val = inp.value.trim();
+  if (!val) return;
+  if (val === TRIAL_PWD) {
+    localStorage.setItem(AUTH_KEY, "1");
+    localStorage.removeItem(FAIL_KEY);
+    localStorage.removeItem(LOCK_KEY);
+    startApp();
+    return;
+  }
+  let fails = parseInt(localStorage.getItem(FAIL_KEY) || "0", 10) + 1;
+  localStorage.setItem(FAIL_KEY, String(fails));
+  if (fails >= 3) {
+    const until = Date.now() + LOCK_MS;
+    localStorage.setItem(LOCK_KEY, String(until));
+    lockView(until);
+  } else {
+    document.getElementById("authErr").textContent = "❌ 口令错误，还剩 " + (3 - fails) + " 次机会";
+    inp.value = ""; inp.focus();
+  }
+}
+function logout() {
+  if (appTimer) clearInterval(appTimer);
+  localStorage.removeItem(AUTH_KEY);
+  showGate();
+}
+
+// 启动：已登录直接进，否则弹门（含锁定判断）
+if (localStorage.getItem(AUTH_KEY) === "1") {
+  startApp();
+} else {
+  showGate();
+  document.getElementById("authPwd").addEventListener("keydown", e => { if (e.key === "Enter") tryAuth(); });
+  checkLock();
+}
 
 // ====== 写体测报告 ======
 let repChildId = null;
