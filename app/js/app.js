@@ -18,8 +18,8 @@ function headerBar(child) {
 function tabBar(active) {
   const t = (h, ic, label) =>
     '<a href="#' + h + '" class="' + (active === h ? "active" : "") + '"><span class="ic">' + ic + "</span>" + label + "</a>";
-  return '<div class="tabbar">' + t("/booking", "📅", "预约") + t("/report", "📊", "报告") +
-    t("/growth", "🌱", "成长") + t("/message", "🔔", "消息") + "</div>";
+  return '<div class="tabbar">' + t("/booking", "📅", "预约") + t("/survey", "📋", "档案") +
+    t("/report", "📊", "报告") + t("/growth", "🌱", "成长") + t("/message", "🔔", "消息") + "</div>";
 }
 
 function renderLogin() {
