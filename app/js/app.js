@@ -208,28 +208,11 @@ function renderMessage(child) {
     '<div class="card"><h3>通知</h3>' + items + "</div>";
 }
 
-function renderAdmin() {
-  return '<div class="hero"><h2>馆长视图</h2><p>试课预约聚合看板</p></div>' +
-    '<div class="card"><h3>所有预约</h3><div id="adminBookings"><p class="muted">加载中…</p></div></div>';
-}
 
-async function fillAdmin() {
-  const box = document.getElementById("adminBookings");
-  if (!box) return;
-  const key = (window.TRIAL_CONFIG && window.TRIAL_CONFIG.ADMIN_KEY) || "xingyi2026"; // 生产改 config.js 注入
-  const j = await Store.adminBookings(key);
-  if (j.error) { box.innerHTML = '<p class="muted">鉴权失败或后端未启动</p>'; return; }
-  const rows = (j.bookings || []).map(b =>
-    '<div class="row"><span class="k">' + b.childId + '</span><span class="v">' + b.time +
-    ' <span class="tag">' + b.status + "</span></span></div>").join("");
-  box.innerHTML = j.count
-    ? rows
-    : '<p class="muted">暂无预约数据</p>';
-}
 
 const routes = {
   "/login": renderLogin, "/booking": renderBooking, "/survey": renderSurvey,
-  "/report": renderReport, "/growth": renderGrowth, "/message": renderMessage, "/admin": renderAdmin
+  "/report": renderReport, "/growth": renderGrowth, "/message": renderMessage
 };
 
 function bindEvents(h, child) {
@@ -267,19 +250,18 @@ async function postRender(h, child) {
   if (h === "/survey" && child) await fillSurvey(child);
   if (h === "/report" && child) await fillReport(child);
   if (h === "/growth" && child) await fillGrowth(child);
-  if (h === "/admin") await fillAdmin();
 }
 
 function render() {
   const child = Auth.current();
   let h = location.hash.slice(1) || (child ? "/booking" : "/login");
-  if (h !== "/login" && h !== "/admin" && !child) h = "/login";
+  if (h !== "/login" && !child) h = "/login";
   const view = routes[h] || renderLogin;
   const app = document.getElementById("app");
   let html = "";
-  if (child && h !== "/login" && h !== "/admin") html += headerBar(child);
+  if (child && h !== "/login") html += headerBar(child);
   html += '<main class="page">' + view(child) + "</main>";
-  if (child && h !== "/login" && h !== "/admin") html += tabBar(h);
+  if (child && h !== "/login") html += tabBar(h);
   app.innerHTML = html;
   bindEvents(h, child);
   postRender(h, child);
