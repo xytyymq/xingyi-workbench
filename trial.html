@@ -148,8 +148,9 @@
 <!-- 写体测报告弹窗 -->
 <div class="modal-mask" id="repModal">
   <div class="modal">
-    <h3>📝 填写体测报告</h3>
+    <h3>📝 现场体测（教练填）</h3>
     <p class="sub" id="repWho">—</p>
+    <p class="sub" style="color:var(--sub);font-size:11px;margin:-2px 0 8px;">以下为现场体测项；家长填写的孩子基础信息，请引导家长在试课系统「📋 档案」页填写。</p>
     <div class="f-grid">
       <div class="f-sec">静态体测</div>
       <div class="f-item"><label>身高（cm）</label><input id="fHeight" inputmode="decimal" placeholder="如 122"></div>
@@ -283,7 +284,7 @@ async function saveReport() {
     } catch (e) { /* 拉不到就当首次 */ }
     const entries = (old && old.entries) ? old.entries : [];
     entries.push(entry);
-    const payload = { entries, updatedAt: new Date().toISOString() };
+    const payload = { ...(old || {}), entries, updatedAt: new Date().toISOString() };
     const p = await fetch(TRIAL_API + "/api/report", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ childId: repChildId, report: payload })
