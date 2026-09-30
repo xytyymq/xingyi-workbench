@@ -72,23 +72,91 @@ function reportRows(e) {
 }
 
 function renderReport(child) {
-  return '<div class="hero"><h2>' + child.name + " 的体测报告</h2><p>静态 + 动态综合测评</p></div>" +
-    '<div class="card" id="reportCard"><h3>测评结果</h3><p class="muted">加载中…</p></div>';
+  return '<div class="hero"><h2>' + child.name + " 的体测报告</h2><p>家长档案 + 教练现场体测</p></div>" +
+    '<div class="card"><h3>① 您填写的孩子信息</h3><div id="parentCard"><p class="muted">加载中…</p></div></div>' +
+    '<div class="card"><h3>② 教练现场体测</h3><div id="coachCard"><p class="muted">加载中…</p></div></div>';
+}
+
+function surveyRows(p, exp) {
+  const row = (k, v) => v ? '<div class="row"><span class="k">' + k + '</span><span class="v">' + esc2safe(v) + "</span></div>" : "";
+  return row("性别", p.gender) + row("出生年月", p.birth) + row("就读年级", p.grade) +
+    row("羽毛球基础", p.prior) + row("运动基础", p.base) + row("性格", p.pers) +
+    row("每周训练", p.weekly) + row("家长期望", exp) +
+    row("健康注意", p.health) + row("孩子最想要", p.want);
 }
 
 async function fillReport(child) {
-  const box = document.getElementById("reportCard");
-  if (!box) return;
+  const pc = document.getElementById("parentCard");
+  const cc = document.getElementById("coachCard");
+  if (!pc || !cc) return;
   const r = await Store.getReport(child.childId);
+  const parent = (r && r.parent) || null;
   const entries = (r && r.entries) || [];
-  if (!entries.length) {
-    box.innerHTML = '<h3>测评结果</h3><p class="muted">教练测评中，试课后报告会自动出现在这里。</p>';
-    return;
+  // ① 家长问卷
+  if (!parent || !parent.gender) {
+    pc.innerHTML = '<p class="muted">还没填孩子基础档案，预约后花 1 分钟填一下，帮教练更懂 ' + child.name + '。</p>' +
+      '<a class="btn" href="#/survey">去「📋 档案」填写</a>';
+  } else {
+    const exp = (parent.expect && parent.expect.length) ? parent.expect.join("、") : "—";
+    pc.innerHTML = surveyRows(parent, exp) +
+      '<p class="muted">提交时间 ' + (parent.filledAt ? fmtTime(parent.filledAt) : "—") + ' · <a href="#/survey">修改</a></p>';
   }
-  const e = entries[entries.length - 1];
-  box.innerHTML = '<h3>测评结果 <span class="muted">' + esc2safe(e.date) + "</span></h3>" + reportRows(e) +
-    (e.note ? '<div class="note">' + esc2safe(e.note) + "</div>" : "") +
-    '<p class="muted">报告由教练试课中测评生成，仅您可见。共 ' + entries.length + ' 次测评记录。</p>';
+  // ② 教练体测
+  if (!entries.length) {
+    cc.innerHTML = '<p class="muted">教练测评中，试课后结果会自动出现在这里。</p>';
+  } else {
+    const e = entries[entries.length - 1];
+    cc.innerHTML = '<p class="muted">' + esc2safe(e.date) + " 测评</p>" + reportRows(e) +
+      (e.note ? '<div class="note">' + esc2safe(e.note) + "</div>" : "") +
+      '<p class="muted">共 ' + entries.length + ' 次测评记录。</p>';
+  }
+}
+
+function renderSurvey(child) {
+  return '<div class="hero"><h2>孩子基础档案</h2><p>花 1 分钟填写，帮教练更了解 ' + child.name + '</p></div>' +
+    '<div class="card"><h3>① 基础信息</h3><div class="f-grid">' +
+      '<div class="f-item"><label>孩子性别</label><select id="sGender"><option value="">请选择</option><option>男</option><option>女</option></select></div>' +
+      '<div class="f-item"><label>出生年月</label><input id="sBirth" placeholder="如 2019-03"></div>' +
+      '<div class="f-item"><label>就读年级</label><select id="sGrade"><option value="">请选择</option><option>幼儿园</option><option>一年级</option><option>二年级</option><option>三年级</option><option>四年级</option><option>五年级</option><option>六年级</option></select></div>' +
+      '<div class="f-item"><label>是否接触过羽毛球</label><select id="sPrior"><option value="">请选择</option><option>没接触过</option><option>上过几节</option><option>正在学</option></select></div>' +
+      '<div class="f-item"><label>平时运动基础</label><select id="sBase"><option value="">请选择</option><option>很少运动</option><option>偶尔锻炼</option><option>经常锻炼</option></select></div>' +
+      '<div class="f-item"><label>孩子性格</label><select id="sPers"><option value="">请选择</option><option>文静</option><option>好动活泼</option><option>专注</option></select></div>' +
+      '<div class="f-item"><label>每周能来几次</label><select id="sWeekly"><option value="">请选择</option><option>1 次</option><option>2 次</option><option>3 次以上</option><option>还不确定</option></select></div>' +
+    '</div></div>' +
+    '<div class="card"><h3>② 家长期望与健康</h3><div class="f-grid">' +
+      '<div class="f-item f-full"><label>您最希望孩子从羽毛球得到（可多选）</label><div class="checks">' +
+        '<label><input type="checkbox" class="sExp" value="增强体质"> 增强体质</label>' +
+        '<label><input type="checkbox" class="sExp" value="培养兴趣"> 培养兴趣</label>' +
+        '<label><input type="checkbox" class="sExp" value="走专业路线"> 走专业路线</label>' +
+        '<label><input type="checkbox" class="sExp" value="交朋友"> 交朋友/社交</label></div></div>' +
+      '<div class="f-item f-full"><label>健康注意（过敏/哮喘/先心病等，教练需知晓，可空）</label><textarea id="sHealth" rows="2" placeholder="无特殊情况的填「无」即可"></textarea></div>' +
+      '<div class="f-item f-full"><label>最想让孩子从羽毛球得到什么（开放，可空）</label><textarea id="sWant" rows="2" placeholder="如：希望他更自信、能坚持一件事"></textarea></div>' +
+    '</div><button class="btn" id="surveyBtn" style="margin-top:12px;">💾 保存档案</button>' +
+    '<p class="muted">提交后教练端立刻能看到，试课时更懂怎么带 ' + child.name + '。</p></div>';
+}
+
+async function fillSurvey(child) {
+  const r = await Store.getReport(child.childId);
+  const p = (r && r.parent) || {};
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+  set("sGender", p.gender); set("sBirth", p.birth); set("sGrade", p.grade);
+  set("sPrior", p.prior); set("sBase", p.base); set("sPers", p.pers);
+  set("sWeekly", p.weekly); set("sHealth", p.health); set("sWant", p.want);
+  if (p.expect && Array.isArray(p.expect)) {
+    document.querySelectorAll(".sExp").forEach(c => { c.checked = p.expect.includes(c.value); });
+  }
+}
+
+async function submitSurvey(child) {
+  const v = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
+  const exp = Array.from(document.querySelectorAll(".sExp")).filter(c => c.checked).map(c => c.value);
+  const parent = {
+    gender: v("sGender"), birth: v("sBirth"), grade: v("sGrade"), prior: v("sPrior"),
+    base: v("sBase"), pers: v("sPers"), weekly: v("sWeekly"),
+    expect: exp, health: v("sHealth"), want: v("sWant"), filledAt: new Date().toISOString()
+  };
+  await Store.saveParentSurvey(child.childId, parent);
+  toast("已保存，教练马上能看到 ✅");
 }
 
 function esc2safe(s) {
@@ -98,11 +166,13 @@ function esc2safe(s) {
 
 function renderGrowth(child) {
   return '<div class="hero"><h2>成长记录</h2><p>' + child.name + " 的试课轨迹</p></div>" +
+    '<div class="card"><h3>档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>预约记录</h3><div id="growthBookings"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div></div>';
 }
 
 async function fillGrowth(child) {
+  const gs = document.getElementById("growthSurvey");
   const gb = document.getElementById("growthBookings");
   const gr = document.getElementById("growthReports");
   if (!gb || !gr) return;
@@ -113,6 +183,12 @@ async function fillGrowth(child) {
         ' <span class="muted">' + fmtTime(b.createdAt) + "</span></span></div>").join("")
     : '<p class="muted">还没有预约记录。</p>';
   const r = await Store.getReport(child.childId);
+  const p = (r && r.parent) || null;
+  if (gs) gs.innerHTML = (p && p.gender)
+    ? '<div class="row"><span class="k">📋 孩子档案</span><span class="v"><span class="tag good">已填</span> <span class="muted">' +
+        (p.filledAt ? fmtTime(p.filledAt) : "") + '</span></span></div>'
+    : '<div class="row"><span class="k">📋 孩子档案</span><span class="v"><span class="tag warn">未填</span></span></div>' +
+      '<a class="btn" href="#/survey">去填写</a>';
   const entries = ((r && r.entries) || []).slice().reverse();
   gr.innerHTML = entries.length
     ? entries.map(e =>
@@ -152,8 +228,8 @@ async function fillAdmin() {
 }
 
 const routes = {
-  "/login": renderLogin, "/booking": renderBooking, "/report": renderReport,
-  "/growth": renderGrowth, "/message": renderMessage, "/admin": renderAdmin
+  "/login": renderLogin, "/booking": renderBooking, "/survey": renderSurvey,
+  "/report": renderReport, "/growth": renderGrowth, "/message": renderMessage, "/admin": renderAdmin
 };
 
 function bindEvents(h, child) {
@@ -188,6 +264,7 @@ function bindEvents(h, child) {
 
 async function postRender(h, child) {
   if (h === "/booking" && child) await fillBookings(child);
+  if (h === "/survey" && child) await fillSurvey(child);
   if (h === "/report" && child) await fillReport(child);
   if (h === "/growth" && child) await fillGrowth(child);
   if (h === "/admin") await fillAdmin();
