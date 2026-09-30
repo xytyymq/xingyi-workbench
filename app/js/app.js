@@ -243,6 +243,17 @@ function bindEvents(h, child) {
       selSlot = null; render();
     };
   }
+
+  if (h === "/survey") {
+    const sb = document.getElementById("surveyBtn");
+    if (sb) sb.onclick = async () => {
+      sb.disabled = true;
+      const oldText = sb.textContent;
+      sb.textContent = "保存中…";
+      try { await submitSurvey(child); }
+      finally { sb.disabled = false; sb.textContent = oldText; }
+    };
+  }
 }
 
 async function postRender(h, child) {
