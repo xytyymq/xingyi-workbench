@@ -34,6 +34,21 @@ const Store = {
   async saveReport(childId, report) {
     return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report }) });
   },
+  // 家长问卷：GET 旧报告 → 合并 parent（保留教练 entries）→ POST
+  async saveParentSurvey(childId, parent) {
+    let old = null;
+    try { const j = await this.getReport(childId); old = j || null; } catch { /* 忽略 */ }
+    const merged = { ...(old || {}), parent, updatedAt: new Date().toISOString() };
+    return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report: merged }) });
+  },
+  // 教练体测：GET 旧报告 → 追加 entry（保留家长 parent）→ POST
+  async saveCoachEntry(childId, entry) {
+    let old = null;
+    try { const j = await this.getReport(childId); old = j || null; } catch { /* 忽略 */ }
+    const entries = (old && old.entries ? old.entries : []).concat(entry);
+    const merged = { ...(old || {}), entries, updatedAt: new Date().toISOString() };
+    return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report: merged }) });
+  },
   // 馆长聚合接口
   async adminBookings(key) {
     const j = await api("/api/admin/bookings?key=" + encodeURIComponent(key));
