@@ -85,3 +85,17 @@ html, body {
 }
 .toast.show { opacity: 1; }
 .muted { color: var(--mut); font-size: 12px; }
+/* 表单网格（家长档案问卷 / 通用） */
+.f-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 12px; }
+.f-sec { grid-column: 1 / -1; font-size: 13px; font-weight: 700; color: var(--blue); margin: 4px 0 2px; }
+.f-item { display: flex; flex-direction: column; }
+.f-item.f-full { grid-column: 1 / -1; }
+.f-item label { font-size: 12px; color: var(--mut); margin-bottom: 4px; }
+.f-item input, .f-item select, .f-item textarea {
+  border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px;
+  font-size: 14px; outline: none; font-family: inherit; width: 100%; background: #fff; color: var(--ink);
+}
+.f-item input:focus, .f-item select:focus, .f-item textarea:focus { border-color: var(--blue); }
+.checks { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 6px; }
+.checks label { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
+
