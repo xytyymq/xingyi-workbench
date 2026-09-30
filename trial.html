@@ -213,12 +213,15 @@ async function loadAll() {
 
     // 预约列表
     bookBox.innerHTML = list.length
-      ? list.map(b =>
-          '<div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
+      ? list.map(b => {
+          const sv = (rj.reports || {})[b.childId];
+          const hasSurvey = !!(sv && sv.parent && sv.parent.gender);
+          return '<div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
           '<br><span class="meta">' + (b.phone ? '📞 ' + esc(b.phone) + ' · ' : '') + fmtTime(b.createdAt) + "</span></span>" +
           '<span class="v"><span class="row-actions">' + esc(b.time) + statusTag(b.status) +
+          '<span class="tag ' + (hasSurvey ? "good" : "warn") + '">问卷' + (hasSurvey ? "✅" : "⚪") + '</span>' +
           '<button class="rep-btn" onclick="openRepModal(\'' + esc(b.childId) + '\',\'' + esc(b.name || "") + '\')">📝 报告</button>' +
-          "</span></span></div>").join("")
+          "</span></span></div>"; }).join("")
       : '<p class="muted">还没有预约。把试课页发给家长，他们点选时段提交后，这里立刻出现。</p>';
 
     // 报告列表（含名字反查 + 编辑入口）
@@ -237,7 +240,8 @@ async function loadAll() {
           return '<div class="row" style="display:block"><span class="k">🧒 ' + esc(nameOf(id)) +
             ' <span class="tag">' + (entries.length ? entries.length + " 次测评" : "1 条") + "</span>" +
             ' <button class="rep-btn ghost" onclick="openRepModal(\'' + esc(id) + '\',\'' + esc(nameOf(id)) + '\')">✏️ 补填/修改</button></span>' +
-            '<div class="meta">' + (entries.length ? "最近测评 " + esc(last.date || fmtTime(rp.updatedAt)) + "<br>" : "") + summary + "</div></div>";
+            '<div class="meta">' + (entries.length ? "最近测评 " + esc(last.date || fmtTime(rp.updatedAt)) + "<br>" : "") + summary +
+            (rp.parent && rp.parent.gender ? ' · 家长问卷✅' : ' · 家长问卷⚪') + "</div></div>";
         }).join("")
       : '<p class="muted">还没有体测报告。点上方预约记录里的「📝 报告」，试课后 1 分钟填完，家长端立刻可见。</p>';
 
