@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-09-30 23:11",
-  "data_date": "2026-09-30",
+  "generated_at": "2026-10-01 08:01",
+  "data_date": "2026-10-01",
   "overall": "red",
   "lights": [
     {
@@ -11,7 +11,7 @@
   "funnel": {
     "new_leads_today": 0,
     "trial_arrive_rate": null,
-    "month_signups": 2.0,
+    "month_signups": 0,
     "month_pace_note": ""
   },
   "stale_leads": [],
@@ -32,15 +32,6 @@
   "cross_check": [],
   "callback": null,
   "week_rows": [
-    {
-      "date": "09-24",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
-    },
     {
       "date": "09-25",
       "leads": 0.0,
@@ -88,6 +79,15 @@
     },
     {
       "date": "09-30",
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0,
+      "income": 0,
+      "expense": 0
+    },
+    {
+      "date": "10-01",
       "leads": 0,
       "trials": 0,
       "signups": 0,
