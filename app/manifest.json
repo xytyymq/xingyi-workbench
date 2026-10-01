@@ -1,7 +1,7 @@
 {
-  "name": "星羿试课 · 家长端",
-  "short_name": "星羿试课",
-  "description": "星羿羽毛球馆试课系统家长端",
+  "name": "星羿家长端",
+  "short_name": "星羿家长端",
+  "description": "星羿羽毛球馆家长端：约课、成长记录、荣誉墙、体测报告",
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
