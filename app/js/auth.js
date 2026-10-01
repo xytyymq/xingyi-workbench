@@ -12,6 +12,15 @@ const Auth = {
     const ph = (phone || "").trim();
     if (!ph || !name) return null;
     const child = { phone: ph, name, childId: this._hash(ph + name) };
+    return this._start(child);
+  },
+  // 手机号找回后登录：用服务端记录的 childId（与首次预约一致），姓名用服务端登记的全名
+  loginWithChild(phone, child) {
+    const ph = (phone || "").trim();
+    if (!ph || !child || !child.childId) return null;
+    return this._start({ phone: ph, name: child.name || "", childId: child.childId });
+  },
+  _start(child) {
     const token = "t" + Math.random().toString(36).slice(2) + Date.now().toString(36);
     const exp = Date.now() + 30 * 24 * 3600 * 1000; // 30 天
     localStorage.setItem(this.TOKEN_KEY, JSON.stringify({ token, exp }));
