@@ -229,9 +229,36 @@
   </div>
 </div>
 
+<!-- 授奖弹窗 -->
+<div class="modal-mask" id="awardModal">
+  <div class="modal">
+    <h3>🏅 授予奖状</h3>
+    <p class="sub" id="awardWho">—</p>
+    <div class="f-grid">
+      <div class="f-item f-full"><label>奖状类型</label>
+        <select id="awType">
+          <option value="monthly_star">🌟 月度之星</option>
+          <option value="progress">🚀 进步之星</option>
+          <option value="full_attend">🎯 全勤小将</option>
+          <option value="best_new">🌱 最佳新人</option>
+          <option value="discipline">🎖️ 纪律之星</option>
+          <option value="match_gold">🥇 积分赛冠军</option>
+          <option value="match_silver">🥈 积分赛亚军</option>
+          <option value="match_bronze">🥉 积分赛季军</option>
+        </select></div>
+      <div class="f-item"><label>授予日期</label><input id="awDate" type="date"></div>
+      <div class="f-item"><label>备注（印在奖状上，可空）</label><input id="awNote" placeholder="如：跳绳从 92 到 110"></div>
+    </div>
+    <div class="f-actions">
+      <button class="cancel" onclick="closeAwardModal()">取消</button>
+      <button class="save" onclick="saveAward()">🏅 授予</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ====== 配置：试课系统换后端地址时只改下面一行；前端不再存任何密钥 ======
-const TRIAL_API = "https://b74f149cf8974e6995d47412c949bed1.app.workbuddy.host";
+const TRIAL_API = "https://460592d232a546f8b9db66bd0d4f4d32.app.workbuddy.host";
 const TOKEN_KEY = "xy_trial_token_v1"; // 登录后由后端签发，存本机
 // ==========================================================
 
@@ -342,6 +369,7 @@ async function loadAll() {
           '<span class="v"><span class="row-actions">' + esc(b.time) + statusTag(b.status) +
           '<span class="tag link ' + (hasSurvey ? "good" : "warn") + '" onclick="togglePQ(\'' + esc(b.childId) + '\')" title="点击看家长填写的基础信息">问卷' + (hasSurvey ? "✅" : "⚪") + '</span>' +
           '<button class="rep-btn" onclick="openRepModal(\'' + esc(b.childId) + '\',\'' + esc(b.name || "") + '\')">📝 报告</button>' +
+          '<button class="rep-btn ghost" onclick="openAwardModal(\'' + esc(b.childId) + '\',\'' + esc(b.name || "") + '\')">🏅 授奖</button>' +
           "</span></span></div>" +
           '<div class="pq" id="pq-' + esc(b.childId) + '" style="display:' + open + '">' + pqHtml(p) + "</div></div>"; }).join("")
       : '<p class="muted">还没有预约。把试课页发给家长，他们点选时段提交后，这里立刻出现。</p>';
@@ -521,6 +549,36 @@ async function saveReport() {
     loadAll();
   } catch (e) {
     alert("⚠️ 提交失败（" + e.message + "），请检查后端地址或稍后重试");
+  }
+}
+// ====== 授予奖状 ======
+let awardChild = null;
+function openAwardModal(childId, name) {
+  awardChild = { childId, name };
+  document.getElementById("awardWho").textContent = "孩子：" + (name || childId) + " · 授予后家长端「荣誉墙」立刻可见";
+  document.getElementById("awDate").value = new Date().toISOString().slice(0, 10);
+  document.getElementById("awNote").value = "";
+  document.getElementById("awardModal").classList.add("open");
+}
+function closeAwardModal() { document.getElementById("awardModal").classList.remove("open"); }
+
+async function saveAward() {
+  if (!awardChild) return;
+  const type = document.getElementById("awType").value;
+  const date = document.getElementById("awDate").value || new Date().toISOString().slice(0, 10);
+  const note = document.getElementById("awNote").value.trim();
+  try {
+    const token = localStorage.getItem(TOKEN_KEY) || "";
+    const p = await fetch(TRIAL_API + "/api/admin/award", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Token": token },
+      body: JSON.stringify({ childId: awardChild.childId, name: awardChild.name, type, date, note })
+    });
+    if (!p.ok) throw new Error("HTTP " + p.status);
+    closeAwardModal();
+    alert("🏅 已授予，家长端「成长 → 荣誉墙」立刻可见，可看大图保存");
+  } catch (e) {
+    alert("⚠️ 授予失败（" + e.message + "），登录可能过期，请刷新重试");
   }
 }
 </script>
