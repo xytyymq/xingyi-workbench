@@ -76,6 +76,15 @@
     border-radius:20px;padding:5px 12px;cursor:pointer;margin-left:8px;}
   .rep-btn.ghost{background:var(--teal-100);color:var(--teal-700);}
   .row-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  /* 家长问卷详情：点「问卷✅」展开 */
+  .tag.link{cursor:pointer;}
+  .pq{display:none;margin:2px 0 12px;padding:10px 12px;background:var(--mint-50);
+    border:1px dashed var(--line);border-radius:12px;}
+  .pq-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;}
+  .pq-i{font-size:12.5px;color:var(--sub);display:flex;justify-content:space-between;gap:8px;}
+  .pq-i b{color:var(--ink);font-weight:700;font-size:12.5px;text-align:right;}
+  .pq-time{margin-top:9px;font-size:11px;color:var(--muted);}
+  .pq-empty{font-size:12.5px;color:var(--muted);}
   .modal-mask{display:none;position:fixed;inset:0;background:rgba(15,32,29,.45);z-index:100;
     align-items:flex-end;justify-content:center;}
   .modal-mask.open{display:flex;}
@@ -161,6 +170,7 @@
   <section class="xy-sec">
     <div class="xy-sec-title"><span class="bar"></span>试课预约
       <button onclick="loadAll()">🔄 刷新</button>
+      <button id="pqAllBtn" onclick="toggleAllPQ()">📋 展开全部</button>
     </div>
     <div class="card">
       <h3>预约列表（按最新排序）</h3>
@@ -226,6 +236,69 @@ function statusTag(st) {
   return '<span class="tag">' + esc(st || "—") + "</span>";
 }
 
+// ====== 家长填写的基础信息（问卷）：点「问卷✅」展开 ======
+const expandedPQ = new Set(); // 记住展开状态，30 秒自动刷新后不会被收起
+const PQ_FIELDS = [
+  ["性别", "gender"], ["出生年月", "birth"], ["就读年级", "grade"],
+  ["羽毛球基础", "prior"], ["运动基础", "base"], ["性格", "pers"],
+  ["每周训练", "weekly"], ["健康注意", "health"], ["孩子最想要", "want"]
+];
+// 出生年月：家长端可能填 20160718 或 2019-03，统一成 2016-07-18，并顺带算年龄
+function fmtBirth(b) {
+  const s = String(b || "").trim();
+  if (/^\d{8}$/.test(s)) return s.slice(0, 4) + "-" + s.slice(4, 6) + "-" + s.slice(6, 8);
+  return s;
+}
+function ageOf(b) {
+  const s = String(b || "").trim();
+  let y = 0, m = 0;
+  if (/^\d{8}$/.test(s)) { y = +s.slice(0, 4); m = +s.slice(4, 6); }
+  else if (/^\d{4}-\d{1,2}/.test(s)) { y = +s.slice(0, 4); m = +s.slice(5, 7) || 0; }
+  if (!y) return "";
+  const now = new Date();
+  let age = now.getFullYear() - y;
+  if (m && now.getMonth() + 1 < m) age--;
+  return (age >= 3 && age <= 20) ? age + " 岁" : "";
+}
+function pqHtml(p) {
+  if (!p || !p.gender)
+    return '<div class="pq-empty">家长还没填问卷 —— 引导家长在试课系统「📋 档案」页填写</div>';
+  const items = PQ_FIELDS.filter(f => p[f[1]]).map(f => {
+    let v = p[f[1]];
+    if (f[1] === "birth") { v = fmtBirth(v); const a = ageOf(p.birth); if (a) v += "（" + a + "）"; }
+    return '<div class="pq-i"><span>' + f[0] + '</span><b>' + esc(v) + '</b></div>';
+  }).join("");
+  const exp = (p.expect && p.expect.length)
+    ? '<div class="pq-i" style="grid-column:1/-1"><span>家长期望</span><b>' + esc(p.expect.join("、")) + '</b></div>'
+    : "";
+  return '<div class="pq-grid">' + items + exp + '</div>' +
+    '<div class="pq-time">家长填写于 ' + (p.filledAt ? fmtTime(p.filledAt) : "—") + '</div>';
+}
+function togglePQ(id) {
+  if (expandedPQ.has(id)) expandedPQ.delete(id); else expandedPQ.add(id);
+  const show = expandedPQ.has(id) ? "block" : "none";
+  ["pq-", "pqr-"].forEach(pre => {
+    const el = document.getElementById(pre + id);
+    if (el) el.style.display = show;
+  });
+  syncPQBtn();
+}
+function toggleAllPQ() {
+  const all = Array.from(document.querySelectorAll(".pq"));
+  const openCount = all.filter(el => el.style.display === "block").length;
+  const toOpen = openCount < all.length;
+  all.forEach(el => {
+    const id = el.id.slice(el.id.indexOf("-") + 1);
+    if (toOpen) expandedPQ.add(id); else expandedPQ.delete(id);
+    el.style.display = toOpen ? "block" : "none";
+  });
+  syncPQBtn();
+}
+function syncPQBtn() {
+  const btn = document.getElementById("pqAllBtn");
+  if (btn) btn.textContent = expandedPQ.size > 0 ? "📋 收起全部" : "📋 展开全部";
+}
+
 async function get(path) {
   const token = localStorage.getItem(TOKEN_KEY) || "";
   // token 走 X-Token 自定义头（发布平台代理会覆盖 Authorization 头，且 query 长值偶发被改写）
@@ -252,13 +325,16 @@ async function loadAll() {
     bookBox.innerHTML = list.length
       ? list.map(b => {
           const sv = (rj.reports || {})[b.childId];
-          const hasSurvey = !!(sv && sv.parent && sv.parent.gender);
-          return '<div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
+          const p = (sv && sv.parent) ? sv.parent : null;
+          const hasSurvey = !!(p && p.gender);
+          const open = expandedPQ.has(b.childId) ? "block" : "none";
+          return '<div><div class="row"><span class="k">🧒 ' + esc(b.name || b.childId) +
           '<br><span class="meta">' + (b.phone ? '📞 ' + esc(b.phone) + ' · ' : '') + fmtTime(b.createdAt) + "</span></span>" +
           '<span class="v"><span class="row-actions">' + esc(b.time) + statusTag(b.status) +
-          '<span class="tag ' + (hasSurvey ? "good" : "warn") + '">问卷' + (hasSurvey ? "✅" : "⚪") + '</span>' +
+          '<span class="tag link ' + (hasSurvey ? "good" : "warn") + '" onclick="togglePQ(\'' + esc(b.childId) + '\')" title="点击看家长填写的基础信息">问卷' + (hasSurvey ? "✅" : "⚪") + '</span>' +
           '<button class="rep-btn" onclick="openRepModal(\'' + esc(b.childId) + '\',\'' + esc(b.name || "") + '\')">📝 报告</button>' +
-          "</span></span></div>"; }).join("")
+          "</span></span></div>" +
+          '<div class="pq" id="pq-' + esc(b.childId) + '" style="display:' + open + '">' + pqHtml(p) + "</div></div>"; }).join("")
       : '<p class="muted">还没有预约。把试课页发给家长，他们点选时段提交后，这里立刻出现。</p>';
 
     // 报告列表（含名字反查 + 编辑入口）
@@ -274,16 +350,21 @@ async function loadAll() {
             ? '身高 ' + esc(last.height || "—") + ' · 跳绳 ' + esc(last.rope || "—") +
               ' · 协调 ' + esc(last.coord || "—") + (last.note ? '<br><span class="meta">💬 ' + esc(last.note) + "</span>" : "")
             : "（旧版单条报告）" + fmtTime(rp.updatedAt);
-          return '<div class="row" style="display:block"><span class="k">🧒 ' + esc(nameOf(id)) +
+          const p2 = rp.parent || null;
+          const hasP2 = !!(p2 && p2.gender);
+          const open2 = expandedPQ.has(id) ? "block" : "none";
+          return '<div><div class="row" style="display:block"><span class="k">🧒 ' + esc(nameOf(id)) +
             ' <span class="tag">' + (entries.length ? entries.length + " 次测评" : "1 条") + "</span>" +
             ' <button class="rep-btn ghost" onclick="openRepModal(\'' + esc(id) + '\',\'' + esc(nameOf(id)) + '\')">✏️ 补填/修改</button></span>' +
             '<div class="meta">' + (entries.length ? "最近测评 " + esc(last.date || fmtTime(rp.updatedAt)) + "<br>" : "") + summary +
-            (rp.parent && rp.parent.gender ? ' · 家长问卷✅' : ' · 家长问卷⚪') + "</div></div>";
+            '<span class="tag link ' + (hasP2 ? "good" : "warn") + '" style="margin-left:4px" onclick="togglePQ(\'' + esc(id) + '\')" title="点击看家长填写的基础信息">家长问卷' + (hasP2 ? "✅" : "⚪") + '</span>' + "</div></div>" +
+            '<div class="pq" id="pqr-' + esc(id) + '" style="display:' + open2 + '">' + pqHtml(p2) + "</div></div>";
         }).join("")
       : '<p class="muted">还没有体测报告。点上方预约记录里的「📝 报告」，试课后 1 分钟填完，家长端立刻可见。</p>';
 
     document.getElementById("updatedAt").textContent =
       "更新于 " + new Date().toLocaleTimeString("zh-CN") + " · 数据源：试课系统后端";
+    syncPQBtn();
   } catch (e) {
     bookBox.innerHTML = '<div class="err">⚠️ 拉不到试课系统数据（' + esc(e.message) +
       '）。多半是临时后端地址变了——改本页顶部 TRIAL_API 一行即可。</div>';
