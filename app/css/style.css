@@ -143,6 +143,15 @@ html, body {
 .cert-mini .cm-date { font-size: 11px; color: #8aa; }
 .cert-mini .cm-view { float: right; color: #185FA5; font-weight: 700; }
 
+/* 折叠块（上课反馈更早记录 / 技能徽章） */
+.fb-fold { margin-top: 8px; }
+.fb-fold > summary { font-size: 13px; font-weight: 700; color: #185FA5; cursor: pointer; padding: 9px 12px;
+  background: #eef5fc; border-radius: 10px; list-style: none; user-select: none; }
+.fb-fold > summary::-webkit-details-marker { display: none; }
+.fb-fold > summary::after { content: "▸"; float: right; transition: .2s; color: #7ba7d4; }
+.fb-fold[open] > summary::after { transform: rotate(90deg); }
+.fb-fold[open] > summary { margin-bottom: 8px; }
+
 /* 技能挑战徽章：八项五级 40 格 */
 .skill-cat { font-size: 12px; font-weight: 800; color: #185FA5; margin: 10px 0 6px; display: flex; align-items: center; gap: 8px; }
 .skill-cat .sc-got { font-size: 10px; font-weight: 700; color: #0e7a5f; background: #e2f7ee; padding: 1px 8px; border-radius: 10px; }
