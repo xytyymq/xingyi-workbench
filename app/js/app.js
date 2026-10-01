@@ -10,7 +10,7 @@ function toast(msg) {
 }
 
 function headerBar(child) {
-  return '<div class="header"><h1>星羿试课</h1>' +
+  return '<div class="header"><h1>🏸 星羿家长端</h1>' +
     '<div style="text-align:right"><div class="who">' + child.name + " 家长</div>" +
     '<button id="logoutBtn">退出</button></div></div>';
 }
@@ -23,12 +23,13 @@ function tabBar(active) {
 }
 
 function renderLogin() {
-  return '<div class="hero"><h2>星羿试课 · 家长端</h2><p>给孩子预约一节羽毛球体验课</p></div>' +
+  return '<div class="hero"><h2>星羿家长端</h2><p>约课 · 成长记录 · 荣誉墙 · 体测报告，一站式查看</p></div>' +
     '<div class="card"><h3>登录查看专属内容</h3>' +
     '<input class="input" id="phone" placeholder="家长手机号" inputmode="numeric" />' +
     '<input class="input" id="child" placeholder="孩子姓名（如：小明）" />' +
     '<button class="btn" id="loginBtn">进入</button>' +
-    '<p class="muted">登录后仅显示您孩子的试课与体测内容，数据隔离。</p></div>';
+    '<div id="pickList"></div>' +
+    '<p class="muted">手机号和孩子姓名请与预约时填写的一致。记不清写法也没关系：点「进入」后系统会按手机号自动帮您找回孩子的记录。</p></div>';
 }
 
 function renderBooking(child) {
@@ -74,7 +75,52 @@ function reportRows(e) {
 function renderReport(child) {
   return '<div class="hero"><h2>' + child.name + " 的体测报告</h2><p>家长档案 + 教练现场体测</p></div>" +
     '<div class="card"><h3>① 您填写的孩子信息</h3><div id="parentCard"><p class="muted">加载中…</p></div></div>' +
-    '<div class="card"><h3>② 教练现场体测</h3><div id="coachCard"><p class="muted">加载中…</p></div></div>';
+    '<div class="card"><h3>② 教练现场体测</h3><div id="coachCard"><p class="muted">加载中…</p></div>' +
+    '<button class="btn ghost" id="dlReportBtn" style="margin-top:10px;">📥 生成报告图片（长按可保存）</button></div>';
+}
+
+// 体测报告卡 SVG（品牌墨绿+荧光绿，750x980）
+function reportCardSvg(child, parent, entries) {
+  const e = entries[entries.length - 1] || {};
+  const item = (y, k, v) => {
+    if (!v) return "";
+    return '<text x="70" y="' + y + '" font-size="22" fill="#8AA09A" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + k + '</text>' +
+      '<text x="290" y="' + y + '" font-size="22" font-weight="bold" fill="#F2F8F6" text-anchor="end" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + esc2safe(String(v)) + "</text>";
+  };
+  const d = String(e.date || "").replace(/^(\d{4})-(\d{1,2})-(\d{1,2}).*$/, "$1.$2.$3");
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="750" height="980" viewBox="0 0 750 980">' +
+    '<defs><linearGradient id="rbg" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="#0E5A4C"/><stop offset="1" stop-color="#0B3A32"/></linearGradient></defs>' +
+    '<rect width="750" height="980" rx="18" fill="url(#rbg)"/>' +
+    '<circle cx="640" cy="110" r="140" fill="#C6F94B" opacity=".06"/>' +
+    '<text x="70" y="110" font-size="26" fill="#C6F94B" font-weight="bold" letter-spacing="3" font-family="PingFang SC,Microsoft YaHei,sans-serif">🏸 星羿羽毛球 · 体测报告</text>' +
+    '<text x="70" y="190" font-size="52" font-weight="bold" fill="#FFFFFF" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + esc2safe(child.name) + '</text>' +
+    '<text x="70" y="232" font-size="22" fill="#8AA09A" font-family="PingFang SC,Microsoft YaHei,sans-serif">测评日期 ' + esc2safe(d) + (entries.length > 1 ? " · 第 " + entries.length + " 次测评" : "") + "</text>" +
+    item(320, "身高", e.height ? e.height + " cm" : "") +
+    item(365, "体重", e.weight ? e.weight + " kg" : "") +
+    item(410, "柔韧性", e.flexibility) +
+    item(455, "1 分钟跳绳", e.rope ? e.rope + " 个" : "") +
+    item(500, "步法敏捷", e.footwork) +
+    item(545, "协调性球感", e.coord) +
+    item(590, "力量", e.strength) +
+    '<rect x="56" y="620" width="638" height="1" fill="#2A5A50"/>' +
+    (parent && parent.gender
+      ? '<text x="70" y="672" font-size="20" fill="#8AA09A" font-family="PingFang SC,Microsoft YaHei,sans-serif">基础档案</text>' +
+        '<text x="290" y="672" font-size="20" font-weight="bold" fill="#F2F8F6" text-anchor="end" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
+        esc2safe([parent.gender, parent.grade, parent.prior].filter(Boolean).join(" · ")) + "</text>"
+      : "") +
+    (e.note
+      ? '<rect x="56" y="716" width="638" height="150" rx="12" fill="#C6F94B" opacity=".12"/>' +
+        '<text x="80" y="756" font-size="20" font-weight="bold" fill="#C6F94B" font-family="PingFang SC,Microsoft YaHei,sans-serif">💬 教练建议</text>' +
+        '<text x="80" y="792" font-size="19" fill="#F2F8F6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
+        esc2safe(String(e.note).slice(0, 22)) + "</text>" +
+        '<text x="80" y="822" font-size="19" fill="#F2F8F6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
+        esc2safe(String(e.note).slice(22, 44)) + "</text>" +
+        '<text x="80" y="852" font-size="19" fill="#F2F8F6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
+        esc2safe(String(e.note).slice(44, 66)) + "</text>"
+      : "") +
+    '<text x="375" y="932" font-size="16" fill="#8AA09A" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">星羿羽毛球馆 · 江西省九江市开发区杭州路 · 15107920066</text>' +
+    "</svg>";
 }
 
 function surveyRows(p, exp) {
@@ -92,6 +138,14 @@ async function fillReport(child) {
   const r = await Store.getReport(child.childId);
   const parent = (r && r.parent) || null;
   const entries = (r && r.entries) || [];
+  const dl = document.getElementById("dlReportBtn");
+  if (dl) dl.onclick = async () => {
+    if (!entries.length) { toast("还没有体测数据，试课后教练填写即可生成"); return; }
+    dl.disabled = true; const old = dl.textContent; dl.textContent = "生成中…";
+    try { await openImgModal(reportCardSvg(child, parent, entries), 750, 980, child.name + " · 体测报告"); }
+    catch (e) { toast("生成失败，请重试"); }
+    dl.disabled = false; dl.textContent = old;
+  };
   // ① 家长问卷
   if (!parent || !parent.gender) {
     pc.innerHTML = '<p class="muted">还没填孩子基础档案，预约后花 1 分钟填一下，帮教练更懂 ' + child.name + '。</p>' +
@@ -164,19 +218,158 @@ function esc2safe(s) {
     c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
+// 手机号下有多个孩子且名字对不上时：列出选择
+function showPickList(phone, children, typedName) {
+  const box = document.getElementById("pickList");
+  if (!box) return;
+  window.__pickChild = (cid, nm) => {
+    Auth.loginWithChild(phone, { childId: cid, name: nm });
+    location.hash = "/booking";
+  };
+  box.innerHTML =
+    '<p class="muted" style="margin:10px 0 6px;">用手机号 <b>' + esc2safe(phone.slice(0,3)+"****"+phone.slice(-4)) +
+    '</b> 找到以下孩子，请点选（输入的「' + esc2safe(typedName) + '」没对上）：</p>' +
+    children.map(c =>
+      '<button class="btn ghost pick-child" style="margin-bottom:8px;" onclick="__pickChild(\'' +
+      esc2safe(c.childId) + '\',\'' + esc2safe(c.name) + '\')">🧒 ' + esc2safe(c.name) + "（点此进入）</button>"
+    ).join("");
+}
+
+// ===== 荣誉墙：奖状类型与获取条件（8 种） =====
+const AWARD_TYPES = [
+  { type: "monthly_star", name: "月度之星", icon: "🌟", how: "每月由教练组综合评选 1 名" },
+  { type: "progress",     name: "进步之星", icon: "🚀", how: "体测成绩较上次明显提升" },
+  { type: "full_attend",  name: "全勤小将", icon: "🎯", how: "当月课程全部到课" },
+  { type: "best_new",     name: "最佳新人", icon: "🌱", how: "新学员首月表现突出" },
+  { type: "discipline",   name: "纪律之星", icon: "🎖️", how: "课堂纪律与礼仪标兵" },
+  { type: "match_gold",   name: "积分赛冠军", icon: "🥇", how: "馆内积分赛第一名" },
+  { type: "match_silver", name: "积分赛亚军", icon: "🥈", how: "馆内积分赛第二名" },
+  { type: "match_bronze", name: "积分赛季军", icon: "🥉", how: "馆内积分赛第三名" }
+];
+const awardMeta = t => AWARD_TYPES.find(a => a.type === t) || { type: t, name: t, icon: "🏅", how: "" };
+
 function renderGrowth(child) {
-  return '<div class="hero"><h2>成长记录</h2><p>' + child.name + " 的试课轨迹</p></div>" +
-    '<div class="card"><h3>档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
-    '<div class="card"><h3>预约记录</h3><div id="growthBookings"><p class="muted">加载中…</p></div></div>' +
-    '<div class="card"><h3>体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div></div>';
+  return '<div class="hero"><h2>成长记录</h2><p>' + child.name + " 的训练轨迹与荣誉</p></div>" +
+    '<div class="card"><h3>📖 上课反馈</h3><p class="muted" style="margin:0 0 8px;">教练每节课后的专属反馈，像老师留言一样</p><div id="growthClasses"><p class="muted">加载中…</p></div></div>' +
+    '<div class="card"><h3>🏅 荣誉墙</h3><p class="muted" style="margin:0 0 8px;">点已获得的奖状可看大图、长按保存</p><div id="awardWall"><p class="muted">加载中…</p></div></div>' +
+    '<div class="card"><h3>📋 档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
+    '<div class="card"><h3>📅 预约记录</h3><div id="growthBookings"><p class="muted">加载中…</p></div></div>' +
+    '<div class="card"><h3>📊 体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div></div>';
+}
+
+// 上课反馈：家长话术呈现
+function classCards(classes) {
+  if (!classes.length)
+    return '<p class="muted">还没有上课记录。孩子来上课后，教练当天的反馈会自动出现在这里。</p>';
+  const fmtD = s => { const m = String(s || "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); return m ? (+m[2]) + "月" + (+m[3]) + "日" : s; };
+  return classes.slice(0, 12).map(c => {
+    const lines = [];
+    if (c.progress) lines.push('<div class="fb-line">🌟 <b>今日进步</b>：' + esc2safe(c.progress) + "</div>");
+    if (c.focus) lines.push('<div class="fb-line">💪 <b>下节课重点</b>：' + esc2safe(c.focus) + "</div>");
+    return '<div class="fb-card">' +
+      '<div class="fb-head"><b>' + esc2safe(fmtD(c.date)) + "</b>" +
+      (c.className ? '<span class="tag">' + esc2safe(c.className) + "</span>" : "") +
+      (c.coach ? '<span class="muted">教练 ' + esc2safe(c.coach) + "</span>" : "") + "</div>" +
+      '<div class="fb-say">孩子今天的训练已完成 ✅</div>' +
+      lines.join("") + "</div>";
+  }).join("") + (classes.length > 12 ? '<p class="muted">仅显示最近 12 次上课反馈</p>' : "");
+}
+
+// 荣誉墙：已获得（彩色可点）+ 未获得（灰显锁定）
+function awardWall(awards) {
+  const got = {};
+  (awards || []).forEach(a => { got[a.type] = got[a.type] || []; got[a.type].push(a); });
+  const items = AWARD_TYPES.map(m => {
+    const mine = got[m.type];
+    if (mine && mine.length) {
+      const last = mine[0];
+      return '<div class="award-card got" onclick="showAwardImage(\'' + m.type + '\',\'' +
+        esc2safe(last.name || "").replace(/'/g, "") + '\',\'' + esc2safe(last.date) + '\',\'' +
+        esc2safe(last.note || "").replace(/'/g, "") + '\')" title="点击看奖状大图">' +
+        '<span class="a-ic">' + m.icon + '</span><span class="a-name">' + m.name + "</span>" +
+        '<span class="a-date">' + esc2safe(last.date || "") + '</span><span class="a-tip">查看</span></div>';
+    }
+    return '<div class="award-card lock"><span class="a-ic">' + m.icon + '</span><span class="a-name">' + m.name + "</span>" +
+      '<span class="a-how">🔒 ' + esc2safe(m.how) + "</span></div>";
+  }).join("");
+  const extra = (awards || []).filter(a => !AWARD_TYPES.some(m => m.type === a.type));
+  return '<div class="award-grid">' + items + "</div>" +
+    (extra.length ? '<p class="muted">其他荣誉：' + extra.map(a => esc2safe(awardMeta(a.type).name)).join("、") + "</p>" : "");
+}
+
+// ===== 奖状大图（SVG 模板 → PNG，长按保存） =====
+function awardSvg(type, name, date, note) {
+  const m = awardMeta(type);
+  const d = String(date || "").replace(/^(\d{4})-(\d{1,2})-(\d{1,2}).*$/, "$1 年 $2 月 $3 日");
+  const noteTxt = note ? String(note).slice(0, 40) : "";
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="750" height="530" viewBox="0 0 750 530">' +
+    '<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="#0E5A4C"/><stop offset="1" stop-color="#0B3A32"/></linearGradient></defs>' +
+    '<rect width="750" height="530" rx="18" fill="url(#bg)"/>' +
+    '<rect x="14" y="14" width="722" height="502" rx="12" fill="none" stroke="#E0A93B" stroke-width="3"/>' +
+    '<rect x="24" y="24" width="702" height="482" rx="8" fill="none" stroke="#E0A93B" stroke-width="1" opacity=".5"/>' +
+    '<circle cx="375" cy="120" r="44" fill="#E0A93B" opacity=".15"/>' +
+    '<text x="375" y="138" font-size="52" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + m.icon + "</text>" +
+    '<text x="375" y="212" font-size="44" font-weight="bold" fill="#E0A93B" text-anchor="middle" letter-spacing="6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + m.name + "</text>" +
+    '<text x="375" y="252" font-size="15" fill="#C6F94B" text-anchor="middle" letter-spacing="4">XINGYI BADMINTON · HONOR</text>' +
+    '<text x="375" y="316" font-size="26" fill="#F2F8F6" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">授予 <tspan font-weight="bold" font-size="32" fill="#FFFFFF">' + esc2safe(name) + " 同学</tspan></text>" +
+    '<text x="375" y="368" font-size="18" fill="#BFD8D2" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">表彰你在羽毛球训练中的出色表现，愿你挥拍向前，成长看得见！</text>' +
+    (noteTxt ? '<text x="375" y="404" font-size="16" fill="#C6F94B" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">「' + esc2safe(noteTxt) + '」</text>' : "") +
+    '<text x="375" y="462" font-size="16" fill="#8AA09A" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + d + "</text>" +
+    '<text x="375" y="492" font-size="14" fill="#8AA09A" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">星羿羽毛球馆 · 九江开发区杭州路</text></svg>';
+}
+
+window.showAwardImage = async function (type, name, date, note) {
+  const svg = awardSvg(type, name, date, note);
+  await openImgModal(svg, 750, 530, name + " · " + awardMeta(type).name);
+};
+
+// SVG → PNG（canvas 2x 渲染），弹层展示提示长按保存
+async function openImgModal(svg, w, h, title) {
+  const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  const png = await new Promise((res, rej) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = w * 2; c.height = h * 2;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0, c.width, c.height);
+      try { res(c.toDataURL("image/png")); } catch (e) { rej(e); }
+    };
+    img.onerror = rej;
+    img.src = url;
+  }).catch(() => null);
+  let el = document.getElementById("imgModal");
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "imgModal";
+    el.className = "img-modal";
+    el.onclick = () => el.classList.remove("open");
+    document.body.appendChild(el);
+  }
+  el.innerHTML = '<div class="img-modal-box">' +
+    '<div class="img-modal-title">🖼 ' + esc2safe(title || "图片") + '</div>' +
+    (png
+      ? '<img src="' + png + '" alt="奖状图片" />'
+      : '<img src="' + url + '" alt="奖状图片" style="width:100%">') +
+    '<p class="img-modal-tip">📱 长按图片保存到相册 · 点空白处关闭</p></div>';
+  el.classList.add("open");
 }
 
 async function fillGrowth(child) {
   const gs = document.getElementById("growthSurvey");
   const gb = document.getElementById("growthBookings");
   const gr = document.getElementById("growthReports");
+  const gc = document.getElementById("growthClasses");
+  const aw = document.getElementById("awardWall");
   if (!gb || !gr) return;
-  const list = await Store.getBookings(child.childId);
+  // 成长数据（上课记录 + 奖状）与预约/报告并行拉
+  const [list, growth] = await Promise.all([
+    Store.getBookings(child.childId),
+    Store.getGrowth(child.childId, child.name).catch(() => ({ classes: [], awards: [] }))
+  ]);
+  if (gc) gc.innerHTML = classCards(growth.classes);
+  if (aw) aw.innerHTML = awardWall(growth.awards);
   gb.innerHTML = list.length
     ? list.map(b => '<div class="row"><span class="k">' + esc2safe(b.time) +
         '</span><span class="v">' + esc2safe(b.status) +
@@ -218,11 +411,33 @@ const routes = {
 function bindEvents(h, child) {
   if (h === "/login") {
     const btn = document.getElementById("loginBtn");
-    if (btn) btn.onclick = () => {
-      const ph = document.getElementById("phone").value;
-      const nm = document.getElementById("child").value;
+    if (btn) btn.onclick = async () => {
+      const ph = document.getElementById("phone").value.trim();
+      const nm = document.getElementById("child").value.trim();
       if (!ph || !nm) { toast("请填写手机号和孩子姓名"); return; }
+      btn.disabled = true; const old = btn.textContent; btn.textContent = "查找中…";
+      try {
+        // 先按手机号找回（老生换设备 / 姓名写法不一致时依然能对上）
+        const children = await Store.lookupPhone(ph);
+        if (children.length) {
+          const norm = s => String(s || "").replace(/\s/g, "");
+          const partial = children.filter(c =>
+            norm(c.name).includes(norm(nm)) || norm(nm).includes(norm(c.name)));
+          const exact = partial.find(c => norm(c.name) === norm(nm));
+          const match = exact || partial[0];
+          if (match) {
+            Auth.loginWithChild(ph, match);
+            location.hash = "/booking";
+            return;
+          }
+          // 名字对不上该手机号下的孩子 → 列出让家长选
+          showPickList(ph, children, nm);
+          btn.disabled = false; btn.textContent = old;
+          return;
+        }
+      } catch (e) { /* 找回接口不可用 → 走本地登录兜底 */ }
       const c = Auth.login(ph, nm);
+      btn.disabled = false; btn.textContent = old;
       if (c) location.hash = "/booking";
     };
     return;
