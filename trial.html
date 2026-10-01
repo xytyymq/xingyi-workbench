@@ -195,6 +195,14 @@
     </div>
   </section>
 
+  <section class="xy-sec" style="margin-top:0;">
+    <div class="xy-sec-title"><span class="bar"></span>提报分析 · 家长反馈</div>
+    <div class="card">
+      <h3>💬 家长反馈（家长端「🔔 消息」页提交，直达这里）</h3>
+      <div id="fbAdminList"><p class="muted">加载中…</p></div>
+    </div>
+  </section>
+
   <p id="updatedAt"></p>
 </div>
 
@@ -398,6 +406,20 @@ async function loadAll() {
             '<div class="pq" id="pqr-' + esc(id) + '" style="display:' + open2 + '">' + pqHtml(p2) + "</div></div>";
         }).join("")
       : '<p class="muted">还没有体测报告。点上方预约记录里的「📝 报告」，试课后 1 分钟填完，家长端立刻可见。</p>';
+
+    // 家长反馈（提报分析）：独立拉取，失败不拖垮整个看板
+    const fbBox = document.getElementById("fbAdminList");
+    if (fbBox) {
+      try {
+        const fj = await get("/api/admin/feedback");
+        const fbs = fj.feedback || [];
+        fbBox.innerHTML = fbs.length
+          ? fbs.map(f => '<div class="row" style="display:block"><span class="k">🧒 ' + esc(f.name || f.childId) +
+              ' <span class="meta">' + fmtTime(f.createdAt) + '</span> <span class="tag">' + esc(f.status || "已收到") + "</span></span>" +
+              '<div class="meta" style="margin-top:3px;">💬 ' + esc(f.text) + "</div></div>").join("")
+          : '<p class="muted">还没有家长反馈。家长在家长端「🔔 消息」页提交后会自动出现在这里。</p>';
+      } catch (e) { fbBox.innerHTML = '<p class="muted">反馈加载失败：' + esc(e.message) + "</p>"; }
+    }
 
     document.getElementById("updatedAt").textContent =
       "更新于 " + new Date().toLocaleTimeString("zh-CN") + " · 数据源：试课系统后端";
