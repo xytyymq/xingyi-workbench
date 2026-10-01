@@ -59,10 +59,25 @@ const Store = {
     const j = await api("/api/lookup?phone=" + encodeURIComponent(phone));
     return j.children || [];
   },
-  // 成长数据：上课记录（按姓名匹配）+ 奖状
+  // 成长数据：上课记录（按姓名匹配）+ 奖状（接口异常时抛错，让页面提示网络开小差）
   async getGrowth(childId, name) {
     const q = "childId=" + encodeURIComponent(childId || "") + "&name=" + encodeURIComponent(name || "");
     const j = await api("/api/growth?" + q);
+    if (j.error) throw new Error(j.error);
     return { classes: j.classes || [], awards: j.awards || [] };
+  },
+  // 家长反馈：提交 + 查自己的反馈
+  async addFeedback(childId, name, text) {
+    const j = await api("/api/feedback", {
+      method: "POST",
+      body: JSON.stringify({ childId, name, text })
+    });
+    if (j.error) throw new Error(j.error);
+    return j.feedback || null;
+  },
+  async getMyFeedback(childId) {
+    const j = await api("/api/feedback?childId=" + encodeURIComponent(childId));
+    if (j.error) throw new Error(j.error);
+    return j.feedback || [];
   }
 };
