@@ -142,3 +142,17 @@ html, body {
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .cert-mini .cm-date { font-size: 11px; color: #8aa; }
 .cert-mini .cm-view { float: right; color: #185FA5; font-weight: 700; }
+
+/* 技能挑战徽章：八项五级 40 格 */
+.skill-cat { font-size: 12px; font-weight: 800; color: #185FA5; margin: 10px 0 6px; display: flex; align-items: center; gap: 8px; }
+.skill-cat .sc-got { font-size: 10px; font-weight: 700; color: #0e7a5f; background: #e2f7ee; padding: 1px 8px; border-radius: 10px; }
+.skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.skill-cell { border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.skill-cell .sc-name { font-size: 12px; font-weight: 700; line-height: 1.3; }
+.skill-cell .sc-need { font-size: 10px; line-height: 1.3; }
+.skill-cell.got { background: linear-gradient(135deg, #fff8e6, #fffdf5); border: 1.5px solid #FFB703; }
+.skill-cell.got .sc-name { color: #7a5200; }
+.skill-cell.got .sc-need { color: #0e7a5f; font-weight: 700; }
+.skill-cell.lock { background: #f3f5f7; border: 1.5px dashed #cfd8de; }
+.skill-cell.lock .sc-name { color: #8a99a5; }
+.skill-cell.lock .sc-need { color: #9fb0bc; }
