@@ -1,5 +1,23 @@
 // 家长端 SPA：路由 + 登录隔离 + 4 个核心页 + 馆端聚合页（Phase 2）
 let selSlot = null;
+// 老生标记（有上课记录/奖状的学员隐藏「预约试课」页），本会话缓存
+window._xyOld = sessionStorage.getItem("xy_old") === "1";
+function markOldStudent() {
+  window._xyOld = true;
+  try { sessionStorage.setItem("xy_old", "1"); } catch (e) {}
+  const tb = document.querySelector(".tabbar a[href='#/booking']");
+  if (tb) tb.remove();
+}
+// 登录后预拉成长数据：有上课记录/奖状的老生立刻隐藏「预约试课」
+function prefetchOldFlag(child) {
+  if (window._xyOld || !child || !child.childId) return;
+  Store.getGrowth(child.childId, child.name).then(g => {
+    if (g && ((g.classes || []).length || (g.awards || []).length)) {
+      markOldStudent();
+      if ((location.hash.slice(1) || "/booking") === "/booking") render();
+    }
+  }).catch(() => {});
+}
 
 function toast(msg) {
   let el = document.querySelector(".toast");
@@ -18,8 +36,11 @@ function headerBar(child) {
 function tabBar(active) {
   const t = (h, ic, label) =>
     '<a href="#' + h + '" class="' + (active === h ? "active" : "") + '"><span class="ic">' + ic + "</span>" + label + "</a>";
-  return '<div class="tabbar">' + t("/booking", "📅", "预约") + t("/survey", "📋", "档案") +
-    t("/report", "📊", "报告") + t("/growth", "🌱", "成长") + t("/message", "🔔", "消息") + "</div>";
+  const items = [];
+  if (!window._xyOld) items.push(t("/booking", "📅", "预约"));
+  items.push(t("/survey", "📋", "档案") + t("/report", "📊", "报告") +
+    t("/growth", "🌱", "成长") + t("/message", "🔔", "消息"));
+  return '<div class="tabbar">' + items.join("") + "</div>";
 }
 
 function renderLogin() {
@@ -33,6 +54,14 @@ function renderLogin() {
 }
 
 function renderBooking(child) {
+  // 老生（有上课记录/奖状）不显示预约试课
+  if (window._xyOld) {
+    return '<div class="hero"><h2>🏅 在读学员</h2><p>' + esc2safe(child.name) + " 已是星羿在读学员</p></div>" +
+      '<div class="card"><h3>无需预约试课</h3>' +
+      '<p class="muted">排课时间以教练通知为准；请假、调课请直接联系教练。</p>' +
+      '<p class="muted">孩子的上课反馈、荣誉奖状、体测成长都在「🌱 成长」页查看。</p>' +
+      '<a class="btn" href="#/growth">去看成长记录</a></div>';
+  }
   const slots = Data.TIME_SLOTS.map(t =>
     '<div class="time' + (selSlot === t ? " sel" : "") + '" data-slot="' + t + '">' + t + "</div>").join("");
   return '<div class="hero"><h2>预约试课</h2><p>' + child.name + " 的体验课安排</p></div>" +
@@ -371,6 +400,26 @@ function matchStudent(profiles, childName) {
   return profiles.find(s => norm(s.name) === nm) ||
     profiles.find(s => norm(s.name).includes(nm) || nm.includes(norm(s.name))) || null;
 }
+// 同名多档案合并（重复建档兜底）：tests 按日期去重合并，保证体测历史一条不少
+function mergeStudent(profiles, childName) {
+  const norm = s => String(s || "").replace(/\s/g, "");
+  const nm = norm(childName);
+  if (!nm) return null;
+  const hits = profiles.filter(s => s && norm(s.name) &&
+    (norm(s.name) === nm || norm(s.name).includes(nm) || nm.includes(norm(s.name))));
+  if (!hits.length) return null;
+  const merged = Object.assign({}, hits[0]);
+  const seen = new Set(); const tests = [];
+  hits.forEach(h => (h.tests || []).forEach(t => {
+    const d = String((t && t.date) || "");
+    if (d && seen.has(d)) return;
+    if (d) seen.add(d);
+    tests.push(t);
+  }));
+  tests.sort((a, b) => String(a.date || "").localeCompare(String(b.date || "")));
+  merged.tests = tests;
+  return merged;
+}
 
 function surveyRows(p, exp) {
   const row = (k, v) => v ? '<div class="row"><span class="k">' + k + '</span><span class="v">' + esc2safe(v) + "</span></div>" : "";
@@ -484,6 +533,7 @@ function showPickList(phone, children, typedName) {
   window.__pickChild = (cid, nm) => {
     Auth.loginWithChild(phone, { childId: cid, name: nm });
     location.hash = "/booking";
+    prefetchOldFlag(Auth.current());
   };
   box.innerHTML =
     '<p class="muted" style="margin:10px 0 6px;">用手机号 <b>' + esc2safe(phone.slice(0,3)+"****"+phone.slice(-4)) +
@@ -554,7 +604,49 @@ function awardWall(awards) {
     '<span class="a-how">🔒 ' + esc2safe(m.how) + "</span></div>").join("");
   return '<div class="aw-sec">🏆 已获得的荣誉（点击看证书大图，长按保存）</div>' +
     '<div class="cert-grid">' + gotHtml + "</div>" +
-    (lockHtml ? '<div class="aw-sec" style="margin-top:14px;">🎯 还可以争取</div><div class="award-grid">' + lockHtml + "</div>" : "");
+    (lockHtml ? '<div class="aw-sec" style="margin-top:14px;">🎯 荣誉还可争取</div><div class="award-grid">' + lockHtml + "</div>" : "") +
+    '<div style="margin-top:6px;">' + skillWall(list) + "</div>";
+}
+
+// ===== 技能挑战徽章：八项 × 五级 = 40 枚（与证书编辑器「快捷奖项」同源） =====
+const SKILL_CATS = {
+  "定点高远球": [["高远启萌小能手", 5], ["精准击球小达人", 10], ["高远落点小先锋", 20], ["稳定高远小健将", 30], ["高远精准小精英", 50]],
+  "颠球":       [["羽球触感小萌芽", 20], ["拍随球动小骑士", 30], ["稳球小魔法师", 50], ["不间断控球小飞侠", 100], ["百炼控球小王者", 200]],
+  "前后场接球": [["跑位接球小能手", 5], ["移动防守小达人", 10], ["前后场穿梭小先锋", 20], ["灵活接杀小健将", 30], ["全场跑动小精英", 50]],
+  "一分钟跳绳": [["活力跳绳小能手", 80], ["敏捷跳跃小达人", 100], ["体能飞跃小先锋", 130], ["极速跳绳小健将", 180], ["体能巅峰小精英", 200]],
+  "手抛接球":   [["手抛接球小能手", 10], ["手抛接球进步之星", 20], ["手抛接球优秀学员", 30], ["手抛接球活力小将", 40], ["手抛接球潜力之星", 50]],
+  "反应能力":   [["闪电捕球小能手", 5], ["机灵接羽小侠", 10], ["追风接球小将", 20], ["速接小机灵", 30], ["飞羽捕捉小卫士", 50]],
+  "单打发球":   [["初鸣发球", 0, "刚掌握，能稳定把球发过网"], ["稳落发球", 0, "成功率过半，落点基本到位"], ["准星发球", 0, "成功率不错，经常落到目标区域"], ["灵耀发球", 0, "发球成功率高，长短可以变化"], ["金冠发球", 0, "发球成功率顶尖，很少失误"]],
+  "双打发球":   [["启跃发球", 0, "可以完成双打发球，少出界"], ["平顺发球", 0, "过半成功率，安全过网不失误"], ["网捷发球", 0, "成功率良好，网前小球质量稳定"], ["锐捷发球", 0, "高成功率，能控制边线落点"], ["星耀发球", 0, "满分级发球，失误极少，威胁十足"]]
+};
+function skillWall(awards) {
+  // 解析已获得：证书 award 字段格式「项 · 称号（N 个）」
+  const got = {};
+  (awards || []).forEach(a => {
+    const s = String(a.award || "");
+    if (!s || s.indexOf("·") < 0) return;
+    const cat = Object.keys(SKILL_CATS).find(c => s.split("·")[0].trim() === c);
+    if (!cat) return;
+    const title = (s.split("·")[1] || "").replace(/[（(].*$/, "").trim();
+    const numM = s.match(/[（(]\s*(\d+)\s*个/);
+    got[cat] = (got[cat] || []).concat({ title, num: numM ? +numM[1] : 0 });
+  });
+  let gotCount = 0;
+  let html = "";
+  Object.entries(SKILL_CATS).forEach(([cat, levels]) => {
+    const mine = got[cat] || [];
+    const cells = levels.map(([name, need, desc]) => {
+      const hit = mine.find(x =>
+        (x.title && x.title.indexOf(name) >= 0) || (need && x.num && x.num === need));
+      if (hit) { gotCount++; return '<div class="skill-cell got"><span class="sc-name">' + esc2safe(name) + '</span><span class="sc-need">✅ 已获得</span></div>'; }
+      return '<div class="skill-cell lock"><span class="sc-name">🔒 ' + esc2safe(name) + '</span><span class="sc-need">' +
+        (need ? "🎯 目标 " + need + " 个" : esc2safe(desc || "")) + "</span></div>";
+    }).join("");
+    html += '<div class="skill-cat">' + esc2safe(cat) +
+      (mine.length ? '<span class="sc-got">已获 ' + mine.length + " 枚</span>" : "") +
+      '</div><div class="skill-grid">' + cells + "</div>";
+  });
+  return '<div class="aw-sec">🏸 技能挑战徽章 · 八项五级（已集 ' + gotCount + " / 40 枚，教练考核达标即颁发）</div>" + html;
 }
 
 // ===== 荣誉证书大图（cert.html 同款版式 · 纯 SVG 1080x1440） =====
@@ -701,28 +793,55 @@ async function fillGrowth(child) {
   // 成长数据（上课记录 + 奖状）与预约/报告并行拉
   const [list, growth] = await Promise.all([
     Store.getBookings(child.childId),
-    Store.getGrowth(child.childId, child.name).catch(() => ({ classes: [], awards: [] }))
+    Store.getGrowth(child.childId, child.name).catch(() => null)
   ]);
-  if (gc) gc.innerHTML = classCards(growth.classes);
-  if (aw) aw.innerHTML = awardWall(growth.awards);
+  if (!growth) {
+    if (gc) gc.innerHTML = '<p class="muted">📖 成长数据暂时加载不了（网络开小差了），稍后再进来看看。</p>';
+    if (aw) aw.innerHTML = '<p class="muted">🏅 荣誉墙暂时加载不了（网络开小差了），稍后再进来看看。</p>';
+  }
+  const g = growth || { classes: [], awards: [] };
+  // 有上课记录或奖状 → 老生：隐藏「预约试课」
+  if ((g.classes || []).length || (g.awards || []).length) markOldStudent();
+  if (gc) gc.innerHTML = classCards(g.classes);
+  if (aw) aw.innerHTML = awardWall(g.awards);
   gb.innerHTML = list.length
     ? list.map(b => '<div class="row"><span class="k">' + esc2safe(b.time) +
         '</span><span class="v">' + esc2safe(b.status) +
         ' <span class="muted">' + fmtTime(b.createdAt) + "</span></span></div>").join("")
     : '<p class="muted">还没有预约记录。</p>';
-  const r = await Store.getReport(child.childId);
+  // 体测历史：双源合并 = 试课体测(reports) + 工作台云端主档(profiles.json，同名档案自动合并去重)
+  const [r, st] = await Promise.all([
+    Store.getReport(child.childId).catch(() => null),
+    fetchProfiles().then(ps => mergeStudent(ps, child.name)).catch(() => null)
+  ]);
   const p = (r && r.parent) || null;
   if (gs) gs.innerHTML = (p && p.gender)
     ? '<div class="row"><span class="k">📋 孩子档案</span><span class="v"><span class="tag good">已填</span> <span class="muted">' +
         (p.filledAt ? fmtTime(p.filledAt) : "") + '</span></span></div>'
     : '<div class="row"><span class="k">📋 孩子档案</span><span class="v"><span class="tag warn">未填</span></span></div>' +
       '<a class="btn" href="#/survey">去填写</a>';
-  const entries = ((r && r.entries) || []).slice().reverse();
-  gr.innerHTML = entries.length
-    ? entries.map(e =>
+  const seenD = new Set();
+  const rows = [];
+  ((st && st.tests) || []).forEach(t => {
+    const d = String(t.date || ""); if (!d) return;
+    const m = t.m || {};
+    seenD.add(d);
+    rows.push({ date: d,
+      txt: "身高 " + (m.height || "—") + " · 跳绳 " + (m.rope || "—") + " · 步法 " + (m.footwork || "—") +
+        (m.standingJump ? " · 立定跳远 " + m.standingJump + " cm" : ""),
+      note: t.note || "" });
+  });
+  (((r && r.entries) || [])).forEach(e => {
+    const d = String(e.date || ""); if (!d || seenD.has(d)) return;
+    seenD.add(d);
+    rows.push({ date: d, txt: "身高 " + (e.height || "—") + " · 跳绳 " + (e.rope || "—") + " · 协调 " + (e.coord || "—"), note: e.note || "" });
+  });
+  rows.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  gr.innerHTML = rows.length
+    ? rows.map(e =>
         '<div class="row" style="display:block"><span class="k">📊 ' + esc2safe(e.date) + "</span>" +
-        '<div class="muted">身高 ' + esc2safe(e.height || "—") + ' · 跳绳 ' + esc2safe(e.rope || "—") +
-        ' · 协调 ' + esc2safe(e.coord || "—") + (e.note ? "<br>" + esc2safe(e.note) : "") + "</div></div>").join("")
+        '<div class="muted">' + esc2safe(e.txt) + (e.note ? "<br>" + esc2safe(e.note) : "") + "</div></div>").join("") +
+      '<p class="muted">共 ' + rows.length + " 次体测记录 · 完整数据在「📊 报告」页生成体测成长卡图片</p>"
     : '<p class="muted">还没有体测记录，完成首次测评后这里会记录孩子的成长轨迹。</p>';
 }
 
@@ -763,6 +882,7 @@ function bindEvents(h, child) {
           if (match) {
             Auth.loginWithChild(ph, match);
             location.hash = "/booking";
+            prefetchOldFlag(Auth.current());
             return;
           }
           // 名字对不上该手机号下的孩子 → 列出让家长选
@@ -773,7 +893,7 @@ function bindEvents(h, child) {
       } catch (e) { /* 找回接口不可用 → 走本地登录兜底 */ }
       const c = Auth.login(ph, nm);
       btn.disabled = false; btn.textContent = old;
-      if (c) location.hash = "/booking";
+      if (c) { location.hash = "/booking"; prefetchOldFlag(c); }
     };
     return;
   }
