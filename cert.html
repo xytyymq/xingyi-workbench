@@ -558,29 +558,32 @@ document.getElementById('scale').addEventListener('input',e=>{
   document.getElementById('scaleVal').textContent=Math.round(v*100)+'%';
 });
 
-// 导出 PNG
+// 导出 PNG（导出成功后自动存档到家长端荣誉墙，数据自动备份）
 document.getElementById('btn-export').addEventListener('click',async()=>{
   const node=document.getElementById('cert');
   const btn=document.getElementById('btn-export'); btn.textContent='生成中…';
   try{
     const dataUrl=await htmlToImage.toPng(node,{width:1080,height:1440,pixelRatio:1,backgroundColor:'#ffffff',cacheBust:true});
     const a=document.createElement('a'); a.href=dataUrl; a.download=`星羿荣誉证书_${document.getElementById('f-name').value||'学员'}.png`; a.click();
+    btn.textContent='💾 已保存，正在同步家长端…';
+    await autoArchive();
   }catch(err){ alert('导出失败：'+err.message); }
   btn.textContent='💾 保存图片';
 });
 
-// ===== 存档到家长端（荣誉墙） =====
+// ===== 存档到家长端（荣誉墙）=====
 const XY_API = 'https://460592d232a546f8b9db66bd0d4f4d32.app.workbuddy.host';
-document.getElementById('btn-archive').addEventListener('click', async () => {
-  const btn = document.getElementById('btn-archive');
+async function archiveCert(silent){
   const name = document.getElementById('f-name').value.trim();
-  if (!name) { alert('请先填学员姓名'); return; }
+  if (!name) { if(!silent) alert('请先填学员姓名'); return false; }
   const typeSel = document.getElementById('f-type');
   const type = typeSel.value === '自定义' ? (document.getElementById('f-type-custom').value.trim() || '自定义') : typeSel.value;
-  btn.disabled = true; btn.textContent = '存档中…';
   try {
     let pwd = localStorage.getItem('xy_admin_pwd') || '';
-    if (!pwd) { pwd = prompt('首次存档请输入工作台口令（之后不再询问）') || ''; if (!pwd) throw new Error('未输入口令'); }
+    if (!pwd) {
+      if (silent) return false; // 自动模式无口令 → 静默跳过（用「存档」按钮首次授权）
+      pwd = prompt('首次存档请输入工作台口令（之后不再询问）') || ''; if (!pwd) throw new Error('未输入口令');
+    }
     let lr = await fetch(XY_API + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pwd }) });
     if (!lr.ok) { localStorage.removeItem('xy_admin_pwd'); throw new Error('口令不对（' + lr.status + '）'); }
     const token = (await lr.json()).token;
@@ -596,8 +599,28 @@ document.getElementById('btn-archive').addEventListener('click', async () => {
     const ar = await fetch(XY_API + '/api/admin/award', { method: 'POST', headers: { 'X-Token': token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
     const aj = await ar.json();
     if (!ar.ok || !aj.ok) throw new Error(aj.error || ('HTTP ' + ar.status));
-    alert(aj.duplicate ? '该证书今天已存档过，无需重复。' : '✅ 已存档！家长端「成长 · 荣誉墙」立刻可见。');
-  } catch (err) { alert('存档失败：' + err.message); }
+    return true;
+  } catch (err) { if (!silent) alert('存档失败：' + err.message); return false; }
+}
+async function autoArchive(){
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) return;
+  const ok = await archiveCert(true);
+  if (ok) toastMsg('✅ 已自动存档，家长端「成长 · 荣誉墙」同步可见');
+  else if (!localStorage.getItem('xy_admin_pwd')) toastMsg('💡 首次使用请点「📥 存档到家长端」授权一次，之后导出即自动同步');
+}
+function toastMsg(msg){
+  let el=document.querySelector('.xy-toast');
+  if(!el){ el=document.createElement('div'); el.className='xy-toast'; document.body.appendChild(el);
+    el.style.cssText='position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#123;color:#fff;padding:10px 18px;border-radius:22px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);transition:.3s;opacity:0;'; }
+  el.textContent=msg; el.style.opacity='1';
+  setTimeout(()=>{ el.style.opacity='0'; },2600);
+}
+document.getElementById('btn-archive').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-archive');
+  btn.disabled = true; btn.textContent = '存档中…';
+  const ok = await archiveCert(false);
+  if (ok) alert('✅ 已存档！家长端「成长 · 荣誉墙」立刻可见。');
   btn.disabled = false; btn.textContent = '📥 存档到家长端';
 });
 
