@@ -53,5 +53,16 @@ const Store = {
   async adminBookings(key) {
     const j = await api("/api/admin/bookings?key=" + encodeURIComponent(key));
     return j;
+  },
+  // 手机号找回孩子（老生换设备/写法不一致）：只返回 [{childId, name}]，不含手机号
+  async lookupPhone(phone) {
+    const j = await api("/api/lookup?phone=" + encodeURIComponent(phone));
+    return j.children || [];
+  },
+  // 成长数据：上课记录（按姓名匹配）+ 奖状
+  async getGrowth(childId, name) {
+    const q = "childId=" + encodeURIComponent(childId || "") + "&name=" + encodeURIComponent(name || "");
+    const j = await api("/api/growth?" + q);
+    return { classes: j.classes || [], awards: j.awards || [] };
   }
 };
