@@ -1810,7 +1810,28 @@
     "gender": "",
     "cls": "基础班",
     "createdAt": "",
-    "tests": [],
+    "tests": [
+      {
+        "date": "2026-10-01",
+        "m": {
+          "height": 160,
+          "sitReach": -2,
+          "singleStand": 11.7,
+          "wallSquat": 22.5,
+          "posture": "正常/正常/正常",
+          "run50": 13.78,
+          "standingJump": 152,
+          "verticalJump": 210,
+          "rope": 200,
+          "swing15": 12,
+          "footwork": 17.83,
+          "serve": 7,
+          "rally": 21,
+          "clear": 9
+        },
+        "note": ""
+      }
+    ],
     "lessons": [
       {
         "date": "2026-08-15",
