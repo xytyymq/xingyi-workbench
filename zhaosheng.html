@@ -7,59 +7,77 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 :root{
-  --primary:#0f766e; --primary-light:#14b8a6; --ink:#0f201d; --sub:#5b6b67;
-  --line:#e3ece9; --bg:#f1faf7; --card:#fff; --coral:#ef7d4f; --coral-ink:#c2410c;
+  --ink:#0f201d;        /* 墨绿 */
+  --green:#0e7a6e;      /* 深绿 */
+  --green2:#0f766e;
+  --navy:#0c2244;       /* 深蓝承接 */
+  --coral:#c2410c;      /* 行动橙红（白卡上） */
+  --coral-bright:#ff8a4c;/* 亮橙（深底强调） */
+  --body:#2b2f2e;
+  --sub:#5b6b67;
+  --line:#e3ece9;
+  --bg:#f1faf7;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;}
-.topbar{background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
+body{font-family:-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;}
+.topbar{background:linear-gradient(135deg,var(--green2),#14b8a6);color:#fff;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;}
 .topbar h1{font-size:17px;font-weight:800;}
 .topbar .back{font-size:13px;opacity:.9;text-decoration:none;color:#fff;}
 .layout{display:flex;flex-wrap:wrap;gap:18px;padding:18px;align-items:flex-start;}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;flex:1;min-width:300px;box-shadow:0 2px 10px rgba(15,32,29,.05);}
-.panel h2{font-size:14px;margin-bottom:12px;color:var(--primary);}
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;flex:1;min-width:300px;box-shadow:0 2px 10px rgba(15,32,29,.05);}
+.panel h2{font-size:14px;margin-bottom:12px;color:var(--green2);}
 .field{margin-bottom:11px;}
 .field label{display:block;font-size:12px;color:var(--sub);margin-bottom:4px;}
 .field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:13px;font-family:inherit;background:#fff;color:var(--ink);}
-.field textarea{resize:vertical;min-height:56px;}
+.field textarea{resize:vertical;min-height:60px;}
 .row{display:flex;gap:8px;}
 .row .field{flex:1;}
 .actions{display:flex;gap:10px;margin-top:14px;}
 .btn{flex:1;border:none;border-radius:10px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;}
-.btn.primary{background:var(--primary);color:#fff;}
-.btn.ghost{background:#fff;color:var(--primary);border:1px solid var(--primary);}
+.btn.primary{background:var(--green2);color:#fff;}
+.btn.ghost{background:#fff;color:var(--green2);border:1px solid var(--green2);}
 .preview-wrap{flex:1;min-width:300px;display:flex;flex-direction:column;align-items:center;gap:10px;}
 .hint{font-size:11px;color:var(--sub);text-align:center;}
 
-/* 海报本体 360×640，导出 scale=2 → 720×1280 */
-#poster{width:360px;height:640px;position:relative;overflow:hidden;border-radius:12px;box-shadow:0 8px 30px rgba(15,118,110,.18);background:#0c2244;}
-#poster .p-bg{position:absolute;top:0;left:0;right:0;height:320px;background:url('assets/zhaosheng-bg.jpg') top center / cover no-repeat;}
-#poster .p-bg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:80px;background:linear-gradient(180deg,transparent,#0c2244);}
-#poster .p-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,34,68,0.90) 0%,rgba(12,34,68,0.90) 36%,rgba(12,34,68,0.98) 56%,#0c2244 72%);}
-#poster .p-content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;padding:18px 16px 14px;color:#fff;}
-#poster .p-top{text-align:center;margin-bottom:auto;}
-#poster .p-brand{font-size:11px;font-weight:800;letter-spacing:2px;opacity:.92;}
-#poster .p-title{font-size:26px;font-weight:900;line-height:1.15;margin-top:8px;}
-#poster .p-sub{font-size:12px;opacity:.92;margin-top:5px;}
-#poster .p-body{display:flex;flex-direction:column;gap:10px;}
-#poster .p-sell{background:rgba(255,255,255,0.95);border-radius:12px;padding:12px 13px;color:var(--ink);}
-#poster .p-sell .s-title{font-size:12px;font-weight:800;color:var(--primary);margin-bottom:7px;text-align:center;}
-#poster .p-sell .s-item{font-size:11.5px;line-height:1.45;margin-bottom:5px;display:flex;gap:6px;align-items:flex-start;}
+/* ===== 海报本体 360×640，导出 scale=2 → 720×1280（对齐 720 基准像素表）===== */
+#poster{width:360px;height:640px;position:relative;overflow:hidden;border-radius:12px;box-shadow:0 8px 30px rgba(15,32,29,.24);background:var(--navy);}
+
+/* ① 人物区 top0 h326（720 表 y0–652 的 1/2）：林晓(教练·单手持拍)+小宇(学员)，底部渐入深蓝 */
+#poster .p-bg{position:absolute;top:0;left:0;width:360px;height:326px;background:url('assets/zhaosheng-figures.jpg') top center / cover no-repeat;}
+#poster .p-bg::after{content:"";position:absolute;left:0;right:0;bottom:0;height:70px;background:linear-gradient(180deg,rgba(12,34,68,0),var(--navy));}
+/* 标题 scrim 兜底：保证深底白字对比（覆盖 720 表 y400–652） */
+#poster .p-scrim{position:absolute;top:200px;left:0;width:360px;height:126px;background:linear-gradient(180deg,rgba(12,34,68,0) 0%,rgba(12,34,68,.5) 100%);}
+
+/* ② 标题区 top234：主标两行 + 副标，左对齐避开右侧人物 */
+#poster .p-title-wrap{position:absolute;top:234px;left:24px;width:312px;text-align:left;color:#fff;}
+#poster .p-title{font-size:28px;font-weight:900;line-height:1.15;letter-spacing:.5px;}
+#poster .p-sub{font-size:13.5px;margin-top:7px;color:rgba(255,255,255,.95);}
+#poster .p-sub b{color:var(--coral-bright);font-weight:800;}
+
+/* ③ 卖点白卡 top332 h122 */
+#poster .p-sell{position:absolute;top:330px;left:24px;width:312px;background:#fff;border-radius:8px;padding:11px 13px;color:var(--body);box-shadow:0 3px 10px rgba(0,0,0,.10);}
+#poster .p-sell .s-item{display:flex;gap:6px;align-items:baseline;margin-bottom:7px;line-height:1.35;}
 #poster .p-sell .s-item:last-child{margin-bottom:0;}
-#poster .p-sell .s-item b{font-weight:800;color:var(--primary);flex-shrink:0;}
-#poster .p-action{background:#fff;border-radius:12px;padding:12px;color:var(--ink);}
-#poster .p-action .a-title{font-size:13px;font-weight:800;color:var(--coral-ink);text-align:center;margin-bottom:8px;}
-#poster .p-action .qr-row{display:flex;gap:10px;justify-content:center;align-items:flex-start;}
-#poster .qr-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
-#poster .qr-col img{width:76px;height:76px;object-fit:contain;border-radius:6px;border:1px solid #fed7aa;background:#fff;}
-#poster .qr-col span{font-size:9px;color:var(--coral-ink);font-weight:700;}
-#poster .p-contact{font-size:9.5px;color:rgba(255,255,255,0.92);text-align:center;line-height:1.45;padding-top:2px;}
-#poster .p-contact b{font-weight:800;}
+#poster .p-sell .n{font-weight:900;color:var(--coral);font-size:12px;flex-shrink:0;}
+#poster .p-sell .t{font-size:11.5px;font-weight:800;color:var(--green2);flex-shrink:0;}
+#poster .p-sell .d{font-size:11px;color:var(--body);}
+
+/* ④ 行动+双码白卡 top460 h136 */
+#poster .p-action{position:absolute;top:458px;left:24px;width:312px;background:#fff;border-radius:8px;padding:9px 12px 7px;color:var(--body);box-shadow:0 3px 10px rgba(0,0,0,.10);}
+#poster .p-action .a-title{font-size:15.5px;font-weight:900;color:var(--coral);text-align:center;margin-bottom:7px;}
+#poster .qr-row{display:flex;gap:22px;justify-content:center;align-items:flex-start;}
+#poster .qr-col{display:flex;flex-direction:column;align-items:center;gap:3px;}
+#poster .qr-col img{width:84px;height:84px;object-fit:contain;background:#fff;}
+#poster .qr-col span{font-size:9px;color:#4b5563;font-weight:600;}
+
+/* ⑤ 底栏 top600 h40 墨绿实色条，白字两行 */
+#poster .p-contact{position:absolute;top:600px;left:0;width:360px;height:40px;background:var(--ink);color:rgba(255,255,255,.94);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:8.5px;line-height:1.3;text-align:center;}
+#poster .p-contact b{font-weight:800;color:var(--coral-bright);margin-right:3px;}
 
 @media print{
   body *{visibility:hidden;}
   #poster,#poster *{visibility:visible;}
-  #poster{position:fixed;left:0;top:0;width:100%;height:auto;aspect-ratio:auto;border-radius:0;box-shadow:none;}
+  #poster{position:fixed;left:0;top:0;border-radius:0;box-shadow:none;}
 }
 </style>
 </head>
@@ -73,18 +91,18 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   <div class="panel">
     <h2>📋 海报内容</h2>
     <div class="field">
-      <label>主标题</label>
-      <input id="f_title" value="少儿羽毛球 · 成长计划">
+      <label>主标题（用「·」分隔会自动断两行）</label>
+      <input id="f_title" value="星羿羽毛球 · 少儿成长计划">
     </div>
     <div class="field">
-      <label>副标题</label>
+      <label>副标题（「免费试课」自动亮橙强调）</label>
       <input id="f_sub" value="5–12岁 · 免费试课 · 科学体测">
     </div>
     <div class="field">
-      <label>卖点文案（每行一条）</label>
+      <label>卖点（每行一条，用逗号分「标题，说明」）</label>
       <textarea id="f_sells">专业教练带，动作更规范
 科学体测，成长看得见
-数据同步家长，进步不漏接</textarea>
+数据同步家长，一起让孩子爱上运动</textarea>
     </div>
     <div class="row">
       <div class="field">
@@ -100,46 +118,38 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <button class="btn primary" onclick="exportPNG()">⬇️ 导出 PNG</button>
       <button class="btn ghost" onclick="window.print()">🖨️ 打印</button>
     </div>
-    <p class="hint" style="margin-top:8px;">修改左侧文字，右侧海报实时更新；导出为 720×1280 高清 PNG。</p>
+    <p class="hint" style="margin-top:8px;">修改左侧文字，右侧海报实时更新；导出为 720×1280 高清 PNG（也可手机长按保存）。</p>
   </div>
 
   <div class="preview-wrap">
     <div id="poster">
       <div class="p-bg"></div>
-      <div class="p-overlay"></div>
-      <div class="p-content">
-        <div class="p-top">
-          <div class="p-brand">星羿羽毛球馆</div>
-          <div class="p-title" id="p_title">少儿羽毛球 · 成长计划</div>
-          <div class="p-sub" id="p_sub">5–12岁 · 免费试课 · 科学体测</div>
-        </div>
-        <div class="p-body">
-          <div class="p-sell">
-            <div class="s-title">给孩子一次专业的开始</div>
-            <div id="p_sells">
-              <div class="s-item"><b>①</b><span>专业教练带，动作更规范</span></div>
-              <div class="s-item"><b>②</b><span>科学体测，成长看得见</span></div>
-              <div class="s-item"><b>③</b><span>数据同步家长，进步不漏接</span></div>
-            </div>
+      <div class="p-scrim"></div>
+
+      <div class="p-title-wrap">
+        <div class="p-title" id="p_title">星羿羽毛球<br>少儿成长计划</div>
+        <div class="p-sub" id="p_sub">5–12岁 · <b>免费试课</b> · 科学体测</div>
+      </div>
+
+      <div class="p-sell" id="p_sell"></div>
+
+      <div class="p-action">
+        <div class="a-title">扫码预约免费试课</div>
+        <div class="qr-row">
+          <div class="qr-col">
+            <img src="qr-trial-booking.png" alt="扫码预约试课">
+            <span>试课预约码</span>
           </div>
-          <div class="p-action">
-            <div class="a-title">扫码预约免费试课</div>
-            <div class="qr-row">
-              <div class="qr-col">
-                <img src="qr-trial-booking.png" alt="扫码预约试课">
-                <span>试课预约</span>
-              </div>
-              <div class="qr-col">
-                <img src="assets/qrcode-wechat.jpg" alt="微信咨询">
-                <span>微信咨询</span>
-              </div>
-            </div>
-          </div>
-          <div class="p-contact">
-            <b>地址</b> <span id="p_addr">江西省九江市开发区杭州路星羿羽毛球馆（快乐城馆）</span><br>
-            <b>电话</b> <span id="p_phone">15107920066</span>
+          <div class="qr-col">
+            <img src="assets/qrcode-wechat.jpg" alt="微信咨询">
+            <span>微信咨询码</span>
           </div>
         </div>
+      </div>
+
+      <div class="p-contact">
+        <div><b>📍</b><span id="p_addr">江西省九江市开发区杭州路星羿羽毛球馆（快乐城馆）</span></div>
+        <div><b>☎</b><span id="p_phone">15107920066</span></div>
       </div>
     </div>
     <p class="hint">手机长按保存 / 电脑点击导出</p>
@@ -148,15 +158,37 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 <script>
 function $(id){return document.getElementById(id);}
-function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderTitle(t){
+  var parts = String(t).split(/[·・|]/).map(function(x){return x.trim();}).filter(Boolean);
+  if(!parts.length) parts = ['星羿羽毛球','少儿成长计划'];
+  return parts.map(esc).join('<br>');
+}
+function renderSub(s){
+  var safe = esc(s);
+  return safe.replace(/免费试课/g,'<b>免费试课</b>');
+}
+function renderSells(lines){
+  var marks = ['①','②','③','④','⑤'];
+  return lines.map(function(l,i){
+    var parts = String(l).split(/[，,]/);
+    var t = (parts[0]||'').trim();
+    var d = parts.slice(1).join('，').trim();
+    return '<div class="s-item"><span class="n">'+(marks[i]||(i+1))+ '</span>' +
+           '<span class="t">'+esc(t)+'</span>' +
+           (d ? '<span class="d">'+esc(d)+'</span>' : '') + '</div>';
+  }).join('');
+}
+
 function sync(){
-  $('p_title').textContent = $('f_title').value || '少儿羽毛球 · 成长计划';
-  $('p_sub').textContent = $('f_sub').value || '5–12岁 · 免费试课 · 科学体测';
+  $('p_title').innerHTML = renderTitle($('f_title').value);
+  $('p_sub').innerHTML = renderSub($('f_sub').value);
   $('p_addr').textContent = $('f_addr').value || '江西省九江市开发区杭州路星羿羽毛球馆（快乐城馆）';
   $('p_phone').textContent = $('f_phone').value || '15107920066';
-  var lines = ($('f_sells').value || '').trim().split(/\n/).filter(function(l){return l.trim();});
-  if(!lines.length) lines = ['专业教练带，动作更规范','科学体测，成长看得见','数据同步家长，进步不漏接'];
-  $('p_sells').innerHTML = lines.map(function(l,i){return '<div class="s-item"><b>'+(i+1)+'</b><span>'+esc(l.trim())+'</span></div>';}).join('');
+  var lines = ($('f_sells').value || '').trim().split(/\n/).map(function(l){return l.trim();}).filter(Boolean);
+  if(!lines.length) lines = ['专业教练带，动作更规范','科学体测，成长看得见','数据同步家长，一起让孩子爱上运动'];
+  $('p_sell').innerHTML = renderSells(lines);
 }
 ['f_title','f_sub','f_sells','f_addr','f_phone'].forEach(function(id){
   $(id).addEventListener('input', sync);
@@ -167,10 +199,10 @@ function exportPNG(){
   var btn = document.querySelector('.btn.primary');
   var old = btn.textContent;
   btn.textContent = '生成中…';
-  html2canvas($('poster'),{scale:2,backgroundColor:null,useCORS:true,allowTaint:true}).then(function(cv){
+  html2canvas($('poster'),{scale:2,backgroundColor:'#0c2244',useCORS:true,allowTaint:true}).then(function(cv){
     var a = document.createElement('a');
     a.href = cv.toDataURL('image/png');
-    a.download = '星羿招生海报_' + ($('f_title').value || '少儿羽毛球').replace(/\s+/g,'_') + '.png';
+    a.download = '星羿招生海报_' + ($('f_title').value || '少儿羽毛球').replace(/[\s·]+/g,'_') + '.png';
     a.click();
     btn.textContent = old;
   }).catch(function(e){
