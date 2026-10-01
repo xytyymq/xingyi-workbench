@@ -127,3 +127,18 @@ html, body {
 .img-modal-box img { width: 100%; border-radius: 12px; display: block; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
 .img-modal-tip { color: rgba(255,255,255,.85); font-size: 12.5px; text-align: center; margin: 10px 0 0; }
 
+
+/* 荣誉墙：证书小卡（cert.html 同款质感） */
+.aw-sec { font-size: 13px; font-weight: 700; color: #0e5a4c; margin: 2px 0 8px; }
+.cert-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cert-mini { position: relative; background: linear-gradient(160deg, #f2f8ff, #fdfefe); border: 2px solid #185FA5;
+  border-radius: 12px; padding: 12px 12px 10px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 3px 10px rgba(24, 95, 165, .14); }
+.cert-mini::before { content: ""; position: absolute; inset: 4px; border: 1px dashed #FFB703; border-radius: 8px; pointer-events: none; }
+.cert-mini:active { transform: scale(.97); }
+.cert-mini .cm-type { display: inline-block; background: linear-gradient(135deg, #FFB703, #ffd166); color: #5a3b00;
+  font-size: 11px; font-weight: 800; padding: 2px 10px; border-radius: 12px; margin-bottom: 6px; }
+.cert-mini .cm-award { font-size: 13px; font-weight: 700; color: #1A3A5C; line-height: 1.4; margin-bottom: 6px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.cert-mini .cm-date { font-size: 11px; color: #8aa; }
+.cert-mini .cm-view { float: right; color: #185FA5; font-weight: 700; }
