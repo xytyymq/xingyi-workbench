@@ -99,3 +99,31 @@ html, body {
 .checks { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 6px; }
 .checks label { display: flex; align-items: center; gap: 5px; font-size: 13px; color: var(--ink); }
 
+/* ===== 上课反馈（家长话术卡） ===== */
+.fb-card { background: #F5F9F4; border: 1px solid #E3ECE0; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+.fb-head { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-bottom: 6px; flex-wrap: wrap; }
+.fb-say { font-size: 14px; color: var(--ink); margin: 4px 0; }
+.fb-line { font-size: 13.5px; color: var(--ink); margin-top: 5px; line-height: 1.6; }
+
+/* ===== 荣誉墙 ===== */
+.award-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.award-card { border-radius: 12px; padding: 12px 10px; text-align: center; border: 1px solid var(--line); background: #fff; position: relative; min-height: 92px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.award-card .a-ic { font-size: 26px; }
+.award-card .a-name { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.award-card.got { background: linear-gradient(135deg, #FFF9EC, #FFF3D6); border-color: #E0A93B; cursor: pointer; }
+.award-card.got .a-name { color: #9A6E12; }
+.award-card.got .a-date { font-size: 11px; color: #B98A20; }
+.award-card.got .a-tip { position: absolute; top: 6px; right: 8px; font-size: 10px; color: #E0A93B; font-weight: 700; }
+.award-card.lock { background: #F5F7FA; border-style: dashed; }
+.award-card.lock .a-ic { filter: grayscale(1); opacity: .55; }
+.award-card.lock .a-name { color: var(--mut); }
+.award-card.lock .a-how { font-size: 10.5px; color: var(--mut); line-height: 1.4; }
+
+/* ===== 图片弹层（奖状/体测报告，长按保存） ===== */
+.img-modal { display: none; position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,.72); align-items: center; justify-content: center; padding: 18px; }
+.img-modal.open { display: flex; }
+.img-modal-box { width: 100%; max-width: 420px; max-height: 92vh; overflow-y: auto; }
+.img-modal-title { color: #fff; font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 10px; }
+.img-modal-box img { width: 100%; border-radius: 12px; display: block; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+.img-modal-tip { color: rgba(255,255,255,.85); font-size: 12.5px; text-align: center; margin: 10px 0 0; }
+
