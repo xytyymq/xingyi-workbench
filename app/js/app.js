@@ -38,8 +38,7 @@ function tabBar(active) {
     '<a href="#' + h + '" class="' + (active === h ? "active" : "") + '"><span class="ic">' + ic + "</span>" + label + "</a>";
   const items = [];
   if (!window._xyOld) items.push(t("/booking", "📅", "预约"));
-  items.push(t("/survey", "📋", "档案") + t("/report", "📊", "报告") +
-    t("/growth", "🌱", "成长") + t("/message", "🔔", "消息"));
+  items.push(t("/survey", "📋", "档案") + t("/growth", "🌱", "成长") + t("/message", "🔔", "消息"));
   return '<div class="tabbar">' + items.join("") + "</div>";
 }
 
@@ -429,6 +428,17 @@ function surveyRows(p, exp) {
     row("健康注意", p.health) + row("孩子最想要", p.want);
 }
 
+// 生成体测成长卡图片（报告页与成长页「体测历史」共用）：有数据返回 true
+async function makeGrowthCardImage(child) {
+  const st = mergeStudent(await fetchProfiles(), child.name);
+  if (st && st.tests && st.tests.length) {
+    const svg = growthCardSvg(st);
+    await openImgModal(svg, 750, +(svg.match(/height="(\d+)"/) || [0, 980])[1], st.name + " · 学员体测成长卡");
+    return true;
+  }
+  return false;
+}
+
 async function fillReport(child) {
   const pc = document.getElementById("parentCard");
   const cc = document.getElementById("coachCard");
@@ -441,12 +451,8 @@ async function fillReport(child) {
     dl.disabled = true; const old = dl.textContent; dl.textContent = "生成中…";
     try {
       // 优先：工作台体测档案的完整成长卡（静态+动态+技术专项+成长曲线，与教练看到的完全一致）
-      const st = matchStudent(await fetchProfiles(), child.name);
-      if (st && st.tests && st.tests.length) {
-        const svg = growthCardSvg(st);
-        await openImgModal(svg, 750, +(svg.match(/height="(\d+)"/) || [0, 980])[1], st.name + " · 学员体测成长卡");
-      } else {
-        const entries = (r && r.entries) || [];
+      const ok = await makeGrowthCardImage(child);
+      if (!ok) {
         if (!entries.length) { toast("还没有体测数据，试课后教练填写即可生成"); dl.disabled = false; dl.textContent = old; return; }
         await openImgModal(reportCardSvg(child, parent, entries), 750, 980, child.name + " · 体测报告");
       }
@@ -563,25 +569,33 @@ function renderGrowth(child) {
     '<div class="card"><h3>🏅 荣誉墙</h3><p class="muted" style="margin:0 0 8px;">点已获得的奖状可看大图、长按保存</p><div id="awardWall"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>📋 档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>📅 预约记录</h3><div id="growthBookings"><p class="muted">加载中…</p></div></div>' +
-    '<div class="card"><h3>📊 体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div></div>';
+    '<div class="card"><h3>📊 体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div>' +
+    '<button class="btn ghost" id="growthCardBtn" style="margin-top:10px;">📥 生成体测成长卡图片（长按保存）</button></div>';
 }
 
-// 上课反馈：家长话术呈现
+// 上课反馈：家长话术呈现（默认展开最近 2 次，更早的折叠）
+function fbCard(c) {
+  const lines = [];
+  if (c.progress) lines.push('<div class="fb-line">🌟 <b>今日进步</b>：' + esc2safe(c.progress) + "</div>");
+  if (c.focus) lines.push('<div class="fb-line">💪 <b>下节课重点</b>：' + esc2safe(c.focus) + "</div>");
+  const fmtD = s => { const m = String(s || "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); return m ? (+m[2]) + "月" + (+m[3]) + "日" : s; };
+  return '<div class="fb-card">' +
+    '<div class="fb-head"><b>' + esc2safe(fmtD(c.date)) + "</b>" +
+    (c.className ? '<span class="tag">' + esc2safe(c.className) + "</span>" : "") +
+    (c.coach ? '<span class="muted">教练 ' + esc2safe(c.coach) + "</span>" : "") + "</div>" +
+    '<div class="fb-say">孩子今天的训练已完成 ✅</div>' +
+    lines.join("") + "</div>";
+}
 function classCards(classes) {
   if (!classes.length)
     return '<p class="muted">还没有上课记录。孩子来上课后，教练当天的反馈会自动出现在这里。</p>';
-  const fmtD = s => { const m = String(s || "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); return m ? (+m[2]) + "月" + (+m[3]) + "日" : s; };
-  return classes.slice(0, 12).map(c => {
-    const lines = [];
-    if (c.progress) lines.push('<div class="fb-line">🌟 <b>今日进步</b>：' + esc2safe(c.progress) + "</div>");
-    if (c.focus) lines.push('<div class="fb-line">💪 <b>下节课重点</b>：' + esc2safe(c.focus) + "</div>");
-    return '<div class="fb-card">' +
-      '<div class="fb-head"><b>' + esc2safe(fmtD(c.date)) + "</b>" +
-      (c.className ? '<span class="tag">' + esc2safe(c.className) + "</span>" : "") +
-      (c.coach ? '<span class="muted">教练 ' + esc2safe(c.coach) + "</span>" : "") + "</div>" +
-      '<div class="fb-say">孩子今天的训练已完成 ✅</div>' +
-      lines.join("") + "</div>";
-  }).join("") + (classes.length > 12 ? '<p class="muted">仅显示最近 12 次上课反馈</p>' : "");
+  const recent = classes.slice(0, 2).map(fbCard).join("");
+  const older = classes.slice(2);
+  const olderHtml = older.length
+    ? '<details class="fb-fold"><summary>📒 展开更早的 ' + older.length + " 次反馈</summary>" +
+      older.map(fbCard).join("") + "</details>"
+    : "";
+  return recent + olderHtml;
 }
 
 // 荣誉墙：已获得（证书卡可点开大图）+ 未获得（灰显锁定）
@@ -605,7 +619,25 @@ function awardWall(awards) {
   return '<div class="aw-sec">🏆 已获得的荣誉（点击看证书大图，长按保存）</div>' +
     '<div class="cert-grid">' + gotHtml + "</div>" +
     (lockHtml ? '<div class="aw-sec" style="margin-top:14px;">🎯 荣誉还可争取</div><div class="award-grid">' + lockHtml + "</div>" : "") +
-    '<div style="margin-top:6px;">' + skillWall(list) + "</div>";
+    '<details class="fb-fold" style="margin-top:12px;"><summary>🏸 技能挑战徽章 · 已集 ' + skillGotCount(list) +
+    " / 40 枚（点开展开）</summary><div style=\"margin-top:8px;\">" + skillWall(list) + "</div></details>";
+}
+// 已集徽章数（折叠摘要用）
+function skillGotCount(awards) {
+  let n = 0;
+  (awards || []).forEach(a => {
+    const s = String(a.award || "");
+    if (!s || s.indexOf("·") < 0) return;
+    const cat = Object.keys(SKILL_CATS).find(c => s.split("·")[0].trim() === c);
+    if (!cat) return;
+    const title = (s.split("·")[1] || "").replace(/[（(].*$/, "").trim();
+    const numM = s.match(/[（(]\s*(\d+)\s*个/);
+    const num = numM ? +numM[1] : 0;
+    SKILL_CATS[cat].forEach(([name, need]) => {
+      if ((title && title.indexOf(name) >= 0) || (need && num && num === need)) n++;
+    });
+  });
+  return n;
 }
 
 // ===== 技能挑战徽章：八项 × 五级 = 40 枚（与证书编辑器「快捷奖项」同源） =====
@@ -841,8 +873,17 @@ async function fillGrowth(child) {
     ? rows.map(e =>
         '<div class="row" style="display:block"><span class="k">📊 ' + esc2safe(e.date) + "</span>" +
         '<div class="muted">' + esc2safe(e.txt) + (e.note ? "<br>" + esc2safe(e.note) : "") + "</div></div>").join("") +
-      '<p class="muted">共 ' + rows.length + " 次体测记录 · 完整数据在「📊 报告」页生成体测成长卡图片</p>"
+      '<p class="muted">共 ' + rows.length + " 次体测记录 · 点下方按钮生成体测成长卡图片</p>"
     : '<p class="muted">还没有体测记录，完成首次测评后这里会记录孩子的成长轨迹。</p>';
+  const gcb = document.getElementById("growthCardBtn");
+  if (gcb) gcb.onclick = async () => {
+    gcb.disabled = true; const old = gcb.textContent; gcb.textContent = "生成中…";
+    try {
+      const ok = await makeGrowthCardImage(child);
+      if (!ok) toast("还没有体测数据，试课后教练填写即可生成");
+    } catch (e) { toast("生成失败，请重试"); }
+    gcb.disabled = false; gcb.textContent = old;
+  };
 }
 
 function renderMessage(child) {
@@ -852,7 +893,40 @@ function renderMessage(child) {
     (it.unread ? '<span class="tag">未读</span>' : '<span class="muted">已读</span>') +
     "<br><span class=\"muted\">" + it.desc + "</span></span></div>").join("");
   return '<div class="hero"><h2>消息</h2><p>报告与跟进提醒</p></div>' +
-    '<div class="card"><h3>通知</h3>' + items + "</div>";
+    '<div class="card"><h3>通知</h3>' + items + "</div>" +
+    '<div class="card"><h3>💬 家长反馈</h3><p class="muted" style="margin:0 0 8px;">想对教练说的话、建议或问题，提交后直达馆长工作台</p>' +
+    '<textarea id="fbText" class="input" rows="4" style="width:100%;box-sizing:border-box;" placeholder="如：希望多练一下步伐 / 想调整上课时间 / 对课程的疑问…"></textarea>' +
+    '<button class="btn" id="fbBtn" style="margin-top:10px;">📤 提交反馈</button>' +
+    '<div id="fbList" style="margin-top:12px;"><p class="muted">加载中…</p></div></div>';
+}
+
+async function fillMessage(child) {
+  const box = document.getElementById("fbList");
+  const btn = document.getElementById("fbBtn");
+  if (!box || !btn) return;
+  const render = list => {
+    box.innerHTML = list.length
+      ? list.map(f => '<div class="row" style="display:block"><span class="k">💬 ' +
+          esc2safe(String(f.createdAt || "").replace("T", " ").slice(0, 16)) +
+          '</span><div class="muted">' + esc2safe(f.text) +
+          '<br><span class="tag">' + esc2safe(f.status || "已收到") + "</span></div></div>").join("")
+      : '<p class="muted">还没有提交过反馈。</p>';
+  };
+  try { render(await Store.getMyFeedback(child.childId)); }
+  catch (e) { box.innerHTML = '<p class="muted">反馈记录暂时加载不了（网络开小差了）。</p>'; }
+  btn.onclick = async () => {
+    const ta = document.getElementById("fbText");
+    const text = ((ta && ta.value) || "").trim();
+    if (!text) { toast("写点什么再提交吧"); return; }
+    btn.disabled = true; const old = btn.textContent; btn.textContent = "提交中…";
+    try {
+      await Store.addFeedback(child.childId, child.name, text);
+      if (ta) ta.value = "";
+      toast("已提交，馆长在工作台能看到 ✅");
+      render(await Store.getMyFeedback(child.childId));
+    } catch (e) { toast("提交失败：" + e.message); }
+    btn.disabled = false; btn.textContent = old;
+  };
 }
 
 
@@ -931,6 +1005,7 @@ async function postRender(h, child) {
   if (h === "/survey" && child) await fillSurvey(child);
   if (h === "/report" && child) await fillReport(child);
   if (h === "/growth" && child) await fillGrowth(child);
+  if (h === "/message" && child) await fillMessage(child);
 }
 
 function render() {
