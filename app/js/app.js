@@ -106,7 +106,7 @@ function reportCardSvg(child, parent, entries) {
     '<rect x="56" y="620" width="638" height="1" fill="#2A5A50"/>' +
     (parent && parent.gender
       ? '<text x="70" y="672" font-size="20" fill="#8AA09A" font-family="PingFang SC,Microsoft YaHei,sans-serif">基础档案</text>' +
-        '<text x="290" y="672" font-size="20" font-weight="bold" fill="#F2F8F6" text-anchor="end" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
+        '<text x="290" y="672" font-size="20" font-weight="bold" fill="#F2F8F6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' +
         esc2safe([parent.gender, parent.grade, parent.prior].filter(Boolean).join(" · ")) + "</text>"
       : "") +
     (e.note
