@@ -2830,62 +2830,6 @@
     ]
   },
   {
-    "id": "S104924219303607",
-    "name": "陶思晨",
-    "age": "",
-    "gender": "",
-    "cls": "基础班",
-    "createdAt": "",
-    "tests": [
-      {
-        "date": "2026-09-05",
-        "m": {
-          "height": 166,
-          "weight": 65,
-          "sitReach": 4,
-          "singleStand": 33.16,
-          "wallSquat": 15.6,
-          "posture": "正常/正常/正常",
-          "standingJump": 163,
-          "verticalJump": 248,
-          "swing15": 10,
-          "footwork": 18.71,
-          "serve": 8,
-          "rally": 33
-        },
-        "note": ""
-      },
-      {
-        "date": "2026-09-14",
-        "m": {
-          "height": 166,
-          "sitReach": 4,
-          "singleStand": 33.16,
-          "wallSquat": 15.6,
-          "posture": "正常/正常/正常",
-          "standingJump": 163,
-          "verticalJump": 248,
-          "swing15": 10,
-          "footwork": 18.71,
-          "serve": 8,
-          "rally": 33
-        },
-        "note": ""
-      }
-    ],
-    "lessons": [
-      {
-        "date": "2026-09-01",
-        "cls": "基础班",
-        "coach": "张玉玲1",
-        "score": "优秀",
-        "good": "后撤步高远球击球很好",
-        "bad": "网前放网还需加强",
-        "feedback": ""
-      }
-    ]
-  },
-  {
     "id": "S1789301919981",
     "name": "冯骏轩",
     "age": "",
@@ -2947,6 +2891,79 @@
     "gender": "男",
     "cls": "启蒙班",
     "createdAt": "2026-10-01",
-    "tests": []
+    "tests": [
+      {
+        "date": "2026-10-01",
+        "m": {
+          "height": 130,
+          "sitReach": 3,
+          "singleStand": 4.53,
+          "wallSquat": 45,
+          "posture": "正常/正常/正常",
+          "run50": 16.5,
+          "standingJump": 105,
+          "verticalJump": 180,
+          "rope": 113,
+          "rally": 1
+        },
+        "note": ""
+      }
+    ]
+  },
+  {
+    "id": "S104924219303607",
+    "name": "陶思晨",
+    "age": "",
+    "gender": "",
+    "cls": "基础班",
+    "createdAt": "",
+    "tests": [
+      {
+        "date": "2026-09-05",
+        "m": {
+          "height": 166,
+          "weight": 65,
+          "sitReach": 4,
+          "singleStand": 33.16,
+          "wallSquat": 15.6,
+          "posture": "正常/正常/正常",
+          "standingJump": 163,
+          "verticalJump": 248,
+          "swing15": 10,
+          "footwork": 18.71,
+          "serve": 8,
+          "rally": 33
+        },
+        "note": ""
+      },
+      {
+        "date": "2026-09-14",
+        "m": {
+          "height": 166,
+          "sitReach": 4,
+          "singleStand": 33.16,
+          "wallSquat": 15.6,
+          "posture": "正常/正常/正常",
+          "standingJump": 163,
+          "verticalJump": 248,
+          "swing15": 10,
+          "footwork": 18.71,
+          "serve": 8,
+          "rally": 33
+        },
+        "note": ""
+      }
+    ],
+    "lessons": [
+      {
+        "date": "2026-09-01",
+        "cls": "基础班",
+        "coach": "张玉玲1",
+        "score": "优秀",
+        "good": "后撤步高远球击球很好",
+        "bad": "网前放网还需加强",
+        "feedback": ""
+      }
+    ]
   }
 ]
