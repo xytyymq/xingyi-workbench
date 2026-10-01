@@ -76,7 +76,7 @@ function renderReport(child) {
   return '<div class="hero"><h2>' + child.name + " 的体测报告</h2><p>家长档案 + 教练现场体测</p></div>" +
     '<div class="card"><h3>① 您填写的孩子信息</h3><div id="parentCard"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>② 教练现场体测</h3><div id="coachCard"><p class="muted">加载中…</p></div>' +
-    '<button class="btn ghost" id="dlReportBtn" style="margin-top:10px;">📥 生成报告图片（长按可保存）</button></div>';
+    '<button class="btn ghost" id="dlReportBtn" style="margin-top:10px;">📥 生成体测成长卡图片（长按可保存）</button></div>';
 }
 
 // 体测报告卡 SVG（品牌墨绿+荧光绿，750x980）
@@ -123,6 +123,255 @@ function reportCardSvg(child, parent, entries) {
     "</svg>";
 }
 
+// ===== 学员体测成长卡（与工作台体测档案页完全同源 · 移植自 archive.html） =====
+const GC_FF = 'font-family="PingFang SC, Microsoft YaHei, sans-serif"';
+function gcAge(age) { const a = parseInt(age); if (isNaN(a) || a <= 0) return 1; if (a <= 6) return 0; if (a <= 9) return 1; return 2; }
+const GC_AGE_LABEL = ["5-6岁", "7-9岁", "10-12岁"];
+const GC_METRICS = [
+  { key: "height", name: "身高", unit: "cm", group: "static", better: "high" },
+  { key: "weight", name: "体重", unit: "kg", group: "static", better: "high" },
+  { key: "bmi", name: "BMI", unit: "", group: "static", type: "bmi" },
+  { key: "sitReach", name: "坐位体前屈", unit: "cm", group: "static", better: "high" },
+  { key: "singleStand", name: "单脚闭眼站立", unit: "秒", group: "static", better: "high" },
+  { key: "wallSquat", name: "靠墙静蹲", unit: "秒", group: "static", better: "high" },
+  { key: "posture", name: "姿态评估", unit: "", group: "static", type: "posture", postureItems: ["高低肩", "足弓", "脊柱"] },
+  { key: "run50", name: "50米跑", unit: "秒", group: "dynamic", better: "low", ref: [[13, 11], [11, 9.5], [10, 8.5]] },
+  { key: "standingJump", name: "立定跳远", unit: "cm", group: "dynamic", better: "high", ref: [[90, 110], [120, 145], [150, 175]] },
+  { key: "verticalJump", name: "纵跳摸高", unit: "cm", group: "dynamic", better: "high", ref: [[15, 22], [22, 30], [30, 38]] },
+  { key: "rope", name: "跳绳(1分钟)", unit: "个", group: "dynamic", better: "high", ref: [[40, 60], [80, 110], [110, 140]] },
+  { key: "swing15", name: "15秒挥拍", unit: "次", group: "dynamic", better: "high", ref: [[15, 22], [22, 30], [30, 38]] },
+  { key: "footwork", name: "米字步计时", unit: "秒", group: "dynamic", better: "low", ref: [[25, 20], [20, 16], [16, 13]] },
+  { key: "reaction", name: "反应启动", unit: "m", group: "dynamic", better: "low", ref: [[1.2, 0.9], [1.0, 0.7], [0.8, 0.6]] },
+  { key: "serve", name: "发球进区", unit: "个/10", group: "tech", better: "high", target: 8 },
+  { key: "rally", name: "连续颠球", unit: "个", group: "tech", better: "high", target: 10 },
+  { key: "clear", name: "正手高远球击球过网", unit: "个", group: "tech", better: "high", target: 5 }
+];
+function gcVal(st, key) {
+  if (key === "bmi") return st.tests.filter(t => t.m.height && t.m.weight).map(t => ({ date: t.date, v: +(t.m.weight / (t.m.height / 100 * t.m.height / 100)).toFixed(1) }));
+  return st.tests.map(t => ({ date: t.date, v: t.m[key] })).filter(x => x.v != null);
+}
+function gcStatus(m, st, last) {
+  if (m.group === "dynamic" && m.ref) {
+    const [tg, ex] = m.ref[gcAge(st.age)];
+    if (m.better === "high") { if (last >= ex) return "优秀"; if (last >= tg) return "达标"; return "未达标"; }
+    if (last <= ex) return "优秀"; if (last <= tg) return "达标"; return "未达标";
+  }
+  if (m.group === "tech" && m.target != null) {
+    const reach = m.better === "high" ? last >= m.target : last <= m.target;
+    return reach ? "达标" : "未达标";
+  }
+  return null;
+}
+function gcBadge(stt, x, y) {
+  const c = stt === "优秀" ? "#16a34a" : stt === "达标" ? "#0d9488" : "#94a3b8";
+  const w = stt.length * 16 + 22, h = 26;
+  return '<rect x="' + (x - w / 2).toFixed(1) + '" y="' + (y - h / 2).toFixed(1) + '" width="' + w + '" height="' + h + '" rx="13" fill="' + c + '"/>' +
+    '<text x="' + x.toFixed(1) + '" y="' + (y + 5).toFixed(1) + '" font-size="14" fill="#fff" text-anchor="middle" font-weight="600" ' + GC_FF + ">" + stt + "</text>";
+}
+function gcScore(val, m, g) {
+  if (val == null || val === "") return null;
+  const v = +val; if (isNaN(v)) return null;
+  if (m.group === "dynamic" && m.ref) {
+    const [lo, hi] = m.ref[g];
+    if (lo === hi) return v >= lo ? 100 : 0;
+    if (m.better === "high") {
+      if (v >= hi) return 100;
+      if (v <= lo) return Math.max(0, 60 - (lo - v) / (lo * 0.6) * 40);
+      return 60 + (v - lo) / (hi - lo) * 40;
+    }
+    if (v <= hi) return 100;
+    if (v >= lo) return Math.max(0, 60 - (v - lo) / (lo * 0.6) * 40);
+    return 60 + (lo - v) / (lo - hi) * 40;
+  }
+  if (m.group === "tech" && m.target != null) {
+    const lo = m.target, hi = 60 + 40; // tech 无分龄优秀线，用 target*1.5
+    const hiV = m.excellent != null ? m.excellent : lo * 1.5;
+    if (v >= hiV) return 100;
+    if (v >= lo) return 60 + (v - lo) / (hiV - lo) * 40;
+    return Math.max(0, v / lo * 60);
+  }
+  return null;
+}
+function gcSeries(st) {
+  const g = gcAge(st.age), out = [];
+  st.tests.forEach((t, idx) => {
+    let sum = 0, n = 0;
+    GC_METRICS.forEach(m => {
+      if (m.group !== "dynamic" && m.group !== "tech") return;
+      const s = gcScore(t.m[m.key], m, g);
+      if (s != null) { sum += s; n++; }
+    });
+    if (n) out.push({ i: idx, score: +(sum / n).toFixed(1) });
+  });
+  return out;
+}
+function gcSummary(st) {
+  let total = 0, imp = 0;
+  GC_METRICS.forEach(m => {
+    if (m.type === "posture") return;
+    const arr = gcVal(st, m.key); if (!arr.length) return; total++;
+    const f = arr[0].v, l = arr[arr.length - 1].v;
+    if (m.better === "high" ? l > f : l < f) imp++;
+  });
+  return { total, imp };
+}
+function gcEscape(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+function gcOverallSVG(st, oy) {
+  const series = gcSeries(st);
+  if (series.length < 1) return "";
+  const W = 702, H = 172, padL = 40, padR = 14, padT = 16, padB = 28;
+  const cw = W - padL - padR, ch = H - padT - padB, n = series.length;
+  const xs = i => padL + (n === 1 ? cw / 2 : cw * i / (n - 1));
+  const yOf = v => padT + ch * (1 - v / 100);
+  const pts = series.map((o, i) => [xs(i), yOf(o.score)]);
+  const line = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+  const area = "M" + pts[0][0].toFixed(1) + " " + (padT + ch).toFixed(1) + " " + pts.map(p => "L" + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ") + " L" + pts[n - 1][0].toFixed(1) + " " + (padT + ch).toFixed(1) + " Z";
+  let s = '<g transform="translate(24,' + oy + ')">';
+  s += '<defs><linearGradient id="og' + oy + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14b8a6" stop-opacity=".35"/><stop offset="1" stop-color="#14b8a6" stop-opacity="0"/></linearGradient></defs>';
+  [["100", "#16a34a", "优秀"], ["60", "#0d9488", "达标"]].forEach(([vv, c, lab]) => {
+    const yy = yOf(+vv);
+    s += '<line x1="' + padL + '" y1="' + yy.toFixed(1) + '" x2="' + (W - padR) + '" y2="' + yy.toFixed(1) + '" stroke="' + c + '" stroke-width="1" stroke-dasharray="5 4" opacity=".55"/>';
+    s += '<text x="' + (W - padR) + '" y="' + (yy - 4).toFixed(1) + '" font-size="10" fill="' + c + '" text-anchor="end" ' + GC_FF + ">" + lab + "线</text>";
+  });
+  s += '<line x1="' + padL + '" y1="' + (padT + ch).toFixed(1) + '" x2="' + (W - padR) + '" y2="' + (padT + ch).toFixed(1) + '" stroke="#e2e8f0" stroke-width="1"/>';
+  s += '<path d="' + area + '" fill="url(#og' + oy + ')"/>';
+  s += '<path d="' + line + '" fill="none" stroke="#0f766e" stroke-width="2.5" stroke-linejoin="round"/>';
+  pts.forEach((p, i) => {
+    const sc = series[i].score;
+    const col = sc >= 100 ? "#16a34a" : sc >= 60 ? "#0f766e" : "#94a3b8";
+    s += '<circle cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4.5" fill="#fff" stroke="' + col + '" stroke-width="2.5"/>';
+    s += '<text x="' + p[0].toFixed(1) + '" y="' + (padT + ch + 16).toFixed(1) + '" font-size="10" fill="#64748b" text-anchor="middle" ' + GC_FF + ">" + gcEscape(st.tests[series[i].i].date.slice(5)) + "</text>";
+    s += '<text x="' + p[0].toFixed(1) + '" y="' + (p[1] - 9).toFixed(1) + '" font-size="11" fill="' + col + '" text-anchor="middle" font-weight="700" ' + GC_FF + ">" + sc + "</text>";
+  });
+  return s + "</g>";
+}
+function gcMiniTrend(arr, m, st, cx, cy, w, h) {
+  if (!arr.length) return "";
+  const W = w, H = h, pl = 8, pr = 8, pt = 8, pb = 14;
+  const reflines = [];
+  if (m.group === "dynamic" && m.ref) { const [tg, ex] = m.ref[gcAge(st.age)]; reflines.push({ v: tg, c: "#0d9488" }); if (ex != null) reflines.push({ v: ex, c: "#16a34a" }); }
+  else if (m.group === "tech" && m.target != null) reflines.push({ v: m.target, c: "#16a34a" });
+  const xs2 = arr.map(a => a.v).slice(); reflines.forEach(r => xs2.push(r.v));
+  let lo = Math.min.apply(null, xs2), hi = Math.max.apply(null, xs2);
+  if (lo === hi) { lo -= 1; hi += 1; }
+  const pad = (hi - lo) * 0.15; lo -= pad; hi += pad;
+  const n = arr.length;
+  const X = i => pl + (W - pl - pr) * (n === 1 ? 0.5 : i / (n - 1));
+  const Y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
+  const dc = v => {
+    if (m.group === "dynamic" && m.ref) {
+      const [tg, ex] = m.ref[gcAge(st.age)];
+      if (m.better === "high") { if (v >= ex) return "#16a34a"; if (v >= tg) return "#0d9488"; return "#f59e0b"; }
+      if (v <= ex) return "#16a34a"; if (v <= tg) return "#0d9488"; return "#f59e0b";
+    }
+    if (m.group === "tech" && m.target != null) return (m.better === "high" ? v >= m.target : v <= m.target) ? "#16a34a" : "#f59e0b";
+    return "#0d9488";
+  };
+  const refs = reflines.map(r => { const ty = Y(r.v).toFixed(1); return '<line x1="' + pl + '" y1="' + ty + '" x2="' + (W - pr) + '" y2="' + ty + '" stroke="' + r.c + '" stroke-width="1" stroke-dasharray="4 3"/>'; }).join("");
+  const pts = arr.map((a, i) => X(i).toFixed(1) + "," + Y(a.v).toFixed(1)).join(" ");
+  const dots = arr.map((a, i) => '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(a.v).toFixed(1) + '" r="3.5" fill="' + dc(a.v) + '"/>').join("");
+  return '<svg x="' + cx + '" y="' + cy + '" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + " " + H + '">' +
+    '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="6" fill="#f8fafc"/>' + refs +
+    '<polyline points="' + pts + '" fill="none" stroke="#0d9488" stroke-width="1.5"/>' + dots +
+    '<text x="' + W / 2 + '" y="' + (H - 2) + '" font-size="9" fill="#64748b" text-anchor="middle" ' + GC_FF + ">" + gcEscape(m.name) + "</text></svg>";
+}
+// 与工作台 archive.html 的 buildCardSVG 同源
+function growthCardSvg(st) {
+  const W = 750, parts = [];
+  const grpLabel = GC_AGE_LABEL[gcAge(st.age)];
+  const last = st.tests[st.tests.length - 1];
+  parts.push('<defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0f766e"/><stop offset="1" stop-color="#14b8a6"/></linearGradient></defs>');
+  parts.push('<rect x="0" y="0" width="' + W + '" height="104" fill="url(#hg)"/>');
+  parts.push('<text x="' + W / 2 + '" y="52" font-size="34" fill="#ffffff" text-anchor="middle" font-weight="700" ' + GC_FF + ">星羿羽毛球馆</text>");
+  parts.push('<text x="' + W / 2 + '" y="84" font-size="16" fill="#e6fffb" text-anchor="middle" ' + GC_FF + ">学员体测成长卡</text>");
+  parts.push('<rect x="24" y="120" width="' + (W - 48) + '" height="64" rx="12" fill="#f0fdfa" stroke="#99f6e4" stroke-width="1"/>');
+  parts.push('<text x="44" y="156" font-size="28" fill="#0f766e" font-weight="700" ' + GC_FF + ">" + gcEscape(st.name) + "</text>");
+  parts.push('<text x="44" y="176" font-size="13" fill="#475569" ' + GC_FF + ">" + gcEscape(st.cls || "") + " · " + grpLabel + "</text>");
+  parts.push('<text x="' + (W - 44) + '" y="158" font-size="13" fill="#64748b" text-anchor="end" ' + GC_FF + ">测试日期</text>");
+  parts.push('<text x="' + (W - 44) + '" y="178" font-size="16" fill="#0f766e" text-anchor="end" font-weight="600" ' + GC_FF + ">" + gcEscape(last.date) + "</text>");
+  let y = 212;
+  [{ title: "一、静态体测", g: "static" }, { title: "二、动态体测", g: "dynamic" }, { title: "三、羽毛球技术专项", g: "tech" }].forEach(grp => {
+    y += 34;
+    parts.push('<rect x="24" y="' + (y - 18) + '" width="4" height="16" rx="2" fill="#14b8a6"/>');
+    parts.push('<text x="38" y="' + (y - 3) + '" font-size="16" fill="#0f766e" font-weight="700" ' + GC_FF + ">" + grp.title + "</text>");
+    GC_METRICS.filter(m => m.group === grp.g).forEach(m => {
+      if (m.type === "posture") {
+        const arr = gcVal(st, m.key); if (!arr.length) return;
+        y += 34;
+        parts.push('<text x="40" y="' + y + '" font-size="13" fill="#64748b" ' + GC_FF + ">" + gcEscape(m.name) + "：" + gcEscape(arr[arr.length - 1].v) + "</text>");
+        return;
+      }
+      const arr = gcVal(st, m.key); if (!arr.length) return;
+      const first = arr[0].v, lastv = arr[arr.length - 1].v, d2 = +(lastv - first).toFixed(1);
+      const improved = m.better === "high" ? lastv > first : lastv < first;
+      y += 42; const cy = y - 14;
+      parts.push('<text x="40" y="' + (cy + 4) + '" font-size="15" fill="#334155" ' + GC_FF + ">" + gcEscape(m.name) + "</text>");
+      let midTxt = first + m.unit + " → " + lastv + m.unit, acolor = "#64748b";
+      if (m.type !== "bmi" && arr.length > 1 && d2 !== 0) {
+        if (improved) { midTxt += " (" + (d2 > 0 ? "+" : "") + d2 + m.unit + " ↑)"; acolor = "#16a34a"; }
+        else { midTxt += " (" + d2 + m.unit + " ↓)"; acolor = "#dc2626"; }
+      }
+      parts.push('<text x="232" y="' + (cy + 4) + '" font-size="15" fill="' + acolor + '" ' + GC_FF + ">" + gcEscape(midTxt) + "</text>");
+      const stt = gcStatus(m, st, lastv);
+      if (stt) parts.push(gcBadge(stt, W - 70, cy + 2));
+      else if (m.type === "bmi") parts.push('<text x="' + (W - 44) + '" y="' + (cy + 4) + '" font-size="13" fill="#94a3b8" text-anchor="end" ' + GC_FF + ">趋势参考</text>");
+    });
+  });
+  y += 42;
+  parts.push('<rect x="24" y="' + (y - 18) + '" width="4" height="16" rx="2" fill="#14b8a6"/>');
+  parts.push('<text x="38" y="' + (y - 3) + '" font-size="16" fill="#0f766e" font-weight="700" ' + GC_FF + ">综合成长曲线</text>");
+  const osAll = gcSeries(st);
+  if (osAll.length) {
+    const fS = osAll[0].score, lS = osAll[osAll.length - 1].score, dS = +(lS - fS).toFixed(1);
+    parts.push('<text x="' + (W - 44) + '" y="' + (y - 3) + '" font-size="13" fill="#16a34a" text-anchor="end" font-weight="700" ' + GC_FF + ">" + fS + " → " + lS + " 分（" + (dS > 0 ? "+" : "") + dS + "）</text>");
+  }
+  y += 8;
+  parts.push(gcOverallSVG(st, y + 4));
+  y = y + 4 + 172 + 18;
+  y += 44;
+  parts.push('<rect x="24" y="' + (y - 18) + '" width="4" height="16" rx="2" fill="#14b8a6"/>');
+  parts.push('<text x="38" y="' + (y - 3) + '" font-size="16" fill="#0f766e" font-weight="700" ' + GC_FF + ">进步趋势</text>");
+  const miniY = y, miniW = 210, miniH = 120, gap = 12;
+  [["rope", "跳绳"], ["footwork", "米字步"], ["serve", "发球进区"]].forEach((kv, i) => {
+    const k = kv[0], m = GC_METRICS.find(x => x.key === k), arr = gcVal(st, k);
+    const cx = 24 + i * (miniW + gap);
+    if (arr.length) parts.push(gcMiniTrend(arr, m, st, cx, miniY, miniW, miniH));
+    else parts.push('<rect x="' + cx + '" y="' + miniY + '" width="' + miniW + '" height="' + miniH + '" rx="6" fill="#f8fafc"/><text x="' + (cx + miniW / 2) + '" y="' + (miniY + miniH / 2) + '" font-size="12" fill="#94a3b8" text-anchor="middle" ' + GC_FF + ">" + kv[1] + "暂无数据</text>");
+  });
+  y = miniY + miniH + 24;
+  const sum = gcSummary(st);
+  const msg = "本次共记录 " + sum.total + " 项指标，其中 " + sum.imp + " 项明显进步。汗水不会辜负每一个认真的小孩，继续保持，下个级别就在眼前！" +
+    (last.note ? " 教练说：" + last.note : "");
+  parts.push('<rect x="0" y="' + y + '" width="' + W + '" height="130" fill="#f0fdfa"/>');
+  parts.push('<text x="40" y="' + (y + 28) + '" font-size="15" fill="#0f766e" font-weight="700" ' + GC_FF + ">教练寄语</text>");
+  const lines = svgWrap(msg, 34).slice(0, 3);
+  lines.forEach((ln, i) => parts.push('<text x="40" y="' + (y + 54 + i * 22) + '" font-size="13.5" fill="#475569" ' + GC_FF + ">" + gcEscape(ln) + "</text>"));
+  const sx = W - 92, sy = y + 62, r = 34;
+  parts.push('<circle cx="' + sx + '" cy="' + sy + '" r="' + r + '" fill="none" stroke="#dc2626" stroke-width="3"/>');
+  parts.push('<circle cx="' + sx + '" cy="' + sy + '" r="' + (r - 5) + '" fill="none" stroke="#dc2626" stroke-width="1"/>');
+  parts.push('<text x="' + sx + '" y="' + (sy - 2) + '" font-size="15" fill="#dc2626" text-anchor="middle" font-weight="700" ' + GC_FF + ">星羿</text>");
+  parts.push('<text x="' + sx + '" y="' + (sy + 16) + '" font-size="11" fill="#dc2626" text-anchor="middle" ' + GC_FF + ">体育</text>");
+  const H = y + 130;
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + " " + H + '" width="' + W + '" height="' + H + '"><rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>' + parts.join("") + "</svg>";
+}
+// 云端主档（与工作台体测档案同一份 JSON，同源展示）
+let _profilesCache = null;
+async function fetchProfiles() {
+  if (_profilesCache) return _profilesCache;
+  try {
+    const r = await fetch("../data/profiles.json?t=" + Date.now(), { cache: "no-store" });
+    _profilesCache = await r.json();
+  } catch (e) { _profilesCache = []; }
+  return _profilesCache;
+}
+function matchStudent(profiles, childName) {
+  const norm = s => String(s || "").replace(/\s/g, "");
+  const nm = norm(childName);
+  return profiles.find(s => norm(s.name) === nm) ||
+    profiles.find(s => norm(s.name).includes(nm) || nm.includes(norm(s.name))) || null;
+}
+
 function surveyRows(p, exp) {
   const row = (k, v) => v ? '<div class="row"><span class="k">' + k + '</span><span class="v">' + esc2safe(v) + "</span></div>" : "";
   return row("性别", p.gender) + row("出生年月", p.birth) + row("就读年级", p.grade) +
@@ -140,9 +389,19 @@ async function fillReport(child) {
   const entries = (r && r.entries) || [];
   const dl = document.getElementById("dlReportBtn");
   if (dl) dl.onclick = async () => {
-    if (!entries.length) { toast("还没有体测数据，试课后教练填写即可生成"); return; }
     dl.disabled = true; const old = dl.textContent; dl.textContent = "生成中…";
-    try { await openImgModal(reportCardSvg(child, parent, entries), 750, 980, child.name + " · 体测报告"); }
+    try {
+      // 优先：工作台体测档案的完整成长卡（静态+动态+技术专项+成长曲线，与教练看到的完全一致）
+      const st = matchStudent(await fetchProfiles(), child.name);
+      if (st && st.tests && st.tests.length) {
+        const svg = growthCardSvg(st);
+        await openImgModal(svg, 750, +(svg.match(/height="(\d+)"/) || [0, 980])[1], st.name + " · 学员体测成长卡");
+      } else {
+        const entries = (r && r.entries) || [];
+        if (!entries.length) { toast("还没有体测数据，试课后教练填写即可生成"); dl.disabled = false; dl.textContent = old; return; }
+        await openImgModal(reportCardSvg(child, parent, entries), 750, 980, child.name + " · 体测报告");
+      }
+    }
     catch (e) { toast("生成失败，请重试"); }
     dl.disabled = false; dl.textContent = old;
   };
@@ -275,53 +534,129 @@ function classCards(classes) {
   }).join("") + (classes.length > 12 ? '<p class="muted">仅显示最近 12 次上课反馈</p>' : "");
 }
 
-// 荣誉墙：已获得（彩色可点）+ 未获得（灰显锁定）
+// 荣誉墙：已获得（证书卡可点开大图）+ 未获得（灰显锁定）
 function awardWall(awards) {
-  const got = {};
-  (awards || []).forEach(a => { got[a.type] = got[a.type] || []; got[a.type].push(a); });
-  const items = AWARD_TYPES.map(m => {
-    const mine = got[m.type];
-    if (mine && mine.length) {
-      const last = mine[0];
-      return '<div class="award-card got" onclick="showAwardImage(\'' + m.type + '\',\'' +
-        esc2safe(last.name || "").replace(/'/g, "") + '\',\'' + esc2safe(last.date) + '\',\'' +
-        esc2safe(last.note || "").replace(/'/g, "") + '\')" title="点击看奖状大图">' +
-        '<span class="a-ic">' + m.icon + '</span><span class="a-name">' + m.name + "</span>" +
-        '<span class="a-date">' + esc2safe(last.date || "") + '</span><span class="a-tip">查看</span></div>';
-    }
-    return '<div class="award-card lock"><span class="a-ic">' + m.icon + '</span><span class="a-name">' + m.name + "</span>" +
-      '<span class="a-how">🔒 ' + esc2safe(m.how) + "</span></div>";
-  }).join("");
-  const extra = (awards || []).filter(a => !AWARD_TYPES.some(m => m.type === a.type));
-  return '<div class="award-grid">' + items + "</div>" +
-    (extra.length ? '<p class="muted">其他荣誉：' + extra.map(a => esc2safe(awardMeta(a.type).name)).join("、") + "</p>" : "");
+  const list = (awards || []).slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  window._awards = list;
+  const gotTypes = {};
+  list.forEach(a => { gotTypes[a.type] = 1; });
+  const gotHtml = list.length
+    ? list.map((a, i) => {
+        const meta = awardMeta(a.type);
+        return '<div class="cert-mini" onclick="showAwardImage(' + i + ')">' +
+          '<div class="cm-type">' + esc2safe(a.type || "荣誉") + "</div>" +
+          (a.award ? '<div class="cm-award">🏆 ' + esc2safe(a.award) + "</div>" : '<div class="cm-award">🏆 ' + esc2safe(meta.name) + "</div>") +
+          '<div class="cm-date">' + esc2safe(a.date || "") + '<span class="cm-view">查看证书</span></div></div>';
+      }).join("")
+    : '<p class="muted">还没有荣誉记录。教练授奖或证书存档后会自动出现在这里。</p>';
+  const lockHtml = AWARD_TYPES.filter(m => !gotTypes[m.type]).map(m =>
+    '<div class="award-card lock"><span class="a-ic">' + m.icon + '</span><span class="a-name">' + m.name + "</span>" +
+    '<span class="a-how">🔒 ' + esc2safe(m.how) + "</span></div>").join("");
+  return '<div class="aw-sec">🏆 已获得的荣誉（点击看证书大图，长按保存）</div>' +
+    '<div class="cert-grid">' + gotHtml + "</div>" +
+    (lockHtml ? '<div class="aw-sec" style="margin-top:14px;">🎯 还可以争取</div><div class="award-grid">' + lockHtml + "</div>" : "");
 }
 
-// ===== 奖状大图（SVG 模板 → PNG，长按保存） =====
-function awardSvg(type, name, date, note) {
-  const m = awardMeta(type);
-  const d = String(date || "").replace(/^(\d{4})-(\d{1,2})-(\d{1,2}).*$/, "$1 年 $2 月 $3 日");
-  const noteTxt = note ? String(note).slice(0, 40) : "";
-  return '<svg xmlns="http://www.w3.org/2000/svg" width="750" height="530" viewBox="0 0 750 530">' +
-    '<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">' +
-    '<stop offset="0" stop-color="#0E5A4C"/><stop offset="1" stop-color="#0B3A32"/></linearGradient></defs>' +
-    '<rect width="750" height="530" rx="18" fill="url(#bg)"/>' +
-    '<rect x="14" y="14" width="722" height="502" rx="12" fill="none" stroke="#E0A93B" stroke-width="3"/>' +
-    '<rect x="24" y="24" width="702" height="482" rx="8" fill="none" stroke="#E0A93B" stroke-width="1" opacity=".5"/>' +
-    '<circle cx="375" cy="120" r="44" fill="#E0A93B" opacity=".15"/>' +
-    '<text x="375" y="138" font-size="52" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + m.icon + "</text>" +
-    '<text x="375" y="212" font-size="44" font-weight="bold" fill="#E0A93B" text-anchor="middle" letter-spacing="6" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + m.name + "</text>" +
-    '<text x="375" y="252" font-size="15" fill="#C6F94B" text-anchor="middle" letter-spacing="4">XINGYI BADMINTON · HONOR</text>' +
-    '<text x="375" y="316" font-size="26" fill="#F2F8F6" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">授予 <tspan font-weight="bold" font-size="32" fill="#FFFFFF">' + esc2safe(name) + " 同学</tspan></text>" +
-    '<text x="375" y="368" font-size="18" fill="#BFD8D2" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">表彰你在羽毛球训练中的出色表现，愿你挥拍向前，成长看得见！</text>' +
-    (noteTxt ? '<text x="375" y="404" font-size="16" fill="#C6F94B" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">「' + esc2safe(noteTxt) + '」</text>' : "") +
-    '<text x="375" y="462" font-size="16" fill="#8AA09A" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">' + d + "</text>" +
-    '<text x="375" y="492" font-size="14" fill="#8AA09A" text-anchor="middle" font-family="PingFang SC,Microsoft YaHei,sans-serif">星羿羽毛球馆 · 九江开发区杭州路</text></svg>';
+// ===== 荣誉证书大图（cert.html 同款版式 · 纯 SVG 1080x1440） =====
+function svgStar(cx, cy, r, fill, op) {
+  const p = [];
+  for (let i = 0; i < 10; i++) {
+    const ang = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? r * 0.42 : r;
+    p.push((cx + rad * Math.cos(ang)).toFixed(1) + "," + (cy + rad * Math.sin(ang)).toFixed(1));
+  }
+  return '<polygon points="' + p.join(" ") + '" fill="' + fill + '" opacity="' + (op || 1) + '"/>';
+}
+function svgShuttle(cx, cy, s, fill) {
+  return '<g transform="translate(' + cx + "," + cy + ") scale(" + s + ')">' +
+    '<path d="M0 -34 L-22 -6 M0 -34 L0 -2 M0 -34 L22 -6 M0 -34 L-12 -4 M0 -34 L12 -4" stroke="' + fill + '" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+    '<path d="M-22 -6 L22 -6 L15 12 L-15 12 Z" fill="#fff" stroke="' + fill + '" stroke-width="2"/>' +
+    '<circle cx="0" cy="22" r="13" fill="#fff" stroke="' + fill + '" stroke-width="3"/></g>';
+}
+const XY_FONT = "PingFang SC,Microsoft YaHei,sans-serif";
+function svgWrap(t, n) { const o = []; t = String(t || ""); for (let i = 0; i < t.length; i += n) o.push(t.slice(i, i + n)); return o; }
+
+function certSvg(a) {
+  const name = a.name || "学员";
+  const type = a.type || "荣誉证书";
+  const RANK = { "羽芽段位": "🌱 羽芽段位", "羽翼段位": "🪶 羽翼段位", "羽翔段位": "🕊️ 羽翔段位", "羽跃段位": "🚀 羽跃段位", "羽冠段位": "👑 羽冠段位" };
+  const C = { p: "#185FA5", p2: "#2E7FC4", ac: "#FFB703", ink: "#1A3A5C", grey: "#5a6b7c" };
+  const d = String(a.date || "").replace(/^(\d{4})-(\d{1,2})-(\d{1,2}).*$/, "$1 年 $2 月 $3 日");
+  const sign = a.sign || "星羿教练";
+  const comment = a.note || a.comment || "";
+  const rankHtml = RANK[type];
+  const awardTxt = a.award || "";
+
+  // 奖项行（最多 2 行折行）
+  const awardFull = rankHtml ? "经星羿段位考核评定，正式晋升为 " + RANK[type]
+    : (awardTxt ? "在 " + awardTxt + " 中表现优异" : "在羽毛球训练中表现优异");
+  const awardLines = svgWrap(awardFull, 22).slice(0, 2);
+
+  // 评语框（26 字/行）；奖项行折两行时整体下移避让
+  const cLines = comment ? svgWrap(comment, 26).slice(0, 4) : [];
+  const cbY = 830 + (awardLines.length - 1) * 48;
+  const cbH = cLines.length ? cLines.length * 44 + 44 : 0;
+
+  // 装饰：上下边框星 + 四角
+  let deco = "";
+  for (let x = 60; x < 1020; x += 90) deco += svgStar(x, 60, 9, C.ac, .9) + svgStar(x, 1380, 9, C.ac, .9);
+  for (let y = 120; y < 1320; y += 90) deco += svgStar(58, y, 8, "#8ECA3F", .85) + svgStar(1022, y, 8, "#8ECA3F", .85);
+  deco += svgStar(180, 300, 20, C.ac, .9) + svgStar(920, 300, 16, "#FF8FA3", .85) + svgStar(950, 500, 12, "#8ECA3F", .8) + svgStar(140, 540, 14, "#FF8FA3", .8);
+
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1440" viewBox="0 0 1080 1440">' +
+    '<defs>' +
+    '<linearGradient id="cbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#EAF4FF"/><stop offset="1" stop-color="#F7FBFF"/></linearGradient>' +
+    '<radialGradient id="cglow" cx="50%" cy="30%" r="60%"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>' +
+    '<linearGradient id="crib" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFB703"/><stop offset="1" stop-color="#ffd166"/></linearGradient>' +
+    "</defs>" +
+    '<rect width="1080" height="1440" fill="url(#cbg)"/>' +
+    '<rect width="1080" height="1440" fill="url(#cglow)"/>' +
+    '<g opacity=".12">' + svgShuttle(540, 1210, 5.2, "#c8ddf2") + "</g>" +
+    '<rect x="34" y="34" width="1012" height="1372" rx="26" fill="none" stroke="' + C.p + '" stroke-width="5"/>' +
+    '<rect x="46" y="46" width="988" height="1348" rx="20" fill="none" stroke="' + C.ac + '" stroke-width="2" stroke-dasharray="10 7"/>' +
+    deco +
+    // 顶部徽章：羽毛球圆章
+    '<circle cx="540" cy="170" r="92" fill="#EAF4FF" stroke="' + C.p + '" stroke-width="7"/>' +
+    '<circle cx="540" cy="170" r="76" fill="#fff" opacity=".6"/>' +
+    svgShuttle(540, 170, 1.35, C.p) +
+    '<text x="540" y="330" font-size="24" letter-spacing="8" fill="' + C.p + '" font-weight="bold" opacity=".9" text-anchor="middle" font-family="' + XY_FONT + '">星 羿 羽 毛 球 馆</text>' +
+    '<text x="540" y="424" font-size="84" font-weight="900" fill="' + C.p + '" letter-spacing="10" text-anchor="middle" font-family="' + XY_FONT + '">荣誉证书</text>' +
+    '<text x="540" y="458" font-size="20" letter-spacing="5" fill="#9bb" text-anchor="middle" font-family="Arial,sans-serif">CERTIFICATE OF ACHIEVEMENT</text>' +
+    // 缎带
+    (() => {
+      const tw = Math.max(4, type.length) * 34 + 90, x0 = 540 - tw / 2;
+      return '<rect x="' + x0 + '" y="492" width="' + tw + '" height="58" rx="29" fill="url(#crib)"/>' +
+        '<text x="540" y="532" font-size="30" font-weight="800" fill="#5a3b00" text-anchor="middle" font-family="' + XY_FONT + '">' + esc2safe(type) + "</text>";
+    })() +
+    '<text x="540" y="622" font-size="30" fill="#5a6b7c" text-anchor="middle" font-family="' + XY_FONT + '">兹证明</text>' +
+    '<text x="540" y="706" font-size="72" font-weight="900" fill="' + C.p2 + '" text-anchor="middle" font-family="' + XY_FONT + '">' + esc2safe(name) + "</text>" +
+    '<rect x="280" y="722" width="520" height="5" rx="3" fill="' + C.p + '" opacity=".5"/>' +
+    awardLines.map((ln, i) =>
+      '<text x="540" y="' + (796 + i * 48) + '" font-size="34" font-weight="700" fill="' + C.ink + '" text-anchor="middle" font-family="' + XY_FONT + '">' +
+      esc2safe(ln) + "</text>").join("") +
+    (cLines.length
+      ? '<rect x="160" y="' + cbY + '" width="760" height="' + cbH + '" rx="22" fill="#f4f9ff" stroke="#dcebfb" stroke-width="2"/>' +
+        '<text x="190" y="' + (cbY + 34) + '" font-size="44" fill="' + C.ac + '" opacity=".5" font-family="serif">“</text>' +
+        cLines.map((ln, i) =>
+          '<text x="540" y="' + (cbY + 74 + i * 44) + '" font-size="26" fill="#33506b" text-anchor="middle" font-family="' + XY_FONT + '">' + esc2safe(ln) + "</text>").join("")
+      : "") +
+    '<text x="120" y="1272" font-size="26" fill="#5a6b7c" font-family="' + XY_FONT + '">' + esc2safe(d) + "</text>" +
+    '<text x="700" y="1266" font-size="24" fill="#5a6b7c" font-family="' + XY_FONT + '">' + esc2safe(sign) + "</text>" +
+    '<line x1="700" y1="1280" x2="920" y2="1280" stroke="#b9cfe6" stroke-width="2"/>' +
+    '<text x="810" y="1308" font-size="17" fill="#9bb" text-anchor="middle" font-family="' + XY_FONT + '">教练签字</text>' +
+    // 印章
+    '<circle cx="880" cy="1150" r="78" fill="none" stroke="' + C.ac + '" stroke-width="6"/>' +
+    '<circle cx="880" cy="1150" r="62" fill="' + C.ac + '" opacity=".12"/>' +
+    '<text x="880" y="1136" font-size="22" font-weight="800" fill="' + C.p + '" text-anchor="middle" font-family="' + XY_FONT + '">星羿认证</text>' +
+    svgStar(880, 1166, 24, C.p, .9) +
+    '<text x="880" y="1206" font-size="15" fill="' + C.p + '" text-anchor="middle" font-family="Arial,sans-serif">XINGYI</text>' +
+    '<text x="540" y="1382" font-size="22" fill="' + C.p + '" font-weight="bold" letter-spacing="3" text-anchor="middle" font-family="' + XY_FONT + '">星羿体育 · 见证每一次成长</text>' +
+    "</svg>";
 }
 
-window.showAwardImage = async function (type, name, date, note) {
-  const svg = awardSvg(type, name, date, note);
-  await openImgModal(svg, 750, 530, name + " · " + awardMeta(type).name);
+window.showAwardImage = async function (i) {
+  const a = (window._awards || [])[i];
+  if (!a) return;
+  await openImgModal(certSvg(a), 1080, 1440, (a.name || "") + " · 荣誉证书");
 };
 
 // SVG → PNG（canvas 2x 渲染），弹层展示提示长按保存
