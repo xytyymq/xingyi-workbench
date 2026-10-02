@@ -815,11 +815,11 @@ async function openImgModal(svg, w, h, title) {
   el.classList.add("open");
 }
 
-// 静态通道提示：后端网关异常时数据来自 Pages 快照，页面顶部轻提示一句
+// 数据来源提示：后端网关异常时数据来自 Pages 快照，用家长友好的说法轻提示
 function offlineHint(g) {
   if (!g || g.source !== "static") return "";
   const d = g.updated ? String(g.updated).slice(0, 10) : "";
-  return '<p class="muted" style="margin:0 0 8px;">📡 当前为离线快照数据' + (d ? "（" + d + " 更新）" : "") + '，平台恢复后自动切换实时。</p>';
+  return '<p class="muted" style="margin:0 0 8px;">📌 以下为 ' + (d ? d + " " : "") + '同步的最新成长记录</p>';
 }
 
 async function fillGrowth(child) {
