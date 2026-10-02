@@ -59,12 +59,27 @@ const Store = {
     const j = await api("/api/lookup?phone=" + encodeURIComponent(phone));
     return j.children || [];
   },
-  // 成长数据：上课记录（按姓名匹配）+ 奖状（接口异常时抛错，让页面提示网络开小差）
+  // 成长数据：上课记录（按姓名匹配）+ 奖状
+  // 优先后端接口；后端不可用（平台网关异常等）时回退 Pages 静态快照 data/growth.json
   async getGrowth(childId, name) {
     const q = "childId=" + encodeURIComponent(childId || "") + "&name=" + encodeURIComponent(name || "");
     const j = await api("/api/growth?" + q);
-    if (j.error) throw new Error(j.error);
-    return { classes: j.classes || [], awards: j.awards || [] };
+    if (!j.error) return { classes: j.classes || [], awards: j.awards || [], source: "live" };
+    try {
+      const r = await fetch("../data/growth.json?t=" + Date.now(), { cache: "no-store" });
+      if (r.ok) {
+        const s = await r.json();
+        const key = String(name || "").replace(/\s/g, "");
+        const pick = obj => {
+          if (!obj) return [];
+          const hit = Object.keys(obj).find(k => k.replace(/\s/g, "") === key);
+          return hit ? obj[hit] : [];
+        };
+        const classes = pick(s.classes).slice().sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+        return { classes, awards: pick(s.awards), source: "static", updated: s.updated || "" };
+      }
+    } catch (e) { /* 静态也取不到 */ }
+    throw new Error(j.error);
   },
   // 家长反馈：提交 + 查自己的反馈
   async addFeedback(childId, name, text) {
