@@ -815,6 +815,13 @@ async function openImgModal(svg, w, h, title) {
   el.classList.add("open");
 }
 
+// 静态通道提示：后端网关异常时数据来自 Pages 快照，页面顶部轻提示一句
+function offlineHint(g) {
+  if (!g || g.source !== "static") return "";
+  const d = g.updated ? String(g.updated).slice(0, 10) : "";
+  return '<p class="muted" style="margin:0 0 8px;">📡 当前为离线快照数据' + (d ? "（" + d + " 更新）" : "") + '，平台恢复后自动切换实时。</p>';
+}
+
 async function fillGrowth(child) {
   const gs = document.getElementById("growthSurvey");
   const gb = document.getElementById("growthBookings");
@@ -834,7 +841,7 @@ async function fillGrowth(child) {
   const g = growth || { classes: [], awards: [] };
   // 有上课记录或奖状 → 老生：隐藏「预约试课」
   if ((g.classes || []).length || (g.awards || []).length) markOldStudent();
-  if (gc) gc.innerHTML = classCards(g.classes);
+  if (gc) gc.innerHTML = offlineHint(g) + classCards(g.classes);
   if (aw) aw.innerHTML = awardWall(g.awards);
   gb.innerHTML = list.length
     ? list.map(b => '<div class="row"><span class="k">' + esc2safe(b.time) +
