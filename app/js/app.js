@@ -155,9 +155,10 @@ function renderBooking(child) {
   return '<div class="hero"><h2>预约试课</h2><p>' + child.name + " 的体验课安排</p></div>" +
     '<div class="card bk-tip"><h3>📌 试课前先看</h3>' +
       '<ul class="bk-tip-list">' +
-        '<li>选好时段点「提交预约」，到店报家长手机号即可，<b>不用提前缴费</b>。</li>' +
+        '<li>🌟 <b>试课免费 1 次</b>：选好时段点「提交预约」，到店报家长手机号即可，不用提前缴费。</li>' +
+        '<li>🥤 请穿<b>运动鞋</b>、带<b>水壶和跳绳</b>（跳绳用于热身测试）。</li>' +
+        '<li>🏸 <b>体验课球拍由场馆提供</b>，孩子也可自带。</li>' +
         wxLi +
-        '<li>首次试课请穿运动鞋、带水壶；场馆提供球拍，也可自带。</li>' +
       '</ul></div>' +
     '<div class="card"><h3>选择时段</h3><div class="times">' + slots + "</div>" +
     '<button class="btn" id="bookBtn" style="margin-top:12px;">提交预约</button></div>' +
