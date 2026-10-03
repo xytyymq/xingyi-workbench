@@ -991,13 +991,8 @@ async function fillGrowth(child) {
 }
 
 function renderMessage(child) {
-  const m = Data.messagesFor(child);
-  const items = m.map(it =>
-    '<div class="row"><span class="k">' + it.title + '</span><span class="v">' +
-    (it.unread ? '<span class="tag">未读</span>' : '<span class="muted">已读</span>') +
-    "<br><span class=\"muted\">" + it.desc + "</span></span></div>").join("");
-  return '<div class="hero"><h2>消息</h2><p>报告与跟进提醒</p></div>' +
-    '<div class="card"><h3>通知</h3>' + items + "</div>" +
+  return '<div class="hero"><h2>消息</h2><p>训练反馈与跟进提醒</p></div>' +
+    '<div class="card"><h3>📨 训练反馈</h3><div id="msgList"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>💬 家长反馈</h3><p class="muted" style="margin:0 0 8px;">想对教练说的话、建议或问题，提交后直达馆长工作台</p>' +
     '<textarea id="fbText" class="input" rows="4" style="width:100%;box-sizing:border-box;" placeholder="如：希望多练一下步伐 / 想调整上课时间 / 对课程的疑问…"></textarea>' +
     '<button class="btn" id="fbBtn" style="margin-top:10px;">📤 提交反馈</button>' +
@@ -1006,6 +1001,21 @@ function renderMessage(child) {
 }
 
 async function fillMessage(child) {
+  // 训练反馈：拉真实 parent-msg.json，按孩子名过滤
+  const ml = document.getElementById("msgList");
+  if (ml) {
+    try {
+      const list = await Data.parentMessagesFor(child);
+      ml.innerHTML = list.length
+        ? list.map(e =>
+            '<div class="pm-msg"><div class="pm-date">📅 ' + esc2safe(e.date) + '</div>' +
+            '<div class="pm-body">' + esc2safe(e.msg) + '</div></div>'
+          ).join("")
+        : '<p class="muted">暂时还没有孩子的训练反馈消息～</p>';
+    } catch (e) {
+      ml.innerHTML = '<p class="muted">消息暂时加载不了（网络开小差了），稍后再来看看。</p>';
+    }
+  }
   const box = document.getElementById("fbList");
   const btn = document.getElementById("fbBtn");
   if (!box || !btn) return;
