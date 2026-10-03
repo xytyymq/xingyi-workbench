@@ -34,7 +34,7 @@ const CONTACT = {
   techWechat: "",   // 例：xy_tech
   techPhone: "18970260066",
   coachWechat: "15107920066",  // 馆长/教练微信（预约页展示 + 复制）
-  coachPhone: "18970260066",
+  coachPhone: "15107920066",  // 与教练微信同号
   brand: "星羿羽毛球馆 出品",
   version: "v1.3.0",
   updated: "2026-10"
@@ -156,7 +156,7 @@ function renderBooking(child) {
     '<div class="card bk-tip"><h3>📌 试课前先看</h3>' +
       '<ul class="bk-tip-list">' +
         '<li>🌟 <b>试课免费 1 次</b>：选好时段点「提交预约」，到店报家长手机号即可，不用提前缴费。</li>' +
-        '<li>🥤 请穿<b>运动鞋</b>、带<b>水壶和跳绳</b>（跳绳用于热身测试）。</li>' +
+        '<li>🥤 请穿<b>运动鞋</b>、带<b>水壶和跳绳</b>。</li>' +
         '<li>🏸 <b>体验课球拍由场馆提供</b>，孩子也可自带。</li>' +
         wxLi +
       '</ul></div>' +
