@@ -176,3 +176,15 @@ html, body {
 .ab-copy { flex: 0 0 auto; font-size: 12px; line-height: 1.4; padding: 3px 9px; border: 0.5px solid #D3D8E0; background: #fff; color: #1A56A8; border-radius: 6px; text-decoration: none; cursor: pointer; }
 .ab-copy.done { background: #E6F1FB; border-color: #85B7EB; }
 .ab-foot { font-size: 12px; margin: 10px 0 0; border-top: 0.5px solid #F1F3F5; padding-top: 8px; }
+
+/* 预约页：试课前友情提示 */
+.bk-tip { background: linear-gradient(135deg, #FFF9EC, #FFFDF5); border: 1px solid #F0D98A; }
+.bk-tip h3 { color: #9A6E12; }
+.bk-tip-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.7; color: var(--ink); }
+.bk-tip-list li { margin-bottom: 6px; }
+.bk-tip-list b { color: var(--orange); }
+
+/* 预约页：老师微信卡 */
+.bk-wx { border: 1px solid #D7E3F4; background: #F7FBFF; }
+.bk-wx h3 { color: var(--blue); }
+.bk-wx .ab-line { margin-top: 8px; }
