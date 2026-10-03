@@ -165,3 +165,14 @@ html, body {
 .skill-cell.lock { background: #f3f5f7; border: 1.5px dashed #cfd8de; }
 .skill-cell.lock .sc-name { color: #8a99a5; }
 .skill-cell.lock .sc-need { color: #9fb0bc; }
+
+/* 关于本系统：系统制作 / 技术支持联系方式（消息页底部） */
+.ab-item { padding: 10px 0; border-top: 0.5px solid #F1F3F5; }
+.ab-head { font-size: 14px; font-weight: 700; color: #1F2937; }
+.ab-desc { font-size: 12px; margin: 2px 0 6px; line-height: 1.5; }
+.ab-line { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-top: 5px; }
+.ab-lab { font-size: 12px; flex: 0 0 auto; }
+.ab-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; word-break: break-all; color: #1A56A8; }
+.ab-copy { flex: 0 0 auto; font-size: 12px; line-height: 1.4; padding: 3px 9px; border: 0.5px solid #D3D8E0; background: #fff; color: #1A56A8; border-radius: 6px; text-decoration: none; cursor: pointer; }
+.ab-copy.done { background: #E6F1FB; border-color: #85B7EB; }
+.ab-foot { font-size: 12px; margin: 10px 0 0; border-top: 0.5px solid #F1F3F5; padding-top: 8px; }
