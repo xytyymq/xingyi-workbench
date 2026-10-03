@@ -188,3 +188,9 @@ html, body {
 .bk-wx { border: 1px solid #D7E3F4; background: #F7FBFF; }
 .bk-wx h3 { color: var(--blue); }
 .bk-wx .ab-line { margin-top: 8px; }
+
+/* 消息页：真实训练反馈（来自 parent-msg.json，保留换行） */
+.pm-msg { padding: 11px 0; border-top: 0.5px solid #F1F3F5; }
+.pm-msg:first-child { border-top: 0; padding-top: 2px; }
+.pm-date { font-size: 12px; color: var(--mut); margin-bottom: 5px; }
+.pm-body { font-size: 14px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
