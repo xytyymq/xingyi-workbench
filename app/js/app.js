@@ -33,7 +33,7 @@ const CONTACT = {
   techName: "星羿系统技术支持",
   techWechat: "",   // 例：xy_tech
   techPhone: "18970260066",
-  coachWechat: "",  // 例：xy_coach（馆长/教练）
+  coachWechat: "15107920066",  // 馆长/教练微信（预约页展示 + 复制）
   coachPhone: "18970260066",
   brand: "星羿羽毛球馆 出品",
   version: "v1.3.0",
@@ -50,6 +50,21 @@ async function copyText(t) {
       document.body.removeChild(i); return true;
     } catch (e2) { return false; }
   }
+}
+
+// 预约页老师微信卡：coachWechat 留空时整块不显示，避免给家长看错信息
+function coachWxBlock() {
+  if (!CONTACT.coachWechat) return "";
+  const wx = CONTACT.coachWechat;
+  return '<div class="card bk-wx"><h3>💬 加老师微信</h3>' +
+    '<p class="muted" style="margin:0 0 8px;">预约后加好友，备注「孩子姓名 + 手机号」，上课提醒、体测结果第一时间收到。</p>' +
+    '<div class="ab-line"><span class="muted ab-lab">微信号</span><b class="ab-id">' + esc2safe(wx) + '</b>' +
+    '<button class="ab-copy" data-copy="' + esc2safe(wx) + '" data-copy-label="微信号">复制</button></div>' +
+    (CONTACT.coachPhone
+      ? '<div class="ab-line"><span class="muted ab-lab">电话</span><b class="ab-id">' + esc2safe(CONTACT.coachPhone) + '</b>' +
+        '<a class="ab-copy" href="tel:' + esc2safe(CONTACT.coachPhone) + '">拨号</a></div>'
+      : "") +
+    '</div>';
 }
 
 function contactRows(icon, title, desc, wechat, phone) {
@@ -134,10 +149,20 @@ function renderBooking(child) {
   }
   const slots = Data.TIME_SLOTS.map(t =>
     '<div class="time' + (selSlot === t ? " sel" : "") + '" data-slot="' + t + '">' + t + "</div>").join("");
+  const wxLi = CONTACT.coachWechat
+    ? '<li>预约后建议<b>加老师微信</b>（下方微信号可复制），备注「孩子姓名 + 手机号」，上课提醒、体测解读都在微信沟通。</li>'
+    : "";
   return '<div class="hero"><h2>预约试课</h2><p>' + child.name + " 的体验课安排</p></div>" +
+    '<div class="card bk-tip"><h3>📌 试课前先看</h3>' +
+      '<ul class="bk-tip-list">' +
+        '<li>选好时段点「提交预约」，到店报家长手机号即可，<b>不用提前缴费</b>。</li>' +
+        wxLi +
+        '<li>首次试课请穿运动鞋、带水壶；场馆提供球拍，也可自带。</li>' +
+      '</ul></div>' +
     '<div class="card"><h3>选择时段</h3><div class="times">' + slots + "</div>" +
     '<button class="btn" id="bookBtn" style="margin-top:12px;">提交预约</button></div>' +
-    '<div class="card"><h3>我的预约</h3><div id="myBookings"><p class="muted">加载中…</p></div></div>';
+    '<div class="card"><h3>我的预约</h3><div id="myBookings"><p class="muted">加载中…</p></div></div>' +
+    coachWxBlock();
 }
 
 async function fillBookings(child) {
@@ -1063,9 +1088,12 @@ function bindEvents(h, child) {
       if (!selSlot) { toast("请先选一个时段"); return; }
       const c = Auth.current();
       await Store.addBooking(c.childId, { time: selSlot, phone: c.phone, name: c.name });
-      toast("预约成功，到店报手机号即可");
+      toast("预约成功 ✅ " + (CONTACT.coachWechat
+        ? "加微信备注「" + c.name + "+" + c.phone + "」"
+        : "到店报手机号即可"));
       selSlot = null; render();
     };
+    bindContactCopy(); // 绑定预约页老师微信的「复制」按钮
   }
 
   if (h === "/survey") {
