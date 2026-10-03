@@ -27,6 +27,68 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 1600);
 }
 
+// ===== 系统制作 / 技术支持联系方式（消息页底部「关于本系统」）=====
+// 留空的项自动隐藏；只要有一项填了就显示整块。改这里即可上线，无需动页面代码。
+const CONTACT = {
+  techName: "星羿系统技术支持",
+  techWechat: "",   // 例：xy_tech
+  techPhone: "",    // 例：13800000000
+  coachWechat: "",  // 例：xy_coach（馆长/教练）
+  coachPhone: "",
+  brand: "星羿羽毛球馆 出品",
+  version: "v1.3.0",
+  updated: "2026-10"
+};
+
+async function copyText(t) {
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch (e) {
+    try {
+      const i = document.createElement("textarea");
+      i.value = t; i.style.position = "absolute"; i.style.left = "-9999px";
+      document.body.appendChild(i); i.select(); document.execCommand("copy");
+      document.body.removeChild(i); return true;
+    } catch (e2) { return false; }
+  }
+}
+
+function contactRows(icon, title, desc, wechat, phone) {
+  if (!wechat && !phone) return "";
+  const line = (label, val, isPhone) =>
+    '<div class="ab-line"><span class="muted ab-lab">' + label + '</span><b class="ab-id">' + esc2safe(val) + "</b>" +
+    (isPhone ? '<a class="ab-copy" href="tel:' + esc2safe(val) + '">拨号</a>' : "") +
+    '<button class="ab-copy" data-copy="' + esc2safe(val) + '" data-copy-label="' + label + '">复制</button></div>';
+  return '<div class="ab-item"><div class="ab-head">' + icon + " " + title + "</div>" +
+    (desc ? '<div class="muted ab-desc">' + desc + "</div>" : "") +
+    (wechat ? line("微信", wechat, false) : "") +
+    (phone ? line("电话", phone, true) : "") + "</div>";
+}
+
+// 「关于本系统」区块：无任何联系方式时整体不显示
+function aboutBlock() {
+  const tech = contactRows("🛠", "系统问题 · 找技术支持", "打不开页面 / 收不到消息 / 图片生成失败", CONTACT.techWechat, CONTACT.techPhone);
+  const coach = contactRows("🏸", "课程问题 · 找教练 · 馆长", "约课调课 / 训练安排 / 体测解读", CONTACT.coachWechat, CONTACT.coachPhone);
+  if (!tech && !coach) return "";
+  return '<div class="card"><h3>ℹ️ 关于本系统</h3>' +
+    '<p class="muted" style="margin:0 0 4px;">遇到问题先分清找谁，响应更快</p>' +
+    tech + coach +
+    '<p class="muted ab-foot">' + esc2safe(CONTACT.brand) + " · " + esc2safe(CONTACT.version) +
+    " · 更新 " + esc2safe(CONTACT.updated) + "</p></div>";
+}
+
+function bindContactCopy() {
+  document.querySelectorAll(".ab-copy[data-copy]").forEach(b => {
+    b.onclick = async () => {
+      const t = b.getAttribute("data-copy");
+      const ok = await copyText(t);
+      b.textContent = ok ? "已复制 ✓" : "复制";
+      b.classList.toggle("done", ok);
+      if (ok) toast("已复制 " + b.getAttribute("data-copy-label") + "：" + t + "，去微信粘贴搜索即可");
+      setTimeout(() => { b.textContent = "复制"; b.classList.remove("done"); }, 1600);
+    };
+  });
+}
+
 function headerBar(child) {
   return '<div class="header"><h1>🏸 星羿家长端</h1>' +
     '<div style="text-align:right"><div class="who">' + child.name + " 家长</div>" +
@@ -904,7 +966,8 @@ function renderMessage(child) {
     '<div class="card"><h3>💬 家长反馈</h3><p class="muted" style="margin:0 0 8px;">想对教练说的话、建议或问题，提交后直达馆长工作台</p>' +
     '<textarea id="fbText" class="input" rows="4" style="width:100%;box-sizing:border-box;" placeholder="如：希望多练一下步伐 / 想调整上课时间 / 对课程的疑问…"></textarea>' +
     '<button class="btn" id="fbBtn" style="margin-top:10px;">📤 提交反馈</button>' +
-    '<div id="fbList" style="margin-top:12px;"><p class="muted">加载中…</p></div></div>';
+    '<div id="fbList" style="margin-top:12px;"><p class="muted">加载中…</p></div></div>' +
+    aboutBlock();
 }
 
 async function fillMessage(child) {
@@ -934,6 +997,7 @@ async function fillMessage(child) {
     } catch (e) { toast("提交失败：" + e.message); }
     btn.disabled = false; btn.textContent = old;
   };
+  bindContactCopy();
 }
 
 
