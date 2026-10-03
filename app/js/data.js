@@ -48,5 +48,29 @@ const Data = {
       { date: "待发送", title: "3 天跟进", desc: "顾问跟进报名优惠", unread: false }
     ];
   },
+  // 真实家长消息：拉 Pages 上的 parent-msg.json，按孩子名过滤出自己的训练反馈
+  async parentMessagesFor(child) {
+    const name = (child && child.name || "").trim();
+    const dateKey = s => { const p = String(s).split("."); return (parseInt(p[0]) || 0) * 100 + (parseInt(p[1]) || 0); };
+    try {
+      const r = await fetch("../data/parent-msg.json?t=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) return [];
+      const data = await r.json();
+      const msgs = data.messages || {};
+      const out = [];
+      for (const dk of Object.keys(msgs)) {
+        for (const e of (msgs[dk] || [])) {
+          const names = e.names || [];
+          const hit = names.some(n => {
+            n = (n || "").trim();
+            return n && (n === name || n.includes(name) || name.includes(n));
+          });
+          if (hit) out.push({ date: dk, msg: e.msg || "" });
+        }
+      }
+      out.sort((a, b) => dateKey(b.date) - dateKey(a.date));
+      return out;
+    } catch (e) { return []; }
+  },
   TIME_SLOTS: ["周二 18:00", "周四 18:00", "周五 18:00", "周六 18:00", "周日 18:00", "周六 10:00", "周六 16:00", "周日 10:00", "周日 16:00"]
 };
