@@ -32,9 +32,9 @@ function toast(msg) {
 const CONTACT = {
   techName: "星羿系统技术支持",
   techWechat: "",   // 例：xy_tech
-  techPhone: "",    // 例：13800000000
+  techPhone: "18970260066",
   coachWechat: "",  // 例：xy_coach（馆长/教练）
-  coachPhone: "",
+  coachPhone: "18970260066",
   brand: "星羿羽毛球馆 出品",
   version: "v1.3.0",
   updated: "2026-10"
@@ -65,12 +65,21 @@ function contactRows(icon, title, desc, wechat, phone) {
 }
 
 // 「关于本系统」区块：无任何联系方式时整体不显示
+// 若两个角色填的是同一个号码且都没有微信，则合并成一行，避免同一号码重复出现两次
 function aboutBlock() {
-  const tech = contactRows("🛠", "系统问题 · 找技术支持", "打不开页面 / 收不到消息 / 图片生成失败", CONTACT.techWechat, CONTACT.techPhone);
-  const coach = contactRows("🏸", "课程问题 · 找教练 · 馆长", "约课调课 / 训练安排 / 体测解读", CONTACT.coachWechat, CONTACT.coachPhone);
+  const onlyOneLine = !CONTACT.techWechat && !CONTACT.coachWechat &&
+    CONTACT.techPhone && CONTACT.techPhone === CONTACT.coachPhone;
+  let tech, coach;
+  if (onlyOneLine) {
+    tech = contactRows("🏸", "系统 / 课程问题 · 都可以联系", "打不开页面 / 收不到消息 / 约课调课 / 体测解读", "", CONTACT.techPhone);
+    coach = "";
+  } else {
+    tech = contactRows("🛠", "系统问题 · 找技术支持", "打不开页面 / 收不到消息 / 图片生成失败", CONTACT.techWechat, CONTACT.techPhone);
+    coach = contactRows("🏸", "课程问题 · 找教练 · 馆长", "约课调课 / 训练安排 / 体测解读", CONTACT.coachWechat, CONTACT.coachPhone);
+  }
   if (!tech && !coach) return "";
   return '<div class="card"><h3>ℹ️ 关于本系统</h3>' +
-    '<p class="muted" style="margin:0 0 4px;">遇到问题先分清找谁，响应更快</p>' +
+    '<p class="muted" style="margin:0 0 4px;">这套系统由星羿羽毛球馆定制开发</p>' +
     tech + coach +
     '<p class="muted ab-foot">' + esc2safe(CONTACT.brand) + " · " + esc2safe(CONTACT.version) +
     " · 更新 " + esc2safe(CONTACT.updated) + "</p></div>";
