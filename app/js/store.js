@@ -66,7 +66,7 @@ const Store = {
     const j = await api("/api/growth?" + q);
     if (!j.error) return { classes: j.classes || [], awards: j.awards || [], source: "live" };
     try {
-      const r = await fetch("../../data/growth.json?t=" + Date.now(), { cache: "no-store" });
+      const r = await fetch("../data/growth.json?t=" + Date.now(), { cache: "no-store" });
       if (r.ok) {
         const s = await r.json();
         const key = String(name || "").replace(/\s/g, "");
