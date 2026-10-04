@@ -485,7 +485,7 @@ let _profilesCache = null;
 async function fetchProfiles() {
   if (_profilesCache) return _profilesCache;
   try {
-    const r = await fetch("../data/profiles.json?t=" + Date.now(), { cache: "no-store" });
+    const r = await fetch("../../data/profiles.json?t=" + Date.now(), { cache: "no-store" });
     _profilesCache = await r.json();
   } catch (e) { _profilesCache = []; }
   return _profilesCache;
@@ -944,10 +944,17 @@ async function fillGrowth(child) {
     try {
       const pms = await Data.parentMessagesFor(child);
       if (pms.length) {
-        gcHtml = pms.map(e =>
+        // 只显示最新 2 天反馈，更早的折叠（与成长记录 classCards 行为一致）
+        const pmCard = e =>
           '<div class="pm-msg"><div class="pm-date">📅 ' + esc2safe(e.date) + '</div>' +
-          '<div class="pm-body">' + esc2safe(e.msg) + '</div></div>'
-        ).join("");
+          '<div class="pm-body">' + esc2safe(e.msg) + '</div></div>';
+        const recent = pms.slice(0, 2).map(pmCard).join("");
+        const older = pms.slice(2);
+        const olderHtml = older.length
+          ? '<details class="fb-fold"><summary>📒 展开更早的 ' + older.length + ' 次反馈</summary>' +
+            older.map(pmCard).join("") + '</details>'
+          : "";
+        gcHtml = recent + olderHtml;
       } else {
         gcHtml = offlineHint(g) + classCards(g.classes);
       }
