@@ -53,7 +53,7 @@ const Data = {
     const name = (child && child.name || "").trim();
     const dateKey = s => { const p = String(s).split("."); return (parseInt(p[0]) || 0) * 100 + (parseInt(p[1]) || 0); };
     try {
-      const r = await fetch("../data/parent-msg.json?t=" + Date.now(), { cache: "no-store" });
+      const r = await fetch("../../data/parent-msg.json?t=" + Date.now(), { cache: "no-store" });
       if (!r.ok) return [];
       const data = await r.json();
       const msgs = data.messages || {};
