@@ -125,6 +125,10 @@ html, body {
 .img-modal-box { width: 100%; max-width: 420px; max-height: 92vh; overflow-y: auto; }
 .img-modal-title { color: #fff; font-size: 15px; font-weight: 700; text-align: center; margin-bottom: 10px; }
 .img-modal-box img { width: 100%; border-radius: 12px; display: block; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+.img-modal-svg { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+.img-modal-actions { display: flex; justify-content: center; margin: 12px 0 0; }
+.img-save-btn { border: 0; background: #185FA5; color: #fff; font-size: 14px; font-weight: 700; padding: 10px 24px; border-radius: 22px; box-shadow: 0 6px 16px rgba(0,0,0,.28); cursor: pointer; font-family: inherit; }
+.img-save-btn:active { transform: scale(.97); }
 .img-modal-tip { color: rgba(255,255,255,.85); font-size: 12.5px; text-align: center; margin: 10px 0 0; }
 
 
