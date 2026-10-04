@@ -575,41 +575,97 @@ document.getElementById('btn-export').addEventListener('click',async()=>{
 // 2026-10-02 修正：旧后端 b74f… 为旧版部署，仅有写接口、无读接口（/api/growth、/api/admin/awards 均 404），
 // 导致新颁证书无法回流到家长端静态通道。统一指向全功能可读后端 460592…(b2)，历史 12 条奖状已在此、零丢失。
 const XY_API = 'https://460592d232a546f8b9db66bd0d4f4d32.app.workbuddy.host';
-async function archiveCert(silent){
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { if(!silent) alert('请先填学员姓名'); return false; }
+const CERT_QUEUE_KEY = 'xy_cert_queue';
+
+function certBodyFromForm(){
   const typeSel = document.getElementById('f-type');
   const type = typeSel.value === '自定义' ? (document.getElementById('f-type-custom').value.trim() || '自定义') : typeSel.value;
-  try {
-    let pwd = localStorage.getItem('xy_admin_pwd') || '';
-    if (!pwd) {
-      if (silent) return false; // 自动模式无口令 → 静默跳过（用「存档」按钮首次授权）
-      pwd = prompt('首次存档请输入工作台口令（之后不再询问）') || ''; if (!pwd) throw new Error('未输入口令');
-    }
-    let lr = await fetch(XY_API + '/api/admin/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pwd }) });
-    if (!lr.ok) { localStorage.removeItem('xy_admin_pwd'); throw new Error('口令不对（' + lr.status + '）'); }
-    const token = (await lr.json()).token;
-    localStorage.setItem('xy_admin_pwd', pwd);
-    const body = {
-      name, type,
-      award: document.getElementById('f-award').value.trim(),
-      note: document.getElementById('f-comment').value.trim(),
-      date: document.getElementById('f-date').value,
-      sign: document.getElementById('f-signtext').value.trim(),
-      source: 'cert'
-    };
-    const ar = await fetch(XY_API + '/api/admin/award', { method: 'POST', headers: { 'X-Token': token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    const aj = await ar.json();
-    if (!ar.ok || !aj.ok) throw new Error(aj.error || ('HTTP ' + ar.status));
-    return true;
-  } catch (err) { if (!silent) alert('存档失败：' + err.message); return false; }
+  return {
+    name: document.getElementById('f-name').value.trim(),
+    type,
+    award: document.getElementById('f-award').value.trim(),
+    note: document.getElementById('f-comment').value.trim(),
+    date: document.getElementById('f-date').value,
+    sign: document.getElementById('f-signtext').value.trim(),
+    source: 'cert'
+  };
 }
+function certQueue(){
+  try{ return JSON.parse(localStorage.getItem(CERT_QUEUE_KEY) || '[]'); }catch(e){ return []; }
+}
+function queuePush(body){
+  try{
+    const q = certQueue();
+    const dup = q.some(x => x.name===body.name && x.date===body.date && x.award===body.award && x.type===body.type);
+    if(!dup) q.push(body);
+    localStorage.setItem(CERT_QUEUE_KEY, JSON.stringify(q));
+    return true;
+  }catch(e){ return false; }
+}
+function queueSize(){ return certQueue().length; }
+
+// 单次：登录 + 提交奖状。返回后端 JSON（{ok:true,award} 或 {ok:true,duplicate:true}）
+async function postAward(body, pwd){
+  const lr = await fetch(XY_API + '/api/admin/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({pwd})});
+  if(!lr.ok){ localStorage.removeItem('xy_admin_pwd'); const e = new Error('口令不对（'+lr.status+'）'); e.auth = true; throw e; }
+  const token = (await lr.json()).token;
+  localStorage.setItem('xy_admin_pwd', pwd);
+  const ar = await fetch(XY_API + '/api/admin/award', {method:'POST', headers:{'X-Token':token,'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  let aj = {}; try{ aj = await ar.json(); }catch(e){}
+  if(!ar.ok) throw new Error(aj.error || ('HTTP '+ar.status));
+  return aj;
+}
+
+// 返回 {ok, dup, queued, error}；网络抖动自动退避重试，最终失败则入本机待存队列（防丢）
+async function archiveCert(silent){
+  const body = certBodyFromForm();
+  if(!body.name){ if(!silent) alert('请先填学员姓名'); return {ok:false, error:'no-name'}; }
+  let pwd = localStorage.getItem('xy_admin_pwd') || '';
+  if(!pwd){
+    if(silent) return {ok:false, error:'no-pwd'};
+    pwd = prompt('首次存档请输入工作台口令（之后不再询问）') || '';
+    if(!pwd) return {ok:false, error:'cancelled'};
+  }
+  let lastErr = null;
+  for(let attempt = 1; attempt <= 3; attempt++){
+    try{
+      const aj = await postAward(body, pwd);
+      if(aj && aj.duplicate) return {ok:false, dup:true, error:'duplicate'};
+      return {ok:true};
+    }catch(err){
+      lastErr = err;
+      if(err.auth) break;                                        // 口令错不重试
+      if(attempt < 3) await new Promise(r => setTimeout(r, 800 * attempt));  // 网络抖动退避
+    }
+  }
+  const queued = queuePush(body);                                // 三次都失败 → 存本机，稍后补传
+  return {ok:false, queued, error: lastErr ? lastErr.message : 'unknown'};
+}
+
+// 打开页面/导出时自动补传之前未存上的证书
+async function flushCertQueue(quiet){
+  const pwd = localStorage.getItem('xy_admin_pwd') || '';
+  if(!pwd) return;
+  const q = certQueue();
+  if(!q.length) return;
+  const left = []; let sent = 0;
+  for(const body of q){
+    try{ await postAward(body, pwd); sent++; }
+    catch(err){ left.push(body); if(err.auth) break; }
+  }
+  localStorage.setItem(CERT_QUEUE_KEY, JSON.stringify(left));
+  if(sent) toastMsg('☁️ 已自动补传 ' + sent + ' 张之前未存上的证书');
+  if(left.length && !quiet) toastMsg('⚠️ 还有 ' + left.length + ' 张待补传，稍后自动重试');
+}
+
 async function autoArchive(){
   const name = document.getElementById('f-name').value.trim();
-  if (!name) return;
-  const ok = await archiveCert(true);
-  if (ok) toastMsg('✅ 已自动存档，家长端「成长 · 荣誉墙」同步可见');
-  else if (!localStorage.getItem('xy_admin_pwd')) toastMsg('💡 首次使用请点「📥 存档到家长端」授权一次，之后导出即自动同步');
+  if(!name) return;
+  const r = await archiveCert(true);
+  if(r.ok) toastMsg('✅ 已自动存档，家长端「成长 · 荣誉墙」同步可见');
+  else if(r.dup) toastMsg('⚠️ 该学员当天已有同类型证书，系统按判重未新增（如确需多张请告知管理端）');
+  else if(r.queued) toastMsg('📥 后端暂时不可用，已先存到本机，稍后自动补传（不会丢）');
+  else if(r.error === 'no-pwd') toastMsg('💡 首次使用请点「📥 存档到家长端」授权一次，之后导出即自动同步');
 }
 function toastMsg(msg){
   let el=document.querySelector('.xy-toast');
@@ -621,8 +677,10 @@ function toastMsg(msg){
 document.getElementById('btn-archive').addEventListener('click', async () => {
   const btn = document.getElementById('btn-archive');
   btn.disabled = true; btn.textContent = '存档中…';
-  const ok = await archiveCert(false);
-  if (ok) alert('✅ 已存档！家长端「成长 · 荣誉墙」立刻可见。');
+  const r = await archiveCert(false);
+  if (r.ok) alert('✅ 已存档！家长端「成长 · 荣誉墙」立刻可见。');
+  else if (r.dup) alert('⚠️ 该学员当天已有同类型证书，系统按判重未新增。\n如需同一天发多张同类型证书，请告知管理端调整判重规则。');
+  else if (r.queued) alert('📥 后端暂时不可用，这张证书已先保存在本机，下次打开本页会自动补传（不会丢）。');
   btn.disabled = false; btn.textContent = '📥 存档到家长端';
 });
 
@@ -630,6 +688,12 @@ document.getElementById('btn-archive').addEventListener('click', async () => {
 document.getElementById('f-date').value=new Date().toISOString().slice(0,10);
 syncTypeCustom();
 render();
+// 打开即尝试补传历史未存上的证书
+(function initQueue(){
+  const n = queueSize();
+  if (n) toastMsg('📌 有 ' + n + ' 张证书待补传，正在尝试…');
+  setTimeout(()=>{ flushCertQueue(true); }, 1200);
+})();
 </script>
 <footer class="xy-footer">🏸 星羿羽毛球馆 · 荣誉证书工具<br>可添加到手机主屏幕，随时给孩子出证</footer>
 </body>
