@@ -880,35 +880,59 @@ window.showAwardImage = async function (i) {
   await openImgModal(certSvg(a), 1080, 1440, (a.name || "") + " · 荣誉证书");
 };
 
-// SVG → PNG（canvas 2x 渲染），弹层展示提示长按保存
-async function openImgModal(svg, w, h, title) {
+// SVG → PNG（canvas 渲染）；失败返回 null。先 2x，再降 1.5x / 1x，规避手机 canvas 尺寸上限
+async function svgToPng(svg, w, h) {
   const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-  const png = await new Promise((res, rej) => {
-    const img = new Image();
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = w * 2; c.height = h * 2;
-      const ctx = c.getContext("2d");
-      ctx.drawImage(img, 0, 0, c.width, c.height);
-      try { res(c.toDataURL("image/png")); } catch (e) { rej(e); }
-    };
-    img.onerror = rej;
-    img.src = url;
-  }).catch(() => null);
+  for (const scale of [2, 1.5, 1]) {
+    const out = await new Promise(res => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const c = document.createElement("canvas");
+          c.width = Math.round(w * scale); c.height = Math.round(h * scale);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          const d = c.toDataURL("image/png");
+          res(d && d.length > 100 ? d : null);
+        } catch (e) { res(null); }
+      };
+      img.onerror = () => res(null);
+      img.src = url;
+    });
+    if (out) return out;
+  }
+  return null;
+}
+
+// 弹层展示证书：优先 PNG（可长按保存）；转换失败则内联 SVG 兜底（保证一定看得见）+ 保存按钮
+async function openImgModal(svg, w, h, title) {
+  const safeTitle = esc2safe(title || "图片");
+  const png = await svgToPng(svg, w, h);
+  const svgUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
   let el = document.getElementById("imgModal");
   if (!el) {
     el = document.createElement("div");
     el.id = "imgModal";
     el.className = "img-modal";
-    el.onclick = () => el.classList.remove("open");
+    el.onclick = ev => { if (ev.target === el) el.classList.remove("open"); }; // 仅点背景关闭，避免点图片误关
     document.body.appendChild(el);
   }
+  const inlineSvg = svg.replace("<svg ", '<svg style="width:100%;height:auto;display:block;" ');
   el.innerHTML = '<div class="img-modal-box">' +
-    '<div class="img-modal-title">🖼 ' + esc2safe(title || "图片") + '</div>' +
-    (png
-      ? '<img src="' + png + '" alt="奖状图片" />'
-      : '<img src="' + url + '" alt="奖状图片" style="width:100%">') +
-    '<p class="img-modal-tip">📱 长按图片保存到相册 · 点空白处关闭</p></div>';
+    '<div class="img-modal-title">🖼 ' + safeTitle + '</div>' +
+    (png ? '<img src="' + png + '" alt="证书图片" />' : '<div class="img-modal-svg">' + inlineSvg + '</div>') +
+    '<div class="img-modal-actions"><button type="button" class="img-save-btn">⬇️ 保存' + (png ? "图片" : "证书") + '</button></div>' +
+    '<p class="img-modal-tip">📱 ' + (png ? "长按图片可保存到相册 · " : "") + "点空白处关闭</p>" +
+    "</div>";
+  const btn = el.querySelector(".img-save-btn");
+  if (btn) btn.onclick = ev => {
+    ev.stopPropagation();
+    const a = document.createElement("a");
+    a.href = png || svgUrl;
+    a.download = String(title || "星羿证书").replace(/[\\/:*?"<>|]/g, "_") + (png ? ".png" : ".svg");
+    document.body.appendChild(a); a.click(); a.remove();
+    btn.textContent = "✅ 已保存";
+    setTimeout(() => { btn.textContent = "⬇️ 保存" + (png ? "图片" : "证书"); }, 1800);
+  };
   el.classList.add("open");
 }
 
