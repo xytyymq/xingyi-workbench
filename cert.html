@@ -572,7 +572,9 @@ document.getElementById('btn-export').addEventListener('click',async()=>{
 });
 
 // ===== 存档到家长端（荣誉墙）=====
-const XY_API = 'https://b74f149cf8974e6995d47412c949bed1.app.workbuddy.host';
+// 2026-10-02 修正：旧后端 b74f… 为旧版部署，仅有写接口、无读接口（/api/growth、/api/admin/awards 均 404），
+// 导致新颁证书无法回流到家长端静态通道。统一指向全功能可读后端 460592…(b2)，历史 12 条奖状已在此、零丢失。
+const XY_API = 'https://460592d232a546f8b9db66bd0d4f4d32.app.workbuddy.host';
 async function archiveCert(silent){
   const name = document.getElementById('f-name').value.trim();
   if (!name) { if(!silent) alert('请先填学员姓名'); return false; }
