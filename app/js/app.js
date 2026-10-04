@@ -485,7 +485,7 @@ let _profilesCache = null;
 async function fetchProfiles() {
   if (_profilesCache) return _profilesCache;
   try {
-    const r = await fetch("../../data/profiles.json?t=" + Date.now(), { cache: "no-store" });
+    const r = await fetch("../data/profiles.json?t=" + Date.now(), { cache: "no-store" });
     _profilesCache = await r.json();
   } catch (e) { _profilesCache = []; }
   return _profilesCache;
