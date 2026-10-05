@@ -3091,6 +3091,15 @@
     "good": "高远球击球很稳定",
     "bad": "发球动作还需更规范，前后场步伐还需连贯",
     "feedback": ""
+   },
+   {
+    "date": "2026-09-10",
+    "cls": "基础班",
+    "coach": "张玉玲1",
+    "score": "优秀",
+    "good": "高远球挥拍动作连贯",
+    "bad": "上网步伐小碎步太多，蹬转挥拍动作要改进",
+    "feedback": ""
    }
   ]
  },
@@ -4137,11 +4146,24 @@
  {
   "id": "Amuseh0le68",
   "name": "吴帛珅",
-  "age": "",
-  "gender": "",
+  "age": "8",
+  "gender": "男",
   "cls": "启蒙班",
   "createdAt": "2026-10-03",
-  "tests": [],
+  "tests": [
+   {
+    "date": "2026-10-03",
+    "m": {
+     "height": 131,
+     "sitReach": -7,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "verticalJump": 193,
+     "rally": 2
+    },
+    "note": ""
+   }
+  ],
   "lessons": []
  },
  {
@@ -4202,6 +4224,32 @@
   "cls": "启蒙班",
   "createdAt": "2026-10-05",
   "tests": [],
+  "lessons": []
+ },
+ {
+  "id": "S1791109447627",
+  "name": "戴子涵",
+  "age": "",
+  "gender": "男",
+  "cls": "启蒙班",
+  "createdAt": "2026-10-04",
+  "tests": [
+   {
+    "date": "2026-10-04",
+    "m": {
+     "height": 131,
+     "sitReach": 2,
+     "singleStand": 10,
+     "wallSquat": 120,
+     "posture": "正常/正常/正常",
+     "run50": 16.5,
+     "standingJump": 137,
+     "verticalJump": 190,
+     "rally": 1
+    },
+    "note": ""
+   }
+  ],
   "lessons": []
  }
 ]
