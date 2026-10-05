@@ -1,18 +1,22 @@
 {
-  "generated_at": "2026-10-05 08:02",
+  "generated_at": "2026-10-05 23:11",
   "data_date": "2026-10-05",
-  "overall": "red",
+  "overall": "yellow",
   "lights": [
     {
-      "level": "red",
-      "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"
+      "level": "green",
+      "text": "试课到场率 100%（≥80% 达标）"
+    },
+    {
+      "level": "green",
+      "text": "本月报名 2/10 人，进度达到时间线（应到 1.6）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
-    "trial_arrive_rate": null,
+    "new_leads_today": 3.0,
+    "trial_arrive_rate": "100%",
     "month_signups": 2.0,
-    "month_pace_note": ""
+    "month_pace_note": "达标"
   },
   "stale_leads": [],
   "finance": {
@@ -31,7 +35,12 @@
     "2026-10-01｜无",
     "2026-09-29｜无"
   ],
-  "cross_check": [],
+  "cross_check": [
+    {
+      "level": "yellow",
+      "text": "日报有收入 ¥282，但收支记账当日无收入记录——提醒校长补记"
+    }
+  ],
   "callback": null,
   "week_rows": [
     {
@@ -90,15 +99,15 @@
     },
     {
       "date": "10-05",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 3.0,
+      "trials": 5.0,
+      "signups": 0.0,
+      "classes": 2.0,
+      "income": 282.0,
+      "expense": 0.0
     }
   ],
-  "week_summary": "本周合计：新线索 8 · 报名 2 · 收入 ¥1275 · 支出 ¥3 · 净额 ¥1272",
+  "week_summary": "本周合计：新线索 11 · 报名 2 · 收入 ¥1557 · 支出 ¥3 · 净额 ¥1554",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
