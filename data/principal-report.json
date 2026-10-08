@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-10-08 08:02",
+  "generated_at": "2026-10-08 23:12",
   "data_date": "2026-10-08",
-  "overall": "red",
+  "overall": "yellow",
   "lights": [
     {
-      "level": "red",
-      "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"
+      "level": "yellow",
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 2.6）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
+    "new_leads_today": 0.0,
     "trial_arrive_rate": null,
     "month_signups": 2.0,
-    "month_pace_note": ""
+    "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
@@ -21,17 +21,22 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 333.5
+    "balance": 408.5
   },
   "coach": [],
   "boss_todos": [
+    "2026-10-07｜无",
+    "2026-10-06｜无",
     "2026-10-05｜无",
     "2026-10-04｜无",
-    "2026-10-03｜无",
-    "2026-10-02｜无",
-    "2026-10-01｜无"
+    "2026-10-03｜无"
   ],
-  "cross_check": [],
+  "cross_check": [
+    {
+      "level": "green",
+      "text": "日报 vs 上课记录/收支记账 数字一致，无打架"
+    }
+  ],
   "callback": null,
   "week_rows": [
     {
@@ -81,24 +86,24 @@
     },
     {
       "date": "10-07",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 4.0,
+      "signups": 0.0,
+      "classes": 3.0,
+      "income": 114.0,
+      "expense": 0.0
     },
     {
       "date": "10-08",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0,
+      "income": 0.0,
+      "expense": 0.0
     }
   ],
-  "week_summary": "本周合计：新线索 7 · 报名 0 · 收入 ¥1113 · 支出 ¥3 · 净额 ¥1110",
+  "week_summary": "本周合计：新线索 7 · 报名 0 · 收入 ¥1227 · 支出 ¥3 · 净额 ¥1224",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
