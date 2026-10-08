@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-07 23:21",
-  "data_date": "2026-10-07",
+  "generated_at": "2026-10-08 08:02",
+  "data_date": "2026-10-08",
   "overall": "red",
   "lights": [
     {
@@ -34,15 +34,6 @@
   "cross_check": [],
   "callback": null,
   "week_rows": [
-    {
-      "date": "10-01",
-      "leads": 2.0,
-      "trials": 3.0,
-      "signups": 2.0,
-      "classes": 1.0,
-      "income": 102.0,
-      "expense": 0.0
-    },
     {
       "date": "10-02",
       "leads": 2.0,
@@ -96,9 +87,18 @@
       "classes": 0,
       "income": 0,
       "expense": 0
+    },
+    {
+      "date": "10-08",
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0,
+      "income": 0,
+      "expense": 0
     }
   ],
-  "week_summary": "本周合计：新线索 9 · 报名 2 · 收入 ¥1215 · 支出 ¥3 · 净额 ¥1212",
+  "week_summary": "本周合计：新线索 7 · 报名 0 · 收入 ¥1113 · 支出 ¥3 · 净额 ¥1110",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
