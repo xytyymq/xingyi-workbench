@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-08 23:08",
+ "updated": "2026-10-09 23:14",
  "latest": "10.8",
  "dates": [
   "10.8",
@@ -5663,5 +5663,11 @@
     "msg": "【星羿少儿羽毛球 · 今日训练反馈】\n匡景辰家长您好，孩子今天启蒙班的训练已完成 ✅\n🌟 今日进步：体测成绩良好\n💪 下节课重点：抛接球还需加强\n教练：张玉玲\n—————————\n📅 10月8日　星羿羽毛球馆"
    }
   ]
+ },
+ "last_error": {
+  "time": "2026-10-09T23:14:07+08:00",
+  "msg": "腾讯文档连接器失效（personal=not_connected / enterprise=connector_disabled）：fetch_records.py 取数失败，无法导出《学员上课记录》(file_id=BqnMnjsuhwOQ)，本夜家长消息未能更新。",
+  "stage": "fetch",
+  "agent_mail": "not_bound — 告警邮件未能发出，请查阅本自动化运行记录"
  }
 }
