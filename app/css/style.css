@@ -213,3 +213,13 @@ html, body {
 .pl-p { font-weight: 700; color: var(--ok); min-width: 44px; text-align: right; white-space: nowrap; }
 .pl-p.minus { color: #C0392B; }
 .pts-rule { margin-top: 8px; font-size: 11px; color: var(--mut); line-height: 1.6; }
+/* 明细折叠：默认收起，只露最近 2 条；点标题展开其余 */
+.pts-more { border-top: 1px dashed var(--line); }
+.pts-sum {
+  display: block; padding: 11px 0; margin-top: -1px; cursor: pointer; list-style: none;
+  font-size: 13px; font-weight: 700; color: var(--blue); user-select: none;
+}
+.pts-sum::-webkit-details-marker { display: none; }
+.pts-sum:active { opacity: .6; }
+.pts-more[open] .pts-sum { border-bottom: 1px dashed var(--line); margin-bottom: 2px; }
+.pts-more[open] .pts-sum::after { content: " ▴"; }
