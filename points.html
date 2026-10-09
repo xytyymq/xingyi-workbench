@@ -34,6 +34,10 @@
   .btn-text{background:transparent;color:var(--teal-700);border:none;padding:8px 0;font-size:12.5px;font-weight:700;text-decoration:underline;cursor:pointer;}
   .tip{background:var(--coral-soft);border:1px solid #f6d3c0;border-radius:8px;padding:9px 11px;font-size:12px;color:#9a4a28;margin-top:9px;line-height:1.7;}
   .note{font-size:11.5px;color:var(--muted);margin-top:7px;}
+  /* ✂️ 核销提示：放在录入表单最显眼处，防止教练找不到 */
+  .wc-hint{background:#FFF7F5;border:1px solid #F3C4BC;border-left:4px solid #C0392B;
+    border-radius:9px;padding:11px 13px;margin:10px 0 12px;font-size:12.5px;line-height:1.75;color:#7A2E22;}
+  .wc-hint b{color:#C0392B;}
 
   /* 政策区 */
   .policy h3{font-size:14px;color:var(--teal-700);margin:14px 0 6px;padding-left:9px;border-left:4px solid var(--coral);}
@@ -107,11 +111,15 @@
   </div>
 
   <!-- 录入积分 -->
-  <div class="card">
-    <h2><span class="num">➕</span>录入积分（老板 / 教练）</h2>
+  <div class="card" id="entryCard">
+    <h2><span class="num">➕</span>录入积分（加分 / 核销扣分）</h2>
     <p class="note">选事由自动带出建议分值，可改；保存即同步云端，榜单实时更新。</p>
+    <div class="wc-hint">
+      <b>✂️ 兑换核销就在这里做</b>：在下面「事由」里选带 <b>兑换·</b> 字样的项 → 分值自动变<b>负数</b>
+      （例：<b>兑换·羽毛球手胶 = −150</b>）→ 点「💾 保存并上传云端」。家长端会立刻显示这条红色扣分。
+    </div>
     <div class="grid2">
-      <div><label>学员姓名</label><input id="pName" type="text" placeholder="如：小明"></div>
+      <div><label>学员姓名</label><input id="pName" type="text" placeholder="如：洪振宇"></div>
       <div><label>日期</label><input id="pDate" type="date"></div>
     </div>
     <label>事由（选一项自动带分值）</label>
