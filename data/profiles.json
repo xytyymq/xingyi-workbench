@@ -3560,7 +3560,48 @@
     "gender": "",
     "cls": "启蒙班",
     "createdAt": "2026-10-08",
-    "tests": [],
+    "tests": [
+      {
+        "date": "2026-10-08",
+        "m": {
+          "height": 120,
+          "sitReach": 4.5,
+          "singleStand": 11.59,
+          "wallSquat": 49.17,
+          "posture": "正常/正常/正常",
+          "run50": 23.73,
+          "standingJump": 145,
+          "verticalJump": 180,
+          "rope": 111,
+          "swing15": 7,
+          "footwork": 30.49,
+          "serve": 1,
+          "rally": 3,
+          "clear": 3
+        },
+        "note": ""
+      },
+      {
+        "date": "2026-10-09",
+        "m": {
+          "height": 120,
+          "sitReach": 4.5,
+          "singleStand": 11.59,
+          "wallSquat": 49.17,
+          "posture": "正常/正常/正常",
+          "run50": 23.73,
+          "standingJump": 145,
+          "verticalJump": 180,
+          "rope": 111,
+          "swing15": 7,
+          "footwork": 30.49,
+          "serve": 1,
+          "rally": 3,
+          "clear": 3
+        },
+        "note": ""
+      }
+    ],
     "lessons": []
   },
   {
