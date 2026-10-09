@@ -697,21 +697,32 @@ async function loadPoints(name) {
 }
 function pointsCardHtml(pt) {
   if (!pt) return '<p class="muted">还没有积分记录，上课和参加活动就会自动累计啦。</p>';
-  const rows = pt.items.slice(0, 40).map(x => {
+  // 明细默认折叠：只露最近 2 条，其余收进原生 <details>，点标题展开（不额外挂 JS 事件，移动端可靠）
+  const line = x => {
     const plus = x.delta > 0;
     return '<div class="pts-line">' +
       '<span class="pl-d">' + (x.date || "—") + "</span>" +
       '<span class="pl-k">' + esc2safe(x.reason) + "</span>" +
       '<span class="pl-p' + (plus ? "" : " minus") + '">' + (plus ? "+" : "") + x.delta + "</span>" +
       "</div>";
-  }).join("");
+  };
+  const SHOW = 2;                                   // 折叠时默认显示条数
+  const CAP = 40;                                   // 最多渲染条数
+  const shown = pt.items.slice(0, CAP);
+  const head = shown.slice(0, SHOW).map(line).join("");
+  const rest = shown.slice(SHOW);
+  const more = rest.length
+    ? '<details class="pts-more"><summary class="pts-sum">展开其余 ' + rest.length + " 条明细 ▾</summary>" +
+      rest.map(line).join("") +
+      (pt.items.length > CAP ? '<div class="pts-rule">仅显示最近 ' + CAP + " 条</div>" : "") +
+      "</details>"
+    : "";
   return '<div class="pts-wrap">' +
     '<div class="pts-top"><div class="pts-num">' + pt.total + '<span>分</span></div>' +
       (pt.monthPt !== 0 ? '<div class="pts-badge">本月 ' + (pt.monthPt > 0 ? "+" : "") + pt.monthPt + " 分</div>" : "") +
     "</div>" +
     '<div class="pts-sub">共 ' + pt.count + " 条积分记录</div>" +
-    '<div class="pts-detail">' + rows + "</div>" +
-    (pt.items.length > 40 ? '<div class="pts-rule">仅显示最近 40 条</div>' : "") +
+    '<div class="pts-detail">' + head + "</div>" + more +
     "</div>";
 }
 
