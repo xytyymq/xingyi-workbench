@@ -660,8 +660,64 @@ const AWARD_TYPES = [
 ];
 const awardMeta = t => AWARD_TYPES.find(a => a.type === t) || { type: t, name: t, icon: "🏅", how: "" };
 
+// ===== 成长积分（唯一真源 = data/points.json 账本） =====
+// 家长端只读账本、不做任何前端估算：加分（到课 / 教练一键 / 前台 / 段位晋升）与
+// 核销扣分全部由馆内后台 points.html 录入，家长端如实呈现「总分 + 流水明细」。
+// 兑换规则只馆内掌握，家长端不显示任何兑换 / 抵扣 / 排名信息。
+let _pointsCache = null;
+async function fetchPointsLedger() {
+  if (_pointsCache) return _pointsCache;
+  try {
+    const r = await fetch("../data/points.json?t=" + Date.now(), { cache: "no-store" });
+    _pointsCache = r.ok ? (await r.json()) : [];
+  } catch (e) { _pointsCache = []; }
+  return _pointsCache;
+}
+const ptsMonthOf = d => String(d || "").slice(0, 7);
+// 取某个孩子的账本：总分 / 本月增减 / 流水明细（日期倒序，负分即核销扣减）
+async function loadPoints(name) {
+  const norm = s => String(s || "").replace(/\s/g, "");
+  const nm = norm(name);
+  if (!nm) return null;
+  let arr = [];
+  try { arr = await fetchPointsLedger(); } catch (e) { return null; }
+  const items = (arr || []).filter(e => e && e.name && (
+    norm(e.name) === nm || norm(e.name).includes(nm) || nm.includes(norm(e.name))
+  )).map(e => ({
+    date: String(e.date || e.createdAt || "").slice(0, 10),
+    delta: +(e.delta || 0),
+    reason: e.reason || "积分变动",
+    by: e.by || ""
+  })).sort((a, b) => b.date.localeCompare(a.date));
+  if (!items.length) return null;
+  const total = items.reduce((s, x) => s + x.delta, 0);
+  const ym = new Date().toISOString().slice(0, 7);
+  const monthPt = items.filter(x => ptsMonthOf(x.date) === ym).reduce((s, x) => s + x.delta, 0);
+  return { total, monthPt, items, count: items.length };
+}
+function pointsCardHtml(pt) {
+  if (!pt) return '<p class="muted">还没有积分记录，上课和参加活动就会自动累计啦。</p>';
+  const rows = pt.items.slice(0, 40).map(x => {
+    const plus = x.delta > 0;
+    return '<div class="pts-line">' +
+      '<span class="pl-d">' + (x.date || "—") + "</span>" +
+      '<span class="pl-k">' + esc2safe(x.reason) + "</span>" +
+      '<span class="pl-p' + (plus ? "" : " minus") + '">' + (plus ? "+" : "") + x.delta + "</span>" +
+      "</div>";
+  }).join("");
+  return '<div class="pts-wrap">' +
+    '<div class="pts-top"><div class="pts-num">' + pt.total + '<span>分</span></div>' +
+      (pt.monthPt !== 0 ? '<div class="pts-badge">本月 ' + (pt.monthPt > 0 ? "+" : "") + pt.monthPt + " 分</div>" : "") +
+    "</div>" +
+    '<div class="pts-sub">共 ' + pt.count + " 条积分记录</div>" +
+    '<div class="pts-detail">' + rows + "</div>" +
+    (pt.items.length > 40 ? '<div class="pts-rule">仅显示最近 40 条</div>' : "") +
+    "</div>";
+}
+
 function renderGrowth(child) {
   return '<div class="hero"><h2>成长记录</h2><p>' + child.name + " 的训练轨迹与荣誉</p></div>" +
+    '<div class="card" id="pointsCard"><h3>⭐ 成长积分</h3><p class="muted">加载中…</p></div>' +
     '<div class="card"><h3>📖 上课反馈</h3><p class="muted" style="margin:0 0 8px;">教练每节课后的专属反馈，像老师留言一样</p><div id="growthClasses"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>🏅 荣誉墙</h3><p class="muted" style="margin:0 0 8px;">点已获得的奖状可看大图、长按保存</p><div id="awardWall"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>📋 档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
@@ -998,6 +1054,15 @@ async function fillGrowth(child) {
     Store.getReport(child.childId).catch(() => null),
     fetchProfiles().then(ps => mergeStudent(ps, child.name)).catch(() => null)
   ]);
+  // ⭐ 成长积分：直接读馆内账本 data/points.json（加分与核销扣分都如实呈现）
+  const pc = document.getElementById("pointsCard");
+  if (pc) {
+    loadPoints(child.name).then(pt => {
+      pc.innerHTML = '<h3>⭐ 成长积分</h3>' + pointsCardHtml(pt);
+    }).catch(() => {
+      pc.innerHTML = '<h3>⭐ 成长积分</h3><p class="muted">积分加载失败，请稍后再看。</p>';
+    });
+  }
   const p = (r && r.parent) || null;
   if (gs) gs.innerHTML = (p && p.gender)
     ? '<div class="row"><span class="k">📋 孩子档案</span><span class="v"><span class="tag good">已填</span> <span class="muted">' +
