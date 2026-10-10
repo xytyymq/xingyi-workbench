@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-09 08:02",
-  "data_date": "2026-10-09",
+  "generated_at": "2026-10-10 23:12",
+  "data_date": "2026-10-10",
   "overall": "red",
   "lights": [
     {
@@ -21,28 +21,19 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 408.5
+    "balance": 425.5
   },
   "coach": [],
   "boss_todos": [
+    "2026-10-09｜无",
+    "2026-10-08｜无",
     "2026-10-07｜无",
     "2026-10-06｜无",
-    "2026-10-05｜无",
-    "2026-10-04｜无",
-    "2026-10-03｜无"
+    "2026-10-05｜无"
   ],
   "cross_check": [],
   "callback": null,
   "week_rows": [
-    {
-      "date": "10-03",
-      "leads": 2.0,
-      "trials": 5.0,
-      "signups": 0.0,
-      "classes": 2.0,
-      "income": 282.0,
-      "expense": 2.0
-    },
     {
       "date": "10-04",
       "leads": 0.0,
@@ -76,20 +67,29 @@
       "trials": 4.0,
       "signups": 0.0,
       "classes": 3.0,
-      "income": 114.0,
+      "income": 0.0,
       "expense": 0.0
     },
     {
       "date": "10-08",
       "leads": 0.0,
-      "trials": 0.0,
+      "trials": 2.0,
       "signups": 0.0,
-      "classes": 0.0,
-      "income": 0.0,
+      "classes": 2.0,
+      "income": 114.0,
       "expense": 0.0
     },
     {
       "date": "10-09",
+      "leads": 1.0,
+      "trials": 2.0,
+      "signups": 0.0,
+      "classes": 1.0,
+      "income": 206.0,
+      "expense": 0.0
+    },
+    {
+      "date": "10-10",
       "leads": 0,
       "trials": 0,
       "signups": 0,
@@ -98,7 +98,7 @@
       "expense": 0
     }
   ],
-  "week_summary": "本周合计：新线索 5 · 报名 0 · 收入 ¥1128 · 支出 ¥2 · 净额 ¥1126",
+  "week_summary": "本周合计：新线索 4 · 报名 0 · 收入 ¥1052 · 支出 ¥0 · 净额 ¥1052",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
