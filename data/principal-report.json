@@ -1,18 +1,22 @@
 {
-  "generated_at": "2026-10-11 08:02",
+  "generated_at": "2026-10-11 23:15",
   "data_date": "2026-10-11",
   "overall": "red",
   "lights": [
     {
-      "level": "red",
-      "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"
+      "level": "green",
+      "text": "试课到场率 100%（≥80% 达标）"
+    },
+    {
+      "level": "yellow",
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 3.5）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
-    "trial_arrive_rate": null,
+    "new_leads_today": 0.0,
+    "trial_arrive_rate": "100%",
     "month_signups": 2.0,
-    "month_pace_note": ""
+    "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
@@ -21,18 +25,36 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 425.5
+    "balance": 440.5
   },
-  "coach": [],
+  "coach": [
+    {
+      "level": "yellow",
+      "text": "今日带课但员工日报缺卡：张玉玲"
+    },
+    {
+      "level": "yellow",
+      "text": "今日有课但巡课记录为空——巡课未执行"
+    }
+  ],
   "boss_todos": [
+    "2026-10-11｜无",
     "2026-10-09｜无",
     "2026-10-08｜无",
     "2026-10-07｜无",
-    "2026-10-06｜无",
-    "2026-10-05｜无"
+    "2026-10-06｜无"
   ],
-  "cross_check": [],
-  "callback": null,
+  "cross_check": [
+    {
+      "level": "red",
+      "text": "开课节数打架：日报报 3 节，上课记录实际 8 条，需核实"
+    },
+    {
+      "level": "yellow",
+      "text": "日报有收入 ¥163，但收支记账当日无收入记录——提醒校长补记"
+    }
+  ],
+  "callback": "熊一鸣、于宛昕、苏婉君",
   "week_rows": [
     {
       "date": "10-05",
@@ -84,21 +106,21 @@
       "leads": 0,
       "trials": 0,
       "signups": 0,
-      "classes": 0,
+      "classes": 11,
       "income": 0,
       "expense": 0
     },
     {
       "date": "10-11",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 11.0,
+      "signups": 0.0,
+      "classes": 3.0,
+      "income": 163.0,
+      "expense": 1.0
     }
   ],
-  "week_summary": "本周合计：新线索 4 · 报名 0 · 收入 ¥753 · 支出 ¥0 · 净额 ¥753",
+  "week_summary": "本周合计：新线索 4 · 报名 0 · 收入 ¥916 · 支出 ¥1 · 净额 ¥915",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
