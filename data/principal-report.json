@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-10-12 08:01",
+  "generated_at": "2026-10-12 23:12",
   "data_date": "2026-10-12",
-  "overall": "red",
+  "overall": "yellow",
   "lights": [
     {
-      "level": "red",
-      "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"
+      "level": "yellow",
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 3.9）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
+    "new_leads_today": 0.0,
     "trial_arrive_rate": null,
     "month_signups": 2.0,
-    "month_pace_note": ""
+    "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
@@ -25,14 +25,19 @@
   },
   "coach": [],
   "boss_todos": [
+    "2026-10-12｜无",
     "2026-10-11｜无",
     "2026-10-09｜无",
     "2026-10-08｜无",
-    "2026-10-07｜无",
-    "2026-10-06｜无"
+    "2026-10-07｜无"
   ],
-  "cross_check": [],
-  "callback": "郭一谦/郭奕妍、卢明锐、黄知远",
+  "cross_check": [
+    {
+      "level": "yellow",
+      "text": "日报有收入 ¥4，但收支记账当日无收入记录——提醒校长补记"
+    }
+  ],
+  "callback": "苏婉君、邹书云、苏音绮",
   "week_rows": [
     {
       "date": "10-06",
@@ -90,15 +95,15 @@
     },
     {
       "date": "10-12",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0,
+      "income": 4.0,
+      "expense": 1511.0
     }
   ],
-  "week_summary": "本周合计：新线索 1 · 报名 0 · 收入 ¥634 · 支出 ¥1 · 净额 ¥633",
+  "week_summary": "本周合计：新线索 1 · 报名 0 · 收入 ¥638 · 支出 ¥1512 · 净额 ¥-874",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
