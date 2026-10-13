@@ -169,7 +169,7 @@
     <ul id="bossTodos"></ul>
   </section>
 
-  <!-- 网格：家长沟通 / 入学视频 / 体测 / 赛事 / 教练 -->
+  <!-- 网格：家长沟通 / 入学视频 -->
   <div class="grid2">
     <section class="panel">
       <h2><span class="ico">📞</span> 家长沟通 & 回访 <span class="pill">含触达</span></h2>
@@ -181,17 +181,13 @@
       <h2><span class="ico">🎬</span> 入学视频 <span class="pill demo" id="videoPill">示例</span></h2>
       <div id="videoBox"></div>
     </section>
-
-    <section class="panel">
-      <h2><span class="ico">📈</span> 体测进度 <span class="pill demo" id="ticePill">示例</span></h2>
-      <div id="ticeBox"></div>
-    </section>
-
-    <section class="panel">
-      <h2><span class="ico">🏆</span> 赛事 / 月度之星 <span class="pill demo" id="saishiPill">示例</span></h2>
-      <div id="saishiBox"></div>
-    </section>
   </div>
+
+  <!-- 体测进度 -->
+  <section class="panel">
+    <h2><span class="ico">📈</span> 体测进度 <span class="pill demo" id="ticePill">示例</span></h2>
+    <div id="ticeBox"></div>
+  </section>
 
   <!-- 教练管理 -->
   <section class="panel">
@@ -206,7 +202,7 @@
     <div id="weekSummary" style="margin-top:10px"></div>
   </section>
 
-  <div class="foot">星羿体育 · 见证每一次成长<br>每晚 23:11 自动生成（次日 8:00 补拉）· 数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案 / 赛事域</div>
+  <div class="foot">星羿体育 · 见证每一次成长<br>每晚 23:11 自动生成（次日 8:00 补拉）· 数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案</div>
 </main>
 
 <script>
@@ -218,8 +214,7 @@ function item(l,txt){const m=LIGHT_META[l]||LIGHT_META.green;return `<div class=
 
 const DEMO={
   video:{today:3,this_week:11,this_month:42,latest_title:"小宇启蒙班第3课",latest_status:"单手持拍对拉练习 · 抖音/小红书草稿待审"},
-  tice:{month_done:18,month_plan:40,rate:"85%"},
-  saishi:{name:"月度之星",nominations:6,vote_date:"本周五",note:"提名复核中"}
+  tice:{month_done:18,month_plan:40,rate:"85%"}
 };
 function demoCard(boxId,pillId,key,raw,htmlFn){
   const box=document.getElementById(boxId),pill=document.getElementById(pillId);
@@ -273,10 +268,9 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
     ?`<div class="item yellow">📞 <span>随机抽查建议（核反馈）：<b>${esc(d.callback)}</b></span></div>`
     :'<div class="empty">近 7 天无上课记录，暂无抽查对象</div>';
 
-  // 入学视频 / 体测 / 赛事
+  // 入学视频 / 体测
   demoCard('videoBox','videoPill','video',d.video,v=>`<div class="minicard"><div class="big">${v.today}</div><div class="cap">条 · 今日新增</div></div><div class="sub2">本周累计 ${v.this_week} 条 · 本月 ${v.this_month} 条</div><div class="sub2">最新：<b>${esc(v.latest_title)}</b> · ${esc(v.latest_status)}</div>`);
   demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="minicard"><div class="big">${v.month_done}</div><div class="cap">人/月</div></div><div class="sub2">本月计划 ${v.month_plan} 人 · 达标率 ${v.rate}</div>`);
-  demoCard('saishiBox','saishiPill','saishi',d.saishi,v=>`<div class="sub2"><b>${esc(v.name)}</b> · 提名 ${v.nominations} 人</div><div class="sub2">${esc(v.vote_date?("评选日 "+v.vote_date):"")}${v.note||""}</div>`);
 
   // 教练
   document.getElementById("coachBlock").innerHTML=(d.coach&&d.coach.length)?d.coach.map(x=>item(x.level,x.text)).join(""):'<div class="empty">暂无教练数据</div>';
