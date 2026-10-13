@@ -2,96 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>星羿体育 · 校长每日工作看板</title>
-<style>
-:root{
-  --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
-  --orange:#FF8A3D; --white:#fff; --muted:#9fb0d0;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
-  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
-.header{display:flex;justify-content:space-between;align-items:flex-end;
-  padding:8px 4px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
-.brand{font-size:18px;font-weight:700}
-.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
-.date{font-size:12px;color:var(--cyan)}
-.section-title{font-size:13px;color:var(--green);font-weight:700;margin:20px 4px 10px;letter-spacing:1px}
-.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
-  border-radius:14px;padding:14px;margin-bottom:10px}
-.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.card-title{font-size:14px;font-weight:600}
-.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
-.big{font-size:26px;font-weight:700;color:var(--green)}
-.big small{font-size:13px;color:var(--muted);font-weight:400}
-.sub{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
-.feed{font-size:12px;color:#dce6f5;background:rgba(0,0,0,.22);border-radius:8px;
-  padding:8px 10px;margin-top:6px;line-height:1.55}
-.feed b{color:var(--orange)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;background:var(--orange)}
-.warn{background:rgba(255,138,61,.13);border-color:rgba(255,138,61,.4)}
-.cta{display:block;text-align:center;background:var(--orange);color:#1a0d00;font-weight:700;
-  border-radius:30px;padding:13px;margin-top:18px;text-decoration:none;font-size:14px}
-.foot{text-align:center;font-size:11px;color:var(--muted);margin:14px 0}
-</style>
+<meta http-equiv="refresh" content="0;url=report.html">
+<title>已合并至校长日报</title>
 </head>
-<body>
-<div class="header">
-  <div class="brand">星羿体育<small>校长每日工作看板</small></div>
-  <div class="date" id="today">2026-10-14 周三</div>
-</div>
-
-<div class="section-title">今日核心 · 三件事</div>
-
-<div class="card">
-  <div class="card-head"><span class="card-title">① 入学视频</span><span class="tag">媒体库</span></div>
-  <div class="big">3 <small>条今日新增</small></div>
-  <div class="sub">本周累计 11 条 · 本月累计 42 条</div>
-  <div class="feed">最新：<b>小宇启蒙班第3课</b> · 单手持拍对拉练习 · 已发抖音/小红书草稿待审</div>
-</div>
-
-<div class="card">
-  <div class="card-head"><span class="card-title">② 家长沟通</span><span class="tag">家长消息</span></div>
-  <div class="big">28 <small>位家长今日触达</small></div>
-  <div class="sub">推送类型：上课提醒 / 体测反馈 / 续费预警</div>
-  <div class="feed"><b>反馈摘要：</b>家长A「孩子回家主动练挥拍，很开心」；家长B「问跳绳进步怎么看」；家长C「确认下周续费2个月」</div>
-</div>
-
-<div class="card">
-  <div class="card-head"><span class="card-title">③ 续费战报</span><span class="tag">续费台账</span></div>
-  <div class="big">¥86,400 <small>本月累计</small></div>
-  <div class="sub">续费人数 32 人 · 目标完成率 72%（目标 ¥120,000）</div>
-  <div class="feed">距月底还有 17 天，待跟进预警 9 人 → <b>今日优先私聊</b></div>
-</div>
-
-<div class="section-title">运营仪表盘 · 建议补充</div>
-
-<div class="grid2">
-  <div class="card"><div class="card-head"><span class="card-title">④ 到课</span><span class="tag">上课记录</span></div><div class="big">64<small>/72</small></div><div class="sub">出勤率 89%</div></div>
-  <div class="card"><div class="card-head"><span class="card-title">⑤ 体测</span><span class="tag">体测档案</span></div><div class="big">18<small>人/月</small></div><div class="sub">本月计划 40 人，达标率 85%</div></div>
-  <div class="card"><div class="card-head"><span class="card-title">⑥ 教练</span><span class="tag">排课表</span></div><div class="big">5<small>位带班</small></div><div class="sub">今日无异常换班</div></div>
-  <div class="card"><div class="card-head"><span class="card-title">⑦ 赛事</span><span class="tag">赛事域</span></div><div class="big">月度之星</div><div class="sub">提名 6 人，周五评选</div></div>
-</div>
-
-<div class="card warn">
-  <div class="card-head"><span class="card-title" style="color:var(--orange)">⑧ 营收预警</span><span class="tag">续费台账</span></div>
-  <div class="sub"><span class="dot"></span>续费预警 9 人（8:00 推送）· <b>今日优先私聊</b></div>
-</div>
-
-<div class="section-title">⑨ 今日行动项</div>
-<div class="card">
-  <div class="sub">1. 私聊 9 位续费预警家长（目标 ¥30,000）<br>2. 确认小宇启蒙视频发布 + 文案<br>3. 体测剩余 22 人排期<br>4. 月度之星提名复核</div>
-</div>
-
-<a class="cta" href="#">生成今日晨会简报 →</a>
-<div class="foot">星羿体育 · 见证每一次成长｜对接工作台 9 张腾讯文档表 + 6 项自动化</div>
-
-<script>
-document.getElementById('today').textContent =
-  new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
-</script>
+<body style="font-family:-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;text-align:center;padding-top:60px;color:#1A2233">
+  <p>校长简报已合并至「校长日报」。</p>
+  <p style="margin-top:12px"><a href="report.html" style="color:#2E5AAC;font-weight:700">点此打开校长日报 →</a></p>
 </body>
 </html>
