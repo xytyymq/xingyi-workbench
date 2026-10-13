@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿体育 · 校长日报填写</title>
+<style>
+:root{
+  --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+  --orange:#FF8A3D; --white:#fff; --muted:#9fb0d0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
+  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:8px 4px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand{font-size:18px;font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.date{font-size:12px;color:var(--cyan)}
+.section-title{font-size:13px;color:var(--green);font-weight:700;margin:20px 4px 10px;letter-spacing:1px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:14px;margin-bottom:10px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.field input,.field textarea{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;padding:11px;color:var(--white);font-size:15px;font-family:inherit}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--green)}
+.field textarea{resize:vertical;min-height:58px;line-height:1.5}
+input[type=date]{color-scheme:dark}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.optional{color:var(--orange);font-size:10px;margin-left:4px}
+.funnel{margin-top:6px}
+.funnel-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.funnel-row .fl{font-size:11px;color:var(--muted);width:42px;flex-shrink:0}
+.funnel-row .bar{height:9px;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--cyan));flex:1;transition:width .25s}
+.funnel-row .num{font-size:13px;font-weight:700;width:30px;text-align:right;color:var(--green)}
+.cta{display:block;text-align:center;background:var(--orange);color:#1a0d00;font-weight:700;
+  border-radius:30px;padding:14px;margin-top:16px;text-decoration:none;font-size:15px;border:none;width:100%;cursor:pointer}
+.cta.ghost{background:transparent;color:var(--cyan);border:1px solid var(--cyan);margin-top:10px}
+.foot{text-align:center;font-size:11px;color:var(--muted);margin:14px 0}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--green);color:#0a1a00;
+  padding:12px 20px;border-radius:24px;font-weight:700;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+.readonly{background:rgba(198,249,75,.08);border-color:rgba(198,249,75,.3)}
+.readonly .big{font-size:15px;font-weight:700;color:var(--green);line-height:1.6}
+a.link{color:var(--cyan);text-decoration:none;font-weight:700}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand">星羿体育<small>校长日报填写 · 卡片版</small></div>
+  <div class="date" id="today">2026-10-14 周三</div>
+</div>
+
+<div class="card readonly">
+  <div class="card-head"><span class="card-title">📊 本月续费战报（自动）</span><span class="tag">校长日报</span></div>
+  <div class="big">续费金额 / 人数 / 目标完成率，每晚自动汇总到《校长日报》看板，<a class="link" href="report.html" target="_blank" rel="noopener">点此查看 →</a></div>
+  <div class="hint">续费是月度口径，不在此每日填写。本页只收集每日经营 + 三件事。</div>
+</div>
+
+<div class="section-title">基础信息</div>
+<div class="card">
+  <div class="grid2">
+    <div class="field"><label>日期</label><input type="date" id="f_date"></div>
+    <div class="field"><label>填报人</label><input type="text" id="f_who" placeholder="如 王双双"></div>
+  </div>
+</div>
+
+<div class="section-title">经营结果</div>
+<div class="card">
+  <div class="grid3">
+    <div class="field"><label>今日收入(元)</label><input type="number" id="f_in" placeholder="0"></div>
+    <div class="field"><label>今日支出(元)</label><input type="number" id="f_out" placeholder="0"></div>
+    <div class="field"><label>账户余额</label><input type="number" id="f_bal" placeholder="0"></div>
+  </div>
+  <div class="grid2">
+    <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
+    <div class="field"><label>缺课人数</label><input type="number" id="f_absent" placeholder="0"></div>
+  </div>
+</div>
+
+<div class="section-title">招生漏斗</div>
+<div class="card">
+  <div class="grid2">
+    <div class="field"><label>新线索</label><input type="number" id="f_lead" placeholder="0"></div>
+    <div class="field"><label>试课预约</label><input type="number" id="f_book" placeholder="0"></div>
+    <div class="field"><label>试课到场</label><input type="number" id="f_show" placeholder="0"></div>
+    <div class="field"><label>今日报名</label><input type="number" id="f_sign" placeholder="0"></div>
+  </div>
+  <div class="funnel" id="funnel"></div>
+  <div class="hint">线索 → 预约 → 到场 → 报名，填数自动画漏斗。</div>
+</div>
+
+<div class="section-title">今日三件事</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">🎬 入学视频</span><span class="tag">媒体库</span></div>
+  <div class="grid2">
+    <div class="field"><label>今日新增条数</label><input type="number" id="f_video" placeholder="0"></div>
+    <div class="field"><label>最新一条标题</label><input type="text" id="f_video_title" placeholder="如 小宇启蒙第3课"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">💬 家长沟通</span><span class="tag">家长消息</span></div>
+  <div class="field"><label>今日触达家长数</label><input type="number" id="f_touch" placeholder="0"></div>
+  <div class="field"><label>反馈摘要</label><textarea id="f_fb" placeholder="家长原话 / 诉求点，一句话即可"></textarea></div>
+</div>
+
+<div class="section-title">备注（选填）</div>
+<div class="card">
+  <div class="field"><label>异常与问题 / 明日重点 / 需决策 / 教练反馈<span class="optional">选填</span></label>
+  <textarea id="f_note" placeholder="有内容才填：如 买6号场子网 / 明日邀约重点 / 待定定价… 没内容留空即可"></textarea></div>
+  <div class="hint">原表 4 个文字列已合并为 1 个选填框，日常留空不强制填「无」。</div>
+</div>
+
+<button class="cta" id="saveCloud">保存并同步云端</button>
+<button class="cta ghost" id="saveLocal">仅存本机（离线）</button>
+<div class="foot">星羿体育 · 见证每一次成长｜右下角🔑先授权云同步，保存即写入工作台数据</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="xy-auth.js"></script>
+<script>
+// ===== 字段与腾讯文档日报表表头严格一致（夜间脚本按这些列名读取）=====
+var COLS = {
+  date:'日期', who:'填报人',
+  in:'今日收入(元)', out:'今日支出(元)', bal:'现金/账户余额',
+  lessons:'今日开课节数', absent:'缺课人数',
+  lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数',
+  video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
+  touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
+  note:'备注（选填）'
+};
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main';
+
+function $(id){return document.getElementById(id);}
+function val(id){return $(id).value.trim();}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);}
+function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
+
+// 日期 / 顶部
+$('today').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+$('f_date').value = todayISO();
+
+// 漏斗实时绘制
+var fIds=['f_lead','f_book','f_show','f_sign'], fLabels=['线索','预约','到场','报名'];
+function drawFunnel(){
+  var vals=fIds.map(function(id){return Math.max(0,parseInt(val(id)||0,10));});
+  var max=Math.max(1,Math.max.apply(null,vals));
+  $('funnel').innerHTML = vals.map(function(v,i){
+    return '<div class="funnel-row"><span class="fl">'+fLabels[i]+'</span><span class="bar" style="width:'+Math.round(v/max*100)+'%"></span><span class="num">'+v+'</span></div>';
+  }).join('');
+}
+fIds.forEach(function(id){$(id).addEventListener('input',drawFunnel);});
+
+// 收集（列名 = 腾讯文档表头）
+function collect(){
+  var rec={};
+  rec[COLS.date]=val('f_date');
+  rec[COLS.who]=val('f_who');
+  rec[COLS.lead]=val('f_lead')||'0';
+  rec[COLS.book]=val('f_book')||'0';
+  rec[COLS.show]=val('f_show')||'0';
+  rec[COLS.sign]=val('f_sign')||'0';
+  rec[COLS.lessons]=val('f_lessons')||'0';
+  rec[COLS.absent]=val('f_absent')||'0';
+  rec[COLS.in]=val('f_in')||'0';
+  rec[COLS.out]=val('f_out')||'0';
+  rec[COLS.bal]=val('f_bal')||'0';
+  rec[COLS.note]=val('f_note');
+  rec[COLS.video]=val('f_video')||'0';
+  rec[COLS.videoTitle]=val('f_video_title');
+  rec[COLS.touch]=val('f_touch')||'0';
+  rec[COLS.touchFb]=val('f_fb');
+  return rec;
+}
+
+// 回填
+function prefill(rec){
+  if(!rec) return;
+  function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
+  set('f_who',COLS.who);
+  set('f_in',COLS.in);set('f_out',COLS.out);set('f_bal',COLS.bal);
+  set('f_lessons',COLS.lessons);set('f_absent',COLS.absent);
+  set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
+  set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
+  set('f_touch',COLS.touch);set('f_fb',COLS.touchFb);set('f_note',COLS.note);
+  drawFunnel();
+}
+
+// 本机缓存
+function lsKey(d){return 'xy_daily_'+d;}
+function saveLocal(rec){try{localStorage.setItem(lsKey(rec[COLS.date]),JSON.stringify(rec));}catch(e){}}
+function loadLocal(d){try{var s=localStorage.getItem(lsKey(d));return s?JSON.parse(s):null;}catch(e){return null;}}
+
+// 启动：先回填本机，再尝试云端（跨设备同步）
+prefill(loadLocal(todayISO()));
+drawFunnel();
+(function loadCloud(){
+  var tk = window.XYGate && XYGate.ghToken();
+  if(!tk) return;
+  fetch('https://api.github.com/repos/'+REPO+'/contents/'+PATH+'?ref='+BRANCH,
+    {headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){return r.status===200?r.json():null;})
+  .then(function(m){ if(!m||!m.content) return;
+    try{ var list=JSON.parse(b64d(m.content)); var rec=list.filter(function(x){return x[COLS.date]===todayISO();})[0]; if(rec) prefill(rec); }catch(e){} })
+  .catch(function(){});
+})();
+
+// 输入即缓存（防丢失）
+['f_who','f_in','f_out','f_bal','f_lessons','f_absent','f_lead','f_book','f_show','f_sign',
+ 'f_video','f_video_title','f_touch','f_fb','f_note'].forEach(function(id){
+  $(id).addEventListener('input',function(){saveLocal(collect());});
+});
+
+// 仅存本机
+$('saveLocal').addEventListener('click',function(){
+  var rec=collect(); saveLocal(rec);
+  toast('已存本机 '+rec[COLS.date]+'（未同步云端）');
+});
+
+// 保存并同步云端
+$('saveCloud').addEventListener('click',function(){
+  var rec=collect();
+  if(!rec[COLS.date]){toast('请先选日期');return;}
+  var tk = window.XYGate && XYGate.ghToken();
+  if(!tk){ toast('未授权：点右下角 🔑 先授权云同步'); return; }
+  var api='https://api.github.com/repos/'+REPO+'/contents/'+PATH;
+  fetch(api+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){
+    if(r.status===404) return {list:[],sha:null};
+    if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
+    return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};});
+  })
+  .then(function(st){
+    var list=st.list||[];
+    var found=false;
+    list=list.map(function(r){ if(r[COLS.date]===rec[COLS.date]){found=true;return Object.assign({},r,rec);} return r; });
+    if(!found) list.push(rec);
+    var put={message:'chore: 校长日报 '+rec[COLS.date]+' 表单同步',content:b64e(JSON.stringify(list,null,2)),branch:BRANCH};
+    if(st.sha) put.sha=st.sha;
+    return fetch(api,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
+      .then(function(rr){ if(rr.status===200||rr.status===201){saveLocal(rec);toast('✅ 已同步云端 '+rec[COLS.date]);} else {return rr.text().then(function(t){throw new Error('写入失败 HTTP '+rr.status+' '+t.slice(0,100));});} });
+  })
+  .catch(function(e){ toast('云端写入失败：'+(e.message||e)); });
+});
+</script>
+</body>
+</html>
