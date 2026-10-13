@@ -3644,6 +3644,22 @@
     "createdAt": "2026-10-09",
     "tests": [
       {
+        "date": "2026-08-15",
+        "m": {
+          "height": 121,
+          "sitReach": 13,
+          "singleStand": 13.31,
+          "wallSquat": 34.56,
+          "posture": "正常/正常/正常",
+          "run50": 13.13,
+          "standingJump": 151,
+          "verticalJump": 174,
+          "rope": 95,
+          "rally": 2
+        },
+        "note": ""
+      },
+      {
         "date": "2026-10-13",
         "m": {
           "height": 122,
