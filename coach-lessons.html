@@ -25,8 +25,8 @@
   th{color:var(--mut);font-weight:600}
   td.name,th.name{text-align:left;font-weight:600}
   tr.total td{font-weight:700;background:#f0faf4}
-  .bar{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--g2),var(--g1));min-width:2px}
-  .barcell{text-align:left;min-width:90px}
+  .bar{display:inline-block;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--g2),var(--g1));min-width:2px;vertical-align:-2px;margin-right:6px}
+  .barcell{text-align:left;min-width:90px;white-space:nowrap}
   .legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin-top:8px}
   .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:3px;vertical-align:-1px}
   .note{font-size:12px;color:var(--o);background:#fff6ee;border-radius:10px;padding:9px 10px;margin-bottom:12px}
@@ -42,14 +42,16 @@
   <select id="coachSel"><option value="__ALL__">全部教练</option></select>
 </div>
 <div class="kpis" id="kpis"></div>
+<div class="sec"><h2>📅 按月统计（算工资看这里：60元/节 × 当月节数）</h2><div id="monthly"></div><div id="monthlyDetail"></div></div>
 <div class="sec"><h2>教练 × 时段 课时分布</h2><div id="cross"></div></div>
 <div class="sec"><h2 id="matrixTitle">按日期 × 时段 明细</h2><div id="matrix"></div></div>
 
 <script>
-const DATA = {"updated": "2026-10-12 23:04", "scopeFrom": "2026-09-01", "slots": ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1", "未录"], "coaches": {"张玉玲": {"total": 53, "byDate": {"9.24": 1, "9.5": 3, "10.11": 2, "9.8": 1, "9.27": 3, "9.3": 1, "10.7": 3, "9.19": 3, "9.12": 3, "9.4": 1, "10.6": 3, "9.26": 3, "9.6": 3, "9.17": 1, "10.3": 2, "9.29": 1, "9.13": 3, "10.4": 2, "9.11": 1, "9.1": 1, "10.5": 2, "9.18": 1, "10.2": 2, "10.8": 1, "10.1": 1, "9.25": 1, "9.22": 1, "10.10": 1, "9.15": 1, "9.10": 1}, "bySlot": {"下午6点": 25, "早上10点": 14, "下午4点": 14}, "byDateSlot": {"9.24": {"下午6点": 1}, "9.5": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "10.11": {"早上10点": 1, "下午4点": 1}, "9.8": {"下午6点": 1}, "9.27": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "9.3": {"下午6点": 1}, "10.7": {"早上10点": 1, "下午4点": 1, "下午6点": 1}, "9.19": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "9.12": {"下午4点": 1, "下午6点": 1, "早上10点": 1}, "9.4": {"下午6点": 1}, "10.6": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "9.26": {"下午4点": 1, "下午6点": 1, "早上10点": 1}, "9.6": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "9.17": {"下午6点": 1}, "10.3": {"下午4点": 1, "早上10点": 1}, "9.29": {"下午6点": 1}, "9.13": {"早上10点": 1, "下午4点": 1, "下午6点": 1}, "10.4": {"早上10点": 1, "下午4点": 1}, "9.11": {"下午6点": 1}, "9.1": {"下午6点": 1}, "10.5": {"早上10点": 1, "下午4点": 1}, "9.18": {"下午6点": 1}, "10.2": {"早上10点": 1, "下午4点": 1}, "10.8": {"下午6点": 1}, "10.1": {"下午6点": 1}, "9.25": {"下午6点": 1}, "9.22": {"下午6点": 1}, "10.10": {"下午6点": 1}, "9.15": {"下午6点": 1}, "9.10": {"下午6点": 1}}}, "瞿佳康": {"total": 11, "byDate": {"10.7": 1, "10.11": 3, "10.4": 1, "10.8": 1, "10.9": 1, "10.10": 1, "10.3": 2, "10.1": 1}, "bySlot": {"下午4点": 4, "下午6点": 5, "早上10点": 1, "成人班1V1": 1}, "byDateSlot": {"10.7": {"下午4点": 1}, "10.11": {"下午6点": 1, "早上10点": 1, "下午4点": 1}, "10.4": {"下午4点": 1}, "10.8": {"下午6点": 1}, "10.9": {"下午6点": 1}, "10.10": {"下午6点": 1}, "10.3": {"下午4点": 1, "成人班1V1": 1}, "10.1": {"下午6点": 1}}}}, "dates": ["9.1", "9.3", "9.4", "9.5", "9.6", "9.8", "9.10", "9.11", "9.12", "9.13", "9.15", "9.17", "9.18", "9.19", "9.22", "9.24", "9.25", "9.26", "9.27", "9.29", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "10.9", "10.10", "10.11"], "unknownDates": 0, "skippedPre": 182};
+const DATA = {"updated": "2026-10-13 18:39", "scopeFrom": "2026-09-01", "slots": ["早上10点", "下午2点", "下午4点", "下午6点", "成人班1V4", "成人班1V1", "未录"], "coaches": {"瞿佳康": {"total": 11, "byDate": {"10.9": 1, "10.1": 1, "10.4": 1, "10.3": 2, "10.11": 3, "10.7": 1, "10.8": 1, "10.10": 1}, "bySlot": {"下午6点": 5, "下午4点": 4, "成人班1V1": 1, "早上10点": 1}, "byDateSlot": {"10.9": {"下午6点": 1}, "10.1": {"下午6点": 1}, "10.4": {"下午4点": 1}, "10.3": {"成人班1V1": 1, "下午4点": 1}, "10.11": {"下午6点": 1, "下午4点": 1, "早上10点": 1}, "10.7": {"下午4点": 1}, "10.8": {"下午6点": 1}, "10.10": {"下午6点": 1}}, "byMonth": {"2026-10": 11}, "byMonthSlot": {"2026-10": {"下午6点": 5, "下午4点": 4, "成人班1V1": 1, "早上10点": 1}}}, "张玉玲": {"total": 53, "byDate": {"10.2": 2, "10.11": 2, "9.19": 3, "9.8": 1, "9.6": 3, "9.24": 1, "9.3": 1, "10.4": 2, "10.3": 2, "9.13": 3, "9.25": 1, "9.26": 3, "10.5": 2, "9.12": 3, "9.27": 3, "10.6": 3, "9.15": 1, "10.7": 3, "9.5": 3, "10.10": 1, "10.1": 1, "9.4": 1, "9.22": 1, "9.11": 1, "9.18": 1, "9.10": 1, "9.17": 1, "9.29": 1, "9.1": 1, "10.8": 1}, "bySlot": {"下午4点": 14, "早上10点": 14, "下午6点": 25}, "byDateSlot": {"10.2": {"下午4点": 1, "早上10点": 1}, "10.11": {"下午4点": 1, "早上10点": 1}, "9.19": {"早上10点": 1, "下午6点": 1, "下午4点": 1}, "9.8": {"下午6点": 1}, "9.6": {"早上10点": 1, "下午6点": 1, "下午4点": 1}, "9.24": {"下午6点": 1}, "9.3": {"下午6点": 1}, "10.4": {"早上10点": 1, "下午4点": 1}, "10.3": {"下午4点": 1, "早上10点": 1}, "9.13": {"下午6点": 1, "下午4点": 1, "早上10点": 1}, "9.25": {"下午6点": 1}, "9.26": {"下午6点": 1, "下午4点": 1, "早上10点": 1}, "10.5": {"下午4点": 1, "早上10点": 1}, "9.12": {"早上10点": 1, "下午6点": 1, "下午4点": 1}, "9.27": {"下午6点": 1, "下午4点": 1, "早上10点": 1}, "10.6": {"早上10点": 1, "下午4点": 1, "下午6点": 1}, "9.15": {"下午6点": 1}, "10.7": {"早上10点": 1, "下午4点": 1, "下午6点": 1}, "9.5": {"下午6点": 1, "下午4点": 1, "早上10点": 1}, "10.10": {"下午6点": 1}, "10.1": {"下午6点": 1}, "9.4": {"下午6点": 1}, "9.22": {"下午6点": 1}, "9.11": {"下午6点": 1}, "9.18": {"下午6点": 1}, "9.10": {"下午6点": 1}, "9.17": {"下午6点": 1}, "9.29": {"下午6点": 1}, "9.1": {"下午6点": 1}, "10.8": {"下午6点": 1}}, "byMonth": {"2026-10": 19, "2026-09": 34}, "byMonthSlot": {"2026-10": {"下午4点": 7, "早上10点": 7, "下午6点": 5}, "2026-09": {"早上10点": 7, "下午6点": 20, "下午4点": 7}}}}, "dates": ["9.1", "9.3", "9.4", "9.5", "9.6", "9.8", "9.10", "9.11", "9.12", "9.13", "9.15", "9.17", "9.18", "9.19", "9.22", "9.24", "9.25", "9.26", "9.27", "9.29", "10.1", "10.2", "10.3", "10.4", "10.5", "10.6", "10.7", "10.8", "10.9", "10.10", "10.11"], "months": ["2026-09", "2026-10"], "byMonth": {"2026-10": 30, "2026-09": 34}, "unknownDates": 0, "skippedPre": 182};
 const SLOTS = DATA.slots.filter(s=>s!=="未录");
 const SLOT_COLORS = {"早上10点":"#0f9d58","下午2点":"#34c759","下午4点":"#ffb020","下午6点":"#ff7a18","成人班1V4":"#5b8def","成人班1V1":"#9b6dff"};
 function fmtD(k){const p=k.split(".");return p.length===2?p[0]+"月"+p[1]+"日":k;}
+function fmtM(m){const p=m.split("-");return p[0]+"年"+parseInt(p[1],10)+"月";}
 function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
 document.getElementById("meta").textContent = "更新于 "+DATA.updated+" · 共 "+DATA.dates.length+" 个上课日 · 统计区间：2026年9月起 · 口径：一个时间段=1课时（按教练×日期×时段去重，算工资用）";
@@ -69,13 +71,55 @@ function renderKpis(filter){
   const names=coachList(filter);
   let total=0,days=new Set();
   names.forEach(n=>{total+=DATA.coaches[n].total;Object.keys(DATA.coaches[n].byDate).forEach(d=>days.add(d));});
+  const now=new Date();
+  const curM=now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+  const monthV=names.reduce((a,n)=>a+((DATA.coaches[n].byMonth||{})[curM]||0),0);
   const kpis=[
     ["总课时",total+" 节"],
+    ["本月课时",monthV+" 节"],
     ["教练",names.length+" 人"],
     ["上课日",days.size+" 天"],
     ["时段档",SLOTS.length+" 类"],
   ];
   document.getElementById("kpis").innerHTML=kpis.map(k=>`<div class="kpi"><b>${k[1]}</b><span>${k[0]}</span></div>`).join("");
+}
+
+function renderMonthly(filter){
+  const names=coachList(filter);
+  const MS=DATA.months||[];
+  const box=document.getElementById("monthly");
+  const det=document.getElementById("monthlyDetail");
+  det.innerHTML="";
+  if(!MS.length){box.innerHTML="<div class='empty'>暂无数据</div>";return;}
+  const rowTot=MS.map(m=>names.reduce((a,n)=>a+((DATA.coaches[n].byMonth||{})[m]||0),0));
+  const maxTot=Math.max(1,...rowTot);
+  let html="<table><tr><th class='name'>月份</th>"+names.map(n=>`<th>${esc(n)}</th>`).join("")+"<th>合计</th></tr>";
+  MS.forEach((m,mi)=>{
+    html+=`<tr><td class='name'>${fmtM(m)}</td>`;
+    names.forEach(n=>{const v=(DATA.coaches[n].byMonth||{})[m]||0;html+=`<td>${v||""}</td>`;});
+    const t=rowTot[mi];
+    html+=`<td class='barcell'><div class='bar' style='width:${Math.max(2,Math.round(t/maxTot*70))}px'></div><b>${t}</b></td></tr>`;
+  });
+  html+="<tr class='total'><td class='name'>总计</td>"+names.map(n=>`<td>${DATA.coaches[n].total}</td>`).join("")+`<td>${names.reduce((a,n)=>a+DATA.coaches[n].total,0)}</td></tr>`;
+  html+="</table>";
+  box.innerHTML=html;
+  if(names.length===1) renderMonthlyDetail(names[0]);
+}
+
+function renderMonthlyDetail(n){
+  const c=DATA.coaches[n];
+  if(!c||!(DATA.months||[]).length){document.getElementById("monthlyDetail").innerHTML="";return;}
+  let html="<div style='font-size:12px;color:var(--mut);margin:10px 0 6px'>"+esc(n)+" · 按月 × 时段（补录核对用）</div>";
+  html+="<table><tr><th class='name'>月份</th>"+SLOTS.map(s=>`<th>${esc(s)}</th>`).join("")+"<th>未录</th><th>合计</th></tr>";
+  DATA.months.forEach(m=>{
+    const ms=(c.byMonthSlot||{})[m]||{};let row=0;
+    html+=`<tr><td class='name'>${fmtM(m)}</td>`;
+    SLOTS.forEach(s=>{const v=ms[s]||0;row+=v;html+=`<td>${v||""}</td>`;});
+    const un=ms["未录"]||0;row+=un;
+    html+=`<td>${un||""}</td><td><b>${row}</b></td></tr>`;
+  });
+  html+="</table>";
+  document.getElementById("monthlyDetail").innerHTML=html;
 }
 
 function renderCross(filter){
@@ -122,7 +166,7 @@ function renderMatrix(filter){
 }
 
 function render(filter){
-  renderKpis(filter);renderCross(filter);renderMatrix(filter);
+  renderKpis(filter);renderMonthly(filter);renderCross(filter);renderMatrix(filter);
 }
 // 未录 / 口径 提示
 let warns=[];
