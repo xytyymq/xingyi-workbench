@@ -6,133 +6,216 @@
 <title>校长日报 · 星羿全馆工作台</title>
 <style>
   :root{
-    --blue:#2E5AAC; --blue-d:#1E3F78; --green:#1B5E20; --green-bg:#E8F5E9;
-    --red:#B71C1C; --red-bg:#FFEBEE; --yellow:#795500; --yellow-bg:#FFF8E1;
-    --ink:#1A2233; --muted:#5A6478; --line:#E3E8F2; --bg:#F4F6FB; --card:#FFFFFF;
+    --navy:#0C1C42; --navy-d:#06102C;
+    --neon:#C6F94B; --cyan:#56D8F0; --orange:#FF8A3D;
+    --text:#EAF1FF; --muted:#9FB0D0;
+    --card:rgba(255,255,255,.055); --card-strong:rgba(255,255,255,.09);
+    --line:rgba(255,255,255,.12);
+    --red:#FF6B6B; --red-bg:rgba(255,107,107,.14);
+    --yellow:#FFD24D; --yellow-bg:rgba(255,210,77,.13);
+    --green:#5BE584; --green-bg:rgba(91,229,132,.13);
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:40px}
-  header{background:linear-gradient(135deg,var(--blue),var(--blue-d));color:#fff;padding:20px 16px 18px;border-radius:0 0 18px 18px}
-  header h1{font-size:20px;display:flex;align-items:center;gap:8px}
-  header .sub{font-size:12px;opacity:.85;margin-top:6px}
-  .wrap{padding:14px;max-width:640px;margin:0 auto}
-  .light-hero{background:var(--card);border-radius:16px;padding:18px;text-align:center;box-shadow:0 2px 10px rgba(30,63,120,.08);margin-top:-26px;position:relative}
-  .light-dot{width:64px;height:64px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:30px}
-  .light-hero .verdict{font-size:18px;font-weight:700}
-  .light-hero .when{font-size:12px;color:var(--muted);margin-top:4px}
-  .card{background:var(--card);border-radius:16px;padding:16px;margin-top:12px;box-shadow:0 2px 10px rgba(30,63,120,.06)}
-  .card h2{font-size:15px;margin-bottom:10px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-  .item{display:flex;gap:8px;padding:8px 10px;border-radius:10px;font-size:13.5px;line-height:1.55;margin-bottom:6px;align-items:flex-start}
+  html,body{background:var(--navy-d)}
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(120% 80% at 0% 0%, rgba(86,216,240,.18), transparent 45%),
+      radial-gradient(120% 90% at 100% 100%, rgba(198,249,75,.10), transparent 50%),
+      linear-gradient(160deg,var(--navy),var(--navy-d));
+    background-attachment:fixed;
+    min-height:100vh;padding-bottom:30px;
+  }
+  /* 顶部速度线装饰 */
+  .speed-lines{position:absolute;top:0;left:0;right:0;height:6px;background:
+    repeating-linear-gradient(90deg,transparent 0 14px, rgba(198,249,75,.55) 14px 16px);opacity:.5}
+  /* 右下能量带 */
+  .energy-band{position:fixed;right:-60px;bottom:-40px;width:240px;height:120px;
+    background:linear-gradient(135deg,var(--neon),var(--cyan));
+    transform:rotate(-18deg);opacity:.9;border-radius:14px;z-index:0;box-shadow:0 0 40px rgba(198,249,75,.35)}
+  .energy-band::after{content:"";position:absolute;inset:6px;border:2px solid rgba(255,255,255,.35);border-radius:10px}
+
+  header.hero{position:relative;overflow:hidden;padding:26px 18px 30px}
+  .glow{position:absolute;top:-40px;left:-30px;width:200px;height:200px;border-radius:50%;
+    background:radial-gradient(circle,rgba(86,216,240,.45),transparent 70%);filter:blur(6px)}
+  /* 拍框线稿剪影 */
+  .racket{position:absolute;right:14px;top:18px;width:96px;height:96px;opacity:.22}
+  .hero-inner{position:relative;z-index:2;max-width:640px;margin:0 auto}
+  header h1{font-size:30px;font-weight:800;color:#fff;letter-spacing:1px;line-height:1.1;
+    text-shadow:0 2px 0 rgba(0,0,0,.25)}
+  header h1 .neon{display:block;font-size:14px;font-weight:700;color:var(--neon);
+    margin-top:8px;letter-spacing:2px;text-shadow:none}
+  .sub{font-size:12.5px;color:var(--muted);margin-top:12px}
+  .verdict-row{display:flex;align-items:center;gap:12px;margin-top:16px;
+    background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+  .verdict-dot{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+  .verdict-text{font-size:17px;font-weight:800}
+
+  .wrap{position:relative;z-index:2;padding:14px;max-width:640px;margin:0 auto}
+
+  /* 顶部核心 KPI 条 */
+  .kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px}
+  .kpi{background:var(--card-strong);border:1px solid var(--line);border-radius:14px;
+    padding:12px 6px;text-align:center;backdrop-filter:blur(4px)}
+  .kpi .n{font-size:18px;font-weight:800;color:var(--neon);line-height:1.1;word-break:break-all}
+  .kpi .l{font-size:10.5px;color:var(--muted);margin-top:5px;line-height:1.3}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:15px;margin-top:14px;backdrop-filter:blur(4px)}
+  .panel h2{font-size:15px;font-weight:700;color:#fff;margin-bottom:11px;
+    display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .panel h2 .ico{font-size:17px}
+  .pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;
+    background:rgba(86,216,240,.16);color:var(--cyan);font-weight:700}
+  .pill.demo{background:rgba(255,138,61,.18);color:var(--orange)}
+
+  .item{display:flex;gap:8px;padding:9px 11px;border-radius:11px;font-size:13px;
+    line-height:1.55;margin-bottom:7px;align-items:flex-start}
   .item.red{background:var(--red-bg);color:var(--red)}
   .item.yellow{background:var(--yellow-bg);color:var(--yellow)}
   .item.green{background:var(--green-bg);color:var(--green)}
   .item b{font-weight:700}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .kpi{background:#F7F9FE;border-radius:12px;padding:10px 8px;text-align:center}
-  .kpi .n{font-size:20px;font-weight:800;color:var(--blue)}
-  .kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
-  .bar-wrap{margin-top:10px}
-  .bar-bg{height:10px;background:#E9EEF8;border-radius:6px;overflow:hidden}
-  .bar-fg{height:100%;background:linear-gradient(90deg,#4CAF50,var(--blue));border-radius:6px;transition:width .6s}
-  .bar-txt{font-size:12px;color:var(--muted);margin-top:5px}
-  table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th,td{padding:7px 4px;text-align:center;border-bottom:1px solid var(--line)}
-  th{color:var(--muted);font-weight:600;font-size:11.5px}
+  .sub2{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.55}
+  .empty{color:var(--muted);font-size:13px;text-align:center;padding:10px 0}
+
+  .funnel-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+  .bar-bg{height:11px;background:rgba(255,255,255,.1);border-radius:6px;overflow:hidden}
+  .bar-fg{height:100%;background:linear-gradient(90deg,var(--neon),var(--cyan));border-radius:6px;transition:width .6s}
+  .bar-txt{font-size:12px;color:var(--muted);margin-top:6px}
+
+  .mini{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .minicard{background:var(--card-strong);border:1px solid var(--line);border-radius:13px;padding:12px}
+  .minicard .big{font-size:22px;font-weight:800;color:var(--neon)}
+  .minicard .cap{font-size:11px;color:var(--muted);margin-top:4px}
+
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{padding:7px 3px;text-align:center;border-bottom:1px solid var(--line);color:var(--text)}
+  th{color:var(--muted);font-weight:600;font-size:11px}
   td.up{color:var(--green);font-weight:600}
   td.down{color:var(--red);font-weight:600}
-  .muted{color:var(--muted);font-size:12.5px}
-  .empty{color:var(--muted);font-size:13px;text-align:center;padding:10px 0}
-  .todo{background:#FFF8E1;border:1px dashed #E6C200}
-  .todo li{margin:6px 0 6px 18px;font-size:13.5px;line-height:1.5}
-  .sub2{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
-  .pill{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:#EAF2FF;color:var(--blue);font-weight:700;margin-left:6px}
-  .pill.demo{background:#FFF3E0;color:#B26A00}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .big{font-size:22px;font-weight:800;color:var(--blue)}
-  .foot{margin-top:18px;text-align:center;font-size:11px;color:#9AA3B8}
+
+  .todo{border:1px solid rgba(255,107,107,.4);background:rgba(255,107,107,.07)}
+  .todo h2{color:var(--red)}
+  .todo li{margin:7px 0 7px 18px;font-size:13.5px;line-height:1.55;color:#FFD9D9}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .grid2 .panel{margin-top:0}
+
+  .foot{margin-top:20px;text-align:center;font-size:11px;color:rgba(159,176,208,.6);line-height:1.7}
+
+  @media(max-width:520px){
+    .kpi-strip{grid-template-columns:repeat(2,1fr)}
+    .kpi-strip .kpi:last-child{grid-column:span 2}
+    .grid2{grid-template-columns:1fr}
+    header h1{font-size:25px}
+  }
 </style>
 </head>
 <body>
-<header>
-  <h1>🚦 校长日报</h1>
-  <div class="sub">招生 · 教练 · 财务 · 家长沟通 一线监督 · 每晚 23:11 自动生成（次日 8:00 补拉）</div>
-</header>
-<div class="wrap">
-  <div class="light-hero">
-    <div class="light-dot" id="heroDot">⚪</div>
-    <div class="verdict" id="heroVerdict">加载中…</div>
-    <div class="when" id="heroWhen"></div>
-  </div>
+<div class="speed-lines"></div>
+<div class="energy-band"></div>
 
-  <div class="card">
-    <h2>🚨 红黄绿灯 <span class="pill">含数据校验</span></h2>
-    <div id="lights"></div>
-  </div>
-
-  <div class="card">
-    <h2>📣 招生漏斗</h2>
-    <div class="kpis" id="funnelKpis"></div>
-    <div class="bar-wrap">
-      <div class="bar-bg"><div class="bar-fg" id="goalBar" style="width:0%"></div></div>
-      <div class="bar-txt" id="goalTxt">月报名目标 10 人</div>
+<header class="hero">
+  <div class="glow"></div>
+  <svg class="racket" viewBox="0 0 100 100" fill="none" stroke="#fff" stroke-width="2">
+    <ellipse cx="42" cy="42" rx="30" ry="34"/>
+    <line x1="42" y1="8" x2="42" y2="76"/><line x1="12" y1="42" x2="72" y2="42"/>
+    <line x1="22" y1="22" x2="62" y2="62"/><line x1="62" y1="22" x2="22" y2="62"/>
+    <line x1="42" y1="76" x2="62" y2="98"/><line x1="58" y1="80" x2="78" y2="98"/>
+    <circle cx="84" cy="92" r="6"/>
+  </svg>
+  <div class="hero-inner">
+    <h1>校长日报<span class="neon">· 每日经营 一眼清</span></h1>
+    <div class="sub" id="heroWhen">加载中…</div>
+    <div class="verdict-row">
+      <div class="verdict-dot" id="heroDot">⚪</div>
+      <div class="verdict-text" id="heroVerdict">…</div>
     </div>
-    <div id="staleLeads" style="margin-top:10px"></div>
   </div>
+</header>
 
-  <div class="card">
-    <h2>💰 财务统计 <span class="pill">含本月续费战报</span></h2>
-    <div class="kpis" id="finKpis"></div>
-    <div id="renewBox" style="margin-top:10px"></div>
-    <div style="margin-top:12px;overflow-x:auto"><table id="finTable"></table></div>
-  </div>
+<main class="wrap">
+  <!-- 第一屏核心 KPI -->
+  <section class="kpi-strip" id="kpiStrip">
+    <div class="kpi"><div class="n" id="kTodayIncome">–</div><div class="l">今日收入</div></div>
+    <div class="kpi"><div class="n" id="kRenewAmt">–</div><div class="l">本月续费额</div></div>
+    <div class="kpi"><div class="n" id="kRenewCnt">–</div><div class="l">续费人数</div></div>
+    <div class="kpi"><div class="n" id="kSignup">–</div><div class="l">本月报名</div></div>
+    <div class="kpi"><div class="n" id="kTouch">–</div><div class="l">今日触达</div></div>
+  </section>
 
-  <div class="card">
-    <h2>📞 家长沟通 & 回访 <span class="pill">含今日触达</span></h2>
-    <div id="touchBox" style="margin-bottom:8px"></div>
-    <div id="callback"></div>
-  </div>
+  <!-- 续费战报条 -->
+  <div class="renew-bar" id="renewBar" style="margin-top:8px;background:var(--card-strong);border:1px solid var(--line);border-left:3px solid var(--neon);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--text)"></div>
 
-  <div class="card">
-    <h2>🎬 入学视频 <span class="pill demo" id="videoPill">示例</span></h2>
-    <div id="videoBox"></div>
-  </div>
+  <!-- 红黄绿灯 -->
+  <section class="panel">
+    <h2><span class="ico">🚨</span> 红黄绿灯 <span class="pill">含数据校验</span></h2>
+    <div id="lights"></div>
+  </section>
 
-  <div class="card">
-    <h2>📈 体测进度 <span class="pill demo" id="ticePill">示例</span></h2>
-    <div id="ticeBox"></div>
-  </div>
+  <!-- 招生漏斗 -->
+  <section class="panel">
+    <h2><span class="ico">📣</span> 招生漏斗</h2>
+    <div class="funnel-kpis" id="funnelKpis"></div>
+    <div class="bar-bg"><div class="bar-fg" id="goalBar" style="width:0%"></div></div>
+    <div class="bar-txt" id="goalTxt"></div>
+    <div id="staleLeads" style="margin-top:11px"></div>
+  </section>
 
-  <div class="card">
-    <h2>🏆 赛事 / 月度之星 <span class="pill demo" id="saishiPill">示例</span></h2>
-    <div id="saishiBox"></div>
-  </div>
-
-  <div class="card">
-    <h2>👔 教练管理</h2>
-    <div id="coachBlock"></div>
-  </div>
-
-  <div class="card todo">
-    <h2>⚡ 老板待办（需你决策）</h2>
+  <!-- 老板待办 -->
+  <section class="panel todo">
+    <h2><span class="ico">⚡</span> 老板待办（需你决策）</h2>
     <ul id="bossTodos"></ul>
+  </section>
+
+  <!-- 网格：家长沟通 / 入学视频 / 体测 / 赛事 / 教练 -->
+  <div class="grid2">
+    <section class="panel">
+      <h2><span class="ico">📞</span> 家长沟通 & 回访 <span class="pill">含触达</span></h2>
+      <div id="touchBox"></div>
+      <div id="callback" style="margin-top:8px"></div>
+    </section>
+
+    <section class="panel">
+      <h2><span class="ico">🎬</span> 入学视频 <span class="pill demo" id="videoPill">示例</span></h2>
+      <div id="videoBox"></div>
+    </section>
+
+    <section class="panel">
+      <h2><span class="ico">📈</span> 体测进度 <span class="pill demo" id="ticePill">示例</span></h2>
+      <div id="ticeBox"></div>
+    </section>
+
+    <section class="panel">
+      <h2><span class="ico">🏆</span> 赛事 / 月度之星 <span class="pill demo" id="saishiPill">示例</span></h2>
+      <div id="saishiBox"></div>
+    </section>
   </div>
 
-  <div class="card">
-    <h2>📊 周报 · 近 7 天</h2>
+  <!-- 教练管理 -->
+  <section class="panel">
+    <h2><span class="ico">👔</span> 教练管理</h2>
+    <div id="coachBlock"></div>
+  </section>
+
+  <!-- 周报 -->
+  <section class="panel">
+    <h2><span class="ico">📊</span> 周报 · 近 7 天</h2>
     <div style="overflow-x:auto"><table id="weekTable"></table></div>
     <div id="weekSummary" style="margin-top:10px"></div>
-  </div>
+  </section>
 
-  <div class="foot">星羿体育 · 见证每一次成长<br>数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案 / 赛事域</div>
-</div>
+  <div class="foot">星羿体育 · 见证每一次成长<br>每晚 23:11 自动生成（次日 8:00 补拉）· 数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案 / 赛事域</div>
+</main>
+
 <script>
-const LIGHT_META={red:{c:"var(--red)",bg:"var(--red-bg)",ico:"🔴",t:"红灯 · 今天要过问"},
-  yellow:{c:"var(--yellow)",bg:"var(--yellow-bg)",ico:"🟡",t:"黄灯 · 留意关注"},
-  green:{c:"var(--green)",bg:"var(--green-bg)",ico:"🟢",t:"绿灯 · 一切正常"}};
+const LIGHT_META={red:{bg:"var(--red-bg)",ico:"🔴",c:"var(--red)",t:"红灯 · 今天要过问"},
+  yellow:{bg:"var(--yellow-bg)",ico:"🟡",c:"var(--yellow)",t:"黄灯 · 留意关注"},
+  green:{bg:"var(--green-bg)",ico:"🟢",c:"var(--green)",t:"绿灯 · 一切正常"}};
 const esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 function item(l,txt){const m=LIGHT_META[l]||LIGHT_META.green;return `<div class="item ${l}">${m.ico} <span>${esc(txt)}</span></div>`}
 
-// 示例数据（夜间自动化接入真实数据后自动覆盖；在此之前标注"示例"）
 const DEMO={
   video:{today:3,this_week:11,this_month:42,latest_title:"小宇启蒙班第3课",latest_status:"单手持拍对拉练习 · 抖音/小红书草稿待审"},
   tice:{month_done:18,month_plan:40,rate:"85%"},
@@ -153,17 +236,28 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
   document.getElementById("heroVerdict").textContent=m.t;
   document.getElementById("heroVerdict").style.color=m.c;
 
-  // 红黄绿灯 + 数据交叉校验（折叠去重，减负）
+  // 核心 KPI 条
+  const fin=d.finance||{},rn=fin.renew||{},f=d.funnel||{},touch=d.touch||{};
+  const setK=(id,v)=>document.getElementById(id).textContent=v;
+  setK("kTodayIncome","¥"+(fin.today_income??0));
+  setK("kRenewAmt", rn.month_amount!=null?"¥"+rn.month_amount:"–");
+  setK("kRenewCnt", rn.month_count!=null?rn.month_count+" 人":"–");
+  setK("kSignup", (f.month_signups??0)+" 人");
+  setK("kTouch", touch.count!=null?touch.count+" 位":"–");
+  document.getElementById("renewBar").innerHTML=(rn.month_amount!=null)
+    ?`📈 续费战报：本月 <b style="color:var(--neon)">¥${rn.month_amount}</b> · ${rn.month_count??0} 人 · 目标 ¥${rn.goal??0} · 完成率 <b style="color:${rn.goal_rate&&rn.goal_rate.indexOf('超')>=0?'var(--green)':'var(--cyan)'}">${rn.goal_rate??'–'}</b> ${rn.note||''}`
+    :'📈 续费战报：待接入夜间自动化（续费台账）';
+
+  // 红黄绿灯 + 数据交叉校验
   let lightsHtml=(d.lights||[]).map(x=>item(x.level,x.text)).join("")||'<div class="empty">今日无异常</div>';
   if(d.cross_check&&d.cross_check.length){ lightsHtml+='<div class="sub2" style="margin:6px 0 2px;font-weight:700;color:var(--muted)">数据交叉校验</div>'+d.cross_check.map(x=>item(x.level,x.text)).join(""); }
   document.getElementById("lights").innerHTML=lightsHtml;
 
   // 招生漏斗
-  const f=d.funnel||{};
   document.getElementById("funnelKpis").innerHTML=
-    `<div class="kpi"><div class="n">${f.new_leads_today??0}</div><div class="l">今日新线索</div></div>
-     <div class="kpi"><div class="n">${f.trial_arrive_rate??"–"}</div><div class="l">试课到场率(红线80%)</div></div>
-     <div class="kpi"><div class="n">${f.month_signups??0}<span style="font-size:12px;color:var(--muted)">/10</span></div><div class="l">本月报名</div></div>`;
+    `<div class="kpi" style="background:transparent;border:none;padding:4px"><div class="n" style="color:var(--cyan)">${f.new_leads_today??0}</div><div class="l">今日新线索</div></div>
+     <div class="kpi" style="background:transparent;border:none;padding:4px"><div class="n" style="color:${(parseFloat(f.trial_arrive_rate)||0)<80?'var(--red)':'var(--green)'}">${f.trial_arrive_rate??"–"}</div><div class="l">试课到场率(红线80%)</div></div>
+     <div class="kpi" style="background:transparent;border:none;padding:4px"><div class="n">${f.month_signups??0}<span style="font-size:12px;color:var(--muted)">/10</span></div><div class="l">本月报名</div></div>`;
   const pct=Math.min(100,Math.round(((f.month_signups??0)/10)*100));
   document.getElementById("goalBar").style.width=pct+"%";
   document.getElementById("goalTxt").textContent=`月报名进度 ${f.month_signups??0}/10 人（${pct}%）· ${f.month_pace_note||""}`;
@@ -171,36 +265,17 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
     ?`<div class="item red">⏰ <span><b>超48h未跟进（${d.stale_leads.length}）：</b>${esc(d.stale_leads.map(x=>`${x.name}(${x.days}天)`).join("、"))}</span></div>`
     :'<div class="item green">✅ <span>线索全部在 48h 跟进时限内</span></div>';
 
-  // 财务 + 续费战报（合并）
-  const fin=d.finance||{};
-  document.getElementById("finKpis").innerHTML=
-    `<div class="kpi"><div class="n" style="color:var(--green)">¥${fin.today_income??0}</div><div class="l">今日收入</div></div>
-     <div class="kpi"><div class="n" style="color:var(--red)">¥${fin.today_expense??0}</div><div class="l">今日支出</div></div>
-     <div class="kpi"><div class="n">¥${fin.month_net??0}</div><div class="l">本月净额</div></div>`;
-  const rn=fin.renew||{};
-  document.getElementById("renewBox").innerHTML=(rn.month_amount!=null)
-    ?`<div class="grid2"><div class="kpi"><div class="n" style="color:var(--blue)">¥${rn.month_amount}</div><div class="l">本月续费金额</div></div>
-       <div class="kpi"><div class="n">${rn.month_count??0}<span style="font-size:12px;color:var(--muted)">人</span></div><div class="l">续费人数</div></div></div>
-       <div class="sub2">续费目标 ¥${rn.goal??0} · 完成率 ${rn.goal_rate??"–"} ${rn.note||""}</div>`
-    :'<div class="sub2">本月续费战报：待接入夜间自动化（续费台账）</div>';
-  if(d.week_rows&&d.week_rows.length){
-    document.getElementById("finTable").innerHTML=
-      `<tr><th>日期</th><th>线索</th><th>试课</th><th>报名</th><th>开课</th><th>收入</th><th>支出</th></tr>`+
-      d.week_rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${r.leads??0}</td><td>${r.trials??0}</td><td class="${(r.signups??0)>0?"up":""}">${r.signups??0}</td><td>${r.classes??0}</td><td class="up">${r.income??0}</td><td class="down">${r.expense??0}</td></tr>`).join("");
-  }
-
-  // 家长沟通 & 回访（合并）
-  const touch=d.touch||{};
+  // 家长沟通 & 回访
   document.getElementById("touchBox").innerHTML=(touch.count!=null)
     ?`<div class="item green">📨 <span>今日家长触达 <b>${esc(touch.count)}</b> 位 · ${esc(touch.types||"")}</span></div>`+(touch.feedback?`<div class="sub2">反馈摘要：${esc(touch.feedback)}</div>`:"")
     :'<div class="sub2">今日家长触达：待接入家长消息推送记录</div>';
   document.getElementById("callback").innerHTML=d.callback
-    ?`<div class="item yellow">📞 <span>今日随机抽查建议（核反馈是否属实）：<b>${esc(d.callback)}</b></span></div>`
+    ?`<div class="item yellow">📞 <span>随机抽查建议（核反馈）：<b>${esc(d.callback)}</b></span></div>`
     :'<div class="empty">近 7 天无上课记录，暂无抽查对象</div>';
 
-  // 入学视频 / 体测 / 赛事（新增，示例→实时）
-  demoCard('videoBox','videoPill','video',d.video,v=>`<div class="big">${v.today} <span style="font-size:13px;color:var(--muted)">条今日新增</span></div><div class="sub2">本周累计 ${v.this_week} 条 · 本月累计 ${v.this_month} 条</div><div class="sub2">最新：<b>${esc(v.latest_title)}</b> · ${esc(v.latest_status)}</div>`);
-  demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="big">${v.month_done} <span style="font-size:13px;color:var(--muted)">人/月</span></div><div class="sub2">本月计划 ${v.month_plan} 人 · 达标率 ${v.rate}</div>`);
+  // 入学视频 / 体测 / 赛事
+  demoCard('videoBox','videoPill','video',d.video,v=>`<div class="minicard"><div class="big">${v.today}</div><div class="cap">条 · 今日新增</div></div><div class="sub2">本周累计 ${v.this_week} 条 · 本月 ${v.this_month} 条</div><div class="sub2">最新：<b>${esc(v.latest_title)}</b> · ${esc(v.latest_status)}</div>`);
+  demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="minicard"><div class="big">${v.month_done}</div><div class="cap">人/月</div></div><div class="sub2">本月计划 ${v.month_plan} 人 · 达标率 ${v.rate}</div>`);
   demoCard('saishiBox','saishiPill','saishi',d.saishi,v=>`<div class="sub2"><b>${esc(v.name)}</b> · 提名 ${v.nominations} 人</div><div class="sub2">${esc(v.vote_date?("评选日 "+v.vote_date):"")}${v.note||""}</div>`);
 
   // 教练
@@ -211,7 +286,12 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
     ?d.boss_todos.map(t=>`<li>${esc(t)}</li>`).join(""):'<li style="color:var(--muted)">暂无待决策事项 ✅</li>';
 
   // 周报
-  if(d.week_summary)document.getElementById("weekSummary").innerHTML=`<div class="muted">${esc(d.week_summary)}</div>`;
+  if(d.week_rows&&d.week_rows.length){
+    document.getElementById("weekTable").innerHTML=
+      `<tr><th>日期</th><th>线索</th><th>试课</th><th>报名</th><th>开课</th><th>收入</th><th>支出</th></tr>`+
+      d.week_rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${r.leads??0}</td><td>${r.trials??0}</td><td class="${(r.signups??0)>0?"up":""}">${r.signups??0}</td><td>${r.classes??0}</td><td class="up">${r.income??0}</td><td class="down">${r.expense??0}</td></tr>`).join("");
+  }
+  if(d.week_summary)document.getElementById("weekSummary").innerHTML=`<div class="sub2">${esc(d.week_summary)}</div>`;
 }).catch(e=>{document.getElementById("heroVerdict").textContent="数据加载失败，稍后重试";console.error(e)});
 </script>
 </body>
