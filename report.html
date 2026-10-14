@@ -139,7 +139,7 @@
   <!-- 第一屏核心 KPI -->
   <section class="kpi-strip" id="kpiStrip">
     <div class="kpi"><div class="n" id="kTodayIncome">–</div><div class="l">今日收入</div></div>
-    <div class="kpi"><div class="n" id="kRenewAmt">–</div><div class="l">本月续费额</div></div>
+    <div class="kpi"><div class="n" id="kRenewAmt">–</div><div class="l">本月续课额</div></div>
     <div class="kpi"><div class="n" id="kRenewCnt">–</div><div class="l">续费人数</div></div>
     <div class="kpi"><div class="n" id="kSignup">–</div><div class="l">本月报名</div></div>
     <div class="kpi"><div class="n" id="kTouch">–</div><div class="l">今日触达</div></div>
@@ -235,16 +235,16 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
   const fin=d.finance||{},rn=fin.renew||{},f=d.funnel||{},touch=d.touch||{};
   const setK=(id,v)=>document.getElementById(id).textContent=v;
   setK("kTodayIncome","¥"+(fin.today_income??0));
-  setK("kRenewAmt", rn.month_amount!=null?"¥"+rn.month_amount:"–");
+  setK("kRenewAmt", rn.month_amount!=null?"¥"+Math.round(rn.month_amount):"–");
   setK("kRenewCnt", rn.month_count!=null?rn.month_count+" 人":"–");
   setK("kSignup", (f.month_signups??0)+" 人");
   setK("kTouch", touch.count!=null?touch.count+" 位":"–");
-  const renewOk = rn && rn.month_amount!=null;
+  const renewOk = rn && rn.goal!=null;
   document.getElementById("renewBar").innerHTML = renewOk
-    ? `📈 续费战报：本月 <b style="color:var(--neon)">¥${rn.month_amount}</b> · ${rn.month_count??0} 人`
-      + (rn.goal!=null ? ` · 目标 ¥${rn.goal} · 完成率 <b style="color:${rn.goal_rate&&rn.goal_rate.indexOf('超')>=0?'var(--green)':'var(--cyan)'}">${rn.goal_rate}</b>` : ` · <b style="color:var(--cyan)">目标待设定</b>`)
+    ? `📈 续课战报：本月 <b style="color:var(--neon)">¥${Math.round(rn.month_amount||0)}</b> · ${rn.month_count??0} 人`
+      + (rn.goal!=null ? ` · 目标 ¥${rn.goal} · 达成率 <b style="color:${rn.goal_rate&&rn.goal_rate.indexOf('超')>=0?'var(--green)':'var(--cyan)'}">${rn.goal_rate}</b>` : ` · <b style="color:var(--cyan)">目标待设定</b>`)
       + (rn.note||'')
-    : '📈 续费战报：待接入夜间自动化（续费台账）';
+    : '📈 续课战报：待接入夜间自动化（续费台账）';
 
   // 红黄绿灯 + 数据交叉校验
   let lightsHtml=(d.lights||[]).map(x=>item(x.level,x.text)).join("")||'<div class="empty">今日无异常</div>';
