@@ -27,9 +27,9 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
 .field{margin-bottom:11px}
 .field:last-child{margin-bottom:0}
 .field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
-.field input,.field textarea{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);
+.field input,.field textarea,.renew-row input,.renew-row select{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);
   border-radius:10px;padding:11px;color:var(--white);font-size:15px;font-family:inherit}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--green)}
+.field input:focus,.field textarea:focus{border-color:var(--green)}
 .field textarea{resize:vertical;min-height:58px;line-height:1.5}
 input[type=date]{color-scheme:dark}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -62,7 +62,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 <div class="card readonly">
   <div class="card-head"><span class="card-title">📊 本月续费战报（自动）</span><span class="tag">校长日报</span></div>
   <div class="big">续费金额 / 人数 / 目标完成率，每晚自动汇总到《校长日报》看板，<a class="link" href="report.html" target="_blank" rel="noopener">点此查看 →</a></div>
-  <div class="hint">续费是月度口径，不在此每日填写。本页只收集每日经营 + 三件事。</div>
+  <div class="hint">续费是月度口径，不在此每日填写；在下方「续费登记」逐人登记即可，日报自动汇总。</div>
 </div>
 
 <div class="section-title">基础信息</div>
@@ -80,10 +80,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
     <div class="field"><label>今日支出(元)</label><input type="number" id="f_out" placeholder="0"></div>
     <div class="field"><label>账户余额</label><input type="number" id="f_bal" placeholder="0"></div>
   </div>
-  <div class="grid2">
-    <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
-    <div class="field"><label>缺课人数</label><input type="number" id="f_absent" placeholder="0"></div>
-  </div>
+  <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
 </div>
 
 <div class="section-title">招生漏斗</div>
@@ -112,6 +109,14 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="field"><label>反馈摘要</label><textarea id="f_fb" placeholder="家长原话 / 诉求点，一句话即可"></textarea></div>
 </div>
 
+<div class="section-title">续费登记（一人一表）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">💰 续费 / 新购台账</span><span class="tag">独立台账</span></div>
+  <div id="renewList"></div>
+  <button class="cta ghost" id="addRenew" type="button" style="margin-top:10px">+ 添加一条续费记录</button>
+  <div class="hint">每个续费 / 新购学员登记一条（学员 · 金额 · 类型 · 日期）。保存即写入工作台续费台账，校长日报自动汇总本月续费额与人数。</div>
+</div>
+
 <div class="section-title">备注（选填）</div>
 <div class="card">
   <div class="field"><label>异常与问题 / 明日重点 / 需决策 / 教练反馈<span class="optional">选填</span></label>
@@ -131,13 +136,13 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 var COLS = {
   date:'日期', who:'填报人',
   in:'今日收入(元)', out:'今日支出(元)', bal:'现金/账户余额',
-  lessons:'今日开课节数', absent:'缺课人数',
+  lessons:'今日开课节数',
   lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数',
   video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
   touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
   note:'备注（选填）'
 };
-var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main';
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json';
 
 function $(id){return document.getElementById(id);}
 function val(id){return $(id).value.trim();}
@@ -171,7 +176,6 @@ function collect(){
   rec[COLS.show]=val('f_show')||'0';
   rec[COLS.sign]=val('f_sign')||'0';
   rec[COLS.lessons]=val('f_lessons')||'0';
-  rec[COLS.absent]=val('f_absent')||'0';
   rec[COLS.in]=val('f_in')||'0';
   rec[COLS.out]=val('f_out')||'0';
   rec[COLS.bal]=val('f_bal')||'0';
@@ -189,7 +193,7 @@ function prefill(rec){
   function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
   set('f_who',COLS.who);
   set('f_in',COLS.in);set('f_out',COLS.out);set('f_bal',COLS.bal);
-  set('f_lessons',COLS.lessons);set('f_absent',COLS.absent);
+  set('f_lessons',COLS.lessons);
   set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
   set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
   set('f_touch',COLS.touch);set('f_fb',COLS.touchFb);set('f_note',COLS.note);
@@ -216,7 +220,7 @@ drawFunnel();
 })();
 
 // 输入即缓存（防丢失）
-['f_who','f_in','f_out','f_bal','f_lessons','f_absent','f_lead','f_book','f_show','f_sign',
+['f_who','f_in','f_out','f_bal','f_lessons','f_lead','f_book','f_show','f_sign',
  'f_video','f_video_title','f_touch','f_fb','f_note'].forEach(function(id){
   $(id).addEventListener('input',function(){saveLocal(collect());});
 });
@@ -227,7 +231,59 @@ $('saveLocal').addEventListener('click',function(){
   toast('已存本机 '+rec[COLS.date]+'（未同步云端）');
 });
 
-// 保存并同步云端
+// ===== 续费台账（一人一表，独立文件 data/renew-records.json）=====
+function renewRowHTML(r){
+  r=r||{};
+  return '<div class="renew-row" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr 30px;gap:6px;margin-bottom:8px;align-items:center">'+
+    '<input class="rn-name" placeholder="学员姓名" value="'+(r.name||'')+'">'+
+    '<input class="rn-amount" type="number" placeholder="金额" value="'+(r.amount||'')+'">'+
+    '<select class="rn-type"><option'+(r.type==='续费'?' selected':'')+'>续费</option><option'+(r.type==='新购'?' selected':'')+'>新购</option><option'+(r.type==='转介绍'?' selected':'')+'>转介绍</option></select>'+
+    '<input class="rn-date" type="date" value="'+(r.date||todayISO())+'">'+
+    '<button class="rn-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
+    '</div>';
+}
+function bindDel(){ document.querySelectorAll('#renewList .rn-del').forEach(function(b){ b.onclick=function(){ b.parentNode.remove(); }; }); }
+function renderRenew(list){
+  var box=document.getElementById('renewList');
+  box.innerHTML = (list&&list.length) ? list.map(renewRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方按钮添加。</div>';
+  bindDel();
+}
+function collectRenew(){
+  var out=[];
+  document.querySelectorAll('#renewList .renew-row').forEach(function(row){
+    var name=row.querySelector('.rn-name').value.trim();
+    var amount=row.querySelector('.rn-amount').value.trim();
+    var type=row.querySelector('.rn-type').value;
+    var date=row.querySelector('.rn-date').value.trim();
+    if(name&&amount&&date) out.push({date:date,name:name,amount:amount,type:type});
+  });
+  return out;
+}
+document.getElementById('addRenew').onclick=function(){
+  document.getElementById('renewList').insertAdjacentHTML('beforeend',renewRowHTML({})); bindDel();
+};
+(function loadRenew(){
+  var tk=window.XYGate&&XYGate.ghToken(); if(!tk) return;
+  fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){return r.status===200?r.json():null;})
+  .then(function(m){ if(!m||!m.content) return; try{ renderRenew(JSON.parse(b64d(m.content))); }catch(e){} })
+  .catch(function(){});
+})();
+function saveRenew(tk){
+  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){ if(r.status===404) return {list:[],sha:null}; if(!r.ok) throw new Error('读取续费台账失败'); return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};}); })
+  .then(function(st){
+    var seen={}; (st.list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+    collectRenew().forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+    var merged=Object.keys(seen).map(function(k){return seen[k];});
+    var put={message:'chore: 续费台账更新',content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+    if(st.sha) put.sha=st.sha;
+    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
+      .then(function(rr){ if(!rr.ok) throw new Error('续费台账写入失败 HTTP '+rr.status); });
+  });
+}
+
+// 保存并同步云端（日报主行 + 续费台账）
 $('saveCloud').addEventListener('click',function(){
   var rec=collect();
   if(!rec[COLS.date]){toast('请先选日期');return;}
@@ -248,7 +304,14 @@ $('saveCloud').addEventListener('click',function(){
     var put={message:'chore: 校长日报 '+rec[COLS.date]+' 表单同步',content:b64e(JSON.stringify(list,null,2)),branch:BRANCH};
     if(st.sha) put.sha=st.sha;
     return fetch(api,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
-      .then(function(rr){ if(rr.status===200||rr.status===201){saveLocal(rec);toast('✅ 已同步云端 '+rec[COLS.date]);} else {return rr.text().then(function(t){throw new Error('写入失败 HTTP '+rr.status+' '+t.slice(0,100));});} });
+      .then(function(rr){
+        if(rr.status===200||rr.status===201){
+          return saveRenew(tk).then(function(){
+            saveLocal(rec);
+            toast('✅ 已同步云端（日报 + 续费台账）'+rec[COLS.date]);
+          });
+        } else { return rr.text().then(function(t){throw new Error('写入失败 HTTP '+rr.status+' '+t.slice(0,100));}); }
+      });
   })
   .catch(function(e){ toast('云端写入失败：'+(e.message||e)); });
 });
