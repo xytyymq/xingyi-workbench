@@ -273,7 +273,7 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
 
   // 入学视频 / 体测
   demoCard('videoBox','videoPill','video',d.video,v=>`<div class="minicard"><div class="big">${v.today}</div><div class="cap">条 · 今日新增</div></div><div class="sub2">本周累计 ${v.this_week} 条 · 本月 ${v.this_month} 条</div><div class="sub2">最新：<b>${esc(v.latest_title)}</b> · ${esc(v.latest_status)}</div>`);
-  demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="minicard"><div class="big">${v.month_done??0}</div><div class="cap">本月体测人次</div></div><div class="sub2">本季(${v.quarter_label||'Q'}) ${v.quarter_done??0} 人次 · 累计 ${v.total_students??0} 名学员建档</div><div class="sub2">最近：${v.latest_date||'–'}${v.latest_student?(' · '+v.latest_student):''}</div>`);
+  demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="minicard"><div class="big">${v.month_done??0}</div><div class="cap">本月体测人次</div></div><div class="sub2">本季(${v.quarter_label||'Q'}) ${v.quarter_done??0} 人次 · 累计 ${v.total_students??0} 名学员建档</div><div class="sub2">当月上课学生 ${v.active_students??0} 人 · 计划 ${v.month_plan??0} 人次(80%) · 达标率 <b style="color:${v.rate&&v.rate.indexOf('超')>=0?'var(--green)':'var(--neon)'}">${v.rate||'–'}</b></div><div class="sub2">最近：${v.latest_date||'–'}${v.latest_student?(' · '+v.latest_student):''}</div>`);
 
   // 教练
   document.getElementById("coachBlock").innerHTML=(d.coach&&d.coach.length)?d.coach.map(x=>item(x.level,x.text)).join(""):'<div class="empty">暂无教练数据</div>';
