@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-13 23:12",
-  "data_date": "2026-10-13",
+  "generated_at": "2026-10-14 08:02",
+  "data_date": "2026-10-14",
   "overall": "red",
   "lights": [
     {
@@ -21,28 +21,25 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 440.5
+    "balance": 425.5
   },
   "coach": [],
-  "boss_todos": [
-    "2026-10-12｜无",
-    "2026-10-11｜无",
-    "2026-10-09｜无",
-    "2026-10-08｜无",
-    "2026-10-07｜无"
-  ],
+  "boss_todos": [],
   "cross_check": [],
-  "callback": "易承羽、苏音绮、黄文皓",
+  "callback": "黄知远、卢明锐、苏婉君",
+  "video": {
+    "today": 0,
+    "this_week": 0.0,
+    "this_month": 0.0,
+    "latest_title": "",
+    "latest_status": ""
+  },
+  "touch": {
+    "count": 0,
+    "types": "微信/群消息推送",
+    "feedback": ""
+  },
   "week_rows": [
-    {
-      "date": "10-07",
-      "leads": 0.0,
-      "trials": 4.0,
-      "signups": 0.0,
-      "classes": 3.0,
-      "income": 0.0,
-      "expense": 0.0
-    },
     {
       "date": "10-08",
       "leads": 0.0,
@@ -63,12 +60,12 @@
     },
     {
       "date": "10-10",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 11,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 5.0,
+      "signups": 0.0,
+      "classes": 1.0,
+      "income": 400.0,
+      "expense": 0.0
     },
     {
       "date": "10-11",
@@ -96,9 +93,18 @@
       "classes": 0,
       "income": 0,
       "expense": 0
+    },
+    {
+      "date": "10-14",
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0,
+      "income": 0,
+      "expense": 0
     }
   ],
-  "week_summary": "本周合计：新线索 1 · 报名 0 · 收入 ¥487 · 支出 ¥1512 · 净额 ¥-1025",
+  "week_summary": "本周合计：新线索 1 · 报名 0 · 收入 ¥887 · 支出 ¥1512 · 净额 ¥-625",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
