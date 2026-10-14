@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-14 23:12",
+  "generated_at": "2026-10-14 23:14",
   "data_date": "2026-10-14",
   "overall": "yellow",
   "lights": [
@@ -21,7 +21,7 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 425.5,
+    "balance": 435.5,
     "renew": {
       "month_amount": 0,
       "month_count": 0,
@@ -38,7 +38,7 @@
       "text": "日报 vs 上课记录/收支记账 数字一致，无打架"
     }
   ],
-  "callback": "熊一鸣、黄知远、于宛昕",
+  "callback": "郭一谦/郭奕妍、谢晨希、朱梦玥",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
