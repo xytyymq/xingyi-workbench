@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-10-14 08:02",
+  "generated_at": "2026-10-14 23:12",
   "data_date": "2026-10-14",
-  "overall": "red",
+  "overall": "yellow",
   "lights": [
     {
-      "level": "red",
-      "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"
+      "level": "yellow",
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 4.5）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
+    "new_leads_today": 0.0,
     "trial_arrive_rate": null,
     "month_signups": 2.0,
-    "month_pace_note": ""
+    "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
@@ -21,23 +21,47 @@
     "month_income": 0,
     "month_expense": 0,
     "month_net": 0,
-    "balance": 425.5
+    "balance": 425.5,
+    "renew": {
+      "month_amount": 0,
+      "month_count": 0,
+      "goal": 28800,
+      "goal_rate": "0%",
+      "note": ""
+    }
   },
   "coach": [],
   "boss_todos": [],
-  "cross_check": [],
-  "callback": "黄知远、卢明锐、苏婉君",
+  "cross_check": [
+    {
+      "level": "green",
+      "text": "日报 vs 上课记录/收支记账 数字一致，无打架"
+    }
+  ],
+  "callback": "熊一鸣、黄知远、于宛昕",
   "video": {
-    "today": 0,
+    "today": 0.0,
     "this_week": 0.0,
     "this_month": 0.0,
     "latest_title": "",
     "latest_status": ""
   },
   "touch": {
-    "count": 0,
+    "count": 0.0,
     "types": "微信/群消息推送",
     "feedback": ""
+  },
+  "tice": {
+    "month_done": 0,
+    "month_students": 0,
+    "quarter_done": 0,
+    "quarter_label": "Q4",
+    "total_students": 7,
+    "latest_date": "2026-08-30",
+    "latest_student": "高梓杰",
+    "active_students": 15,
+    "month_plan": 12,
+    "rate": "0%"
   },
   "week_rows": [
     {
@@ -87,21 +111,21 @@
     },
     {
       "date": "10-13",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0,
+      "income": 0.0,
+      "expense": 0.0
     },
     {
       "date": "10-14",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0,
+      "income": 0.0,
+      "expense": 0.0
     }
   ],
   "week_summary": "本周合计：新线索 1 · 报名 0 · 收入 ¥887 · 支出 ¥1512 · 净额 ¥-625",
