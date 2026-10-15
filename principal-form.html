@@ -117,6 +117,14 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="hint">每个续费 / 新购学员登记一条（学员 · 金额 · 类型 · 日期）。保存即写入工作台续费台账，校长日报自动汇总本月续费额与人数。</div>
 </div>
 
+<div class="section-title">穿线登记（每月统计）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">🎾 穿线台账</span><span class="tag">独立台账</span></div>
+  <div id="stringList"></div>
+  <button class="cta ghost" id="addString" type="button" style="margin-top:10px">+ 添加一条穿线记录</button>
+  <div class="hint">记录每笔穿线：穿线师 · 条数 · 金额(元) · 日期（选填线型号）。保存即写入工作台穿线台账，校长日报自动按月统计每个穿线师穿了多少线、金额多少。</div>
+</div>
+
 <div class="section-title">备注（选填）</div>
 <div class="card">
   <div class="field"><label>异常与问题 / 明日重点 / 需决策 / 教练反馈<span class="optional">选填</span></label>
@@ -142,7 +150,7 @@ var COLS = {
   touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
   note:'备注（选填）'
 };
-var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json';
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json';
 
 function $(id){return document.getElementById(id);}
 function val(id){return $(id).value.trim();}
@@ -283,6 +291,65 @@ function saveRenew(tk){
   });
 }
 
+// ===== 穿线台账（独立文件 data/stringing-records.json，按 id 合并，支持同日多笔/可编辑）=====
+function stringRowHTML(r){
+  r=r||{}; var id=r.id||(Date.now()+''+Math.floor(Math.random()*1000));
+  return '<div class="sx-row" data-id="'+id+'" style="margin-bottom:9px">'+
+    '<div style="display:grid;grid-template-columns:1.3fr .7fr .9fr 1.1fr 30px;gap:6px;align-items:center">'+
+      '<input class="sx-stringer" placeholder="穿线师姓名" value="'+escAttr(r.stringer||'')+'">'+
+      '<input class="sx-count" type="number" placeholder="条数" value="'+(r.count!=null?r.count:'')+'">'+
+      '<input class="sx-amount" type="number" placeholder="金额" value="'+(r.amount!=null?r.amount:'')+'">'+
+      '<input class="sx-date" type="date" value="'+(r.date||todayISO())+'">'+
+      '<button class="sx-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
+    '</div>'+
+    '<input class="sx-note" placeholder="线型号/备注（选填）" value="'+escAttr(r.note||'')+'" style="width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px;color:var(--white);font-size:12px;margin-top:5px;font-family:inherit">'+
+  '</div>';
+}
+function bindDelString(){ document.querySelectorAll('#stringList .sx-del').forEach(function(b){ b.onclick=function(){ b.parentNode.parentNode.remove(); }; }); }
+function renderString(list){
+  var box=document.getElementById('stringList');
+  box.innerHTML = (list&&list.length) ? list.map(stringRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方按钮添加。</div>';
+  bindDelString();
+}
+function collectString(){
+  var out=[];
+  document.querySelectorAll('#stringList .sx-row').forEach(function(row){
+    var id=row.getAttribute('data-id');
+    var stringer=row.querySelector('.sx-stringer').value.trim();
+    var date=row.querySelector('.sx-date').value.trim();
+    if(!stringer||!date) return;
+    var count=parseFloat(row.querySelector('.sx-count').value)||0;
+    var amount=parseFloat(row.querySelector('.sx-amount').value)||0;
+    if(count<=0 && amount<=0) return;
+    out.push({id:id,date:date,stringer:stringer,count:count,amount:amount,note:row.querySelector('.sx-note').value.trim()});
+  });
+  return out;
+}
+document.getElementById('addString').onclick=function(){
+  document.getElementById('stringList').insertAdjacentHTML('beforeend',stringRowHTML({})); bindDelString();
+};
+function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+(function loadString(){
+  var tk=window.XYGate&&XYGate.ghToken(); if(!tk) return;
+  fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){return r.status===200?r.json():null;})
+  .then(function(m){ if(!m||!m.content) return; try{ renderString(JSON.parse(b64d(m.content))); }catch(e){} })
+  .catch(function(){});
+})();
+function saveString(tk){
+  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
+  .then(function(r){ if(r.status===404) return {list:[],sha:null}; if(!r.ok) throw new Error('读取穿线台账失败'); return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};}); })
+  .then(function(st){
+    var seen={}; (st.list||[]).forEach(function(r){ seen[r.id]=r; });
+    collectString().forEach(function(r){ seen[r.id]=r; });
+    var merged=Object.keys(seen).map(function(k){return seen[k];});
+    var put={message:'chore: 穿线台账更新',content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+    if(st.sha) put.sha=st.sha;
+    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
+      .then(function(rr){ if(!rr.ok) throw new Error('穿线台账写入失败 HTTP '+rr.status); });
+  });
+}
+
 // 保存并同步云端（日报主行 + 续费台账）
 $('saveCloud').addEventListener('click',function(){
   var rec=collect();
@@ -306,9 +373,9 @@ $('saveCloud').addEventListener('click',function(){
     return fetch(api,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
       .then(function(rr){
         if(rr.status===200||rr.status===201){
-          return saveRenew(tk).then(function(){
+          return saveRenew(tk).then(function(){ return saveString(tk); }).then(function(){
             saveLocal(rec);
-            toast('✅ 已同步云端（日报 + 续费台账）'+rec[COLS.date]);
+            toast('✅ 已同步云端（日报 + 续费台账 + 穿线台账）'+rec[COLS.date]);
           });
         } else { return rr.text().then(function(t){throw new Error('写入失败 HTTP '+rr.status+' '+t.slice(0,100));}); }
       });
