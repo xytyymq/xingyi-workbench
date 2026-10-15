@@ -189,6 +189,12 @@
     <div id="ticeBox"></div>
   </section>
 
+  <!-- 穿线统计 -->
+  <section class="panel">
+    <h2><span class="ico">🎾</span> 穿线统计 <span class="pill">本月</span></h2>
+    <div id="stringBox"></div>
+  </section>
+
   <!-- 教练管理 -->
   <section class="panel">
     <h2><span class="ico">👔</span> 教练管理</h2>
@@ -202,7 +208,7 @@
     <div id="weekSummary" style="margin-top:10px"></div>
   </section>
 
-  <div class="foot">星羿体育 · 见证每一次成长<br>每晚 23:11 自动生成（次日 8:00 补拉）· 数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案</div>
+  <div class="foot">星羿体育 · 见证每一次成长<br>每晚 23:11 自动生成（次日 8:00 补拉）· 数据来源：校长日报 / 招生线索 / 员工日报 / 收支记账 / 巡课记录 / 上课记录 / 媒体库 / 体测档案 / 穿线台账</div>
 </main>
 
 <script>
@@ -274,6 +280,21 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
   // 入学视频 / 体测
   demoCard('videoBox','videoPill','video',d.video,v=>`<div class="minicard"><div class="big">${v.today}</div><div class="cap">条 · 今日新增</div></div><div class="sub2">本周累计 ${v.this_week} 条 · 本月 ${v.this_month} 条</div><div class="sub2">最新：<b>${esc(v.latest_title)}</b> · ${esc(v.latest_status)}</div>`);
   demoCard('ticeBox','ticePill','tice',d.tice,v=>`<div class="minicard"><div class="big">${v.month_done??0}</div><div class="cap">本月体测人次</div></div><div class="sub2">本季(${v.quarter_label||'Q'}) ${v.quarter_done??0} 人次 · 累计 ${v.total_students??0} 名学员建档</div><div class="sub2">当月上课学生 ${v.active_students??0} 人 · 计划 ${v.month_plan??0} 人次(80%) · 达标率 <b style="color:${v.rate&&v.rate.indexOf('超')>=0?'var(--green)':'var(--neon)'}">${v.rate||'–'}</b></div><div class="sub2">最近：${v.latest_date||'–'}${v.latest_student?(' · '+v.latest_student):''}</div>`);
+
+  // 穿线统计（本月）
+  const sx=d.stringing||{};
+  const sxBox=document.getElementById("stringBox");
+  if(sx && sx.by_stringer && sx.by_stringer.length){
+    const rows=sx.by_stringer.map(function(x){
+      const avg=x.count>0?x.amount/x.count:0;
+      return '<tr><td>'+esc(x.stringer)+'</td><td>'+x.jobs+'</td><td>'+x.count+'</td><td>¥'+Math.round(x.amount)+'</td><td>¥'+avg.toFixed(1)+'</td></tr>';
+    }).join("");
+    sxBox.innerHTML='<div class="minicard" style="margin-bottom:10px"><div class="big">¥'+Math.round(sx.month_amount||0)+'</div><div class="cap">本月穿线金额 · 共 '+(sx.month_count||0)+' 条 / '+(sx.month_jobs||0)+' 单</div></div>'+
+      '<div style="overflow-x:auto"><table><tr><th>穿线师</th><th>单量</th><th>条数</th><th>金额</th><th>均价</th></tr>'+rows+'</table></div>'+
+      '<div class="sub2">每月自动统计每个穿线师穿了多少线、金额多少；数据来自《校长日报填写》穿线台账。</div>';
+  } else {
+    sxBox.innerHTML='<div class="empty">本月暂无穿线记录，去《校长日报填写》→ 穿线台账登记</div>';
+  }
 
   // 教练
   document.getElementById("coachBlock").innerHTML=(d.coach&&d.coach.length)?d.coach.map(x=>item(x.level,x.text)).join(""):'<div class="empty">暂无教练数据</div>';
