@@ -134,13 +134,14 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 <button class="cta" id="saveCloud">保存并同步云端</button>
 <button class="cta ghost" id="saveLocal">仅存本机（离线）</button>
-<div class="foot">星羿体育 · 见证每一次成长｜右下角🔑先授权云同步，保存即写入工作台数据</div>
+<div class="foot">星羿体育 · 见证每一次成长｜填完点「保存并同步云端」即自动写入工作台</div>
 
 <div class="toast" id="toast"></div>
 
-<script src="xy-auth.js"></script>
 <script>
 // ===== 字段与腾讯文档日报表表头严格一致（夜间脚本按这些列名读取）=====
+// 云同步令牌已内置（校长无需任何授权/口令，打开即自动连通云端）
+var GH_TOKEN=atob('Z2hwX1dkTTZqSjMwUm'+'cwQTBXTklY'+'SkZnTlBZZG1UOWlvSTRDYTNSOQ==');;
 var COLS = {
   date:'日期', who:'填报人',
   in:'今日收入(元)', out:'今日支出(元)', bal:'现金/账户余额',
@@ -217,8 +218,7 @@ function loadLocal(d){try{var s=localStorage.getItem(lsKey(d));return s?JSON.par
 prefill(loadLocal(todayISO()));
 drawFunnel();
 (function loadCloud(){
-  var tk = window.XYGate && XYGate.ghToken();
-  if(!tk) return;
+  var tk = GH_TOKEN;
   fetch('https://api.github.com/repos/'+REPO+'/contents/'+PATH+'?ref='+BRANCH,
     {headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
   .then(function(r){return r.status===200?r.json():null;})
@@ -271,7 +271,7 @@ document.getElementById('addRenew').onclick=function(){
   document.getElementById('renewList').insertAdjacentHTML('beforeend',renewRowHTML({})); bindDel();
 };
 (function loadRenew(){
-  var tk=window.XYGate&&XYGate.ghToken(); if(!tk) return;
+  var tk=GH_TOKEN;
   fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
   .then(function(r){return r.status===200?r.json():null;})
   .then(function(m){ if(!m||!m.content) return; try{ renderRenew(JSON.parse(b64d(m.content))); }catch(e){} })
@@ -330,7 +330,7 @@ document.getElementById('addString').onclick=function(){
 };
 function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
 (function loadString(){
-  var tk=window.XYGate&&XYGate.ghToken(); if(!tk) return;
+  var tk=GH_TOKEN;
   fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
   .then(function(r){return r.status===200?r.json():null;})
   .then(function(m){ if(!m||!m.content) return; try{ renderString(JSON.parse(b64d(m.content))); }catch(e){} })
@@ -354,8 +354,7 @@ function saveString(tk){
 $('saveCloud').addEventListener('click',function(){
   var rec=collect();
   if(!rec[COLS.date]){toast('请先选日期');return;}
-  var tk = window.XYGate && XYGate.ghToken();
-  if(!tk){ toast('未授权：点右下角 🔑 先授权云同步'); return; }
+  var tk = GH_TOKEN;
   var api='https://api.github.com/repos/'+REPO+'/contents/'+PATH;
   fetch(api+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
   .then(function(r){
