@@ -166,18 +166,25 @@ let ALL = [];
     document.getElementById('detail').innerHTML='<div class="empty">⚠️ 上课记录加载失败：'+esc(e.message)+'<br><br>请确认网络可访问 data/student-records.csv</div>';
     return;
   }
-  // build student map
+  // 学员列存在"合写"：郭一谦/郭奕妍、洪振宇 洪振新 → 自动拆成多名学员，各自进统计/可查
+  function splitNames(raw){
+    const parts=String(raw||'').split(/[\/\s]+/).map(s=>s.trim()).filter(Boolean);
+    return parts.length?parts:[String(raw||'').trim()];
+  }
   const map={};
   rows.forEach(r=>{
-    const nm=(r['学员']||'').trim(); if(!nm) return;
-    if(!map[nm]) map[nm]={name:nm, cls:(r['班级']||'').trim(), records:[]};
-    map[nm].records.push({
+    const raw=(r['学员']||'').trim(); if(!raw) return;
+    const rec={
       date:r['日期']||'', cls:(r['班级']||'').trim(), coach:cleanCoach(r['教练']),
       att:(r['出勤']||'').trim(), score:(r['技能评分']||'').trim(),
       prog:(r['进步点']||'').trim(), weak:(r['待加强']||'').trim(),
       fb:(r['家长反馈']||'').trim(), tempo:(r['课堂节奏']||'').trim(),
       engage:(r['学员参与度']||'').trim(), interact:(r['教练互动']||'').trim(),
       renew:(r['价格/续费提及']||'').trim(), hl:(r['教学亮点']||'').trim()
+    };
+    splitNames(raw).forEach(nm=>{
+      if(!map[nm]) map[nm]={name:nm, cls:rec.cls, records:[]};
+      map[nm].records.push(rec);
     });
   });
   STUDENTS = Object.values(map).map(s=>{
