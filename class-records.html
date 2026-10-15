@@ -69,6 +69,34 @@
   .rec .hl .k{color:var(--cyan)}
   .att-y{color:var(--good)} .att-n{color:var(--bad)}
   .foot{text-align:center;color:var(--muted);font-size:11px;padding:14px}
+  .back-btn{display:none;align-items:center;gap:6px;background:var(--card);color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-size:14px;
+    margin-bottom:12px;cursor:pointer;font-family:inherit}
+  .back-btn:active{background:rgba(86,216,240,.16)}
+
+  /* ===== 移动端框架（≤760px）：单栏布局 + 学员列表/详情 两态切换 ===== */
+  @media (max-width:760px){
+    header{padding:12px 14px;position:static}
+    h1{font-size:17px;letter-spacing:0}
+    .sub{font-size:11px;line-height:1.5}
+    .stat-row{gap:8px;margin-top:10px}
+    .stat{flex:1 1 calc(50% - 4px);min-width:0;padding:7px 10px}
+    .stat b{font-size:16px}
+    .toolbar{gap:8px;margin-top:10px}
+    input{flex:1 1 100%;min-width:0}
+    select{flex:1 1 calc(50% - 4px);min-width:0}
+    .wrap{display:block;min-height:auto}
+    .list{width:100%;max-height:none;border-right:none;border-bottom:none}
+    .detail{max-height:none;padding:14px}
+    .back-btn{display:inline-flex}
+    body.m-detail .list{display:none}
+    body:not(.m-detail) .detail{display:none}
+    .pname{font-size:20px}
+    .tile{flex:1 1 calc(50% - 8px);min-width:0}
+    .tl{margin-left:2px;padding-left:14px}
+    .rec:before{left:-21px}
+    .rec .dt{font-size:14px}
+  }
 </style>
 </head>
 <body>
@@ -119,6 +147,8 @@ function normDate(d){
 }
 function dispDate(d){ const n=normDate(d); const m=n.match(/(\d{4})-(\d{2})-(\d{2})/); return m? (m[2]*1)+'.'+(m[3]*1) : d; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+// 源表教练名尾部常带编号数字（如「杜愈滨1」），展示/筛选时统一清洗
+function cleanCoach(s){ return String(s==null?'':s).replace(/[\s\d]+$/,'').trim(); }
 
 let STUDENTS = []; // [{name, cls, records:[{date,cls,coach,att,score,prog,weak,fb,hl,...}]}]
 let ALL = [];
@@ -142,7 +172,7 @@ let ALL = [];
     const nm=(r['学员']||'').trim(); if(!nm) return;
     if(!map[nm]) map[nm]={name:nm, cls:(r['班级']||'').trim(), records:[]};
     map[nm].records.push({
-      date:r['日期']||'', cls:(r['班级']||'').trim(), coach:(r['教练']||'').trim(),
+      date:r['日期']||'', cls:(r['班级']||'').trim(), coach:cleanCoach(r['教练']),
       att:(r['出勤']||'').trim(), score:(r['技能评分']||'').trim(),
       prog:(r['进步点']||'').trim(), weak:(r['待加强']||'').trim(),
       fb:(r['家长反馈']||'').trim(), tempo:(r['课堂节奏']||'').trim(),
@@ -213,7 +243,8 @@ function selectStudent(nm){
   const attRate=cnt?Math.round(att/cnt*100):0;
   const recent=s.records[cnt-1];
   const coaches=[...new Set(s.records.map(r=>r.coach).filter(Boolean))];
-  let h=`<div class="phead"><div class="pname">${esc(s.name)}`+
+  let h=`<button class="back-btn" id="backBtn">← 返回学员列表</button>`;
+  h+=`<div class="phead"><div class="pname">${esc(s.name)}`+
     (s.cls?`<span class="cls">${esc(s.cls)}</span>`:'')+`</div></div>`;
   h+=`<div class="pmeta"><span>上课 ${cnt} 次</span><span>出勤率 ${attRate}%</span>`+
      `<span>最近 ${recent?dispDate(recent.date):'—'}</span><span>教练 ${coaches.join('、')||'—'}</span></div>`;
@@ -244,6 +275,13 @@ function selectStudent(nm){
   });
   h+=`</div>`;
   document.getElementById('detail').innerHTML=h;
+  const bb=document.getElementById('backBtn');
+  if(bb) bb.onclick=()=>{ document.body.classList.remove('m-detail'); window.scrollTo(0,0); };
+  // 手机端：选中后切到详情视图
+  if(window.innerWidth<=760){
+    document.body.classList.add('m-detail');
+    window.scrollTo(0,0);
+  }
 }
 
 document.getElementById('search').addEventListener('input',renderList);
