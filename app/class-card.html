@@ -72,6 +72,11 @@ function parseCSV(text){
 function normDate(d){ const m=String(d||'').match(/(\d{1,2})[.](\d{1,2})/); return m?('2026-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0')):String(d||''); }
 function dispDate(d){ const n=normDate(d); const m=n.match(/(\d{4})-(\d{2})-(\d{2})/); return m?(m[2]*1)+'.'+(m[3]*1):d; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+// 学员列可能合写：郭一谦/郭奕妍、洪振宇 洪振新 → 拆成多名学员精确匹配
+function splitNames(raw){
+  const parts=String(raw||'').split(/[\/\s]+/).map(s=>s.trim()).filter(Boolean);
+  return parts.length?parts:[String(raw||'').trim()];
+}
 
 function getChild(){
   try{ const t=JSON.parse(localStorage.getItem('trial_child')||'{}'); return t.childName||t.name||''; }
@@ -98,7 +103,7 @@ function showNotFound(name){
   }catch(e){
     document.getElementById('app').innerHTML='<div class="empty">⚠️ 数据加载失败：'+esc(e.message)+'</div>'; return;
   }
-  const recs=rows.filter(r=>(r['学员']||'').trim()===name || (r['学员']||'').includes(name))
+  const recs=rows.filter(r=>{ const raw=(r['学员']||'').trim(); return raw===name || splitNames(raw).includes(name); })
     .map(r=>({date:r['日期']||'',cls:(r['班级']||'').trim(),coach:(r['教练']||'').trim(),
       att:(r['出勤']||'').trim(),score:(r['技能评分']||'').trim(),prog:(r['进步点']||'').trim(),
       weak:(r['待加强']||'').trim(),fb:(r['家长反馈']||'').trim(),hl:(r['教学亮点']||'').trim()}));
