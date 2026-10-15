@@ -373,7 +373,7 @@ $('saveCloud').addEventListener('click',function(){
     return fetch(api,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
       .then(function(rr){
         if(rr.status===200||rr.status===201){
-          return saveRenew(tk).then(function(){ return saveString(tk); }).then(function(){
+          return saveRenew(tk).then(function(){ return saveString(tk).catch(function(e){ console.warn('穿线台账写入失败（不影响日报/续费主流程）',e); }); }).then(function(){
             saveLocal(rec);
             toast('✅ 已同步云端（日报 + 续费台账 + 穿线台账）'+rec[COLS.date]);
           });
