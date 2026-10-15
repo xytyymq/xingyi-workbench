@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-15 08:02",
+  "generated_at": "2026-10-15 23:17",
   "data_date": "2026-10-15",
   "overall": "red",
   "lights": [
@@ -33,7 +33,7 @@
   "coach": [],
   "boss_todos": [],
   "cross_check": [],
-  "callback": "黄文皓、徐宁远、卢明锐",
+  "callback": "卢明锐、苏音绮、熊一鸣",
   "video": {
     "today": 0,
     "this_week": 0.0,
@@ -57,6 +57,12 @@
     "active_students": 15,
     "month_plan": 12,
     "rate": "0%"
+  },
+  "stringing": {
+    "month_count": 0,
+    "month_amount": 0,
+    "month_jobs": 0,
+    "by_stringer": []
   },
   "week_rows": [
     {
