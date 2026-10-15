@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>星羿 · 上课记录卡</title>
+<style>
+  :root{
+    --navy:#0C1C42; --navy2:#06102C; --cyan:#56D8F0; --lime:#C6F94B;
+    --orange:#FF7A33; --txt:#EAF2FF; --muted:#9FB2D6; --card:#10234d;
+    --line:#1d3a73; --good:#39D98A; --bad:#FF6B6B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(120% 80% at 0% 0%,rgba(86,216,240,.18),transparent 40%),
+      linear-gradient(160deg,var(--navy),var(--navy2));color:var(--txt);
+    min-height:100vh;padding:14px}
+  .card{max-width:480px;margin:0 auto;background:rgba(16,35,77,.55);
+    border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    box-shadow:0 10px 40px rgba(0,0,0,.35)}
+  .hero{position:relative;padding:20px 18px 16px;background:
+      linear-gradient(135deg,rgba(198,249,75,.12),transparent 60%);border-bottom:1px solid var(--line)}
+  .hero .name{font-size:26px;font-weight:800;color:#fff}
+  .hero .name .cls{font-size:13px;color:var(--cyan);font-weight:400;margin-left:8px}
+  .hero .meta{color:var(--muted);font-size:12px;margin-top:6px}
+  .hero .meta span{margin-right:12px}
+  .hero .ribbon{position:absolute;right:-30px;top:14px;background:var(--lime);color:#06102C;
+    font-size:11px;font-weight:700;padding:4px 36px;transform:rotate(38deg)}
+  .body{padding:14px 16px 20px}
+  .sec{margin-top:16px}
+  .sec-t{font-size:14px;font-weight:700;color:var(--lime);border-left:4px solid var(--lime);
+    padding-left:9px;margin-bottom:9px}
+  .snap{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-width:92px}
+  .tile .k{font-size:11px;color:var(--muted)}.tile .v{font-size:18px;font-weight:700;color:var(--lime);margin-top:3px}
+  .tile .u{font-size:10px;color:var(--muted);margin-left:2px}
+  .tl{position:relative;margin-left:4px;padding-left:16px;border-left:2px solid var(--line)}
+  .rec{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:11px;position:relative}
+  .rec:before{content:"";position:absolute;left:-23px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--lime);border:2px solid var(--navy2)}
+  .rec .top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .rec .dt{font-size:15px;font-weight:700;color:var(--cyan)}
+  .rec .tag{font-size:11px;color:var(--muted)}
+  .rec .row{display:flex;flex-wrap:wrap;gap:5px 14px;margin-top:7px;font-size:12px}
+  .rec .row .lbl{color:var(--muted);margin-right:3px}
+  .rec .hl{margin-top:7px;font-size:12px;line-height:1.6}
+  .rec .hl .k{color:var(--cyan)}
+  .att-y{color:var(--good)} .att-n{color:var(--bad)}
+  .empty{text-align:center;color:var(--muted);margin-top:50px;font-size:15px;padding:0 20px;line-height:1.8}
+  .foot{text-align:center;color:var(--muted);font-size:11px;margin-top:16px}
+  .hint{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+  .back{display:inline-block;margin:10px auto 0;color:var(--cyan);font-size:12px;text-decoration:none}
+</style>
+</head>
+<body>
+<div id="app"><div class="empty">加载中…</div></div>
+<div class="foot">星羿体育 · 见证每一次成长 🏸</div>
+
+<script>
+const CSV_PATH='../data/student-records.csv';
+function parseCSV(text){
+  const rows=[]; let row=[], field='', inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){ if(c==='"'){ if(text[i+1]==='"'){field+='"';i++;} else inQ=false; } else field+=c; }
+    else { if(c==='"') inQ=true; else if(c===','){ row.push(field); field=''; }
+      else if(c==='\n'){ row.push(field); rows.push(row); row=[]; field=''; }
+      else if(c==='\r'){} else field+=c; }
+  }
+  if(field.length||row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+function normDate(d){ const m=String(d||'').match(/(\d{1,2})[.](\d{1,2})/); return m?('2026-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0')):String(d||''); }
+function dispDate(d){ const n=normDate(d); const m=n.match(/(\d{4})-(\d{2})-(\d{2})/); return m?(m[2]*1)+'.'+(m[3]*1):d; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function getChild(){
+  try{ const t=JSON.parse(localStorage.getItem('trial_child')||'{}'); return t.childName||t.name||''; }
+  catch(e){ return ''; }
+}
+function showLogin(){
+  document.getElementById('app').innerHTML='<div class="empty">🔒 请先登录星羿家长端<br><br>'+
+    '上课记录属于孩子隐私，需登录后查看。<br>请从星羿家长端 App 内打开本页。</div>';
+}
+function showNotFound(name){
+  document.getElementById('app').innerHTML='<div class="empty">未找到「'+esc(name)+'」的上课记录<br><br>'+
+    '该学员尚未录入上课记录，或姓名与系统不一致。<br>如有疑问请联系带课教练。</div>';
+}
+
+(async function(){
+  const name=getChild();
+  if(!name){ showLogin(); return; }
+  let rows;
+  try{
+    const res=await fetch(CSV_PATH,{cache:'no-store'}); if(!res.ok) throw new Error('HTTP '+res.status);
+    const table=parseCSV(await res.text());
+    const head=table[0].map(h=>h.trim());
+    rows=table.slice(1).map(r=>{ const o={}; head.forEach((h,i)=>o[h]=r[i]||''); return o; });
+  }catch(e){
+    document.getElementById('app').innerHTML='<div class="empty">⚠️ 数据加载失败：'+esc(e.message)+'</div>'; return;
+  }
+  const recs=rows.filter(r=>(r['学员']||'').trim()===name || (r['学员']||'').includes(name))
+    .map(r=>({date:r['日期']||'',cls:(r['班级']||'').trim(),coach:(r['教练']||'').trim(),
+      att:(r['出勤']||'').trim(),score:(r['技能评分']||'').trim(),prog:(r['进步点']||'').trim(),
+      weak:(r['待加强']||'').trim(),fb:(r['家长反馈']||'').trim(),hl:(r['教学亮点']||'').trim()}));
+  if(!recs.length){ showNotFound(name); return; }
+  recs.sort((a,b)=>normDate(a.date).localeCompare(normDate(b.date)));
+  const cls=[...new Set(recs.map(r=>r.cls).filter(Boolean))][0]||'';
+  const cnt=recs.length;
+  const att=recs.filter(r=>r.att==='1').length;
+  const attRate=cnt?Math.round(att/cnt*100):0;
+  const recent=recs[cnt-1];
+  const coaches=[...new Set(recs.map(r=>r.coach).filter(Boolean))];
+  let h=`<div class="card"><div class="hero"><div class="ribbon">上课记录</div>`+
+    `<div class="name">${esc(name)}`+(cls?`<span class="cls">${esc(cls)}</span>`:'')+`</div>`+
+    `<div class="meta"><span>上课 ${cnt} 次</span><span>出勤率 ${attRate}%</span>`+
+    `<span>最近 ${recent?dispDate(recent.date):'—'}</span></div></div>`;
+  h+=`<div class="body">`;
+  h+=`<div class="snap">`+
+     `<div class="tile"><div class="k">上课次数</div><div class="v">${cnt}<span class="u">节</span></div></div>`+
+     `<div class="tile"><div class="k">出勤率</div><div class="v">${attRate}<span class="u">%</span></div></div>`+
+     `<div class="tile"><div class="k">最近上课</div><div class="v" style="font-size:15px">${recent?dispDate(recent.date):'—'}</div></div>`+
+     `<div class="tile"><div class="k">带课教练</div><div class="v" style="font-size:15px">${coaches.length}</div></div></div>`;
+  h+=`<div class="sec"><div class="sec-t">上课记录时间线（${cnt} 节）</div><div class="tl">`;
+  recs.forEach(r=>{
+    h+=`<div class="rec"><div class="top"><span class="dt">${dispDate(r.date)}</span>`+
+       `<span class="tag">${esc(r.cls||'')} · ${esc(r.coach||'')}</span></div>`;
+    h+=`<div class="row"><span><span class="lbl">出勤</span><b class="${r.att==='1'?'att-y':'att-n'}">${r.att==='1'?'✓ 到课':'✗ 缺勤'}</b></span>`+
+       (r.score?`<span><span class="lbl">评分</span><b>${esc(r.score)}</b></span>`:'')+`</div>`;
+    const lines=[];
+    if(r.prog) lines.push(`<span class="k">进步点</span> ${esc(r.prog)}`);
+    if(r.weak) lines.push(`<span class="k">待加强</span> ${esc(r.weak)}`);
+    if(r.hl) lines.push(`<span class="k">教学亮点</span> ${esc(r.hl)}`);
+    if(r.fb) lines.push(`<span class="k">家长反馈</span> ${esc(r.fb)}`);
+    if(lines.length) h+=`<div class="hl">${lines.join('<br>')}</div>`;
+    h+=`</div>`;
+  });
+  h+=`</div></div></div></div>`;
+  document.getElementById('app').innerHTML=h;
+})();
+</script>
+</body>
+</html>
