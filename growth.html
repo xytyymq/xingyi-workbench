@@ -93,10 +93,33 @@
   .pc{background:var(--card);border:1px solid var(--line);border-radius:8px;
     padding:6px 10px;font-size:12px;color:var(--muted)}
   .pc b{color:var(--txt)}
-  @media(max-width:860px){
-    .wrap{flex-direction:column}
-    .list{width:100%;max-height:240px;border-right:none;border-bottom:1px solid var(--line)}
-    .detail{max-height:none}
+  .back-btn{display:none;align-items:center;gap:6px;background:var(--card);color:var(--txt);
+    border:1px solid var(--line);border-radius:9px;padding:8px 14px;font-size:14px;
+    margin-bottom:12px;cursor:pointer;font-family:inherit}
+  .back-btn:active{background:rgba(86,216,240,.16)}
+
+  /* ===== 移动端框架（≤760px）：单栏布局 + 学员列表/详情 两态切换 ===== */
+  @media(max-width:760px){
+    header{padding:12px 14px;position:static}
+    h1{font-size:17px;letter-spacing:0}
+    .sub{font-size:11px;line-height:1.5}
+    .stat-row{gap:8px;margin-top:10px}
+    .stat{flex:1 1 calc(50% - 4px);min-width:0;padding:7px 10px}
+    .stat b{font-size:16px}
+    .toolbar{gap:8px;margin-top:10px}
+    input{flex:1 1 100%;min-width:0}
+    select{flex:1 1 100%;min-width:0}
+    .wrap{display:block;min-height:auto}
+    .list{width:100%;max-height:none;border-right:none;border-bottom:none}
+    .detail{max-height:none;padding:14px}
+    .back-btn{display:inline-flex}
+    body.m-detail .list{display:none}
+    body:not(.m-detail) .detail{display:none}
+    .pname{font-size:20px}
+    .charts{grid-template-columns:1fr;gap:10px}
+    .tile{flex:1 1 calc(50% - 8px);min-width:0}
+    .trend .row{font-size:12px}
+    .trend .vv{font-size:12px}
   }
 </style>
 </head>
@@ -199,6 +222,10 @@ function select(id){
   selectedId=id;
   renderList();
   renderDetail();
+  if(window.innerWidth<=760){
+    document.body.classList.add('m-detail');
+    window.scrollTo(0,0);
+  }
 }
 
 function svgLine(title,unit,pts,better){
@@ -262,7 +289,8 @@ function renderDetail(){
   const last=tests[n-1];
   const gender=s.gender? (s.gender==='男'?'男':s.gender==='女'?'女':s.gender):'—';
   const age=s.age!=null? s.age+'岁':'—';
-  let html=`<div class="phead"><div>
+  let html=`<button class="back-btn" id="backBtn">← 返回学员列表</button>`;
+  html+=`<div class="phead"><div>
       <div class="pname">${s.name||'未命名'}<span class="cls">${s.cls||'未分班'}</span></div>
       <div class="pmeta"><span>性别 ${gender}</span><span>年龄 ${age}</span>
         <span>体测 ${n} 次</span><span>最近 ${last?last.date:'—'}</span></div>
@@ -281,7 +309,7 @@ function renderDetail(){
       if(last.m.posture) html+=`<div class="sec-title">身体姿态</div><div class="posture-chips"><span class="pc"><b>${last.m.posture}</b></span></div>`;
       if(last.note) html+=`<div class="note"><div class="h">📝 教练寄语（${last.date}）</div>${last.note}</div>`;
     }
-    box.innerHTML=html; return;
+    finishDetail(html); return;
   }
 
   // composite
@@ -337,6 +365,14 @@ function renderDetail(){
   box.innerHTML=html;
 }
 
+// 详情渲染收尾：写入内容并绑定「返回列表」按钮（手机端）
+function finishDetail(html){
+  const box=document.getElementById('detail');
+  box.innerHTML=html;
+  const bb=document.getElementById('backBtn');
+  if(bb) bb.onclick=()=>{ document.body.classList.remove('m-detail'); window.scrollTo(0,0); };
+}
+
 (async function(){
   const data=await loadData();
   if(!data){ document.getElementById('list').innerHTML='<div class="empty">⚠️ 数据加载失败，请确认 data/profiles.json 可访问</div>'; return; }
@@ -345,7 +381,8 @@ function renderDetail(){
   renderStats(); renderClassFilter(); renderList();
   document.getElementById('clsFilter').onchange=renderList;
   document.getElementById('search').oninput=renderList;
-  if(STUDENTS.length) select(STUDENTS[0].id);
+  // 桌面端默认选中首位学员；手机端保持列表态（由用户点选进入详情）
+  if(STUDENTS.length && window.innerWidth>760) select(STUDENTS[0].id);
 })();
 </script>
 </body>
