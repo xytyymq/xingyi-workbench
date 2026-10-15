@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>星羿 · 学员成长曲线（馆内管理）</title>
+<style>
+  :root{
+    --navy:#0C1C42; --navy2:#06102C; --cyan:#56D8F0; --lime:#C6F94B;
+    --orange:#FF7A33; --txt:#EAF2FF; --muted:#9FB2D6; --card:#10234d;
+    --line:#1d3a73; --good:#39D98A; --bad:#FF6B6B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--txt);min-height:100vh}
+  header{padding:16px 20px;border-bottom:1px solid var(--line);
+    background:rgba(6,16,44,.6);position:sticky;top:0;z-index:5;backdrop-filter:blur(6px)}
+  h1{margin:0;font-size:20px;letter-spacing:1px}
+  h1 .em{color:var(--lime)}
+  .sub{color:var(--muted);font-size:12px;margin-top:4px}
+  .stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;
+    padding:8px 12px;font-size:12px;color:var(--muted)}
+  .stat b{display:block;font-size:18px;color:var(--txt);margin-top:2px}
+  .stat.ok b{color:var(--lime)} .stat.wait b{color:var(--orange)}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  select,input{background:var(--card);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:8px 10px;font-size:13px;outline:none}
+  input{flex:1;min-width:160px}
+  .wrap{display:flex;gap:0;align-items:stretch;min-height:calc(100vh - 170px)}
+  .list{width:300px;border-right:1px solid var(--line);overflow:auto;max-height:calc(100vh - 170px)}
+  .list-head{padding:8px 14px;color:var(--muted);font-size:12px;position:sticky;top:0;
+    background:var(--navy);border-bottom:1px solid var(--line)}
+  .grp-title{padding:6px 14px;font-size:12px;color:var(--cyan);background:rgba(86,216,240,.08)}
+  .stu{display:flex;justify-content:space-between;align-items:center;padding:9px 14px;
+    cursor:pointer;border-bottom:1px solid rgba(29,58,115,.4);font-size:14px}
+  .stu:hover{background:rgba(86,216,240,.08)}
+  .stu.active{background:rgba(198,249,75,.14);border-left:3px solid var(--lime)}
+  .stu .nm{font-weight:600}
+  .stu .meta{font-size:11px;color:var(--muted)}
+  .badge{font-size:10px;padding:2px 6px;border-radius:6px;margin-left:6px}
+  .badge.ok{background:rgba(198,249,75,.18);color:var(--lime)}
+  .badge.wait{background:rgba(255,122,51,.18);color:var(--orange)}
+  .detail{flex:1;padding:18px 22px;overflow:auto;max-height:calc(100vh - 170px)}
+  .empty{color:var(--muted);text-align:center;margin-top:80px;font-size:15px}
+  .phead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+  .pname{font-size:24px;font-weight:700}
+  .pname .cls{font-size:13px;color:var(--cyan);margin-left:8px;font-weight:400}
+  .pmeta{color:var(--muted);font-size:13px;margin-top:6px}
+  .pmeta span{margin-right:14px}
+  .pending{background:rgba(255,122,51,.1);border:1px solid rgba(255,122,51,.4);
+    border-radius:14px;padding:22px;text-align:center;margin-top:18px}
+  .pending .big{font-size:40px}
+  .pending .t{font-size:16px;margin-top:8px;color:var(--orange)}
+  .pending .d{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.6}
+  .snap{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;min-width:110px}
+  .tile .k{font-size:12px;color:var(--muted)}
+  .tile .v{font-size:20px;font-weight:700;margin-top:4px;color:var(--lime)}
+  .tile .u{font-size:11px;color:var(--muted);margin-left:3px}
+  .sec-title{font-size:15px;margin:22px 0 10px;color:var(--lime);
+    border-left:4px solid var(--lime);padding-left:10px}
+  .charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+  .chart{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .chart-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .ct{font-size:13px;font-weight:600}
+  .cu{font-size:10px;color:var(--muted)}
+  .chart-svg{width:100%;height:auto;display:block}
+  .ln{fill:none;stroke:var(--lime);stroke-width:2.4}
+  .dot{fill:var(--cyan);stroke:#fff;stroke-width:1}
+  .gl{stroke:rgba(159,178,214,.18);stroke-dasharray:3 3}
+  .vlab{fill:var(--txt);font-size:9px;text-anchor:middle}
+  .xlab{fill:var(--muted);font-size:9px;text-anchor:middle}
+  .chart-empty{background:var(--card);border:1px dashed var(--line);border-radius:12px;
+    padding:18px;text-align:center;color:var(--muted);font-size:13px;height:170px;
+    display:flex;flex-direction:column;justify-content:center}
+  .chart-empty b{color:var(--txt);font-size:14px}
+  .trend{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .trend .row{display:flex;justify-content:space-between;align-items:center;
+    padding:7px 0;border-bottom:1px solid rgba(29,58,115,.4);font-size:13px}
+  .trend .row:last-child{border-bottom:none}
+  .trend .nm{color:var(--txt)}
+  .trend .vv{font-weight:600}
+  .up{color:var(--good)} .down{color:var(--bad)}
+  .arrow{font-size:15px;margin:0 4px}
+  .improved-badge{display:inline-block;background:rgba(198,249,75,.16);color:var(--lime);
+    border-radius:8px;padding:4px 10px;font-size:13px;margin-bottom:10px}
+  .note{background:rgba(86,216,240,.08);border:1px solid rgba(86,216,240,.3);
+    border-radius:12px;padding:12px 16px;margin-top:8px;font-size:14px;line-height:1.7}
+  .note .h{color:var(--cyan);font-size:13px;margin-bottom:6px}
+  .posture-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+  .pc{background:var(--card);border:1px solid var(--line);border-radius:8px;
+    padding:6px 10px;font-size:12px;color:var(--muted)}
+  .pc b{color:var(--txt)}
+  @media(max-width:860px){
+    .wrap{flex-direction:column}
+    .list{width:100%;max-height:240px;border-right:none;border-bottom:1px solid var(--line)}
+    .detail{max-height:none}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🏸 学员<span class="em">成长曲线</span> · 馆内管理</h1>
+  <div class="sub">数据源：云端主档 profiles.json（与体测档案、家长端同一份）· 仅展示有体测记录的学员</div>
+  <div class="stat-row" id="stats"></div>
+  <div class="toolbar">
+    <select id="clsFilter"><option value="">全部班级</option></select>
+    <input id="search" placeholder="搜索学员姓名…" />
+  </div>
+</header>
+<div class="wrap">
+  <div class="list" id="list"><div class="empty">加载中…</div></div>
+  <div class="detail" id="detail"><div class="empty">← 从左侧选择一名学员查看成长曲线</div></div>
+</div>
+
+<script>
+const METRICS = {
+  height:{name:'身高',unit:'cm',cat:'static',better:'up'},
+  weight:{name:'体重',unit:'kg',cat:'static',better:'up'},
+  sitReach:{name:'坐位体前屈',unit:'cm',cat:'dynamic',better:'up'},
+  singleStand:{name:'单脚站立',unit:'s',cat:'dynamic',better:'up'},
+  wallSquat:{name:'靠墙静蹲',unit:'s',cat:'dynamic',better:'up'},
+  standingJump:{name:'立定跳远',unit:'cm',cat:'dynamic',better:'up'},
+  verticalJump:{name:'纵跳',unit:'cm',cat:'dynamic',better:'up'},
+  rope:{name:'跳绳',unit:'次/分',cat:'dynamic',better:'up'},
+  run50:{name:'50米跑',unit:'s',cat:'dynamic',better:'down'},
+  swing15:{name:'15次挥拍',unit:'s',cat:'tech',better:'down'},
+  footwork:{name:'步法敏捷',unit:'s',cat:'tech',better:'down'},
+  serve:{name:'发球',unit:'个',cat:'tech',better:'up'},
+  rally:{name:'连续对拉',unit:'个',cat:'tech',better:'up'},
+  clear:{name:'高远球',unit:'个',cat:'tech',better:'up'},
+  reaction:{name:'反应速度',unit:'ms',cat:'tech',better:'down'},
+  posture:{name:'身体姿态',cat:'posture',better:null}
+};
+const CATS=[['static','静态指标'],['dynamic','动态指标'],['tech','技术专项']];
+const NUM_KEYS=Object.keys(METRICS).filter(k=>METRICS[k].cat!=='posture');
+
+let STUDENTS=[];
+let selectedId=null;
+
+function fmt(v){ if(v===null||v===undefined||!isFinite(v)) return '—';
+  return (Math.round(v*10)/10).toString(); }
+function sortTests(s){ return (s.tests||[]).slice().sort((a,b)=> (a.date||'').localeCompare(b.date||'')); }
+function numTests(s){ return (s.tests||[]).length; }
+
+async function loadData(){
+  const urls=['data/profiles.json','../data/profiles.json',
+    'https://xytyymq.github.io/xingyi-workbench/data/profiles.json'];
+  for(const u of urls){
+    try{ const r=await fetch(u); if(r.ok){ const j=await r.json();
+      return Array.isArray(j)? j : (j.students||[]); } }catch(e){}
+  }
+  return null;
+}
+
+function renderStats(){
+  const total=STUDENTS.length;
+  const drawable=STUDENTS.filter(s=>numTests(s)>=2).length;
+  const wait=total-drawable;
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><span>在读学员</span><b>${total}</b></div>
+    <div class="stat ok"><span>可画成长曲线(≥2次)</span><b>${drawable}</b></div>
+    <div class="stat wait"><span>数据待积累(≤1次)</span><b>${wait}</b></div>`;
+}
+
+function renderClassFilter(){
+  const cls=new Set(STUDENTS.map(s=>s.cls).filter(Boolean));
+  const sel=document.getElementById('clsFilter');
+  [...cls].sort().forEach(c=>{ const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+}
+
+function renderList(){
+  const cls=document.getElementById('clsFilter').value;
+  const q=document.getElementById('search').value.trim();
+  const box=document.getElementById('list');
+  let arr=STUDENTS.filter(s=> (!cls||s.cls===cls) && (!q||(s.name||'').includes(q)));
+  if(!arr.length){ box.innerHTML='<div class="empty">无匹配学员</div>'; return; }
+  // group by class
+  const groups={};
+  arr.forEach(s=>{ const c=s.cls||'未分班'; (groups[c]=groups[c]||[]).push(s); });
+  let html='';
+  Object.keys(groups).sort().forEach(c=>{
+    html+=`<div class="grp-title">${c}（${groups[c].length}）</div>`;
+    groups[c].forEach(s=>{
+      const n=numTests(s);
+      const bd = n>=2? '<span class="badge ok">📈可画</span>' : (n===1?'<span class="badge wait">⏳1次</span>':'<span class="badge wait">无体测</span>');
+      html+=`<div class="stu ${s.id===selectedId?'active':''}" data-id="${s.id}">
+        <div><div class="nm">${s.name||'未命名'}</div>
+        <div class="meta">${n} 次体测</div></div>${bd}</div>`;
+    });
+  });
+  box.innerHTML=html;
+  box.querySelectorAll('.stu').forEach(el=>el.onclick=()=>select(el.dataset.id));
+}
+
+function select(id){
+  selectedId=id;
+  renderList();
+  renderDetail();
+}
+
+function svgLine(title,unit,pts,better){
+  const W=300,H=172,padL=38,padR=14,padT=30,padB=26;
+  if(!pts||pts.length<2) return `<div class="chart-empty"><b>${title}</b><span>数据不足<br>（需≥2次体测）</span></div>`;
+  const vals=pts.map(p=>p.value);
+  let mn=Math.min(...vals),mx=Math.max(...vals);
+  if(mn===mx){mn-=1;mx+=1;}
+  const range=mx-mn, plotW=W-padL-padR, plotH=H-padT-padB;
+  const x=i=> padL + (pts.length===1?plotW/2:plotW*i/(pts.length-1));
+  const y=v=> padT + plotH - (v-mn)/range*plotH;
+  let g=`<line x1="${padL}" y1="${y(mn).toFixed(1)}" x2="${W-padR}" y2="${y(mn).toFixed(1)}" class="gl"/>`;
+  g+=`<line x1="${padL}" y1="${y(mx).toFixed(1)}" x2="${W-padR}" y2="${y(mx).toFixed(1)}" class="gl"/>`;
+  const path=pts.map((p,i)=>`${i?'L':'M'}${x(i).toFixed(1)} ${y(p.value).toFixed(1)}`).join(' ');
+  const dots=pts.map((p,i)=>`<circle cx="${x(i).toFixed(1)}" cy="${y(p.value).toFixed(1)}" r="3.2" class="dot"/>`).join('');
+  const vl=pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${(y(p.value)-7).toFixed(1)}" class="vlab">${fmt(p.value)}</text>`).join('');
+  const xl=pts.map((p,i)=>`<text x="${x(i).toFixed(1)}" y="${H-8}" class="xlab">${p.date.slice(5)}</text>`).join('');
+  const dir=better==='up'?'↑越高越好':better==='down'?'↓越低越好':'';
+  return `<div class="chart"><div class="chart-h"><span class="ct">${title}</span><span class="cu">${unit||''} ${dir}</span></div>
+    <svg viewBox="0 0 ${W} ${H}" class="chart-svg">${g}<path d="${path}" class="ln"/>${dots}${vl}${xl}</svg></div>`;
+}
+
+function compositeFor(s){
+  const tests=sortTests(s);
+  const range={};
+  NUM_KEYS.forEach(k=>{
+    const vals=tests.map(t=>t.m&&t.m[k]).filter(v=>typeof v==='number'&&isFinite(v));
+    if(vals.length>=2) range[k]={min:Math.min(...vals),max:Math.max(...vals)};
+  });
+  const out=[];
+  tests.forEach(t=>{
+    let sum=0,n=0;
+    NUM_KEYS.forEach(k=>{ const v=t.m&&t.m[k];
+      if(typeof v==='number'&&isFinite(v)&&range[k]){
+        const r=range[k]; sum += (r.max>r.min?(v-r.min)/(r.max-r.min)*100:50); n++; } });
+    if(n) out.push({date:t.date,value:+(sum/n).toFixed(1)});
+  });
+  return out;
+}
+
+function trend(s){
+  const tests=sortTests(s);
+  if(tests.length<2) return null;
+  const f=tests[0],l=tests[tests.length-1];
+  const rows=[];
+  NUM_KEYS.forEach(k=>{ const m=METRICS[k];
+    const a=f.m&&f.m[k], b=l.m&&l.m[k];
+    if(typeof a==='number'&&isFinite(a)&&typeof b==='number'&&isFinite(b)&&a!==b){
+      const delta=b-a; const imp = m.better==='up'? delta>0 : delta<0;
+      const pct = a!==0? Math.round(delta/a*100):0;
+      rows.push({name:m.name,unit:m.unit,a,b,delta,imp,pct});
+    } });
+  return {rows, improved:rows.filter(r=>r.imp).length, total:rows.length};
+}
+
+function renderDetail(){
+  const box=document.getElementById('detail');
+  const s=STUDENTS.find(x=>x.id===selectedId);
+  if(!s){ box.innerHTML='<div class="empty">← 从左侧选择一名学员</div>'; return; }
+  const tests=sortTests(s); const n=tests.length;
+  const last=tests[n-1];
+  const gender=s.gender? (s.gender==='男'?'男':s.gender==='女'?'女':s.gender):'—';
+  const age=s.age!=null? s.age+'岁':'—';
+  let html=`<div class="phead"><div>
+      <div class="pname">${s.name||'未命名'}<span class="cls">${s.cls||'未分班'}</span></div>
+      <div class="pmeta"><span>性别 ${gender}</span><span>年龄 ${age}</span>
+        <span>体测 ${n} 次</span><span>最近 ${last?last.date:'—'}</span></div>
+    </div></div>`;
+
+  if(n<2){
+    html+=`<div class="pending"><div class="big">📋</div>
+      <div class="t">体测数据待积累（当前 ${n} 次）</div>
+      <div class="d">成长曲线需至少 <b>2 次</b>体测才能生成。<br>
+      再为「${s.name}」做一次体测，即可自动出现进步曲线与趋势分析。</div></div>`;
+    if(n===1 && last && last.m){
+      const tiles=NUM_KEYS.filter(k=>typeof last.m[k]==='number'&&isFinite(last.m[k]))
+        .map(k=>`<div class="tile"><div class="k">${METRICS[k].name}</div>
+          <div class="v">${fmt(last.m[k])}<span class="u">${METRICS[k].unit}</span></div></div>`).join('');
+      if(tiles) html+=`<div class="sec-title">最近一次体测快照（${last.date}）</div><div class="snap">${tiles}</div>`;
+      if(last.m.posture) html+=`<div class="sec-title">身体姿态</div><div class="posture-chips"><span class="pc"><b>${last.m.posture}</b></span></div>`;
+      if(last.note) html+=`<div class="note"><div class="h">📝 教练寄语（${last.date}）</div>${last.note}</div>`;
+    }
+    box.innerHTML=html; return;
+  }
+
+  // composite
+  const comp=compositeFor(s);
+  html+=`<div class="sec-title">综合成长指数</div>`;
+  if(comp.length>=2){
+    html+=`<div class="charts">${svgLine('综合成长指数','分(自比0-100)',comp,'up')}</div>`;
+  }else{
+    html+=`<div class="charts"><div class="chart-empty"><b>综合成长指数</b><span>各次体测项目不重叠<br>暂无法计算综合指数</span></div></div>`;
+  }
+
+  // categories
+  CATS.forEach(([cat,label])=>{
+    const keys=NUM_KEYS.filter(k=>METRICS[k].cat===cat);
+    let charts='';
+    keys.forEach(k=>{
+      const pts=tests.filter(t=>typeof (t.m&&t.m[k])==='number'&&isFinite(t.m[k]))
+        .map(t=>({date:t.date,value:t.m[k]}));
+      charts+=svgLine(METRICS[k].name,METRICS[k].unit,pts,METRICS[k].better);
+    });
+    if(charts) html+=`<div class="sec-title">${label}</div><div class="charts">${charts}</div>`;
+  });
+
+  // posture chips per test
+  const post=tests.filter(t=>t.m&&t.m.posture);
+  if(post.length){ html+=`<div class="sec-title">身体姿态</div><div class="posture-chips">`+
+    post.map(t=>`<span class="pc">${t.date}：<b>${t.m.posture}</b></span>`).join('')+`</div>`; }
+
+  // trend
+  const tr=trend(s);
+  if(tr){
+    html+=`<div class="sec-title">进步趋势（首次 → 最近）</div>`;
+    if(tr.total===0){
+      html+=`<div class="trend"><div class="row"><span class="nm">📊 首次与最近体测暂无可比指标</span></div>
+        <div class="row" style="color:var(--muted);font-size:12px;border:none">建议两次体测测相同项目，即可自动生成进步对比</div></div>`;
+    }else{
+      html+=`<div class="trend"><span class="improved-badge">✅ ${tr.improved}/${tr.total} 项指标进步</span>`;
+      tr.rows.sort((a,b)=>Math.abs(b.pct)-Math.abs(a.pct));
+      tr.rows.forEach(r=>{
+        const cls=r.imp?'up':'down'; const ar=r.imp?'▲':'▼';
+        html+=`<div class="row"><span class="nm">${r.name}</span>
+          <span class="vv">${fmt(r.a)}${r.unit} <span class="arrow">→</span> ${fmt(r.b)}${r.unit}
+          <span class="${cls}">${ar}${r.imp?'+':''}${r.pct}%</span></span></div>`;
+      });
+      html+=`</div>`;
+    }
+  }
+
+  // coach note
+  const notes=tests.filter(t=>t.note).map(t=>`<div class="note"><div class="h">📝 教练寄语（${t.date}）</div>${t.note}</div>`);
+  if(notes.length) html+=`<div class="sec-title">教练寄语</div>`+notes.join('');
+
+  box.innerHTML=html;
+}
+
+(async function(){
+  const data=await loadData();
+  if(!data){ document.getElementById('list').innerHTML='<div class="empty">⚠️ 数据加载失败，请确认 data/profiles.json 可访问</div>'; return; }
+  STUDENTS=data;
+  STUDENTS.sort((a,b)=> (a.cls||'').localeCompare(b.cls||'') || (a.name||'').localeCompare(b.name||''));
+  renderStats(); renderClassFilter(); renderList();
+  document.getElementById('clsFilter').onchange=renderList;
+  document.getElementById('search').oninput=renderList;
+  if(STUDENTS.length) select(STUDENTS[0].id);
+})();
+</script>
+</body>
+</html>
