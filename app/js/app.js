@@ -734,7 +734,8 @@ function renderGrowth(child) {
     '<div class="card"><h3>📋 档案填写状态</h3><div id="growthSurvey"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>📅 预约记录</h3><div id="growthBookings"><p class="muted">加载中…</p></div></div>' +
     '<div class="card"><h3>📊 体测历史</h3><div id="growthReports"><p class="muted">加载中…</p></div>' +
-    '<button class="btn ghost" id="growthCardBtn" style="margin-top:10px;">📥 生成体测成长卡图片（长按保存）</button></div>';
+    '<button class="btn ghost" id="growthCardBtn" style="margin-top:10px;">📥 生成体测成长卡图片（长按保存）</button>' +
+    '<a class="btn ghost" href="growth-card.html" style="margin-top:8px;text-align:center;text-decoration:none;display:block;">📈 体测成长曲线（数据图表）</a></div>';
 }
 
 // 上课反馈：家长话术呈现（默认展开最近 2 次，更早的折叠）
