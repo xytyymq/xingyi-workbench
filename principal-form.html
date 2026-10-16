@@ -75,11 +75,6 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 <div class="section-title">经营结果</div>
 <div class="card">
-  <div class="grid3">
-    <div class="field"><label>今日收入(元)</label><input type="number" id="f_in" placeholder="0"></div>
-    <div class="field"><label>今日支出(元)</label><input type="number" id="f_out" placeholder="0"></div>
-    <div class="field"><label>账户余额</label><input type="number" id="f_bal" placeholder="0"></div>
-  </div>
   <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
 </div>
 
@@ -144,7 +139,6 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 var GH_TOKEN=atob('Z2hwX1dkTTZqSjMwUm'+'cwQTBXTklY'+'SkZnTlBZZG1UOWlvSTRDYTNSOQ==');;
 var COLS = {
   date:'日期', who:'填报人',
-  in:'今日收入(元)', out:'今日支出(元)', bal:'现金/账户余额',
   lessons:'今日开课节数',
   lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数',
   video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
@@ -185,9 +179,6 @@ function collect(){
   rec[COLS.show]=val('f_show')||'0';
   rec[COLS.sign]=val('f_sign')||'0';
   rec[COLS.lessons]=val('f_lessons')||'0';
-  rec[COLS.in]=val('f_in')||'0';
-  rec[COLS.out]=val('f_out')||'0';
-  rec[COLS.bal]=val('f_bal')||'0';
   rec[COLS.note]=val('f_note');
   rec[COLS.video]=val('f_video')||'0';
   rec[COLS.videoTitle]=val('f_video_title');
@@ -201,7 +192,6 @@ function prefill(rec){
   if(!rec) return;
   function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
   set('f_who',COLS.who);
-  set('f_in',COLS.in);set('f_out',COLS.out);set('f_bal',COLS.bal);
   set('f_lessons',COLS.lessons);
   set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
   set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
@@ -228,7 +218,7 @@ drawFunnel();
 })();
 
 // 输入即缓存（防丢失）
-['f_who','f_in','f_out','f_bal','f_lessons','f_lead','f_book','f_show','f_sign',
+['f_who','f_lessons','f_lead','f_book','f_show','f_sign',
  'f_video','f_video_title','f_touch','f_fb','f_note'].forEach(function(id){
   $(id).addEventListener('input',function(){saveLocal(collect());});
 });
