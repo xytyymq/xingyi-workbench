@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-16 08:03",
+  "generated_at": "2026-10-16 23:11",
   "data_date": "2026-10-16",
   "overall": "red",
   "lights": [
@@ -16,12 +16,6 @@
   },
   "stale_leads": [],
   "finance": {
-    "today_income": 0,
-    "today_expense": 0,
-    "month_income": 0,
-    "month_expense": 0,
-    "month_net": 0,
-    "balance": 435.5,
     "renew": {
       "month_amount": 0,
       "month_count": 0,
@@ -33,7 +27,7 @@
   "coach": [],
   "boss_todos": [],
   "cross_check": [],
-  "callback": "郭一谦/郭奕妍、黄文皓、朱梦玥",
+  "callback": "熊一鸣、郭一谦/郭奕妍、卢明锐",
   "video": {
     "today": 0,
     "this_week": 0.0,
@@ -70,66 +64,52 @@
       "leads": 0.0,
       "trials": 5.0,
       "signups": 0.0,
-      "classes": 1.0,
-      "income": 400.0,
-      "expense": 0.0
+      "classes": 1.0
     },
     {
       "date": "10-11",
       "leads": 0.0,
       "trials": 11.0,
       "signups": 0.0,
-      "classes": 3.0,
-      "income": 163.0,
-      "expense": 1.0
+      "classes": 3.0
     },
     {
       "date": "10-12",
       "leads": 0.0,
       "trials": 0.0,
       "signups": 0.0,
-      "classes": 0.0,
-      "income": 4.0,
-      "expense": 1511.0
+      "classes": 0.0
     },
     {
       "date": "10-13",
       "leads": 0.0,
       "trials": 0.0,
       "signups": 0.0,
-      "classes": 0.0,
-      "income": 0.0,
-      "expense": 0.0
+      "classes": 0.0
     },
     {
       "date": "10-14",
       "leads": 0.0,
       "trials": 0.0,
       "signups": 0.0,
-      "classes": 0.0,
-      "income": 0.0,
-      "expense": 0.0
+      "classes": 0.0
     },
     {
       "date": "10-15",
       "leads": 0.0,
       "trials": 0.0,
       "signups": 0.0,
-      "classes": 1.0,
-      "income": 0.0,
-      "expense": 0.0
+      "classes": 1.0
     },
     {
       "date": "10-16",
       "leads": 0,
       "trials": 0,
       "signups": 0,
-      "classes": 0,
-      "income": 0,
-      "expense": 0
+      "classes": 0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 0 · 收入 ¥567 · 支出 ¥1512 · 净额 ¥-945",
+  "week_summary": "本周合计：新线索 0 · 报名 0 · 开课 5 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
