@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿 · 校长日报</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+    --red:#FF6B6B; --yellow:#FFD166; --ok:#3DDC84; --muted:#9fb0d0; --line:rgba(255,255,255,.12);
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(120% 80% at 0% 0%,#16306b 0%,var(--navy) 38%,var(--navy2) 100%);
+    color:#fff;min-height:100vh;padding:14px;}
+  .wrap{max-width:460px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid var(--line);
+    border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.4)}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px;
+    border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(198,249,75,.12),transparent)}
+  .brand{font-weight:800;font-size:18px;letter-spacing:.5px}
+  .brand b{color:var(--green)}
+  .top .meta{text-align:right;font-size:11px;color:var(--muted);line-height:1.5}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-top:2px}
+  .b-green{background:rgba(61,220,132,.18);color:var(--ok)}
+  .b-yellow{background:rgba(255,209,102,.18);color:var(--yellow)}
+  .b-red{background:rgba(255,107,107,.18);color:var(--red)}
+  .sec{padding:14px 18px;border-bottom:1px solid var(--line)}
+  .sec-t{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+  /* HERO 月度目标 */
+  .hero{display:flex;gap:12px}
+  .gauge{flex:1;background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:14px;
+    padding:14px 10px;text-align:center;position:relative}
+  .gauge .t{font-size:12px;color:var(--muted);margin-bottom:6px}
+  .gauge .v{font-size:22px;font-weight:800;margin-top:4px}
+  .gauge .v small{font-size:12px;color:var(--muted);font-weight:500}
+  .gauge .s{font-size:11px;margin-top:2px}
+  .ring{width:96px;height:96px;margin:0 auto;display:block}
+  .ring .lab{font-size:13px;font-weight:800;fill:#fff}
+  .ring .pct{font-size:18px;font-weight:800;fill:var(--green)}
+  /* 漏斗 */
+  .funnel{display:flex;align-items:flex-end;gap:8px;height:120px}
+  .fcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .fbar{width:100%;border-radius:8px 8px 0 0;background:linear-gradient(180deg,var(--cyan),#2b8fb8);min-height:4px}
+  .fnum{font-weight:800;font-size:18px;margin-bottom:4px}
+  .flab{font-size:11px;color:var(--muted);margin-top:6px}
+  .fconv{font-size:10px;color:var(--green);margin-top:2px}
+  /* 周对比 */
+  .bars{display:flex;align-items:flex-end;gap:6px;height:130px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bstack{width:100%;display:flex;flex-direction:column;justify-content:flex-end;border-radius:6px 6px 0 0;overflow:hidden}
+  .bcls{background:linear-gradient(180deg,var(--green),#7fae1e)}
+  .bsig{background:linear-gradient(180deg,var(--cyan),#2b8fb8)}
+  .bnum{font-size:10px;color:var(--muted);margin-top:3px}
+  .bdate{font-size:10px;color:var(--muted);margin-top:2px}
+  .legend{display:flex;gap:14px;font-size:10px;color:var(--muted);margin-top:8px;justify-content:center}
+  .lg{display:flex;align-items:center;gap:4px}.dot{width:8px;height:8px;border-radius:2px;display:inline-block}
+  /* 异常 */
+  .pill{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;margin-bottom:8px;
+    background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:13px;line-height:1.45}
+  .pill .ic{font-size:14px;line-height:1.4}
+  .pill.r{border-color:rgba(255,107,107,.5);background:rgba(255,107,107,.08)}
+  .pill.y{border-color:rgba(255,209,102,.5);background:rgba(255,209,102,.08)}
+  .pill.g{border-color:rgba(61,220,132,.4);background:rgba(61,220,132,.07)}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+  .chip{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:12px}
+  .chip b{color:var(--green)}
+  .todo{font-size:13px;color:#fff;background:rgba(198,249,75,.1);border:1px solid rgba(198,249,75,.35);
+    border-radius:10px;padding:9px 11px;line-height:1.5}
+  .foot{padding:12px 18px;font-size:10px;color:var(--muted);text-align:center;line-height:1.6}
+  .load{text-align:center;color:var(--muted);padding:40px;font-size:13px}
+  .hl{color:var(--green);font-weight:700}
+  .warn{color:var(--yellow);font-weight:700}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="brand"><b>星羿</b> · 校长日报</div>
+      <div class="meta" id="m_date">数据日期 —</div>
+    </div>
+    <div>
+      <span class="badge b-green" id="m_overall">—</span>
+      <div class="meta" id="m_gen">生成 —</div>
+    </div>
+  </div>
+  <div id="body"><div class="load">加载中…</div></div>
+</div>
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function ring(percent,label){
+  var r=40,c=2*Math.PI*r,off=c*(1-Math.max(0,Math.min(1,percent)));
+  var col=percent>=0.8?'#C6F94B':(percent>=0.4?'#FFD166':'#FF6B6B');
+  return '<svg class="ring" viewBox="0 0 100 100">'+
+    '<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="9"/>'+
+    '<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" '+
+    'stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)"/>'+
+    '<text x="50" y="47" text-anchor="middle" class="pct" style="fill:'+col+'">'+Math.round(percent*100)+'%</text>'+
+    '<text x="50" y="63" text-anchor="middle" class="lab">'+esc(label)+'</text></svg>';
+}
+function bar(max,v,cls){var h=max>0?Math.max(3,v/max*100):3;return '<div class="'+cls+'" style="height:'+h+'%"></div>';}
+function render(d){
+  var R=d.overall||'yellow';
+  var ob={'green':'🟢 平稳 · 绿','yellow':'🟡 需关注 · 黄','red':'🔴 预警 · 红'}[R]||'—';
+  document.getElementById('m_date').textContent='数据日期 '+ (d.data_date||'—');
+  document.getElementById('m_gen').textContent='生成 '+(d.generated_at||'—');
+  var ob_el=document.getElementById('m_overall');
+  ob_el.textContent=ob; ob_el.className='badge '+(R==='green'?'b-green':R==='red'?'b-red':'b-yellow');
+
+  var rn=d.finance&&d.finance.renew||{};
+  var goal=rn.goal||28800, amt=rn.month_amount||0, rcnt=rn.month_count||0;
+  var rate=rn.goal_rate?parseFloat(rn.goal_rate):(goal?amt/goal:0);
+  var mt=d.kpi&&d.kpi.month_target||10;
+  var ms=d.funnel&&d.funnel.month_signups||0;
+  var srate=mt?ms/mt:0;
+
+  var hero='<div class="sec"><div class="sec-t">🎯 月度目标完成度（核心）</div><div class="hero">'+
+    '<div class="gauge"><div class="t">本月续费额</div>'+ring(rate,'目标')+
+      '<div class="v">¥'+amt.toLocaleString()+' <small>/ ¥'+goal.toLocaleString()+'</small></div>'+
+      '<div class="s" style="color:'+(rate>=0.8?'var(--green)':rate>=0.4?'var(--yellow)':'var(--red)')+'">'+rcnt+' 人续费 · 完成 '+Math.round(rate*100)+'%</div></div>'+
+    '<div class="gauge"><div class="t">本月报名人数</div>'+ring(srate,'目标')+
+      '<div class="v">'+ms+' <small>/ '+mt+' 人</small></div>'+
+      '<div class="s" style="color:'+(srate>=0.8?'var(--green)':srate>=0.4?'var(--yellow)':'var(--red)')+'">完成 '+Math.round(srate*100)+'%</div></div>'+
+    '</div></div>';
+
+  // 漏斗（今日）
+  var f=d.funnel||{};
+  var ld=f.new_leads_today||0, tr=f.trials||0, ar=Math.round(parseFloat((f.trial_arrive_rate||'0').replace('%',''))||0), su=f.month_signups||0;
+  // 用今日预约/到场（周数据里今日行）更准：取 week_rows 末项
+  var wr=d.week_rows||[], todayRow=wr[wr.length-1]||{};
+  var t_leads=todayRow.leads||0, t_trials=todayRow.trials||0, t_sign=todayRow.signups||0, t_cls=todayRow.classes||0;
+  var fmax=Math.max(t_leads,t_trials,Math.max(t_cls,1));
+  function fcol(v,lab,conv){
+    var h=fmax>0?Math.max(4,v/fmax*100):4;
+    return '<div class="fcol"><div class="fnum">'+v+'</div><div class="fbar" style="height:'+h+'%"></div><div class="flab">'+lab+'</div>'+
+      (conv?'<div class="fconv">'+conv+'</div>':'')+'</div>';
+  }
+  var funnelSec='<div class="sec"><div class="sec-t">📊 今日工作内容 · 转化漏斗</div><div class="funnel">'+
+    fcol(t_leads,'新线索')+fcol(t_trials,'试课预约',t_leads?Math.round(t_trials/t_leads*100)+'%':'' )+
+    fcol(t_cls,'开课节数')+fcol(t_sign,'今日报名',t_trials?Math.round(t_sign/t_trials*100)+'%':'')+
+    '</div><div class="legend"><span class="lg"><span class="dot" style="background:var(--cyan)"></span>数值越高条越长</span>'+
+    '<span class="lg"><span class="dot" style="background:var(--green)"></span>试课到场率 '+(f.trial_arrive_rate||'—')+'</span></div></div>';
+
+  // 周对比
+  var wmax=Math.max.apply(null,wr.map(function(r){return Math.max(r.classes||0,r.signups||0,1);}));
+  var bars=wr.map(function(r){
+    return '<div class="bcol"><div class="bstack">'+bar(wmax,r.signups||0,'bsig')+bar(wmax,r.classes||0,'bcls')+'</div>'+
+      '<div class="bnum">'+(r.signups||0)+'/'+Math.round(r.classes||0)+'</div><div class="bdate">'+r.date+'</div></div>';
+  }).join('');
+  var weekSec='<div class="sec"><div class="sec-t">📅 近 7 天工作内容对比（报名/开课）</div><div class="bars">'+bars+'</div>'+
+    '<div class="legend"><span class="lg"><span class="dot" style="background:var(--green)"></span>开课节数</span>'+
+    '<span class="lg"><span class="dot" style="background:var(--cyan)"></span>报名</span>'+
+    '<span class="lg">格式 报名/开课</span></div>'+
+    '<div class="todo" style="margin-top:10px">'+esc(d.week_summary||'')+'</div></div>';
+
+  // 异常标注
+  var anom='<div class="sec"><div class="sec-t">⚠️ 异常与提醒（自动标注）</div>';
+  (d.lights||[]).forEach(function(x){
+    var cls=x.level==='red'?'r':x.level==='yellow'?'y':'g';
+    var ic=x.level==='red'?'🔴':x.level==='yellow'?'🟡':'🟢';
+    anom+='<div class="pill '+cls+'"><span class="ic">'+ic+'</span><span>'+esc(x.text)+'</span></div>';
+  });
+  // 体测预警
+  var t=d.tice||{};
+  if(t.month_plan && t.rate!==undefined){
+    var tr2=parseFloat((t.rate||'0').replace('%',''))||0;
+    if(tr2<100) anom+='<div class="pill '+((tr2>=50)?'y':'r')+'"><span class="ic">🏃</span><span>本月体测进度 <span class="warn">'+t.rate+'</span>（已完成 '+t.month_done+' / 计划 '+t.month_plan+' 人）'+(t.latest_date?('，最近一次 '+t.latest_date):'')+'</span></div>';
+  }
+  // 回访名单
+  if(d.callback) anom+='<div class="pill y"><span class="ic">📞</span><span>需回访家长：<b>'+esc(d.callback)+'</b></span></div>';
+  // 家长沟通重点
+  if(d.touch&&d.touch.feedback) anom+='<div class="pill g"><span class="ic">💬</span><span>家长沟通重点：'+esc(d.touch.feedback)+'</span></div>';
+  anom+='</div>';
+
+  // 其他指标 chips
+  var chips='<div class="sec"><div class="sec-t">📌 其他指标</div><div class="chips">';
+  chips+='<span class="chip">🎬 本月入学视频 <b>'+(d.video?d.video.this_month:0)+'</b></span>';
+  chips+='<span class="chip">🎾 本月穿线 <b>¥'+(d.stringing?Math.round(d.stringing.month_amount||0):0)+'</b> / '+(d.stringing?d.stringing.month_count||0:0)+'单</span>';
+  chips+='<span class="chip">💬 今日家长触达 <b>'+(d.touch?d.touch.count||0:0)+'</b></span>';
+  chips+='<span class="chip">📋 今日开课 <b>'+(d.funnel?t_cls:0)+'</b> 节</span>';
+  chips+='</div>';
+
+  // 老板待办
+  var todoSec='';
+  if(d.boss_todos&&d.boss_todos.length){
+    todoSec='<div class="sec"><div class="sec-t">✅ 老板待办（来自日报备注）</div>';
+    d.boss_todos.forEach(function(t){todoSec+='<div class="todo">'+esc(t)+'</div>';});
+    todoSec+='</div>';
+  }
+
+  document.getElementById('body').innerHTML=hero+funnelSec+weekSec+anom+chips+todoSec+
+    '<div class="foot">星羿体育 · 校长日报长图 ｜ 数据来源：校长日报卡片板 / 招生线索 / 上课记录 / 体测档案 / 续费·穿线台账<br>本图由夜间自动化生成，异常项自动以红/黄标注</div>';
+}
+(function(){
+  var url='data/principal-report.json?_t='+Date.now()+Math.random().toString(36).slice(2,7);
+  fetch(url,{cache:'no-store'}).then(function(r){return r.json();}).then(render).catch(function(e){
+    document.getElementById('body').innerHTML='<div class="load">加载失败：'+(e.message||e)+'<br>请确认 data/principal-report.json 已生成。</div>';
+  });
+})();
+</script>
+</body>
+</html>
