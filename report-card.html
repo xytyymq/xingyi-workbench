@@ -6,6 +6,10 @@
 <title>星羿 · 校长日报</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
+  .savebar{position:fixed;top:12px;right:12px;z-index:50;background:var(--green);color:#0C1C42;
+    font-size:13px;font-weight:800;text-decoration:none;padding:8px 13px;border-radius:999px;
+    box-shadow:0 4px 16px rgba(0,0,0,.35)}
+  .savebar:active{transform:translateY(1px)}
   :root{
     --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
     --red:#FF6B6B; --yellow:#FFD166; --ok:#3DDC84; --muted:#9fb0d0; --line:rgba(255,255,255,.12);
@@ -73,6 +77,7 @@
 </style>
 </head>
 <body>
+<button class="savebar" id="saveBtn" type="button">📥 保存图片</button>
 <div class="wrap">
   <div class="top">
     <div>
@@ -106,6 +111,7 @@ function render(d){
   document.getElementById('m_gen').textContent='生成 '+(d.generated_at||'—');
   var ob_el=document.getElementById('m_overall');
   ob_el.textContent=ob; ob_el.className='badge '+(R==='green'?'b-green':R==='red'?'b-red':'b-yellow');
+  window.__reportDate=(d.data_date||'latest');
 
   var rn=d.finance&&d.finance.renew||{};
   var goal=rn.goal||28800, amt=rn.month_amount||0, rcnt=rn.month_count||0;
@@ -197,6 +203,33 @@ function render(d){
     document.getElementById('body').innerHTML='<div class="load">加载失败：'+(e.message||e)+'<br>请确认 data/principal-report.json 已生成。</div>';
   });
 })();
+// 保存图片：优先实时截取当前页面（所见即所得），失败回退到预生成 PNG
+(function(){
+  var btn=document.getElementById('saveBtn');
+  if(!btn) return;
+  btn.addEventListener('click',function(){
+    var fname='星羿校长日报-'+(window.__reportDate||'latest')+'.png';
+    var target=document.querySelector('.wrap');
+    if(typeof html2canvas==='function' && target){
+      btn.textContent='⏳ 生成中…'; btn.disabled=true;
+      html2canvas(target,{scale:2,backgroundColor:'#0C1C42',logging:false,useCORS:true}).then(function(canvas){
+        var a=document.createElement('a');
+        a.download=fname; a.href=canvas.toDataURL('image/png');
+        document.body.appendChild(a); a.click(); a.remove();
+        btn.textContent='📥 保存图片'; btn.disabled=false;
+      }).catch(function(){
+        btn.textContent='📥 保存图片'; btn.disabled=false;
+        window.location.href='report-card-latest.png';
+      });
+    }else{
+      window.location.href='report-card-latest.png';
+    }
+  });
+})();
+</script>
+<script src="html2canvas.min.js"></script>
+</body>
+</html>
 </script>
 </body>
 </html>
