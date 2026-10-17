@@ -3764,37 +3764,6 @@
     "lessons": []
   },
   {
-    "id": "Amv3tzxsg58",
-    "name": "江文博",
-    "age": "",
-    "gender": "",
-    "cls": "启蒙班",
-    "createdAt": "2026-10-11",
-    "tests": [
-      {
-        "date": "2026-10-17",
-        "m": {
-          "height": 147,
-          "sitReach": -14,
-          "singleStand": 32,
-          "wallSquat": 68,
-          "posture": "正常/正常/正常",
-          "run50": 9.2,
-          "standingJump": 180,
-          "verticalJump": 230,
-          "rope": 30,
-          "swing15": 4,
-          "footwork": 30.2,
-          "serve": 1,
-          "rally": 6,
-          "clear": 7
-        },
-        "note": ""
-      }
-    ],
-    "lessons": []
-  },
-  {
     "id": "Amv3tzxsg60",
     "name": "朱梓檬",
     "age": "",
@@ -3892,6 +3861,37 @@
     "cls": "启蒙班",
     "createdAt": "2026-10-17",
     "tests": [],
+    "lessons": []
+  },
+  {
+    "id": "Amv3tzxsg58",
+    "name": "江文博",
+    "age": "",
+    "gender": "",
+    "cls": "启蒙班",
+    "createdAt": "2026-10-11",
+    "tests": [
+      {
+        "date": "2026-10-17",
+        "m": {
+          "height": 147,
+          "sitReach": -14,
+          "singleStand": 32,
+          "wallSquat": 68,
+          "posture": "正常/正常/正常",
+          "run50": 9.2,
+          "standingJump": 180,
+          "verticalJump": 230,
+          "rope": 30,
+          "swing15": 4,
+          "footwork": 30.2,
+          "serve": 1,
+          "rally": 6,
+          "clear": 7
+        },
+        "note": ""
+      }
+    ],
     "lessons": []
   }
 ]
