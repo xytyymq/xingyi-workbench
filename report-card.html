@@ -101,7 +101,7 @@ function ring(percent,label){
     '<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" '+
     'stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)"/>'+
     '<text x="50" y="47" text-anchor="middle" class="pct" style="fill:'+col+'">'+Math.round(percent*100)+'%</text>'+
-    '<text x="50" y="63" text-anchor="middle" class="lab">'+esc(label)+'</text></svg>';
+    '<text x="50" y="63" text-anchor="middle" class="lab" style="fill:#ffffff">'+esc(label)+'</text></svg>';
 }
 function bar(max,v,cls){var h=max>0?Math.max(2,Math.round(v/max*92)):2;return '<div class="'+cls+'" style="height:'+h+'px"></div>';}
 function render(d){
