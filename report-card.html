@@ -196,6 +196,13 @@ function render(d){
 
   document.getElementById('body').innerHTML=hero+funnelSec+weekSec+anom+chips+todoSec+
     '<div class="foot">星羿体育 · 校长日报长图 ｜ 数据来源：校长日报卡片板 / 招生线索 / 上课记录 / 体测档案 / 续费·穿线台账<br>本图由夜间自动化生成，异常项自动以红/黄标注</div>';
+
+  // 纯图模式（自动化截图用）：隐藏保存按钮，并把真实内容高度写入 body 供脚本读取
+  if(/[?&]shot=1/.test(location.search)){
+    var sb0=document.getElementById('saveBtn'); if(sb0) sb0.style.display='none';
+    var setH=function(){ try{ document.body.setAttribute('data-shot-h', document.documentElement.scrollHeight); }catch(e){} };
+    setH(); requestAnimationFrame(function(){ setH(); setTimeout(setH,120); });
+  }
 }
 (function(){
   var url='data/principal-report.json?_t='+Date.now()+Math.random().toString(36).slice(2,7);
