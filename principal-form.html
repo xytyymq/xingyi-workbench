@@ -109,7 +109,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="card-head"><span class="card-title">💰 续费 / 新购台账</span><span class="tag">独立台账</span></div>
   <div id="renewList"></div>
   <button class="cta ghost" id="addRenew" type="button" style="margin-top:10px">+ 添加一条续费记录</button>
-  <div class="hint">每个续费 / 新购学员登记一条（学员 · 金额 · 类型 · 日期）。保存即写入工作台续费台账，校长日报自动汇总本月续费额与人数。</div>
+  <div class="hint">每个续费 / 新购 / 转介绍 / 订金学员登记一条（学员 · 金额 · 类型 · 日期）。保存即写入工作台续费台账，校长日报自动汇总本月续费额与人数。</div>
 </div>
 
 <div class="section-title">穿线登记（每月统计）</div>
@@ -269,7 +269,7 @@ function renewRowHTML(r){
   return '<div class="renew-row" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr 30px;gap:6px;margin-bottom:8px;align-items:center">'+
     '<input class="rn-name" placeholder="学员姓名" value="'+(r.name||'')+'">'+
     '<input class="rn-amount" type="number" placeholder="金额" value="'+(r.amount||'')+'">'+
-    '<select class="rn-type"><option'+(r.type==='续费'?' selected':'')+'>续费</option><option'+(r.type==='新购'?' selected':'')+'>新购</option><option'+(r.type==='转介绍'?' selected':'')+'>转介绍</option></select>'+
+    '<select class="rn-type">'+['续费','新购','转介绍','订金'].map(function(t){return '<option'+(r.type===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select>'+
     '<input class="rn-date" type="date" value="'+(r.date||todayISO())+'">'+
     '<button class="rn-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
     '</div>';
