@@ -155,9 +155,11 @@ function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
 
 // ===== GitHub 读写底层：禁缓存读取 + 写入冲突（409/422 sha 不符）自动重拉合并重试 =====
+// 注：不能加 Cache-Control 请求头（GitHub CORS 白名单不含它，浏览器会直接拦死），
+// 改用每次唯一的时间戳参数 _t 穿透浏览器缓存（等效强制回源，且不新增预检头）。
 function ghRead(path){
-  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now(),
-    {cache:'no-store',headers:{Authorization:'Bearer '+GH_TOKEN,Accept:'application/vnd.github+json','Cache-Control':'no-cache'}})
+  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
+    {headers:{Authorization:'Bearer '+GH_TOKEN,Accept:'application/vnd.github+json'}})
   .then(function(r){
     if(r.status===404) return {list:[],sha:null};
     if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
@@ -174,7 +176,7 @@ function ghSave(path, mergeFn, msg, tries){
     var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
     if(st.sha) body.sha=st.sha;
     return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
-      method:'PUT',cache:'no-store',
+      method:'PUT',
       headers:{Authorization:'Bearer '+GH_TOKEN,Accept:'application/vnd.github+json','Content-Type':'application/json'},
       body:JSON.stringify(body)
     }).then(function(rr){
