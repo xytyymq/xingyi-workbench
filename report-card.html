@@ -109,7 +109,7 @@ function render(d){
 
   var rn=d.finance&&d.finance.renew||{};
   var goal=rn.goal||28800, amt=rn.month_amount||0, rcnt=rn.month_count||0;
-  var rate=rn.goal_rate?parseFloat(rn.goal_rate):(goal?amt/goal:0);
+  var rate=rn.goal_rate!=null?parseFloat(rn.goal_rate)/100:(goal?amt/goal:0);
   var mt=d.kpi&&d.kpi.month_target||10;
   var ms=d.funnel&&d.funnel.month_signups||0;
   var srate=mt?ms/mt:0;
