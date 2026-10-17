@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-10-16 23:11",
-  "data_date": "2026-10-16",
+  "generated_at": "2026-10-17 08:02",
+  "data_date": "2026-10-17",
   "overall": "red",
   "lights": [
     {
@@ -27,7 +27,7 @@
   "coach": [],
   "boss_todos": [],
   "cross_check": [],
-  "callback": "熊一鸣、郭一谦/郭奕妍、卢明锐",
+  "callback": "苏婉君、苏灵萌、谢晨希",
   "video": {
     "today": 0,
     "this_week": 0.0,
@@ -59,13 +59,6 @@
     "by_stringer": []
   },
   "week_rows": [
-    {
-      "date": "10-10",
-      "leads": 0.0,
-      "trials": 5.0,
-      "signups": 0.0,
-      "classes": 1.0
-    },
     {
       "date": "10-11",
       "leads": 0.0,
@@ -107,9 +100,16 @@
       "trials": 0,
       "signups": 0,
       "classes": 0
+    },
+    {
+      "date": "10-17",
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 0 · 开课 5 节",
+  "week_summary": "本周合计：新线索 0 · 报名 0 · 开课 4 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
