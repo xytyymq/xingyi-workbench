@@ -38,9 +38,11 @@
   .gauge .v{font-size:22px;font-weight:800;margin-top:4px}
   .gauge .v small{font-size:12px;color:var(--muted);font-weight:500}
   .gauge .s{font-size:11px;margin-top:2px}
-  .ring{width:96px;height:96px;margin:0 auto;display:block}
-  .ring .lab{font-size:13px;font-weight:800;fill:#fff}
-  .ring .pct{font-size:18px;font-weight:800;fill:var(--green)}
+  /* 环形图：纯 canvas 绘制（避开部分手机浏览器 SVG viewBox 渲染偏移/裁切 bug），文字用 span 绝对定位 */
+  .ring{width:96px;height:96px;margin:0 auto;display:block;position:relative;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  .ring .rc{display:block;width:96px;height:96px}
+  .ring .rp{position:absolute;left:0;right:0;top:29px;text-align:center;font-size:18px;font-weight:800;line-height:22px}
+  .ring .rl{position:absolute;left:0;right:0;top:48px;text-align:center;font-size:13px;font-weight:800;line-height:15px;color:#fff}
   /* 漏斗 */
   .funnel{display:flex;align-items:flex-end;gap:8px;height:120px}
   .fcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
@@ -94,15 +96,28 @@
 <script>
 function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
 function ring(percent,label){
-  var r=40,c=2*Math.PI*r,off=c*(1-Math.max(0,Math.min(1,percent)));
+  var p=Math.max(0,Math.min(1,percent));
   var col=percent>=0.8?'#C6F94B':(percent>=0.4?'#FFD166':'#FF6B6B');
-  return '<svg class="ring" viewBox="0 0 100 100">'+
-    '<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="9"/>'+
-    '<circle cx="50" cy="50" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="9" stroke-linecap="round" '+
-    'stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 50 50)"/>'+
-    '<text x="50" y="47" text-anchor="middle" class="pct" style="fill:'+col+'">'+Math.round(percent*100)+'%</text>'+
-    '<text x="50" y="63" text-anchor="middle" class="lab" style="fill:#ffffff">'+esc(label)+'</text></svg>';
+  return '<div class="ring"><canvas class="rc" data-p="'+p+'" data-c="'+col+'"></canvas>'+
+    '<span class="rp" style="color:'+col+'">'+Math.round(percent*100)+'%</span>'+
+    '<span class="rl">'+esc(label)+'</span></div>';
 }
+// canvas 画环：几何与旧版 SVG 完全一致（中心半径 38.4px、环宽 8.64px、圆帽、12 点起笔）
+function drawRing(cv){
+  var p=parseFloat(cv.getAttribute('data-p'))||0,col=cv.getAttribute('data-c')||'#C6F94B';
+  var dpr=Math.min(3,Math.max(2,window.devicePixelRatio||1)),W=96;
+  cv.width=W*dpr;cv.height=W*dpr;
+  var ctx=cv.getContext('2d');if(!ctx)return;
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,W);
+  ctx.lineWidth=8.64;ctx.lineCap='round';
+  ctx.strokeStyle='rgba(255,255,255,.12)';
+  ctx.beginPath();ctx.arc(48,48,38.4,0,Math.PI*2);ctx.stroke();
+  if(p>0){
+    ctx.strokeStyle=col;
+    ctx.beginPath();ctx.arc(48,48,38.4,-Math.PI/2,-Math.PI/2+Math.PI*2*p);ctx.stroke();
+  }
+}
+function drawRings(){var l=document.querySelectorAll('canvas.rc');for(var i=0;i<l.length;i++)drawRing(l[i]);}
 function bar(max,v,cls){var h=max>0?Math.max(2,Math.round(v/max*92)):2;return '<div class="'+cls+'" style="height:'+h+'px"></div>';}
 function render(d){
   var R=d.overall||'yellow';
@@ -197,6 +212,8 @@ function render(d){
   document.getElementById('body').innerHTML=hero+funnelSec+weekSec+anom+chips+todoSec+
     '<div class="foot">星羿体育 · 校长日报长图 ｜ 数据来源：校长日报卡片板 / 招生线索 / 上课记录 / 体测档案 / 续费·穿线台账<br>本图由夜间自动化生成，异常项自动以红/黄标注</div>';
 
+  drawRings();
+
   // 纯图模式（自动化截图用）：隐藏保存按钮，并把真实内容高度写入 body 供脚本读取
   if(/[?&]shot=1/.test(location.search)){
     var sb0=document.getElementById('saveBtn'); if(sb0) sb0.style.display='none';
@@ -235,8 +252,5 @@ function render(d){
 })();
 </script>
 <script src="html2canvas.min.js"></script>
-</body>
-</html>
-</script>
 </body>
 </html>
