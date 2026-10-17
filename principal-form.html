@@ -154,6 +154,40 @@ function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');c
 function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
 
+// ===== GitHub 读写底层：禁缓存读取 + 写入冲突（409/422 sha 不符）自动重拉合并重试 =====
+function ghRead(path){
+  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now(),
+    {cache:'no-store',headers:{Authorization:'Bearer '+GH_TOKEN,Accept:'application/vnd.github+json','Cache-Control':'no-cache'}})
+  .then(function(r){
+    if(r.status===404) return {list:[],sha:null};
+    if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
+    return r.json().then(function(m){
+      var list=[]; try{ var t=b64d(m.content||''); list=t?JSON.parse(t):[]; }catch(e){ list=[]; }
+      return {list:Array.isArray(list)?list:[],sha:m.sha};
+    });
+  });
+}
+function ghSave(path, mergeFn, msg, tries){
+  if(tries==null) tries=2;
+  return ghRead(path).then(function(st){
+    var merged=mergeFn(st.list||[]);
+    var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+    if(st.sha) body.sha=st.sha;
+    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
+      method:'PUT',cache:'no-store',
+      headers:{Authorization:'Bearer '+GH_TOKEN,Accept:'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    }).then(function(rr){
+      if(rr.status===200||rr.status===201) return true;
+      if((rr.status===409||rr.status===422) && tries>1){
+        // 云端刚被别处（另一台设备/夜间脚本）更新，等一拍重新拉最新内容再合并写一次
+        return new Promise(function(res){setTimeout(res,700);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+      }
+      return rr.text().then(function(t){ throw new Error('写入失败 HTTP '+rr.status+' '+String(t).slice(0,110)); });
+    });
+  });
+}
+
 // 日期 / 顶部
 $('today').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
 $('f_date').value = todayISO();
@@ -208,13 +242,11 @@ function loadLocal(d){try{var s=localStorage.getItem(lsKey(d));return s?JSON.par
 prefill(loadLocal(todayISO()));
 drawFunnel();
 (function loadCloud(){
-  var tk = GH_TOKEN;
-  fetch('https://api.github.com/repos/'+REPO+'/contents/'+PATH+'?ref='+BRANCH,
-    {headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){return r.status===200?r.json():null;})
-  .then(function(m){ if(!m||!m.content) return;
-    try{ var list=JSON.parse(b64d(m.content)); var rec=list.filter(function(x){return x[COLS.date]===todayISO();})[0]; if(rec) prefill(rec); }catch(e){} })
-  .catch(function(){});
+  ghRead(PATH).then(function(st){
+    var rec=(st.list||[]).filter(function(x){return x[COLS.date]===todayISO();})[0];
+    // 本机已有当天草稿时不被云端旧行覆盖，避免填一半被冲掉
+    if(rec && !loadLocal(todayISO())) prefill(rec);
+  }).catch(function(){});
 })();
 
 // 输入即缓存（防丢失）
@@ -261,24 +293,14 @@ document.getElementById('addRenew').onclick=function(){
   document.getElementById('renewList').insertAdjacentHTML('beforeend',renewRowHTML({})); bindDel();
 };
 (function loadRenew(){
-  var tk=GH_TOKEN;
-  fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){return r.status===200?r.json():null;})
-  .then(function(m){ if(!m||!m.content) return; try{ renderRenew(JSON.parse(b64d(m.content))); }catch(e){} })
-  .catch(function(){});
+  ghRead(RENEW_PATH).then(function(st){ renderRenew(st.list||[]); }).catch(function(){});
 })();
-function saveRenew(tk){
-  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){ if(r.status===404) return {list:[],sha:null}; if(!r.ok) throw new Error('读取续费台账失败'); return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};}); })
-  .then(function(st){
-    var seen={}; (st.list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+function saveRenew(){
+  return ghSave(RENEW_PATH, function(list){
+    var seen={}; (list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
     collectRenew().forEach(function(r){ seen[r.date+'|'+r.name]=r; });
-    var merged=Object.keys(seen).map(function(k){return seen[k];});
-    var put={message:'chore: 续费台账更新',content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
-    if(st.sha) put.sha=st.sha;
-    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+RENEW_PATH,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
-      .then(function(rr){ if(!rr.ok) throw new Error('续费台账写入失败 HTTP '+rr.status); });
-  });
+    return Object.keys(seen).map(function(k){return seen[k];});
+  }, 'chore: 续费台账更新');
 }
 
 // ===== 穿线台账（独立文件 data/stringing-records.json，按 id 合并，支持同日多笔/可编辑）=====
@@ -320,56 +342,42 @@ document.getElementById('addString').onclick=function(){
 };
 function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
 (function loadString(){
-  var tk=GH_TOKEN;
-  fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){return r.status===200?r.json():null;})
-  .then(function(m){ if(!m||!m.content) return; try{ renderString(JSON.parse(b64d(m.content))); }catch(e){} })
-  .catch(function(){});
+  ghRead(STRING_PATH).then(function(st){ renderString(st.list||[]); }).catch(function(){});
 })();
-function saveString(tk){
-  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){ if(r.status===404) return {list:[],sha:null}; if(!r.ok) throw new Error('读取穿线台账失败'); return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};}); })
-  .then(function(st){
-    var seen={}; (st.list||[]).forEach(function(r){ seen[r.id]=r; });
+function saveString(){
+  return ghSave(STRING_PATH, function(list){
+    var seen={}; (list||[]).forEach(function(r){ seen[r.id]=r; });
     collectString().forEach(function(r){ seen[r.id]=r; });
-    var merged=Object.keys(seen).map(function(k){return seen[k];});
-    var put={message:'chore: 穿线台账更新',content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
-    if(st.sha) put.sha=st.sha;
-    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+STRING_PATH,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
-      .then(function(rr){ if(!rr.ok) throw new Error('穿线台账写入失败 HTTP '+rr.status); });
-  });
+    return Object.keys(seen).map(function(k){return seen[k];});
+  }, 'chore: 穿线台账更新');
 }
 
-// 保存并同步云端（日报主行 + 续费台账）
+// 保存并同步云端（日报主行 + 续费台账 + 穿线台账）
 $('saveCloud').addEventListener('click',function(){
   var rec=collect();
   if(!rec[COLS.date]){toast('请先选日期');return;}
-  var tk = GH_TOKEN;
-  var api='https://api.github.com/repos/'+REPO+'/contents/'+PATH;
-  fetch(api+'?ref='+BRANCH,{headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json'}})
-  .then(function(r){
-    if(r.status===404) return {list:[],sha:null};
-    if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
-    return r.json().then(function(m){return {list:JSON.parse(b64d(m.content)),sha:m.sha};});
-  })
-  .then(function(st){
-    var list=st.list||[];
+  if($('saveCloud')._busy){ toast('正在上传，请稍等…'); return; }
+  $('saveCloud')._busy=true;
+  setTimeout(function(){ $('saveCloud')._busy=false; }, 1500);
+  ghSave(PATH, function(list){
     var found=false;
-    list=list.map(function(r){ if(r[COLS.date]===rec[COLS.date]){found=true;return Object.assign({},r,rec);} return r; });
-    if(!found) list.push(rec);
-    var put={message:'chore: 校长日报 '+rec[COLS.date]+' 表单同步',content:b64e(JSON.stringify(list,null,2)),branch:BRANCH};
-    if(st.sha) put.sha=st.sha;
-    return fetch(api,{method:'PUT',headers:{Authorization:'Bearer '+tk,Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(put)})
-      .then(function(rr){
-        if(rr.status===200||rr.status===201){
-          return saveRenew(tk).then(function(){ return saveString(tk).catch(function(e){ console.warn('穿线台账写入失败（不影响日报/续费主流程）',e); }); }).then(function(){
-            saveLocal(rec);
-            toast('✅ 已同步云端（日报 + 续费台账 + 穿线台账）'+rec[COLS.date]);
-          });
-        } else { return rr.text().then(function(t){throw new Error('写入失败 HTTP '+rr.status+' '+t.slice(0,100));}); }
+    var merged=(list||[]).map(function(r){
+      if(r[COLS.date]===rec[COLS.date]){ found=true; return Object.assign({},r,rec); }
+      return r;
+    });
+    if(!found) merged.push(rec);
+    return merged;
+  }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步')
+  .then(function(){
+    return saveRenew()
+      .catch(function(e){ console.warn('续费台账写入失败（不影响日报主流程）',e); })
+      .then(function(){ return saveString().catch(function(e){ console.warn('穿线台账写入失败（不影响日报主流程）',e); }); })
+      .then(function(){
+        saveLocal(rec);
+        toast('✅ 已同步云端（日报 + 续费台账 + 穿线台账）'+rec[COLS.date]);
       });
   })
-  .catch(function(e){ toast('云端写入失败：'+(e.message||e)); });
+  .catch(function(e){ toast('云端写入失败：'+(e.message||e)+'　请再点一次保存'); });
 });
 </script>
 </body>
