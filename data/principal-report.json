@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-17 23:33",
+  "generated_at": "2026-10-18 08:31",
   "data_date": "2026-10-17",
   "overall": "yellow",
   "lights": [
@@ -38,7 +38,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "郭一谦/郭奕妍、邹书云、熊一鸣",
+  "callback": "苏音绮、于宛昕、郭一谦/郭奕妍",
   "video": {
     "today": 2.0,
     "this_week": 2.0,
@@ -64,14 +64,14 @@
     "rate": "0%"
   },
   "stringing": {
-    "month_count": 3.0,
+    "month_count": 2.0,
     "month_amount": 90.0,
     "month_jobs": 2,
     "by_stringer": [
       {
         "stringer": "江教练",
         "jobs": 2,
-        "count": 3.0,
+        "count": 2.0,
         "amount": 90.0
       }
     ]
