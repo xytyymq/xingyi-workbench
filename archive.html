@@ -817,9 +817,9 @@ let _syncTimer = null, _syncing = false, _retryN = 0, _booted = false;
 function _dirty(v){ try{ v ? localStorage.setItem(LS_DIRTY,'1') : localStorage.removeItem(LS_DIRTY); }catch(e){} }
 function _isDirty(){ try{ return localStorage.getItem(LS_DIRTY)==='1'; }catch(e){ return false; } }
 function _hhmm(){ const d=new Date(); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
-const _EMBED_GT = 'github'.concat('_pat_', '11CKYAWPA0UvaMJBDA9FbH', '_iHFhCnZSKzdYhOYOY35idH9bAH9HsIoFrNylBOkE6XyVLE6ZZSELM6Xe69o');
+const _EMBED_GT = ''; // 已移除真实令牌：改由后端代理代持（xy-auth.js 全局拦截 api.github.com 请求走代理）
 const _READONLY = false; // 全可写：任意打开都能录入并自动同步云端，无需 ?edit=1、无需授权
-function _gt(){ const t=(window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; if(t) return t; return _READONLY ? '' : _EMBED_GT; }
+function _gt(){ return 'proxy'; } // 占位串：真实令牌由 xy-auth.js 拦截后走后端代理
 
 // 数据一变就排队上传（防抖），页面上不需要点任何按钮
 function scheduleSync(delay){

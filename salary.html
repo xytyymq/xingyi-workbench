@@ -151,7 +151,7 @@ var REPO='xytyymq/xingyi-workbench', BRANCH='main', SALARY_PATH='data/principal-
 
 function $(id){return document.getElementById(id);}
 // 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
-function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : 'proxy'; } // 无本地令牌时返回占位，由 xy-auth.js 拦截走后端代理
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);}
 function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}

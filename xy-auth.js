@@ -294,3 +294,54 @@
     build();
   }
 })();
+
+// ============================================================
+// 后端代理代持：全局拦截 GitHub Contents API 请求
+// 内部员工在前端点「保存」无需各自持有 GitHub 令牌——
+// 所有命中 api.github.com/.../contents/ 的 fetch 自动改写走
+// 后端代理（服务端持有令牌、加来源校验），并从请求头剥离令牌。
+// 各页面 _gt() 返回占位串 'proxy' 即可触发请求、被此处拦截。
+// ============================================================
+(function () {
+  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
+  if (window.XYGate && !window.XYGate.__proxied) {
+    window.XYGate.__proxied = true;
+    var _fetch = window.fetch ? window.fetch.bind(window) : null;
+    if (!_fetch) return; // 极端环境无 fetch，不拦截
+    window.fetch = function (input, opts) {
+      opts = opts || {};
+      var url = (typeof input === 'string') ? input : (input && input.url) || '';
+      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
+        var rest = url.slice(GH_BASE.length);
+        var q = rest.indexOf('?');
+        var path = q >= 0 ? rest.slice(0, q) : rest;
+        var method = (opts.method || 'GET').toUpperCase();
+        if (method === 'GET') {
+          // 读：透明转发，保留 GitHub 原始状态码（含 404）供前端分支判断
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+            method: 'GET',
+            headers: { 'Accept': 'application/vnd.github+json' }
+          });
+        }
+        if (method === 'PUT') {
+          // 写：重组为代理 /github-save（path + 原 body 字段），剥离任何令牌
+          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
+          var nb = JSON.stringify({
+            path: path,
+            message: body.message,
+            content: body.content,
+            sha: body.sha,
+            branch: body.branch || 'main'
+          });
+          return _fetch(XY_PROXY + '/github-save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: nb
+          });
+        }
+      }
+      return _fetch.apply(null, arguments);
+    };
+  }
+})();

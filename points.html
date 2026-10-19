@@ -311,7 +311,7 @@ const LS_P='xy_points_local';
 
 function b64utf8(s){ const bytes=new TextEncoder().encode(s); let bin=''; for(let i=0;i<bytes.length;i++) bin+=String.fromCharCode(bytes[i]); return btoa(bin); }
 function decodeB64(s){ return decodeURIComponent(escape(atob(s.replace(/\s/g,'')))); }
-function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : ''; }
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : 'proxy'; } // 无本地令牌时返回占位，由 xy-auth.js 拦截走后端代理
 function _role(){ return (window.XYGate && XYGate.role) ? XYGate.role() : 'boss'; }
 function esc(s){ return (s+'').replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
 

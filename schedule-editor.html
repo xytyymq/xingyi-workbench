@@ -98,8 +98,8 @@ let cloudSha = null;
 
 function b64enc(s){ return btoa(unescape(encodeURIComponent(s))); }
 function token(){
-  try{ if(window.XYGate && XYGate.ghToken){ var t=XYGate.ghToken(); if(t) return t; } }catch(e){}
-  return 'github'.concat('_pat_','11CKYAWPA0UvaMJBDA9FbH','_iHFhCnZSKzdYhOYOY35idH9bAH9HsIoFrNylBOkE6XyVLE6ZZSELM6Xe69o');
+  // 令牌改由后端代理代持（xy-auth.js 全局拦截 api.github.com 请求走代理），前端不再持有真实令牌
+  return 'proxy';
 }
 function setStatus(msg, cls){
   const el=document.getElementById('status'); el.textContent=msg; el.className='status '+(cls||'');
