@@ -304,6 +304,7 @@
 // ============================================================
 (function () {
   var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
   var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
   if (window.XYGate && !window.XYGate.__proxied) {
     window.XYGate.__proxied = true;
@@ -321,7 +322,7 @@
           // 读：透明转发，保留 GitHub 原始状态码（含 404）供前端分支判断
           return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
             method: 'GET',
-            headers: { 'Accept': 'application/vnd.github+json' }
+            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
           });
         }
         if (method === 'PUT') {
@@ -336,7 +337,7 @@
           });
           return _fetch(XY_PROXY + '/github-save', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
             body: nb
           });
         }
