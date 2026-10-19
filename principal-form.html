@@ -135,11 +135,12 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
     <div class="field"><label>课程实收（元）</label><input type="number" id="f_course" placeholder="0"></div>
   </div>
   <div class="grid2">
-    <div class="field"><label>晚场收入（元）</label><input type="number" id="f_evening" placeholder="0"></div>
+    <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
     <div class="field"><label>教练招生业绩（元）</label><input type="number" id="f_coach" placeholder="0"></div>
   </div>
-  <div class="field"><label>日常工作考核分（0–500）</label><input type="number" id="f_daily" placeholder="如 500"></div>
-  <div class="hint">以上每月底填一次，保存后《校长工资核算页》自动出工资条。KPI 绩效满分 1200 = 晚场达标700（目标18000元）+ 日常500（按考核分，未达标按 实际÷目标 比例发）；教练管理奖金 = 教练招生 ×1%；底薪 3500 固定。</div>
+  <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
+  <div class="field"><label>日常其他考核分（0–300）</label><input type="number" id="f_daily" placeholder="如 300"></div>
+  <div class="hint">以上每月底填一次，保存后《校长工资核算页》自动出工资条。KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）。体测邀约按 完成÷66 给分（封顶200，硬性）；教练管理奖金 = 教练招生 ×1%；底薪 3500 固定。</div>
 </div>
 
 <button class="cta" id="saveCloud">保存并同步云端</button>
@@ -160,7 +161,7 @@ var COLS = {
   touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
   note:'备注（选填）',
   salMonth:'salaryMonth', course:'courseRevenue',
-  evening:'eveningRevenue', coach:'coachEnroll', daily:'dailyWork'
+  venue:'venueRevenue', coach:'coachEnroll', daily:'dailyWork', test:'testDone'
 };
 var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json', SALARY_PATH='data/principal-salary.json';
 
@@ -383,18 +384,19 @@ function prefillSalary(rec){
   if(!rec) return;
   function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
   set('f_course',COLS.course);
-  set('f_evening',COLS.evening); set('f_coach',COLS.coach); set('f_daily',COLS.daily);
+  set('f_venue',COLS.venue); set('f_coach',COLS.coach); set('f_daily',COLS.daily); set('f_test',COLS.test);
 }
 function clearSalaryInputs(){
-  ['f_course','f_evening','f_coach','f_daily'].forEach(function(id){$(id).value='';});
+  ['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){$(id).value='';});
 }
 function collectSalary(){
   return {
     salaryMonth: val('f_sal_month'),
     courseRevenue: val('f_course')||'0',
-    eveningRevenue: val('f_evening')||'0',
+    venueRevenue: val('f_venue')||'0',
     coachEnroll: val('f_coach')||'0',
     dailyWork: val('f_daily')||'0',
+    testDone: val('f_test')||'0',
     updated: new Date().toISOString().slice(0,10)
   };
 }

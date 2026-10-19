@@ -2,9 +2,10 @@
   {
     "salaryMonth": "2026-10",
     "courseRevenue": "26000",
-    "eveningRevenue": "18000",
+    "venueRevenue": "18000",
     "coachEnroll": "6000",
-    "dailyWork": "500",
+    "dailyWork": "300",
+    "testDone": "0",
     "updated": "2026-10-18"
   }
 ]

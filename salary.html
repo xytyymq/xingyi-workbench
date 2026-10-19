@@ -102,9 +102,10 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
     <div class="field"><label>课程实收（元）</label><input type="number" id="f_course" placeholder="0"></div>
     <div class="field"><label>教练招生业绩（元）</label><input type="number" id="f_coach" placeholder="0"></div>
   </div>
-  <div class="field"><label>晚场收入（元）</label><input type="number" id="f_evening" placeholder="0"></div>
-  <div class="field"><label>日常工作考核分（0–500）</label><input type="number" id="f_daily" placeholder="如 500"></div>
-  <div class="hint">底薪固定 3500；<b>KPI 绩效满分 1200 = 晚场达标700（目标18000元）+ 日常500（按考核分）</b>，晚场未达标按 实际÷目标 比例发该项；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%；总业绩提成仅按课程实收 2/2.5/3%。</div>
+  <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
+  <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
+  <div class="field"><label>日常其他考核分（0–300）</label><input type="number" id="f_daily" placeholder="如 300"></div>
+  <div class="hint">底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。场地未达标按 实际÷目标 比例发该项；<b>体测邀约</b>按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%；总业绩提成仅按课程实收 2/2.5/3%。</div>
   <button class="cta" id="saveSalary" type="button">保存本月核算</button>
 </div>
 
@@ -133,11 +134,11 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <summary>📐 计算公式与口径说明（2026-10-18 修正版）</summary>
   <p>校长月总收入 = <code>底薪3500</code> + <code>KPI绩效(分项加权，满分1200)</code> + <code>教练管理奖金(教练招生×1%)</code> + <code>招生阶梯提成(课程实收×档位)</code> + <code>总业绩提成(仅课程实收×档位)</code></p>
   <p><b>KPI 绩效（满分1200，两项加权，未达标按比例发）：</b></p>
-  <p>· 晚场达标 700元 = 晚场收入 ÷ 18000 × 700（封顶700）<br>
-     · 日常工作 500元 = 日常工作考核分（直接给 0–500）</p>
+  <p>· 场地达标 700元 = 场地收入 ÷ 18000 × 700（封顶700）<br>
+     · 日常工作 500元 = 体测邀约硬性 200（本月完成÷66×200，封顶200）+ 日常其他 300（校长考核分 0–300）</p>
   <p>招生阶梯提成（按课程实收）：&lt;18000→2% / 18000–24999→4% / 25000–34999→6% / ≥35000→8%</p>
   <p>总业绩提成（<b>仅课程实收</b>）：&lt;30000→2% / 30000–49999→2.5% / ≥50000→3%</p>
-  <p>四档阶梯参考（KPI 满分、教练招生6000、晚场18000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。仅供横向对照；实际工资以本页输入实时计算为准。</p>
+  <p>四档阶梯参考（KPI 满分、教练招生6000、场地18000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。注：体测邀约目标 66 为当前「从未体测=新生(58)×1 + 已测老生(24)÷3」的首测清栏冲刺值，58 人全部建档后自然回落约 27 次/月。实际工资以本页输入实时计算为准。</p>
   <p>返回 <a class="link" href="report.html">校长日报看板 →</a>　·　<a class="link" href="principal-form.html">填报校长日报 →</a></p>
 </details>
 
@@ -191,19 +192,23 @@ function ghSave(path, mergeFn, msg, tries){
 // ===== 算薪核心（2026-10-18 校长确认修正版）=====
 function calc(r){
   var base=3500, kpiFull=1200;
-  var course=num(r.course), evening=num(r.evening), coach=num(r.coach);
-  var daily=Math.max(0,Math.min(500,num(r.daily)));   // 日常工作考核分 0-500
-  // KPI 绩效分项加权：晚场700(目标18000) + 日常500
-  var eveningKpi = 700*Math.min(evening/18000,1);
-  var dailyKpi   = daily;
-  var performance = eveningKpi+dailyKpi;
+  var course=num(r.course), venue=num(r.venue||r.evening), coach=num(r.coach);
+  var testDone=Math.max(0,num(r.testDone||0));        // 本月体测邀约完成次数
+  var TEST_TARGET=66;                                  // 月度目标：新生(从未体测58)×1 + 老生(已测24)/3 ≈ 66；首测清栏冲刺值，清零后回落≈27
+  var otherDaily=Math.max(0,Math.min(300,num(r.daily))); // 日常其他考核分 0-300
+  // KPI 绩效分项加权：场地700(目标18000) + 体测邀约硬性200 + 日常其他300
+  var venueKpi  = 700*Math.min(venue/18000,1);
+  var testKpi   = 200*Math.min(testDone/TEST_TARGET,1); // 硬性：按比例给分，封顶200
+  var dailyKpi  = testKpi+otherDaily;                  // 封顶500
+  var performance = venueKpi+dailyKpi;
   var coachBonus = coach*0.01;                          // 教练招生 ×1%
   var enrollRate = course<18000?0.02 : course<25000?0.04 : course<35000?0.06 : 0.08;
   var enrollBonus= course*enrollRate;
   var totalRate  = course<30000?0.02 : course<50000?0.025 : 0.03;   // 仅课程实收
   var totalBonus = course*totalRate;
   var sum=base+performance+coachBonus+enrollBonus+totalBonus;
-  return {base:base,performance:performance,eveningKpi:eveningKpi,dailyKpi:dailyKpi,kpiFull:kpiFull,
+  return {base:base,performance:performance,venueKpi:venueKpi,venue:venue,testKpi:testKpi,testDone:testDone,testTarget:TEST_TARGET,
+    otherDaily:otherDaily,dailyKpi:dailyKpi,kpiFull:kpiFull,
     coach:coach,coachBonus:coachBonus,course:course,enrollRate:enrollRate,enrollBonus:enrollBonus,
     totalRate:totalRate,totalBonus:totalBonus,sum:sum};
 }
@@ -232,8 +237,9 @@ function renderSlip(r){
   $('slipMonth').textContent = (r.month||'—')+' 月';
   var rows=[
     ['底薪（固定）', c.base, ''],
-    ['KPI·晚场达标', c.eveningKpi, '晚场 '+yuan(c.evening)+' ÷18000 ×700', true],
-    ['KPI·日常工作', c.dailyKpi, '考核分(满分500)', true],
+    ['KPI·场地达标', c.venueKpi, '场地 '+yuan(c.venue)+' ÷18000 ×700', true],
+    ['KPI·体测邀约(硬性)', c.testKpi, '完成 '+c.testDone+'/'+c.testTarget+' ×200（封顶200）', true],
+    ['KPI·日常其他', c.otherDaily, '考核分(0–300)', true],
     ['教练管理奖金', c.coachBonus, '教练招生 '+yuan(c.coach)+' ×1%'],
     ['招生阶梯提成', c.enrollBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.enrollRate)],
     ['总业绩提成', c.totalBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.totalRate)]
@@ -249,9 +255,9 @@ function renderSlip(r){
 
 // ===== 四档阶梯 =====
 function renderLadder(curCourse){
-  // 固定场景：日常500满分、晚场18000达标、教练招生6000
+  // 固定场景：日常500满分、场地18000达标、教练招生6000
   var tiers=[{n:'未达标',c:8000},{n:'保底档',c:18000},{n:'正常档',c:25000},{n:'冲刺档',c:35000}];
-  var sums=tiers.map(function(t){ return calc({course:t.c,evening:18000,daily:500,coach:6000}).sum; });
+  var sums=tiers.map(function(t){ return calc({course:t.c,venue:18000,daily:300,testDone:66,coach:6000}).sum; });
   var max=Math.max.apply(null,sums);
   var html=tiers.map(function(t,i){
     var cur = (tierOf(curCourse)===t.n)?' cur':'';
@@ -265,11 +271,11 @@ function renderLadder(curCourse){
 var report=null, salaryData=null;
 function refresh(){
   var r={ month:$('f_month').value, course:$('f_course').value,
-    evening:$('f_evening').value, coach:$('f_coach').value, daily:$('f_daily').value };
+    venue:$('f_venue').value, coach:$('f_coach').value, daily:$('f_daily').value, testDone:$('f_test').value };
   renderSlip(r);
   renderLadder(num(r.course));
 }
-['f_course','f_evening','f_coach','f_daily'].forEach(function(id){ $(id).addEventListener('input',refresh); });
+['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){ $(id).addEventListener('input',refresh); });
 $('f_month').addEventListener('change',function(){ loadSalary(this.value); });
 
 // ===== 读取校长日报上下文 =====
@@ -282,11 +288,11 @@ function loadSalary(month){
     var rec=list.filter(function(x){return x.salaryMonth===month;})[0];
     if(rec){
       $('f_course').value=rec.courseRevenue||'';
-      $('f_evening').value=rec.eveningRevenue||''; $('f_coach').value=rec.coachEnroll||'';
-      $('f_daily').value=rec.dailyWork||'';
+      $('f_venue').value=rec.venueRevenue||rec.eveningRevenue||''; $('f_coach').value=rec.coachEnroll||'';
+      $('f_daily').value=rec.dailyWork||''; $('f_test').value=rec.testDone||'';
       salaryData=rec;
     } else {
-      ['f_course','f_evening','f_coach','f_daily'].forEach(function(id){$(id).value='';});
+      ['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){$(id).value='';});
       salaryData=null;
     }
     refresh();
@@ -298,8 +304,9 @@ $('saveSalary').addEventListener('click',function(){
   var month=$('f_month').value;
   if(!month){toast('请先选核算月份');return;}
   var rec={salaryMonth:month, courseRevenue:$('f_course').value||'0',
-    eveningRevenue:$('f_evening').value||'0',
+    venueRevenue:$('f_venue').value||'0',
     coachEnroll:$('f_coach').value||'0', dailyWork:$('f_daily').value||'0',
+    testDone:$('f_test').value||'0',
     updated:new Date().toISOString().slice(0,10)};
   $('saveSalary').textContent='保存中…';
   ghSave(SALARY_PATH, function(list){
