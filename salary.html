@@ -77,6 +77,25 @@ details{font-size:11.5px;color:var(--muted);line-height:1.7}
 details summary{cursor:pointer;color:var(--cyan);font-size:12px;margin-top:4px}
 details code{color:var(--green);background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px}
 a.link{color:var(--cyan);text-decoration:none;font-weight:700}
+
+/* 打印/导出给校长专用：只留工资条，白底黑字 */
+.print-head{display:none}
+@media print{
+  @page{margin:14mm}
+  html,body{background:#fff !important;color:#111 !important}
+  body *{visibility:hidden}
+  #slipCard,#slipCard *{visibility:visible}
+  #slipCard{position:absolute;left:0;top:0;width:100%;border:1px solid #ccc !important;
+    background:#fff !important;box-shadow:none !important;color:#111 !important}
+  .print-head{display:block !important;visibility:visible;margin-bottom:10px;
+    font-size:18px;font-weight:800;text-align:center;color:#111}
+  .slip-row .k,.slip-row .sub{color:#555 !important}
+  .slip-row .v{color:#111 !important}
+  .slip-total{background:#eef7d6 !important;border-color:#b6d65a !important}
+  .slip-total .k{color:#1a1a1a !important}
+  .slip-total .v{color:#1a6b00 !important}
+  .cta,.hint,.foot,details,.section-title,.header{display:none !important}
+}
 </style>
 </head>
 <body>
@@ -86,7 +105,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 </div>
 
 <!-- KPI 上下文（来自校长日报分析 principal-report.json） -->
-<div class="card">
+<div class="card" id="kpiCard">
   <div class="card-head"><span class="card-title">📡 校长日报 KPI 上下文</span><span class="tag" id="ctxDate">加载中…</span></div>
   <div class="kpi-row" id="kpiRow"></div>
   <div class="ctx-meta" id="ctxMeta"></div>
@@ -95,7 +114,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 <!-- 算薪输入 -->
 <div class="section-title">月度薪资核算输入</div>
-<div class="card">
+<div class="card" id="calcCard">
   <div class="card-head"><span class="card-title">💰 核算参数</span><span class="tag">工资页读取</span></div>
   <div class="field"><label>核算月份</label><input type="month" id="f_month"></div>
   <div class="grid2">
@@ -112,18 +131,20 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 <!-- 工资条 -->
 <div class="section-title">工资条（实时计算）</div>
-<div class="card">
+<div class="card" id="slipCard">
+  <div class="print-head">星羿体育 · 校长月度工资条（<span id="printHeadMonth">—</span>）</div>
   <div class="card-head"><span class="card-title">🧾 校长月度工资明细</span><span class="tag" id="slipMonth">—</span></div>
   <div class="slip" id="slip"></div>
   <div class="slip-total">
     <span class="k">本月应发合计<span class="tier-flag" id="tierFlag"></span></span>
     <span class="v" id="totalPay">¥0</span>
   </div>
+  <button class="cta ghost" id="exportSlip" type="button" style="margin-top:12px">🖨️ 导出 / 打印工资条（给校长）</button>
 </div>
 
 <!-- 四档阶梯 -->
 <div class="section-title">四档阶梯参考</div>
-<div class="card">
+<div class="card" id="ladderCard">
   <div class="card-head"><span class="card-title">🪜 业绩—收入阶梯</span><span class="tag">KPI满分/教练招生6000</span></div>
   <div class="ladder" id="ladder"></div>
   <div class="hint">横坐标为月度总收入；橙色描边 = 当前课程实收所处档位（按实际 KPI 与教练招生重算）。</div>
@@ -331,6 +352,12 @@ $('reAgg').addEventListener('click',function(){
     }
     fillAgg(s); refresh(); toast('已重新汇总本月日报');
   });
+});
+
+// ===== 导出 / 打印工资条（给校长）=====
+$('exportSlip').addEventListener('click',function(){
+  $('printHeadMonth').textContent=$('f_month').value||'—';
+  window.print();
 });
 
 // ===== 保存 =====
