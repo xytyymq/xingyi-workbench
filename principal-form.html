@@ -127,20 +127,25 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="hint">原表 4 个文字列已合并为 1 个选填框，日常留空不强制填「无」。</div>
 </div>
 
-<div class="section-title">月度薪资核算（与工资页打通）</div>
+<div class="section-title">每日工资驱动数据（每天填）</div>
 <div class="card">
-  <div class="card-head"><span class="card-title">💰 校长工资核算输入</span><span class="tag">工资页读取</span></div>
+  <div class="card-head"><span class="card-title">💰 今日营收 / 体测</span><span class="tag">后台自动汇总</span></div>
   <div class="grid2">
-    <div class="field"><label>核算月份</label><input type="month" id="f_sal_month"></div>
-    <div class="field"><label>课程实收（元）</label><input type="number" id="f_course" placeholder="0"></div>
+    <div class="field"><label>今日课程实收（元）</label><input type="number" id="f_sal_course" placeholder="0"></div>
+    <div class="field"><label>今日场地收入（元）</label><input type="number" id="f_sal_venue" placeholder="0"></div>
   </div>
   <div class="grid2">
-    <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
-    <div class="field"><label>教练招生业绩（元）</label><input type="number" id="f_coach" placeholder="0"></div>
+    <div class="field"><label>今日教练招生业绩（元）</label><input type="number" id="f_sal_coach" placeholder="0"></div>
+    <div class="field"><label>今日体测邀约次数</label><input type="number" id="f_sal_test" placeholder="0"></div>
   </div>
-  <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
-  <div class="field"><label>日常其他考核分（0–300）</label><input type="number" id="f_daily" placeholder="如 300"></div>
-  <div class="hint">以上每月底填一次，保存后《校长工资核算页》自动出工资条。KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）。体测邀约按 完成÷66 给分（封顶200，硬性）；教练管理奖金 = 教练招生 ×1%；底薪 3500 固定。</div>
+  <div class="hint">以上四项<b>每天填</b>，工资页（后台）自动按月汇总算薪。<b>日常考核分（0–300）不在此填，月底在「校长工资核算页」一次性评。</b></div>
+</div>
+
+<div class="card readonly">
+  <div class="card-head"><span class="card-title">📊 本月累计（来自每日填写）</span><span class="tag">自动</span></div>
+  <div class="big" id="salSum">加载中…</div>
+  <div class="funnel" id="salProg" style="margin-top:10px"></div>
+  <div class="hint">仅展示原始加总与进度，完整工资核算在《校长工资核算页》（后台），不在本卡。</div>
 </div>
 
 <button class="cta" id="saveCloud">保存并同步云端</button>
@@ -160,10 +165,10 @@ var COLS = {
   video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
   touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
   note:'备注（选填）',
-  salMonth:'salaryMonth', course:'courseRevenue',
-  venue:'venueRevenue', coach:'coachEnroll', daily:'dailyWork', test:'testDone'
+  salCourseDay:'salaryCourseDay', salVenueDay:'salaryVenueDay',
+  salCoachDay:'salaryCoachDay', salTestDay:'salaryTestDay'
 };
-var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json', SALARY_PATH='data/principal-salary.json';
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json';
 
 function $(id){return document.getElementById(id);}
 // 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
@@ -240,6 +245,10 @@ function collect(){
   rec[COLS.videoTitle]=val('f_video_title');
   rec[COLS.touch]=val('f_touch')||'0';
   rec[COLS.touchFb]=val('f_fb');
+  rec[COLS.salCourseDay]=val('f_sal_course')||'0';
+  rec[COLS.salVenueDay]=val('f_sal_venue')||'0';
+  rec[COLS.salCoachDay]=val('f_sal_coach')||'0';
+  rec[COLS.salTestDay]=val('f_sal_test')||'0';
   return rec;
 }
 
@@ -252,6 +261,8 @@ function prefill(rec){
   set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
   set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
   set('f_touch',COLS.touch);set('f_fb',COLS.touchFb);set('f_note',COLS.note);
+  set('f_sal_course',COLS.salCourseDay);set('f_sal_venue',COLS.salVenueDay);
+  set('f_sal_coach',COLS.salCoachDay);set('f_sal_test',COLS.salTestDay);
   drawFunnel();
 }
 
@@ -265,15 +276,18 @@ prefill(loadLocal(todayISO()));
 drawFunnel();
 (function loadCloud(){
   ghRead(PATH).then(function(st){
-    var rec=(st.list||[]).filter(function(x){return x[COLS.date]===todayISO();})[0];
+    var list=st.list||[];
+    var rec=list.filter(function(x){return x[COLS.date]===todayISO();})[0];
     // 本机已有当天草稿时不被云端旧行覆盖，避免填一半被冲掉
     if(rec && !loadLocal(todayISO())) prefill(rec);
+    renderSalarySummary(list);
   }).catch(function(){});
 })();
 
 // 输入即缓存（防丢失）
 ['f_who','f_lessons','f_lead','f_book','f_show','f_sign',
- 'f_video','f_video_title','f_touch','f_fb','f_note'].forEach(function(id){
+ 'f_video','f_video_title','f_touch','f_fb','f_note',
+ 'f_sal_course','f_sal_venue','f_sal_coach','f_sal_test'].forEach(function(id){
   $(id).addEventListener('input',function(){saveLocal(collect());});
 });
 
@@ -374,53 +388,25 @@ function saveString(){
   }, 'chore: 穿线台账更新');
 }
 
-// ===== 校长薪资核算（独立文件 data/principal-salary.json，按月 key，与工资页打通）=====
-function salaryRecByMonth(month){
-  return ghRead(SALARY_PATH).then(function(st){
-    return (st.list||[]).filter(function(x){return x[COLS.salMonth]===month;})[0]||null;
+// ===== 本月累计汇总（仅原始加总 + 目标进度，不含工资公式，不在卡上暴露核算）=====
+var SAL_TARGET_VENUE=18000, SAL_TARGET_TEST=66;
+function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
+function renderSalarySummary(list){
+  var m=todayISO().slice(0,7);
+  var s={course:0,venue:0,coach:0,test:0};
+  (list||[]).forEach(function(x){
+    if((x[COLS.date]||'').slice(0,7)!==m) return;
+    s.course+=Math.max(0,parseFloat(x[COLS.salCourseDay]||0)||0);
+    s.venue +=Math.max(0,parseFloat(x[COLS.salVenueDay]||0)||0);
+    s.coach +=Math.max(0,parseFloat(x[COLS.salCoachDay]||0)||0);
+    s.test  +=Math.max(0,parseFloat(x[COLS.salTestDay]||0)||0);
   });
+  $('salSum').innerHTML='课程 <b>'+yuan(s.course)+'</b> · 场地 <b>'+yuan(s.venue)+'</b><br>教练招生 <b>'+yuan(s.coach)+'</b> · 体测 <b>'+s.test+'</b> 次';
+  var vp=Math.min(100,Math.round(s.venue/SAL_TARGET_VENUE*100)), tp=Math.min(100,Math.round(s.test/SAL_TARGET_TEST*100));
+  $('salProg').innerHTML=
+    '<div class="funnel-row"><span class="fl">场地</span><span class="bar" style="width:'+vp+'%"></span><span class="num">'+vp+'%</span></div>'+
+    '<div class="funnel-row"><span class="fl">体测</span><span class="bar" style="width:'+tp+'%"></span><span class="num">'+tp+'%</span></div>';
 }
-function prefillSalary(rec){
-  if(!rec) return;
-  function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
-  set('f_course',COLS.course);
-  set('f_venue',COLS.venue); set('f_coach',COLS.coach); set('f_daily',COLS.daily); set('f_test',COLS.test);
-}
-function clearSalaryInputs(){
-  ['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){$(id).value='';});
-}
-function collectSalary(){
-  return {
-    salaryMonth: val('f_sal_month'),
-    courseRevenue: val('f_course')||'0',
-    venueRevenue: val('f_venue')||'0',
-    coachEnroll: val('f_coach')||'0',
-    dailyWork: val('f_daily')||'0',
-    testDone: val('f_test')||'0',
-    updated: new Date().toISOString().slice(0,10)
-  };
-}
-function saveSalary(){
-  var rec=collectSalary();
-  if(!rec.salaryMonth) return Promise.resolve();
-  return ghSave(SALARY_PATH, function(list){
-    var found=false;
-    var merged=(list||[]).map(function(r){
-      if(r[COLS.salMonth]===rec.salaryMonth){found=true;return Object.assign({},r,rec);}
-      return r;
-    });
-    if(!found) merged.push(rec);
-    return merged;
-  }, 'chore: 校长薪资核算 '+rec.salaryMonth);
-}
-(function initSalary(){
-  $('f_sal_month').value = todayISO().slice(0,7);
-  salaryRecByMonth($('f_sal_month').value).then(function(rec){ if(rec) prefillSalary(rec); }).catch(function(){});
-  $('f_sal_month').addEventListener('change', function(){
-    clearSalaryInputs();
-    salaryRecByMonth(this.value).then(function(rec){ if(rec) prefillSalary(rec); }).catch(function(){});
-  });
-})();
 
 // 保存并同步云端（日报主行 + 续费台账 + 穿线台账 + 薪资核算）
 $('saveCloud').addEventListener('click',function(){
@@ -438,16 +424,15 @@ $('saveCloud').addEventListener('click',function(){
     if(!found) merged.push(rec);
     return merged;
   }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步')
-  .then(function(){
-    return saveRenew()
-      .catch(function(e){ console.warn('续费台账写入失败（不影响日报主流程）',e); })
-      .then(function(){ return saveString().catch(function(e){ console.warn('穿线台账写入失败（不影响日报主流程）',e); }); })
-      .then(function(){ return saveSalary().catch(function(e){ console.warn('薪资核算写入失败（不影响日报主流程）',e); }); })
       .then(function(){
-        saveLocal(rec);
-        toast('✅ 已同步云端（日报 + 续费 + 穿线 + 薪资核算）'+rec[COLS.date]);
-      });
-  })
+        return saveRenew()
+          .catch(function(e){ console.warn('续费台账写入失败（不影响日报主流程）',e); })
+          .then(function(){ return saveString().catch(function(e){ console.warn('穿线台账写入失败（不影响日报主流程）',e); }); })
+          .then(function(){
+            saveLocal(rec);
+            toast('✅ 已同步云端（日报 + 续费 + 穿线 + 每日工资）'+rec[COLS.date]);
+          });
+      })
   .catch(function(e){
     var m=(e&&e.message)||String(e||'');
     if(/HTTP 401/.test(m)||(!_gt()&&!XYGate.hasToken())){

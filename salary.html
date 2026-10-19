@@ -104,8 +104,9 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   </div>
   <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
   <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
-  <div class="field"><label>日常其他考核分（0–300）</label><input type="number" id="f_daily" placeholder="如 300"></div>
-  <div class="hint">底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。场地未达标按 实际÷目标 比例发该项；<b>体测邀约</b>按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%；总业绩提成仅按课程实收 2/2.5/3%。</div>
+  <div class="field"><label>日常其他考核分（0–300，月底评）</label><input type="number" id="f_daily" placeholder="如 300"></div>
+  <div class="hint">前四项（课程/场地/教练招生/体测）来自《校长日报》每日填写，<b>自动按月汇总</b>填入（点下方按钮可重算）；日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%；总业绩提成仅按课程实收 2/2.5/3%。</div>
+  <button class="cta ghost" id="reAgg" type="button" style="margin-top:10px">↻ 重新汇总本月日报</button>
   <button class="cta" id="saveSalary" type="button">保存本月核算</button>
 </div>
 
@@ -281,23 +282,56 @@ $('f_month').addEventListener('change',function(){ loadSalary(this.value); });
 // ===== 读取校长日报上下文 =====
 readJSON('data/principal-report.json').then(renderContext).catch(function(){ renderContext(null); });
 
-// ===== 读取/回填本月考算输入 =====
+// ===== 读取/回填本月考算输入（优先快照，否则聚合校长日报）=====
+function aggregateDaily(month){
+  return readJSON('data/principal-daily.json').then(function(list){
+    list=list||[];
+    var s={course:0,venue:0,coach:0,test:0};
+    list.forEach(function(x){
+      if((x['日期']||'').slice(0,7)!==month) return;
+      s.course+=Math.max(0,num(x['salaryCourseDay']||0));
+      s.venue +=Math.max(0,num(x['salaryVenueDay']||0));
+      s.coach +=Math.max(0,num(x['salaryCoachDay']||0));
+      s.test  +=Math.max(0,num(x['salaryTestDay']||0));
+    });
+    return s;
+  }).catch(function(){ return {course:0,venue:0,coach:0,test:0}; });
+}
+function fillAgg(s){
+  $('f_course').value=s.course||'';
+  $('f_venue').value=s.venue||'';
+  $('f_coach').value=s.coach||'';
+  $('f_test').value=s.test||'';
+}
 function loadSalary(month){
   return readJSON('data/principal-salary.json').then(function(list){
     list=list||[];
     var rec=list.filter(function(x){return x.salaryMonth===month;})[0];
     if(rec){
+      // 优先用已保存的当月快照（稳定、可手动修正）
       $('f_course').value=rec.courseRevenue||'';
       $('f_venue').value=rec.venueRevenue||rec.eveningRevenue||''; $('f_coach').value=rec.coachEnroll||'';
       $('f_daily').value=rec.dailyWork||''; $('f_test').value=rec.testDone||'';
       salaryData=rec;
     } else {
-      ['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){$(id).value='';});
-      salaryData=null;
+      // 无快照：聚合校长日报当日填写
+      return aggregateDaily(month).then(function(s){ fillAgg(s); $('f_daily').value=''; salaryData=null; refresh(); });
     }
     refresh();
   }).catch(function(){ refresh(); });
 }
+$('reAgg').addEventListener('click',function(){
+  var month=$('f_month').value;
+  aggregateDaily(month).then(function(s){
+    var total=s.course+s.venue+s.coach+s.test;
+    // 保护：本月日报还没有任何「每日工资」记录时，不拿 0 去覆盖已有的手动快照
+    if(total===0){
+      toast('本月日报暂无每日工资记录，未覆盖现有数据');
+      return;
+    }
+    fillAgg(s); refresh(); toast('已重新汇总本月日报');
+  });
+});
 
 // ===== 保存 =====
 $('saveSalary').addEventListener('click',function(){
