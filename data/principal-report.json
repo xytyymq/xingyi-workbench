@@ -1,35 +1,32 @@
 {
-  "generated_at": "2026-10-18 08:31",
-  "data_date": "2026-10-17",
+  "generated_at": "2026-10-19 08:30",
+  "data_date": "2026-10-18",
   "overall": "yellow",
   "lights": [
     {
-      "level": "green",
-      "text": "试课到场率 100%（≥80% 达标）"
-    },
-    {
       "level": "yellow",
-      "text": "本月报名 3/10 人，进度落后于时间线（应到 5.5）"
+      "text": "本月报名 4/10 人，进度落后于时间线（应到 5.8）"
     }
   ],
   "funnel": {
     "new_leads_today": 0.0,
-    "trial_arrive_rate": "100%",
-    "month_signups": 3.0,
+    "trial_arrive_rate": null,
+    "month_signups": 4.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 300.0,
-      "month_count": 1,
+      "month_amount": 600.0,
+      "month_count": 2,
       "goal": 28800,
-      "goal_rate": "1%",
+      "goal_rate": "2%",
       "note": ""
     }
   },
   "coach": [],
   "boss_todos": [
+    "2026-10-18｜体能课器材采购",
     "2026-10-17｜商量体能课所需要的器材"
   ],
   "cross_check": [
@@ -38,18 +35,18 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "苏音绮、于宛昕、郭一谦/郭奕妍",
+  "callback": "苏音绮、卢明锐、苏婉君",
   "video": {
-    "today": 2.0,
+    "today": 0.0,
     "this_week": 2.0,
     "this_month": 2.0,
-    "latest_title": "少儿班趣味游戏",
+    "latest_title": "",
     "latest_status": ""
   },
   "touch": {
-    "count": 2.0,
+    "count": 5.0,
     "types": "微信/群消息推送",
-    "feedback": "江文博家长正在考虑是否办年卡"
+    "feedback": "谢晨希家长回去和其他3位家长商量下；吴帛珅家长说回去考虑下"
   },
   "tice": {
     "month_done": 0,
@@ -65,25 +62,18 @@
   },
   "stringing": {
     "month_count": 2.0,
-    "month_amount": 90.0,
+    "month_amount": 100.0,
     "month_jobs": 2,
     "by_stringer": [
       {
         "stringer": "江教练",
         "jobs": 2,
         "count": 2.0,
-        "amount": 90.0
+        "amount": 100.0
       }
     ]
   },
   "week_rows": [
-    {
-      "date": "10-11",
-      "leads": 0.0,
-      "trials": 11.0,
-      "signups": 0.0,
-      "classes": 3.0
-    },
     {
       "date": "10-12",
       "leads": 0.0,
@@ -125,9 +115,16 @@
       "trials": 2.0,
       "signups": 1.0,
       "classes": 6.0
+    },
+    {
+      "date": "10-18",
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 1.0,
+      "classes": 3.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 1 · 开课 10 节",
+  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 10 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
