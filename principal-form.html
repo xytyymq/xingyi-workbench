@@ -448,7 +448,14 @@ $('saveCloud').addEventListener('click',function(){
         toast('✅ 已同步云端（日报 + 续费 + 穿线 + 薪资核算）'+rec[COLS.date]);
       });
   })
-  .catch(function(e){ toast('云端写入失败：'+(e.message||e)+'　请再点一次保存'); });
+  .catch(function(e){
+    var m=(e&&e.message)||String(e||'');
+    if(/HTTP 401/.test(m)||(!_gt()&&!XYGate.hasToken())){
+      toast('🔑 授权已过期/未授权：点右下角「云授权」重新粘贴令牌后再保存');
+    }else{
+      toast('云端写入失败：'+m+'　请再点一次保存');
+    }
+  });
 });
 </script>
 </body>
