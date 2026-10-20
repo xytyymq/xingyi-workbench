@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20 23:02",
+  "generated_at": "2026-10-20 23:29",
   "data_date": "2026-10-20",
   "overall": "red",
   "lights": [
@@ -26,6 +26,25 @@
       "goal": 28800,
       "goal_rate": "2%",
       "note": ""
+    },
+    "revenue": {
+      "month_total": 700,
+      "month_renew": 600,
+      "month_string": 100,
+      "today_total": 0,
+      "today_renew": 0,
+      "today_string": 0,
+      "by_type": [
+        {
+          "name": "续费/订金",
+          "amount": 600
+        },
+        {
+          "name": "穿线",
+          "amount": 100
+        }
+      ],
+      "note": "（含续费/订金·穿线；报名费与《收支记账》表待录入后并入全口径）"
     }
   },
   "coach": [
@@ -50,7 +69,7 @@
       "text": "开课节数打架：日报报 2 节，上课记录实际 13 条，需核实"
     }
   ],
-  "callback": "朱梓芊、盛呈栩、朱梓檬",
+  "callback": "曹心语、邓琬妮、高筠皓",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
