@@ -139,11 +139,15 @@
 <main class="wrap">
   <!-- 第一屏核心 KPI -->
   <section class="kpi-strip" id="kpiStrip">
+    <div class="kpi"><div class="n" id="kRevenue">–</div><div class="l">本月营收</div></div>
     <div class="kpi"><div class="n" id="kRenewAmt">–</div><div class="l">本月续课额</div></div>
     <div class="kpi"><div class="n" id="kRenewCnt">–</div><div class="l">续费人数</div></div>
     <div class="kpi"><div class="n" id="kSignup">–</div><div class="l">本月报名</div></div>
     <div class="kpi"><div class="n" id="kTouch">–</div><div class="l">今日触达</div></div>
   </section>
+
+  <!-- 营收战报条 -->
+  <div class="revenue-bar" id="revenueBar" style="margin-top:8px;background:var(--card-strong);border:1px solid var(--line);border-left:3px solid var(--cyan);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--text)"></div>
 
   <!-- 续课战报条 -->
   <div class="renew-bar" id="renewBar" style="margin-top:8px;background:var(--card-strong);border:1px solid var(--line);border-left:3px solid var(--neon);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--text)"></div>
@@ -239,11 +243,20 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
 
   // 核心 KPI 条
   const rn=d.finance?.renew||{},f=d.funnel||{},touch=d.touch||{};
+  const rev=d.finance?.revenue||{};
   const setK=(id,v)=>document.getElementById(id).textContent=v;
+  setK("kRevenue", rev.month_total!=null?"¥"+Math.round(rev.month_total):"–");
   setK("kRenewAmt", rn.month_amount!=null?"¥"+Math.round(rn.month_amount):"–");
   setK("kRenewCnt", rn.month_count!=null?rn.month_count+" 人":"–");
   setK("kSignup", (f.month_signups??0)+" 人");
   setK("kTouch", touch.count!=null?touch.count+" 位":"–");
+  const revOk = rev && rev.month_total!=null;
+  document.getElementById("revenueBar").innerHTML = revOk
+    ? `💰 本月营收：<b style="color:var(--cyan)">¥${Math.round(rev.month_total||0)}</b>`
+      + (rev.today_total? ` · 今日 <b>¥${Math.round(rev.today_total)}</b>`:'')
+      + (rev.by_type&&rev.by_type.length? ' · ' + rev.by_type.map(x=>`${x.name} ¥${Math.round(x.amount)}`).join(' · ') : '')
+      + (rev.note||'')
+    : '💰 本月营收：待接入';
   const renewOk = rn && rn.goal!=null;
   document.getElementById("renewBar").innerHTML = renewOk
     ? `📈 续课战报：本月 <b style="color:var(--neon)">¥${Math.round(rn.month_amount||0)}</b> · ${rn.month_count??0} 人`
