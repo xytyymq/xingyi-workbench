@@ -60,9 +60,9 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 </div>
 
 <div class="card readonly">
-  <div class="card-head"><span class="card-title">📊 本月续费战报（自动）</span><span class="tag">校长日报</span></div>
-  <div class="big">续费金额 / 人数 / 目标完成率，每晚自动汇总到《校长日报》看板，<a class="link" href="report.html" target="_blank" rel="noopener">点此查看 →</a></div>
-  <div class="hint">续费是月度口径，不在此每日填写；在下方「续费登记」逐人登记即可，日报自动汇总。</div>
+  <div class="card-head"><span class="card-title">📊 本月营收战报（自动）</span><span class="tag">校长日报</span></div>
+  <div class="big">每笔收款在下方「营收台账」登记即可，日报每晚自动汇总本月营收 / 续课额 / 按类型拆分，<a class="link" href="report.html" target="_blank" rel="noopener">点此查看 →</a></div>
+  <div class="hint">营收 = 续费/订金 + 新报名 + 散客/场地 + 穿线，全部逐笔登记；收款人必填（对账 + 教练业绩归属）。体测邀约次数单独填（考核校长工作，不计入营收）。</div>
 </div>
 
 <div class="section-title">基础信息</div>
@@ -104,20 +104,12 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="field"><label>反馈摘要</label><textarea id="f_fb" placeholder="家长原话 / 诉求点，一句话即可"></textarea></div>
 </div>
 
-<div class="section-title">续费登记（一人一表）</div>
+<div class="section-title">营收台账（每笔收款登记）</div>
 <div class="card">
-  <div class="card-head"><span class="card-title">💰 续费 / 新购台账</span><span class="tag">独立台账</span></div>
-  <div id="renewList"></div>
-  <button class="cta ghost" id="addRenew" type="button" style="margin-top:10px">+ 添加一条续费记录</button>
-  <div class="hint">每个续费 / 新购 / 转介绍 / 订金学员登记一条（学员 · 金额 · 类型 · 日期）。保存即写入工作台续费台账，校长日报自动汇总本月续费额与人数。</div>
-</div>
-
-<div class="section-title">穿线登记（每月统计）</div>
-<div class="card">
-  <div class="card-head"><span class="card-title">🎾 穿线台账</span><span class="tag">独立台账</span></div>
-  <div id="stringList"></div>
-  <button class="cta ghost" id="addString" type="button" style="margin-top:10px">+ 添加一条穿线记录</button>
-  <div class="hint">记录每笔穿线：穿线师 · 条数 · 金额(元) · 日期（选填线型号）。保存即写入工作台穿线台账，校长日报自动按月统计每个穿线师穿了多少线、金额多少。</div>
+  <div class="card-head"><span class="card-title">💰 营收台账</span><span class="tag">统一台账</span></div>
+  <div class="hint" style="margin-bottom:10px">每一笔收款登记一行：<b>日期 · 学员/客户 · 金额 · 类型 · 收款人</b>。类型选「续费/订金 / 新报名 / 散客/场地 / 穿线」。<b>收款人必填</b>（对账 + 教练业绩归属）。保存即写入工作台营收台账，校长日报自动汇总本月营收与拆分。</div>
+  <div id="ledgerList"></div>
+  <button class="cta ghost" id="addLedger" type="button" style="margin-top:10px">+ 添加一笔收款</button>
 </div>
 
 <div class="section-title">备注（选填）</div>
@@ -127,31 +119,26 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="hint">原表 4 个文字列已合并为 1 个选填框，日常留空不强制填「无」。</div>
 </div>
 
-<div class="section-title">每日工资驱动数据（每天填）</div>
+<div class="section-title">校长工作考核（每天填）</div>
 <div class="card">
-  <div class="card-head"><span class="card-title">💰 今日营收 / 体测</span><span class="tag">后台自动汇总</span></div>
+  <div class="card-head"><span class="card-title">🎯 体测邀约（考核校长）</span><span class="tag">不计入营收</span></div>
   <div class="grid2">
-    <div class="field"><label>今日课程实收（元）</label><input type="number" id="f_sal_course" placeholder="0"></div>
-    <div class="field"><label>今日场地收入（元）</label><input type="number" id="f_sal_venue" placeholder="0"></div>
-  </div>
-  <div class="grid2">
-    <div class="field"><label>今日教练招生业绩（元）</label><input type="number" id="f_sal_coach" placeholder="0"></div>
     <div class="field"><label>今日体测邀约次数</label><input type="number" id="f_sal_test" placeholder="0"></div>
   </div>
-  <div class="hint">以上四项<b>每天填</b>，工资页（后台）自动按月汇总算薪。<b>日常考核分（0–300）不在此填，月底在「校长工资核算页」一次性评。</b></div>
+  <div class="hint">体测邀约是<b>考核校长工作</b>的指标（工资页按本月完成÷66 计 KPI），<b>不计入营收</b>。营收请在上方「营收台账」逐笔登记，工资页会据此自动汇总课程实收 / 教练招生业绩 / 场地收入。</div>
 </div>
 
 <div class="card readonly">
-  <div class="card-head"><span class="card-title">📊 本月累计（来自每日填写）</span><span class="tag">自动</span></div>
+  <div class="card-head"><span class="card-title">📊 本月累计（来自营收台账）</span><span class="tag">自动</span></div>
   <div class="big" id="salSum">加载中…</div>
   <div class="funnel" id="salProg" style="margin-top:10px"></div>
-  <div class="hint">仅展示原始加总与进度，完整工资核算在《校长工资核算页》（后台），不在本卡。</div>
+  <div class="hint">课程实收 / 场地 / 教练招生 由上方「营收台账」自动汇总；体测为下方每日填写。完整工资核算在《校长工资核算页》（后台）。</div>
 </div>
 
 <button class="cta" id="saveCloud">保存并同步云端</button>
 <button class="cta ghost" id="saveLocal">仅存本机（离线）</button>
 <div class="foot">星羿体育 · 见证每一次成长｜填完点「保存并同步云端」即自动写入工作台</div>
-<div class="foot" style="opacity:.45;font-size:11px;margin-top:4px">客户端版本 v20261020b</div>
+<div class="foot" style="opacity:.45;font-size:11px;margin-top:4px">客户端版本 v20261021</div>
 
 <div class="toast" id="toast"></div>
 
@@ -222,12 +209,12 @@ var COLS = {
   video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
   touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
   note:'备注（选填）',
-  salCourseDay:'salaryCourseDay', salVenueDay:'salaryVenueDay',
-  salCoachDay:'salaryCoachDay', salTestDay:'salaryTestDay'
+  salTestDay:'salaryTestDay'
 };
-var BUILD='20261020b';
+var REV_TYPES = ['续费/订金','新报名','散客/场地','穿线'];
+var BUILD='20261021';
 (function(){ try{ var p=localStorage.getItem('xy_pf_build'); if(p&&p!==BUILD){ var t=document.getElementById('toast'); if(t){ t.textContent='🔄 检测到新版，请刷新本页以生效'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},5000);} } localStorage.setItem('xy_pf_build',BUILD); }catch(e){} })();
-var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json';
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', REVENUE_PATH='data/revenue-ledger.json';
 
 function $(id){return document.getElementById(id);}
 // 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
@@ -321,9 +308,6 @@ function collect(){
   rec[COLS.videoTitle]=val('f_video_title');
   rec[COLS.touch]=val('f_touch')||'0';
   rec[COLS.touchFb]=val('f_fb');
-  rec[COLS.salCourseDay]=val('f_sal_course')||'0';
-  rec[COLS.salVenueDay]=val('f_sal_venue')||'0';
-  rec[COLS.salCoachDay]=val('f_sal_coach')||'0';
   rec[COLS.salTestDay]=val('f_sal_test')||'0';
   return rec;
 }
@@ -337,8 +321,7 @@ function prefill(rec){
   set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
   set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
   set('f_touch',COLS.touch);set('f_fb',COLS.touchFb);set('f_note',COLS.note);
-  set('f_sal_course',COLS.salCourseDay);set('f_sal_venue',COLS.salVenueDay);
-  set('f_sal_coach',COLS.salCoachDay);set('f_sal_test',COLS.salTestDay);
+  set('f_sal_test',COLS.salTestDay);
   drawFunnel();
 }
 
@@ -351,19 +334,20 @@ function loadLocal(d){try{var s=localStorage.getItem(lsKey(d));return s?JSON.par
 prefill(loadLocal(todayISO()));
 drawFunnel();
 (function loadCloud(){
+  var ledgerP = ghRead(REVENUE_PATH).then(function(st){ return st.list||[]; }).catch(function(){ return []; });
   ghRead(PATH).then(function(st){
     var list=st.list||[];
     var rec=list.filter(function(x){return x[COLS.date]===todayISO();})[0];
     // 本机已有当天草稿时不被云端旧行覆盖，避免填一半被冲掉
     if(rec && !loadLocal(todayISO())) prefill(rec);
-    renderSalarySummary(list);
-  }).catch(function(){});
+    return ledgerP.then(function(ledger){ renderSalarySummary(ledger, list); });
+  }).catch(function(){ ledgerP.then(function(ledger){ renderSalarySummary(ledger, []); }); });
 })();
 
 // 输入即缓存（防丢失）
 ['f_who','f_lessons','f_lead','f_book','f_show','f_sign',
  'f_video','f_video_title','f_touch','f_fb','f_note',
- 'f_sal_course','f_sal_venue','f_sal_coach','f_sal_test'].forEach(function(id){
+ 'f_sal_test'].forEach(function(id){
   $(id).addEventListener('input',function(){saveLocal(collect());});
 });
 
@@ -373,95 +357,65 @@ $('saveLocal').addEventListener('click',function(){
   toast('已存本机 '+rec[COLS.date]+'（未同步云端）');
 });
 
-// ===== 续费台账（一人一表，独立文件 data/renew-records.json）=====
-function renewRowHTML(r){
+// ===== 统一营收台账（每笔收款一行，独立文件 data/revenue-ledger.json）=====
+function ledgerRowHTML(r){
   r=r||{};
-  return '<div class="renew-row" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1.1fr 30px;gap:6px;margin-bottom:8px;align-items:center">'+
-    '<input class="rn-name" placeholder="学员姓名" value="'+(r.name||'')+'">'+
-    '<input class="rn-amount" type="number" placeholder="金额" value="'+(r.amount||'')+'">'+
-    '<select class="rn-type">'+['续费','新购','转介绍','订金'].map(function(t){return '<option'+(r.type===t?' selected':'')+'>'+t+'</option>';}).join('')+'</select>'+
-    '<input class="rn-date" type="date" value="'+(r.date||todayISO())+'">'+
-    '<button class="rn-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
+  var typeOpts = REV_TYPES.map(function(t){ return '<option'+(r.type===t?' selected':'')+'>'+t+'</option>'; }).join('');
+  return '<div class="lg-row" style="display:grid;grid-template-columns:1.1fr 1.5fr .9fr 1.3fr 1.1fr 30px;gap:6px;margin-bottom:8px;align-items:center">'+
+    '<input class="lg-date" type="date" value="'+(r.date||todayISO())+'">'+
+    '<input class="lg-name" placeholder="学员/客户" value="'+escAttr(r.name||'')+'">'+
+    '<input class="lg-amount" type="number" placeholder="金额" value="'+(r.amount!=null?r.amount:'')+'">'+
+    '<select class="lg-type">'+typeOpts+'</select>'+
+    '<input class="lg-collector" placeholder="收款人" value="'+escAttr(r.collector||'')+'">'+
+    '<button class="lg-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
     '</div>';
 }
-function bindDel(){ document.querySelectorAll('#renewList .rn-del').forEach(function(b){ b.onclick=function(){ b.parentNode.remove(); }; }); }
-function renderRenew(list){
-  var box=document.getElementById('renewList');
-  box.innerHTML = (list&&list.length) ? list.map(renewRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方按钮添加。</div>';
-  bindDel();
+function bindDelLedger(){ document.querySelectorAll('#ledgerList .lg-del').forEach(function(b){ b.onclick=function(){ b.parentNode.remove(); }; }); }
+function renderLedger(list){
+  var box=document.getElementById('ledgerList');
+  box.innerHTML = (list&&list.length) ? list.map(ledgerRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方「+ 添加一笔收款」开始登记。</div>';
+  bindDelLedger();
 }
-function collectRenew(){
+function collectLedger(){
   var out=[];
-  document.querySelectorAll('#renewList .renew-row').forEach(function(row){
-    var name=row.querySelector('.rn-name').value.trim();
-    var amount=row.querySelector('.rn-amount').value.trim();
-    var type=row.querySelector('.rn-type').value;
-    var date=row.querySelector('.rn-date').value.trim();
-    if(name&&amount&&date) out.push({date:date,name:name,amount:amount,type:type});
+  document.querySelectorAll('#ledgerList .lg-row').forEach(function(row){
+    var amount=row.querySelector('.lg-amount').value.trim();
+    var date=row.querySelector('.lg-date').value.trim();
+    if(!amount||!date) return;   // 金额/日期为必填；姓名/收款人可后补
+    out.push({
+      date:date,
+      name:row.querySelector('.lg-name').value.trim(),
+      amount:amount,
+      type:row.querySelector('.lg-type').value,
+      collector:row.querySelector('.lg-collector').value.trim()
+    });
   });
   return out;
 }
-document.getElementById('addRenew').onclick=function(){
-  document.getElementById('renewList').insertAdjacentHTML('beforeend',renewRowHTML({})); bindDel();
+document.getElementById('addLedger').onclick=function(){
+  document.getElementById('ledgerList').insertAdjacentHTML('beforeend',ledgerRowHTML({})); bindDelLedger();
 };
-(function loadRenew(){
-  ghRead(RENEW_PATH).then(function(st){ renderRenew(st.list||[]); }).catch(function(){});
-})();
 
-// ===== 穿线台账（独立文件 data/stringing-records.json，按 id 合并，支持同日多笔/可编辑）=====
-function stringRowHTML(r){
-  r=r||{}; var id=r.id||(Date.now()+''+Math.floor(Math.random()*1000));
-  return '<div class="sx-row" data-id="'+id+'" style="margin-bottom:9px">'+
-    '<div style="display:grid;grid-template-columns:1.3fr .7fr .9fr 1.1fr 30px;gap:6px;align-items:center">'+
-      '<input class="sx-stringer" placeholder="穿线师姓名" value="'+escAttr(r.stringer||'')+'">'+
-      '<input class="sx-count" type="number" placeholder="条数" value="'+(r.count!=null?r.count:'')+'">'+
-      '<input class="sx-amount" type="number" placeholder="金额" value="'+(r.amount!=null?r.amount:'')+'">'+
-      '<input class="sx-date" type="date" value="'+(r.date||todayISO())+'">'+
-      '<button class="sx-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
-    '</div>'+
-    '<input class="sx-note" placeholder="线型号/备注（选填）" value="'+escAttr(r.note||'')+'" style="width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px;color:var(--white);font-size:12px;margin-top:5px;font-family:inherit">'+
-  '</div>';
-}
-function bindDelString(){ document.querySelectorAll('#stringList .sx-del').forEach(function(b){ b.onclick=function(){ b.parentNode.parentNode.remove(); }; }); }
-function renderString(list){
-  var box=document.getElementById('stringList');
-  box.innerHTML = (list&&list.length) ? list.map(stringRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方按钮添加。</div>';
-  bindDelString();
-}
-function collectString(){
-  var out=[];
-  document.querySelectorAll('#stringList .sx-row').forEach(function(row){
-    var id=row.getAttribute('data-id');
-    var stringer=row.querySelector('.sx-stringer').value.trim();
-    var date=row.querySelector('.sx-date').value.trim();
-    if(!stringer||!date) return;
-    var count=parseFloat(row.querySelector('.sx-count').value)||0;
-    var amount=parseFloat(row.querySelector('.sx-amount').value)||0;
-    if(count<=0 && amount<=0) return;
-    out.push({id:id,date:date,stringer:stringer,count:count,amount:amount,note:row.querySelector('.sx-note').value.trim()});
-  });
-  return out;
-}
-document.getElementById('addString').onclick=function(){
-  document.getElementById('stringList').insertAdjacentHTML('beforeend',stringRowHTML({})); bindDelString();
-};
 function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
-(function loadString(){
-  ghRead(STRING_PATH).then(function(st){ renderString(st.list||[]); }).catch(function(){});
+(function loadLedger(){
+  ghRead(REVENUE_PATH).then(function(st){ renderLedger(st.list||[]); }).catch(function(){});
 })();
 
 // ===== 本月累计汇总（仅原始加总 + 目标进度，不含工资公式，不在卡上暴露核算）=====
 var SAL_TARGET_VENUE=18000, SAL_TARGET_TEST=66;
 function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
-function renderSalarySummary(list){
+function renderSalarySummary(ledger, daily){
   var m=todayISO().slice(0,7);
   var s={course:0,venue:0,coach:0,test:0};
-  (list||[]).forEach(function(x){
+  (ledger||[]).forEach(function(x){
+    if((x.date||'').slice(0,7)!==m) return;
+    var amt=Math.max(0,parseFloat(x.amount||0)||0);
+    if(x.type==='续费/订金'||x.type==='新报名'){ s.course+=amt; s.coach+=amt; }
+    else if(x.type==='散客/场地'){ s.venue+=amt; }
+  });
+  (daily||[]).forEach(function(x){
     if((x[COLS.date]||'').slice(0,7)!==m) return;
-    s.course+=Math.max(0,parseFloat(x[COLS.salCourseDay]||0)||0);
-    s.venue +=Math.max(0,parseFloat(x[COLS.salVenueDay]||0)||0);
-    s.coach +=Math.max(0,parseFloat(x[COLS.salCoachDay]||0)||0);
-    s.test  +=Math.max(0,parseFloat(x[COLS.salTestDay]||0)||0);
+    s.test+=Math.max(0,parseFloat(x[COLS.salTestDay]||0)||0);
   });
   $('salSum').innerHTML='课程 <b>'+yuan(s.course)+'</b> · 场地 <b>'+yuan(s.venue)+'</b><br>教练招生 <b>'+yuan(s.coach)+'</b> · 体测 <b>'+s.test+'</b> 次';
   var vp=Math.min(100,Math.round(s.venue/SAL_TARGET_VENUE*100)), tp=Math.min(100,Math.round(s.test/SAL_TARGET_TEST*100));
@@ -496,29 +450,22 @@ $('saveCloud').addEventListener('click',function(){
     return merged;
   }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步') ];
 
-  // 续费台账：仅在本页有新增登记行时才写（无行跳过，省一次读写）
-  var rn=collectRenew();
-  if(rn.length){
-    tasks.push(ghSave(RENEW_PATH, function(list){
-      var seen={}; (list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
-      rn.forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+  // 统一营收台账：仅在本页有登记行时才写（无行跳过，省一次读写）
+  var lg=collectLedger();
+  if(lg.length){
+    tasks.push(ghSave(REVENUE_PATH, function(list){
+      var seen={}; (list||[]).forEach(function(r){ seen[(r.date||'')+'|'+(r.name||'')+'|'+(r.type||'')+'|'+(r.collector||'')]=r; });
+      lg.forEach(function(r){ seen[(r.date||'')+'|'+(r.name||'')+'|'+(r.type||'')+'|'+(r.collector||'')]=r; });
       return Object.keys(seen).map(function(k){return seen[k];});
-    }, 'chore: 续费台账更新').catch(function(e){ console.warn('续费台账写入失败（不影响日报）',e); }));
-  }
-  // 穿线台账：同上
-  var sx=collectString();
-  if(sx.length){
-    tasks.push(ghSave(STRING_PATH, function(list){
-      var seen={}; (list||[]).forEach(function(r){ seen[r.id]=r; });
-      sx.forEach(function(r){ seen[r.id]=r; });
-      return Object.keys(seen).map(function(k){return seen[k];});
-    }, 'chore: 穿线台账更新').catch(function(e){ console.warn('穿线台账写入失败（不影响日报）',e); }));
+    }, 'chore: 营收台账更新').catch(function(e){ console.warn('营收台账写入失败（不影响日报）',e); }));
   }
 
   Promise.all(tasks).then(function(){
     saveLocal(rec);
-    var extra=(rn.length?' +续费':'')+(sx.length?' +穿线':'');
+    var extra=(lg.length?' +营收台账('+lg.length+'笔)':'');
     toast('✅ 已同步云端（日报'+rec[COLS.date]+extra+'）');
+    // 保存成功后刷新本月累计（营收台账已更新）
+    ghRead(REVENUE_PATH).then(function(st){ renderSalarySummary(st.list||[], null); }).catch(function(){});
   }).catch(function(e){
     var m=(e&&e.message)||String(e||'');
     if(/超时/.test(m)) m='云端响应超时，请检查网络后重试';
