@@ -129,8 +129,10 @@ function render(d){
   window.__reportDate=(d.data_date||'latest');
 
   var rn=d.finance&&d.finance.renew||{};
+  var rev=d.finance&&d.finance.revenue||{};
   var goal=rn.goal||28800, amt=rn.month_amount||0, rcnt=rn.month_count||0;
   var rate=rn.goal_rate!=null?parseFloat(rn.goal_rate)/100:(goal?amt/goal:0);
+  var rrate=goal?Math.min(1,(rev.month_total||0)/goal):0;
   var mt=d.kpi&&d.kpi.month_target||10;
   var ms=d.funnel&&d.funnel.month_signups||0;
   var srate=mt?ms/mt:0;
@@ -142,6 +144,9 @@ function render(d){
     '<div class="gauge"><div class="t">本月报名人数</div>'+ring(srate,'目标')+
       '<div class="v">'+ms+' <small>/ '+mt+' 人</small></div>'+
       '<div class="s" style="color:'+(srate>=0.8?'var(--green)':srate>=0.4?'var(--yellow)':'var(--red)')+'">完成 '+Math.round(srate*100)+'%</div></div>'+
+    '<div class="gauge"><div class="t">本月营收</div>'+ring(rrate,'对标续费目标')+
+      '<div class="v">¥'+Math.round(rev.month_total||0).toLocaleString()+'</div>'+
+      '<div class="s">今日 ¥'+Math.round(rev.today_total||0)+' · '+(rev.by_type?rev.by_type.map(function(x){return x.name+'¥'+x.amount;}).join(' / '):'')+'</div></div>'+
     '</div></div>';
 
   // 漏斗（今日）
@@ -196,6 +201,7 @@ function render(d){
   // 其他指标 chips
   var chips='<div class="sec"><div class="sec-t">📌 其他指标</div><div class="chips">';
   chips+='<span class="chip">🎬 本月入学视频 <b>'+(d.video?d.video.this_month:0)+'</b></span>';
+  chips+='<span class="chip">💰 本月营收 <b>¥'+(rev.month_total||0)+'</b>（续费¥'+(rev.month_renew||0)+'·穿线¥'+(rev.month_string||0)+'）</span>';
   chips+='<span class="chip">🎾 本月穿线 <b>¥'+(d.stringing?Math.round(d.stringing.month_amount||0):0)+'</b> / '+(d.stringing?d.stringing.month_count||0:0)+'单</span>';
   chips+='<span class="chip">💬 今日家长触达 <b>'+(d.touch?d.touch.count||0:0)+'</b></span>';
   chips+='<span class="chip">📋 今日开课 <b>'+(d.funnel?t_cls:0)+'</b> 节</span>';
