@@ -201,7 +201,8 @@ function render(d){
   // 其他指标 chips
   var chips='<div class="sec"><div class="sec-t">📌 其他指标</div><div class="chips">';
   chips+='<span class="chip">🎬 本月入学视频 <b>'+(d.video?d.video.this_month:0)+'</b></span>';
-  chips+='<span class="chip">💰 本月营收 <b>¥'+(rev.month_total||0)+'</b>（续费¥'+(rev.month_renew||0)+'·穿线¥'+(rev.month_string||0)+'）</span>';
+  var revBreak = (rev.by_type&&rev.by_type.length)? rev.by_type.map(function(x){return x.name+'¥'+Math.round(x.amount);}).join('·') : '暂无';
+  chips+='<span class="chip">💰 本月营收 <b>¥'+(rev.month_total||0)+'</b>（'+revBreak+'）</span>';
   chips+='<span class="chip">🎾 本月穿线 <b>¥'+(d.stringing?Math.round(d.stringing.month_amount||0):0)+'</b> / '+(d.stringing?d.stringing.month_count||0:0)+'单</span>';
   chips+='<span class="chip">💬 今日家长触达 <b>'+(d.touch?d.touch.count||0:0)+'</b></span>';
   chips+='<span class="chip">📋 今日开课 <b>'+(d.funnel?t_cls:0)+'</b> 节</span>';
