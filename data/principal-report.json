@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-20 23:29",
+  "generated_at": "2026-10-21 07:10",
   "data_date": "2026-10-20",
   "overall": "red",
   "lights": [
@@ -29,11 +29,7 @@
     },
     "revenue": {
       "month_total": 700,
-      "month_renew": 600,
-      "month_string": 100,
       "today_total": 0,
-      "today_renew": 0,
-      "today_string": 0,
       "by_type": [
         {
           "name": "续费/订金",
@@ -44,7 +40,37 @@
           "amount": 100
         }
       ],
-      "note": "（含续费/订金·穿线；报名费与《收支记账》表待录入后并入全口径）"
+      "derived": {
+        "course": 600,
+        "coach_enroll": 600,
+        "venue": 0,
+        "string": 100
+      },
+      "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
+    },
+    "week": {
+      "this_week": {
+        "total": 50,
+        "by_type": [
+          {
+            "name": "穿线",
+            "amount": 50
+          }
+        ]
+      },
+      "last_week": {
+        "total": 650,
+        "by_type": [
+          {
+            "name": "续费/订金",
+            "amount": 600
+          },
+          {
+            "name": "穿线",
+            "amount": 50
+          }
+        ]
+      }
     }
   },
   "coach": [
@@ -69,7 +95,7 @@
       "text": "开课节数打架：日报报 2 节，上课记录实际 13 条，需核实"
     }
   ],
-  "callback": "曹心语、邓琬妮、高筠皓",
+  "callback": "盛呈栩、刘槿辰、段梦迪",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -95,14 +121,14 @@
     "rate": "0%"
   },
   "stringing": {
-    "month_count": 2.0,
+    "month_count": 2,
     "month_amount": 100.0,
     "month_jobs": 2,
     "by_stringer": [
       {
         "stringer": "江教练",
         "jobs": 2,
-        "count": 2.0,
+        "count": 0.0,
         "amount": 100.0
       }
     ]
