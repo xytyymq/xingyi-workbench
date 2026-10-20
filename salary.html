@@ -124,7 +124,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
   <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
   <div class="field"><label>日常其他考核分（0–300，月底评）</label><input type="number" id="f_daily" placeholder="如 300"></div>
-  <div class="hint">前四项（课程/场地/教练招生/体测）来自《校长日报》每日填写，<b>自动按月汇总</b>填入（点下方按钮可重算）；日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%；总业绩提成仅按课程实收 2/2.5/3%。</div>
+  <div class="hint">课程实收 / 教练招生业绩 / 场地收入 来自《校长日报》填写页<b>「营收台账」逐笔登记</b>，<b>自动按月汇总</b>填入（点下方按钮可重算）；体测邀约次数来自每日填写（考核校长工作，不计入营收）。日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%。<b>总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成</b>（不再单列总业绩提成）。</div>
   <button class="cta ghost" id="reAgg" type="button" style="margin-top:10px">↻ 重新汇总本月日报</button>
   <button class="cta" id="saveSalary" type="button">保存本月核算</button>
 </div>
@@ -150,67 +150,22 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="hint">横坐标为月度总收入；橙色描边 = 当前课程实收所处档位（按实际 KPI 与教练招生重算）。</div>
 </div>
 
-<div class="foot">星羿体育 · 见证每一次成长｜公式经 2026-10-18 校长确认修正（原 Excel 版为参考口径）</div>
+<div class="foot">星羿体育 · 见证每一次成长｜公式经 2026-10-21 校长确认：总工资 = 底薪 + KPI绩效 + 教练管理奖金 + 招生阶梯提成</div>
 
 <details>
   <summary>📐 计算公式与口径说明（2026-10-18 修正版）</summary>
-  <p>校长月总收入 = <code>底薪3500</code> + <code>KPI绩效(分项加权，满分1200)</code> + <code>教练管理奖金(教练招生×1%)</code> + <code>招生阶梯提成(课程实收×档位)</code> + <code>总业绩提成(仅课程实收×档位)</code></p>
+  <p>校长月总收入 = <code>底薪3500</code> + <code>KPI绩效(分项加权，满分1200)</code> + <code>教练管理奖金(教练招生×1%)</code> + <code>招生阶梯提成(课程实收×档位)</code></p>
   <p><b>KPI 绩效（满分1200，两项加权，未达标按比例发）：</b></p>
   <p>· 场地达标 700元 = 场地收入 ÷ 18000 × 700（封顶700）<br>
      · 日常工作 500元 = 体测邀约硬性 200（本月完成÷66×200，封顶200）+ 日常其他 300（校长考核分 0–300）</p>
   <p>招生阶梯提成（按课程实收）：&lt;18000→2% / 18000–24999→4% / 25000–34999→6% / ≥35000→8%</p>
-  <p>总业绩提成（<b>仅课程实收</b>）：&lt;30000→2% / 30000–49999→2.5% / ≥50000→3%</p>
   <p>四档阶梯参考（KPI 满分、教练招生6000、场地18000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。注：体测邀约目标 66 为当前「从未体测=新生(58)×1 + 已测老生(24)÷3」的首测清栏冲刺值，58 人全部建档后自然回落约 27 次/月。实际工资以本页输入实时计算为准。</p>
   <p>返回 <a class="link" href="report.html">校长日报看板 →</a>　·　<a class="link" href="principal-form.html">填报校长日报 →</a></p>
 </details>
 
 <div class="toast" id="toast"></div>
 
-<script src="xy-auth.js"></script><script>
-// ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
-(function () {
-  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
-  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
-  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
-  function setup() {
-    if (!window.XYGate || window.XYGate.__proxied) return false;
-    window.XYGate.__proxied = true;
-    var _fetch = window.fetch ? window.fetch.bind(window) : null;
-    if (!_fetch) return true;
-    window.fetch = function (input, opts) {
-      opts = opts || {};
-      var url = (typeof input === 'string') ? input : (input && input.url) || '';
-      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
-        var rest = url.slice(GH_BASE.length);
-        var q = rest.indexOf('?');
-        var path = q >= 0 ? rest.slice(0, q) : rest;
-        var method = (opts.method || 'GET').toUpperCase();
-        if (method === 'GET') {
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
-            method: 'GET',
-            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
-          });
-        }
-        if (method === 'PUT') {
-          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
-          var nb = JSON.stringify({ path: path, message: body.message, content: body.content, sha: body.sha, branch: body.branch || 'main' });
-          return _fetch(XY_PROXY + '/github-save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
-            body: nb
-          });
-        }
-      }
-      return _fetch.apply(null, arguments);
-    };
-    return true;
-  }
-  if (!setup()) {
-    setup.__retry = 0;
-    var tm = setInterval(function () { if (setup() || ++setup.__retry > 20) clearInterval(tm); }, 50);
-  }
-})();
-</script>
+<script src="xy-auth.js"></script>
 <script>
 // ===== GitHub 读写（工资输入写回 principal-salary.json），令牌取自本机 XYGate（xy-auth.js → localStorage），不写死在源码 =====
 var REPO='xytyymq/xingyi-workbench', BRANCH='main', SALARY_PATH='data/principal-salary.json';
@@ -270,13 +225,12 @@ function calc(r){
   var coachBonus = coach*0.01;                          // 教练招生 ×1%
   var enrollRate = course<18000?0.02 : course<25000?0.04 : course<35000?0.06 : 0.08;
   var enrollBonus= course*enrollRate;
-  var totalRate  = course<30000?0.02 : course<50000?0.025 : 0.03;   // 仅课程实收
-  var totalBonus = course*totalRate;
-  var sum=base+performance+coachBonus+enrollBonus+totalBonus;
+  // 注：2026-10-21 校长确认，总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成；
+  //     不再单列“总业绩提成(2/2.5/3%)”组件（避免与招生阶梯提成重复计课程实收）。
+  var sum=base+performance+coachBonus+enrollBonus;
   return {base:base,performance:performance,venueKpi:venueKpi,venue:venue,testKpi:testKpi,testDone:testDone,testTarget:TEST_TARGET,
     otherDaily:otherDaily,dailyKpi:dailyKpi,kpiFull:kpiFull,
-    coach:coach,coachBonus:coachBonus,course:course,enrollRate:enrollRate,enrollBonus:enrollBonus,
-    totalRate:totalRate,totalBonus:totalBonus,sum:sum};
+    coach:coach,coachBonus:coachBonus,course:course,enrollRate:enrollRate,enrollBonus:enrollBonus,sum:sum};
 }
 function tierOf(course){ return course<18000?'未达标' : course<25000?'保底档' : course<35000?'正常档' : '冲刺档'; }
 function pct(x){return (x*100).toFixed(1).replace(/\.0$/,'')+'%';}
@@ -307,8 +261,7 @@ function renderSlip(r){
     ['KPI·体测邀约(硬性)', c.testKpi, '完成 '+c.testDone+'/'+c.testTarget+' ×200（封顶200）', true],
     ['KPI·日常其他', c.otherDaily, '考核分(0–300)', true],
     ['教练管理奖金', c.coachBonus, '教练招生 '+yuan(c.coach)+' ×1%'],
-    ['招生阶梯提成', c.enrollBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.enrollRate)],
-    ['总业绩提成', c.totalBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.totalRate)]
+    ['招生阶梯提成', c.enrollBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.enrollRate)]
   ];
   $('slip').innerHTML = rows.map(function(x){
     var cls=x[3]?' slip-row kpi-sub':'slip-row';
@@ -347,20 +300,26 @@ $('f_month').addEventListener('change',function(){ loadSalary(this.value); });
 // ===== 读取校长日报上下文 =====
 readJSON('data/principal-report.json').then(renderContext).catch(function(){ renderContext(null); });
 
-// ===== 读取/回填本月考算输入（优先快照，否则聚合校长日报）=====
+// ===== 读取/回填本月考算输入（优先快照，否则聚合统一营收台账 + 体测日报）=====
+// 课程实收 = 续费/订金 + 新报名；教练招生业绩 = 续费/订金 + 新报名（续费也算招生业绩）；
+// 场地收入 = 散客/场地；体测邀约次数 = 校长日报 principal-daily.json（考核校长工作，不计入营收）。
 function aggregateDaily(month){
-  return readJSON('data/principal-daily.json').then(function(list){
-    list=list||[];
-    var s={course:0,venue:0,coach:0,test:0};
-    list.forEach(function(x){
-      if((x['日期']||'').slice(0,7)!==month) return;
-      s.course+=Math.max(0,num(x['salaryCourseDay']||0));
-      s.venue +=Math.max(0,num(x['salaryVenueDay']||0));
-      s.coach +=Math.max(0,num(x['salaryCoachDay']||0));
-      s.test  +=Math.max(0,num(x['salaryTestDay']||0));
+  var ledP = readJSON('data/revenue-ledger.json').then(function(rows){
+    rows=rows||[]; var s={course:0,venue:0,coach:0};
+    rows.forEach(function(x){
+      if((x.date||'').slice(0,7)!==month) return;
+      var amt=Math.max(0,num(x.amount||0));
+      if(x.type==='续费/订金'||x.type==='新报名'){ s.course+=amt; s.coach+=amt; }
+      else if(x.type==='散客/场地'){ s.venue+=amt; }
     });
     return s;
-  }).catch(function(){ return {course:0,venue:0,coach:0,test:0}; });
+  }).catch(function(){ return {course:0,venue:0,coach:0}; });
+  var dailyP = readJSON('data/principal-daily.json').then(function(list){
+    list=list||[]; var test=0;
+    list.forEach(function(x){ if((x['日期']||'').slice(0,7)!==month) return; test+=Math.max(0,num(x['salaryTestDay']||0)); });
+    return {test:test};
+  }).catch(function(){ return {test:0}; });
+  return Promise.all([ledP,dailyP]).then(function(rs){ return Object.assign(rs[0], rs[1]); });
 }
 function fillAgg(s){
   $('f_course').value=s.course||'';
