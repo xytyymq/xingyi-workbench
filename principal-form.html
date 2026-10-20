@@ -238,8 +238,21 @@ function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
 // ===== GitHub 读写底层：禁缓存读取 + 写入冲突（409/422 sha 不符）自动重拉合并重试 =====
 // 注：不能加 Cache-Control 请求头（GitHub CORS 白名单不含它，浏览器会直接拦死），
 // 改用每次唯一的时间戳参数 _t 穿透浏览器缓存（等效强制回源，且不新增预检头）。
+// 关键修复：所有 fetch 套 20s 超时兜底。代理后端（xingyi-salary）偶发挂起不会让 promise 永久 pending，
+// 超时即 reject → 走 catch 给出明确失败提示，不再「一直显示正在上传」。
+var XY_TIMEOUT=20000;
+function withTimeout(p, ms, label){
+  return new Promise(function(res, rej){
+    var t=setTimeout(function(){ rej(new Error(label||'请求超时')); }, ms);
+    p.then(function(v){ clearTimeout(t); res(v); }, function(e){ clearTimeout(t); rej(e); });
+  });
+}
+function ghFetch(url, opts){
+  // 注意：内联代理不转发 AbortController signal，故用「手动超时 reject」而非 abort，确保挂起也能兜住
+  return withTimeout(fetch(url, opts||{}), XY_TIMEOUT, '云端请求超时（'+Math.round(XY_TIMEOUT/1000)+'s）');
+}
 function ghRead(path){
-  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
+  return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
     {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}})
   .then(function(r){
     if(r.status===404) return {list:[],sha:null};
@@ -256,7 +269,7 @@ function ghSave(path, mergeFn, msg, tries){
     var merged=mergeFn(st.list||[]);
     var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
     if(st.sha) body.sha=st.sha;
-    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
+    return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
       method:'PUT',
       headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json','Content-Type':'application/json'},
       body:JSON.stringify(body)
@@ -387,13 +400,6 @@ document.getElementById('addRenew').onclick=function(){
 (function loadRenew(){
   ghRead(RENEW_PATH).then(function(st){ renderRenew(st.list||[]); }).catch(function(){});
 })();
-function saveRenew(){
-  return ghSave(RENEW_PATH, function(list){
-    var seen={}; (list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
-    collectRenew().forEach(function(r){ seen[r.date+'|'+r.name]=r; });
-    return Object.keys(seen).map(function(k){return seen[k];});
-  }, 'chore: 续费台账更新');
-}
 
 // ===== 穿线台账（独立文件 data/stringing-records.json，按 id 合并，支持同日多笔/可编辑）=====
 function stringRowHTML(r){
@@ -436,13 +442,6 @@ function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
 (function loadString(){
   ghRead(STRING_PATH).then(function(st){ renderString(st.list||[]); }).catch(function(){});
 })();
-function saveString(){
-  return ghSave(STRING_PATH, function(list){
-    var seen={}; (list||[]).forEach(function(r){ seen[r.id]=r; });
-    collectString().forEach(function(r){ seen[r.id]=r; });
-    return Object.keys(seen).map(function(k){return seen[k];});
-  }, 'chore: 穿线台账更新');
-}
 
 // ===== 本月累计汇总（仅原始加总 + 目标进度，不含工资公式，不在卡上暴露核算）=====
 var SAL_TARGET_VENUE=18000, SAL_TARGET_TEST=66;
@@ -464,14 +463,23 @@ function renderSalarySummary(list){
     '<div class="funnel-row"><span class="fl">体测</span><span class="bar" style="width:'+tp+'%"></span><span class="num">'+tp+'%</span></div>';
 }
 
-// 保存并同步云端（日报主行 + 续费台账 + 穿线台账 + 薪资核算）
+// 保存并同步云端（日报主行 + 续费台账 + 穿线台账）
+// 优化：① _busy 在保存真正结束（成功/失败）才复位，不再 1.5s 强行复位导致重复提交；
+//       ② 按钮在保存期间禁用并显示「⏳ 正在上传…」，结束恢复；
+//       ③ 续费/穿线若本页无登记行则跳过写请求（无行不写），日常只填日报时由 3 次读写降为 1 次；
+//       ④ 三个台账文件互相独立，用 Promise.all 并行写入，进一步提速。
 $('saveCloud').addEventListener('click',function(){
+  var btn=this;
   var rec=collect();
   if(!rec[COLS.date]){toast('请先选日期');return;}
-  if($('saveCloud')._busy){ toast('正在上传，请稍等…'); return; }
-  $('saveCloud')._busy=true;
-  setTimeout(function(){ $('saveCloud')._busy=false; }, 1500);
-  ghSave(PATH, function(list){
+  if(btn._busy){ toast('正在上传，请稍等…'); return; }
+  btn._busy=true;
+  var origTxt=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='⏳ 正在上传…';
+
+  // 主流程：日报主行（始终写入）
+  var tasks=[ ghSave(PATH, function(list){
     var found=false;
     var merged=(list||[]).map(function(r){
       if(r[COLS.date]===rec[COLS.date]){ found=true; return Object.assign({},r,rec); }
@@ -479,23 +487,41 @@ $('saveCloud').addEventListener('click',function(){
     });
     if(!found) merged.push(rec);
     return merged;
-  }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步')
-      .then(function(){
-        return saveRenew()
-          .catch(function(e){ console.warn('续费台账写入失败（不影响日报主流程）',e); })
-          .then(function(){ return saveString().catch(function(e){ console.warn('穿线台账写入失败（不影响日报主流程）',e); }); })
-          .then(function(){
-            saveLocal(rec);
-            toast('✅ 已同步云端（日报 + 续费 + 穿线 + 每日工资）'+rec[COLS.date]);
-          });
-      })
-  .catch(function(e){
+  }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步') ];
+
+  // 续费台账：仅在本页有新增登记行时才写（无行跳过，省一次读写）
+  var rn=collectRenew();
+  if(rn.length){
+    tasks.push(ghSave(RENEW_PATH, function(list){
+      var seen={}; (list||[]).forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+      rn.forEach(function(r){ seen[r.date+'|'+r.name]=r; });
+      return Object.keys(seen).map(function(k){return seen[k];});
+    }, 'chore: 续费台账更新').catch(function(e){ console.warn('续费台账写入失败（不影响日报）',e); }));
+  }
+  // 穿线台账：同上
+  var sx=collectString();
+  if(sx.length){
+    tasks.push(ghSave(STRING_PATH, function(list){
+      var seen={}; (list||[]).forEach(function(r){ seen[r.id]=r; });
+      sx.forEach(function(r){ seen[r.id]=r; });
+      return Object.keys(seen).map(function(k){return seen[k];});
+    }, 'chore: 穿线台账更新').catch(function(e){ console.warn('穿线台账写入失败（不影响日报）',e); }));
+  }
+
+  Promise.all(tasks).then(function(){
+    saveLocal(rec);
+    var extra=(rn.length?' +续费':'')+(sx.length?' +穿线':'');
+    toast('✅ 已同步云端（日报'+rec[COLS.date]+extra+'）');
+  }).catch(function(e){
     var m=(e&&e.message)||String(e||'');
-    if(/HTTP 401/.test(m)||(!_gt()&&!XYGate.hasToken())){
+    if(/超时/.test(m)) m='云端响应超时，请检查网络后重试';
+    if(/HTTP 401/.test(m)||(!_gt()&&window.XYGate&&!XYGate.hasToken())){
       toast('🔑 授权已过期/未授权：点右下角「云授权」重新粘贴令牌后再保存');
     }else{
       toast('云端写入失败：'+m+'　请再点一次保存');
     }
+  }).then(function(){
+    btn._busy=false; btn.disabled=false; btn.textContent=origTxt;
   });
 });
 </script>
