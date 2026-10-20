@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>星羿体育 · 校长周报</title>
+<style>
+:root{
+  --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+  --orange:#FF8A3D; --white:#fff; --muted:#9fb0d0; --line:rgba(255,255,255,.12);
+  --card:rgba(255,255,255,.06); --card-strong:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
+  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:8px 4px 14px;border-bottom:1px solid var(--line)}
+.brand{font-size:18px;font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.date{font-size:11px;color:var(--cyan);text-align:right}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
+.big{font-size:30px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.big small{font-size:13px;color:var(--muted);font-weight:400;margin-left:4px}
+.delta{font-size:12px;margin-top:4px}
+.up{color:var(--green)} .down{color:#FF6B6B} .flat{color:var(--muted)}
+.sec-t{font-size:13px;color:var(--green);font-weight:700;margin:18px 4px 8px;letter-spacing:1px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:7px 2px;border-bottom:1px dashed rgba(255,255,255,.08);font-size:13px}
+.row:last-child{border-bottom:none}
+.row .k{color:var(--muted)} .row .v{font-weight:700;font-variant-numeric:tabular-nums}
+.bar{height:22px;border-radius:6px;background:linear-gradient(90deg,var(--green),var(--cyan));
+  display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:700;color:#06102C;min-width:40px;margin:5px 0}
+.bar.old{background:rgba(159,176,208,.4);color:var(--white)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.kpi{background:rgba(0,0,0,.22);border-radius:10px;padding:9px 4px;text-align:center}
+.kpi .n{font-size:16px;font-weight:800;color:var(--cyan)} .kpi .l{font-size:9.5px;color:var(--muted);margin-top:2px}
+.light{display:flex;gap:8px;align-items:flex-start;padding:8px 10px;border-radius:10px;margin-bottom:6px;font-size:12.5px;line-height:1.4}
+.light.red{background:rgba(255,107,107,.14);border-left:3px solid #FF6B6B}
+.light.yellow{background:rgba(255,196,0,.12);border-left:3px solid #FFC400}
+.light.green{background:rgba(198,249,75,.12);border-left:3px solid var(--green)}
+.foot{text-align:center;font-size:11px;color:var(--muted);margin:16px 0}
+a.link{color:var(--cyan);text-decoration:none;font-weight:700}
+.hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand">星羿体育<small>校长周报 · 数据驱动</small></div>
+  <div class="date" id="genDate">加载中…</div>
+</div>
+
+<div class="sec-t">本周营收（按自然周）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">💰 本周营收</span><span class="tag" id="weekRange">—</span></div>
+  <div class="big" id="wkTotal">–</div>
+  <div class="delta" id="wkDelta"></div>
+  <div id="wkBars" style="margin-top:10px"></div>
+  <div class="hint">本周 = 本周一至今天；上周 = 上一自然周。数据来自《校长日报》「营收台账」逐笔登记。</div>
+</div>
+
+<div class="sec-t">上周对比</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">📊 上周营收</span><span class="tag">环比基准</span></div>
+  <div class="big" id="lastTotal" style="color:var(--muted)">–</div>
+  <div id="lastBars" style="margin-top:10px"></div>
+</div>
+
+<div class="sec-t">本周招生漏斗（近 7 天）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">📣 招生动态</span><span class="tag">日报聚合</span></div>
+  <div class="kpi-row" id="funnelKpis"></div>
+</div>
+
+<div class="sec-t">校长日报总评（本周最新）</div>
+<div class="card" id="overallCard">
+  <div class="card-head"><span class="card-title">🚨 红黄绿灯</span><span class="tag" id="overallTag">—</span></div>
+  <div id="lights"></div>
+</div>
+
+<div class="foot">
+  星羿体育 · 见证每一次成长　|　
+  <a class="link" href="report.html">日报看板 →</a>　
+  <a class="link" href="principal-form.html">填日报 →</a>
+</div>
+
+<div class="toast" id="toast" style="position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--green);color:#0a1a00;padding:12px 20px;border-radius:24px;font-weight:700;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center"></div>
+
+<script src="xy-auth.js"></script>
+<script>
+var REPO='xytyymq/xingyi-workbench', BRANCH='main';
+function $(id){return document.getElementById(id);}
+function num(v){var n=parseFloat(v);return isNaN(n)?0:n;}
+function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
+function toast(m){var t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2400);}
+function readJSON(path){
+  return fetch(path+'?_t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json();})
+    .catch(function(){ return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now(),
+      {headers:{Authorization:'Bearer '+((window.XYGate&&XYGate.ghToken)?XYGate.ghToken():'proxy'),Accept:'application/vnd.github+json'}})
+      .then(function(r){if(!r.ok)throw 0;return r.json().then(function(m){try{return JSON.parse(decodeURIComponent(escape(atob(m.content.replace(/\s/g,'')))));}catch(e){throw 0;}});}); });
+}
+
+function typeBars(container, byType, max){
+  if(!byType||!byType.length){ container.innerHTML='<div class="hint">本周暂无营收记录</div>'; return; }
+  container.innerHTML = byType.map(function(x){
+    var w = max? Math.max(8, Math.round(x.amount/max*100)) : 0;
+    return '<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:2px"><span>'+x.name+'</span><span>'+yuan(x.amount)+'</span></div>'+
+      '<div class="bar" style="width:'+w+'%">'+yuan(x.amount)+'</div>';
+  }).join('');
+}
+
+function render(rep){
+  if(!rep){ $('genDate').textContent='数据暂不可达'; return; }
+  $('genDate').textContent='数据截止 '+(rep.data_date||rep.generated_at||'—');
+
+  var wk = (rep.finance&&rep.finance.week)||{};
+  var thisWk = wk.this_week||{total:0,by_type:[]}, lastWk = wk.last_week||{total:0,by_type:[]};
+
+  // 本周
+  $('wkTotal').textContent = yuan(thisWk.total);
+  var maxAmt = Math.max(thisWk.total, lastWk.total, 1);
+  typeBars($('wkBars'), thisWk.by_type, maxAmt);
+  // 环比
+  var delta = lastWk.total>0 ? (thisWk.total-lastWk.total)/lastWk.total : null;
+  var dt = $('wkDelta');
+  if(delta===null){ dt.className='delta flat'; dt.textContent='上周无数据，无法环比'; }
+  else if(delta>0.001){ dt.className='delta up'; dt.textContent='▲ 环比上周 +'+(delta*100).toFixed(1)+'%（+'+yuan(thisWk.total-lastWk.total)+'）'; }
+  else if(delta<-0.001){ dt.className='delta down'; dt.textContent='▼ 环比上周 '+(delta*100).toFixed(1)+'%（'+yuan(thisWk.total-lastWk.total)+'）'; }
+  else { dt.className='delta flat'; dt.textContent='与上周持平'; }
+
+  // 上周
+  $('lastTotal').textContent = yuan(lastWk.total);
+  typeBars($('lastBars'), lastWk.by_type, maxAmt);
+
+  // 本周区间文字
+  (function(){
+    var rows = rep.week_rows||[];
+    if(rows.length){ $('weekRange').textContent = rows[0].date+' ~ '+rows[rows.length-1].date; }
+  })();
+
+  // 招生漏斗（近7天聚合）
+  var rows = rep.week_rows||[];
+  var s={leads:0,trials:0,signups:0,classes:0};
+  rows.forEach(function(r){ s.leads+=num(r.leads); s.trials+=num(r.trials); s.signups+=num(r.signups); s.classes+=num(r.classes); });
+  $('funnelKpis').innerHTML=
+    '<div class="kpi"><div class="n">'+s.leads+'</div><div class="l">新线索</div></div>'+
+    '<div class="kpi"><div class="n">'+s.trials+'</div><div class="l">试课预约</div></div>'+
+    '<div class="kpi"><div class="n">'+s.signups+'</div><div class="l">报名</div></div>'+
+    '<div class="kpi"><div class="n">'+s.classes+'</div><div class="l">开课节</div></div>';
+
+  // 总评
+  var overall = rep.overall;
+  var tagMap={red:'🔴 红灯',yellow:'🟡 黄灯',green:'🟢 绿灯'};
+  $('overallTag').textContent = tagMap[overall]||'—';
+  var lights = rep.lights||[];
+  if(!lights.length) lights=[{level:'green',text:'本周无异常'}];
+  $('lights').innerHTML = lights.slice(0,8).map(function(l){
+    return '<div class="light '+l.level+'"><span>'+(l.level==='red'?'🔴':l.level==='yellow'?'🟡':'🟢')+'</span><span>'+esc(l.text)+'</span></div>';
+  }).join('');
+}
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+
+readJSON('data/principal-report.json').then(render).catch(function(){ render(null); toast('日报数据加载失败，请检查网络'); });
+</script>
+</body>
+</html>
