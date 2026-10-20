@@ -151,6 +151,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 <button class="cta" id="saveCloud">保存并同步云端</button>
 <button class="cta ghost" id="saveLocal">仅存本机（离线）</button>
 <div class="foot">星羿体育 · 见证每一次成长｜填完点「保存并同步云端」即自动写入工作台</div>
+<div class="foot" style="opacity:.45;font-size:11px;margin-top:4px">客户端版本 v20261020b</div>
 
 <div class="toast" id="toast"></div>
 
@@ -224,6 +225,8 @@ var COLS = {
   salCourseDay:'salaryCourseDay', salVenueDay:'salaryVenueDay',
   salCoachDay:'salaryCoachDay', salTestDay:'salaryTestDay'
 };
+var BUILD='20261020b';
+(function(){ try{ var p=localStorage.getItem('xy_pf_build'); if(p&&p!==BUILD){ var t=document.getElementById('toast'); if(t){ t.textContent='🔄 检测到新版，请刷新本页以生效'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},5000);} } localStorage.setItem('xy_pf_build',BUILD); }catch(e){} })();
 var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', RENEW_PATH='data/renew-records.json', STRING_PATH='data/stringing-records.json';
 
 function $(id){return document.getElementById(id);}
@@ -278,6 +281,10 @@ function ghSave(path, mergeFn, msg, tries){
       if((rr.status===409||rr.status===422) && tries>1){
         // 云端刚被别处（另一台设备/夜间脚本）更新，等一拍重新拉最新内容再合并写一次
         return new Promise(function(res){setTimeout(res,700);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+      }
+      if(rr.status>=500 && tries>1){
+        // 代理/服务器偶发 5xx（如 502 Bad Gateway），退避后重试，避免随机失败
+        return new Promise(function(res){setTimeout(res,800*tries);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
       }
       return rr.text().then(function(t){ throw new Error('写入失败 HTTP '+rr.status+' '+String(t).slice(0,110)); });
     });
