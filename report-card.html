@@ -6,7 +6,7 @@
 <title>星羿 · 校长日报</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
-  .savebar{position:fixed;top:12px;right:12px;z-index:50;background:var(--green);color:#0C1C42;
+  .savebar{position:fixed;bottom:16px;right:12px;z-index:50;background:var(--green);color:#0C1C42;
     font-size:13px;font-weight:800;text-decoration:none;padding:8px 13px;border-radius:999px;
     box-shadow:0 4px 16px rgba(0,0,0,.35)}
   .savebar:active{transform:translateY(1px)}
@@ -43,6 +43,16 @@
   .ring .rc{display:block;width:96px;height:96px}
   .ring .rp{position:absolute;left:0;right:0;top:29px;text-align:center;font-size:18px;font-weight:800;line-height:22px}
   .ring .rl{position:absolute;left:0;right:0;top:48px;text-align:center;font-size:13px;font-weight:800;line-height:15px;color:#fff}
+  /* 窄屏适配（手机 webview 视口约 360-430px）：环 96→80px、收紧间距，保证三张达成圈卡片不被挤出右缘裁切；
+     长图 PNG 以 460px 宽渲染，不触发本断点 */
+  @media (max-width:440px){
+    .sec{padding:12px 10px}
+    .hero{gap:8px;flex-wrap:wrap}
+    .gauge{padding:12px 6px;min-width:0}
+    .ring,.ring .rc{width:80px;height:80px}
+    .ring .rp{top:24px;font-size:16px;line-height:20px}
+    .ring .rl{top:41px;font-size:12px;line-height:14px}
+  }
   /* 漏斗 */
   .funnel{display:flex;align-items:flex-end;gap:8px;height:120px}
   .fcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
