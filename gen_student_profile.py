@@ -9,9 +9,20 @@ archive.html 兼容的 data/profiles.json（list[{id,name,age,gender,cls,created
 并经 GitHub API 推送至 xytyymq/xingyi-workbench（合并策略，不破坏教练手动录入）。
 依赖：同目录 tencentdocs.py（腾讯文档 MCP CLI）；.env 中 GITHUB_TOKEN。
 """
-import subprocess, json, time, urllib.request, zipfile, io, xml.etree.ElementTree as ET, os, re, datetime, base64, hashlib
+import subprocess, json, time, urllib.request, zipfile, io, xml.etree.ElementTree as ET, os, re, datetime, base64, hashlib, sys
 
-SKILL = "C:/Users/Administrator/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin/5.5.1-wb.37570276.g9af62480.h1a8f7c37fe76/skills/tencent-docs"
+def _locate_tdoc_skill():
+    """动态定位 tencent-docs 插件下的 tencentdocs.py（插件版本升级会改目录名，
+    原硬编码 5.5.1 路径已失效导致体测档案每晚生成失败）。"""
+    import glob as _glob
+    base = "C:/Users/Administrator/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin"
+    cands = _glob.glob(os.path.join(base, "*", "skills", "tencent-docs", "tencentdocs.py"))
+    if cands:
+        cands.sort(key=lambda p: os.path.getmtime(p), reverse=True)
+        return os.path.dirname(cands[0])
+    return "C:/Users/Administrator/.workbuddy/plugins/cache/workbuddy-builtin/tencent-docs-plugin/5.5.1-wb.37570276.g9af62480.h1a8f7c37fe76/skills/tencent-docs"
+
+SKILL = _locate_tdoc_skill()
 PY = "C:/Users/Administrator/.workbuddy/binaries/python/versions/3.13.12/python.exe"
 FILE_ID = "BCmMnaVvBTRo"  # 星羿·学员体测档案
 OUT_PROFILES = "data/profiles.json"
@@ -28,15 +39,21 @@ def tdoc(service, tool, args):
 
 def export_and_download(file_id):
     r = tdoc("tencent-docs", "manage.export_file", json.dumps({"file_id": file_id}))
-    task = r["result"]["structuredContent"]["task_id"]
+    sc = r.get("result", {}).get("structuredContent") or {}
+    task = sc.get("task_id")
+    if not task:
+        raise RuntimeError("腾讯文档导出失败：manage.export_file 未返回 task_id，响应=%s" % json.dumps(r, ensure_ascii=False)[:500])
     url = None
-    for _ in range(30):
+    for _ in range(60):  # 最多等 120s，避免大表导出未完成时误判为失败
         p = tdoc("tencent-docs", "manage.export_progress", json.dumps({"task_id": task}))
-        url = p["result"]["structuredContent"].get("file_url")
+        psc = p.get("result", {}).get("structuredContent") or {}
+        url = psc.get("file_url")
         if url:
             break
         time.sleep(2)
-    return urllib.request.urlopen(url, timeout=30).read()
+    if not url:
+        raise RuntimeError("腾讯文档导出超时：task_id=%s 在 120s 内未返回 file_url" % task)
+    return urllib.request.urlopen(url, timeout=60).read()
 
 def cell_val(c, ss):
     v = c.find(NS + 'v')
@@ -58,12 +75,22 @@ def col_to_idx(ref):
         col = col * 26 + (ord(ch) - 64)
     return col - 1
 
+# 教练填表错别字/异体字映射（与 gen_parent_msg.py / gen_points.py 保持一致）
+# ⚠️ 方向 = 错字 → 正确名。2026-10-22 大哥确认：邹书云/黄文晧 是同一人的错写。
+NAME_ALIAS = {
+    "徐梓宸": "徐梓辰", "彭嘉妤": "彭嘉好", "彭佳妤": "彭嘉好",
+    "邓琬妮": "邓琬宁",
+    "熊沁杰尼": "熊沁杰妮",
+    "黄文晧": "黄文皓", "振洪宇": "洪振宇", "振洪新": "洪振新",
+    "邹书云": "邹书芸",
+}
+
 def split_names(s):
-    """姓名含 '/' 或 '、' 直接拆成多个学员。"""
+    """姓名含 '/' 或 '、' 直接拆成多个学员；错别字/异体字统一映射到正确名。"""
     s = (s or '').strip()
     if not s:
         return []
-    return [p.strip() for p in re.split(r'[/、]', s) if p.strip()]
+    return [NAME_ALIAS.get(p.strip(), p.strip()) for p in re.split(r'[/、]', s) if p.strip()]
 
 def read_sheets(data):
     z = zipfile.ZipFile(io.BytesIO(data))
@@ -137,8 +164,33 @@ def to_m(t):
         m[en] = v
     return m
 
-def to_test(t):
-    return {'date': t.get('测试日期', ''), 'm': to_m(t), 'note': t.get('备注', '') or ''}
+# 待回查清单（大哥 2026-10-08 批第 3、5 项）：这些值只标记、不删——
+# 可能确实是真的（新手颠球 1 个），需人工回查原始登记表后再定。
+# 同时堵住真实的「未测占位」：坐位体前屈允许负数，跳绳不得为 0，未测请留空。
+SUSPECT = []
+
+
+def sanity_check(m, name, date):
+    bad = []
+    sr = m.get('sitReach')
+    if sr in (0, 1):
+        bad.append('坐位体前屈=%s（正常 -20~25，0/1 多为未测占位）' % sr)
+    if m.get('rope') == 0:
+        bad.append('跳绳=0（几乎不可能，疑似未测）')
+    if m.get('run50') in (0, 1):
+        bad.append('50米跑=%s（秒数不合理）' % m.get('run50'))
+    if m.get('serve') == 0 and not m.get('wallSquat'):
+        bad.append('发球进区=0 且靠墙静蹲缺失（疑似整行漏填）')
+    if bad:
+        SUSPECT.append({'name': name, 'date': date, 'items': bad})
+
+
+def to_test(t, name=''):
+    m = to_m(t)
+    date = t.get('测试日期', '')
+    if name:
+        sanity_check(m, name, date)
+    return {'date': date, 'm': m, 'note': t.get('备注', '') or ''}
 
 def to_lesson(l):
     return {'date': l.get('上课日期', ''), 'cls': l.get('班级', ''), 'coach': l.get('教练', ''),
@@ -154,6 +206,25 @@ def merge_tests(ex, new):
         if t.get('date'):
             tm[t['date']] = t
     return sorted(tm.values(), key=lambda x: (x.get('date') or ''))
+
+def merge_dup(a, b):
+    """云端同一学员存在多条时按「并集」合并。
+    archive.html 前端自动同步会产生重复条目（同一学员 2~3 条、id 不同），
+    早期用 last-wins 会丢掉副本里独有的体测日期，故改为并集。
+    """
+    m = dict(a)
+    for k in ('id', 'age', 'gender', 'cls', 'createdAt'):
+        if not m.get(k) and b.get(k):
+            m[k] = b[k]
+    m['tests'] = merge_tests(a.get('tests', []), b.get('tests', []))
+    seen, ul = set(), []
+    for l in list(a.get('lessons') or []) + list(b.get('lessons') or []):
+        key = json.dumps(l, sort_keys=True, ensure_ascii=False)
+        if key not in seen:
+            seen.add(key)
+            ul.append(l)
+    m['lessons'] = ul
+    return m
 
 def merge_cloud(old, new):
     # new = 腾讯文档聚合（权威补充体测/上课）；old = 云端现有（保留手动学员/基础信息）
@@ -174,19 +245,92 @@ def merge_cloud(old, new):
             out.append(s)
     return out
 
-def push_profiles(merged):
+def union_entry(cur, sup):
+    """把「上次本地快照」的条目与本次结果做并集：本次优先，快照只补缺失。
+
+    背景（2026-10-05）：archive.html 前端 13:00 的「上课记录自动识别新生入档」管线
+    会用自己 localStorage 的主档整份覆盖云端，导致只在体测管线里存在的学员被静默抹掉
+    （当日 97 → 77，丢了 邹书云 / 吴帛坤 / 戴子涵 三条及其体测数据）。
+    故加此护栏：本次结果 ∪ 上次本地快照，保证任何学员一旦入过档就不会再消失。
+    """
+    m = dict(cur)
+    for k in ('id', 'age', 'gender', 'cls', 'createdAt'):
+        if not m.get(k) and sup.get(k):
+            m[k] = sup[k]
+    tm = {t.get('date'): t for t in (sup.get('tests') or []) if t.get('date')}
+    for t in (cur.get('tests') or []):          # 本次（腾讯文档/云端）同日期优先
+        if t.get('date'):
+            tm[t['date']] = t
+    m['tests'] = sorted(tm.values(), key=lambda x: x.get('date') or '')
+    seen, ul = set(), []
+    for l in list(cur.get('lessons') or []) + list(sup.get('lessons') or []):
+        k = json.dumps(l, sort_keys=True, ensure_ascii=False)
+        if k not in seen:
+            seen.add(k)
+            ul.append(l)
+    m['lessons'] = ul
+    return m
+
+
+def union_prev_local(merged):
+    """与上次本地 data/profiles.json 做并集，返回 (merged, 复活名单)。"""
+    if not os.path.exists(OUT_PROFILES):
+        return merged, []
+    try:
+        prev = json.load(open(OUT_PROFILES, encoding='utf-8'))
+    except Exception as e:
+        print("  · 本地快照读取失败，跳过并集护栏：%s" % e)
+        return merged, []
+    prev = prev if isinstance(prev, list) else (prev.get('list') or [])
+    pm = {}
+    for s in prev:
+        n = s.get('name')
+        if not n:
+            continue
+        pm[n] = merge_dup(pm[n], s) if n in pm else s
+    cur = {s.get('name'): s for s in merged if s.get('name')}
+    out, revived = [], []
+    for s in merged:
+        n = s.get('name')
+        out.append(union_entry(s, pm[n]) if n in pm else s)
+    for n, s in pm.items():
+        if n not in cur:
+            revived.append(n)
+            out.append(s)
+    return out, revived
+
+
+def get_cloud(retries=4, sleep=5):
+    """GET 云端 data/profiles.json，带重试。
+    返回 (entries, sha, ok)。ok=False 表示读取失败——此时**绝对不能推送**，
+    否则会用「仅腾讯文档」的残缺结果覆盖掉云端前端建档学员（2026-10-03 事故）。
+    """
+    tok = resolve_token()
+    if not tok:
+        return [], None, False
+    H = {'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json'}
+    last = None
+    for i in range(retries):
+        try:
+            r = json.load(urllib.request.urlopen(urllib.request.Request(GH_API, headers=H), timeout=60))
+            return json.loads(decodeB64(r.get('content', ''))), r.get('sha'), True
+        except Exception as e:
+            last = e
+            print(f"  · 第 {i+1}/{retries} 次读取云端失败：{e}")
+            time.sleep(sleep)
+    print("❌ GET 云端失败（已重试 %d 次）：%s" % (retries, last))
+    return [], None, False
+
+
+def push_profiles(merged, sha=None):
     tok = resolve_token()
     if not tok:
         print("⚠️ 无 GITHUB_TOKEN，跳过云端推送")
         return False
     H = {'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'}
-    sha, old = None, []
-    try:
-        r = json.load(urllib.request.urlopen(urllib.request.Request(GH_API, headers=H), timeout=30))
-        sha = r.get('sha')
-        old = json.loads(decodeB64(r.get('content', '')))
-    except Exception as e:
-        print("GET 云端失败（将尝试覆盖）：", e)
+    if not sha:
+        print("❌ 缺少云端 sha（云端读取失败），为防覆盖丢数据，已中止推送")
+        return False
     body = {'message': '体测档案自动生成 ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
             'content': b64utf8(json.dumps(merged, ensure_ascii=False, indent=1))}
     if sha:
@@ -283,15 +427,23 @@ def main():
 
     # 读取云端现有，按 name 合并（保留手动学员/基础信息，不重复生成 id）
     cloud_by_name = {}
-    try:
-        tok = resolve_token()
-        if tok:
-            H = {'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json'}
-            r = json.load(urllib.request.urlopen(urllib.request.Request(GH_API, headers=H), timeout=30))
-            for s in json.loads(decodeB64(r.get('content', ''))):
-                cloud_by_name[s.get('name')] = s
-    except Exception as e:
-        print("读取云端现有 profiles 失败，仅用腾讯文档：", e)
+    cloud_entries, cloud_sha, cloud_ok = get_cloud()
+    if not cloud_ok:
+        print("❌ 云端 profiles.json 读取失败 → 无法做并集合并。"
+              "为避免用残缺数据覆盖云端（前端建档学员会丢失），本次**不写本地、不推送**。")
+        return 2
+    dup = 0
+    for s in cloud_entries:
+        n = s.get('name')
+        if not n:
+            continue
+        if n in cloud_by_name:
+            cloud_by_name[n] = merge_dup(cloud_by_name[n], s)
+            dup += 1
+        else:
+            cloud_by_name[n] = s
+    if dup:
+        print(f"ℹ️ 云端存在 {dup} 条重复学员条目（前端同步产生），已按并集合并，避免体测记录丢失")
 
     new_list = []
     for name, st in students.items():
@@ -304,9 +456,21 @@ def main():
         new_list.append({
             'id': (ex or {}).get('id') or make_id(name),
             'name': name, 'age': age, 'gender': gender, 'cls': cls, 'createdAt': created,
-            'tests': [to_test(t) for t in st['tests']],
+            'tests': [to_test(t, name) for t in st['tests']],
             'lessons': [to_lesson(l) for l in st['lessons']],
         })
+
+    if SUSPECT:
+        print(f"⚠️ 体测可疑值 {len(SUSPECT)} 条（只标记不删除，请人工回查原始登记表）：")
+        for s in SUSPECT:
+            print(f"   · {s['name']} {s['date']} — {'；'.join(s['items'])}")
+        try:
+            with open('C:/Users/Administrator/WorkBuddy/2026-09-21-20-34-00/_tcexport/tice_review.md', 'a', encoding='utf-8') as f:
+                f.write("\n## 体测可疑值待回查 %s\n" % datetime.datetime.now().strftime('%Y-%m-%d %H:%M'))
+                for s in SUSPECT:
+                    f.write("- %s %s：%s\n" % (s['name'], s['date'], '；'.join(s['items'])))
+        except Exception as e:
+            print("   （回查清单写入失败：%s）" % e)
 
     merged = merge_cloud(list(cloud_by_name.values()), new_list)
     # 兜底：确保每个学员 tests/lessons 都是 list（历史/云端独有学员可能缺键或为 None，否则 archive.html 读取报错）
@@ -315,11 +479,18 @@ def main():
             s['tests'] = []
         if not isinstance(s.get('lessons'), list):
             s['lessons'] = []
+
+    # 护栏：与上次本地快照并集，防止前端整份覆盖导致学员静默消失（2026-10-05 事故）
+    merged, revived = union_prev_local(merged)
+    if revived:
+        print(f"🛟 并集护栏：从上次本地快照补回 {len(revived)} 名被前端覆盖掉的学员：{revived}")
+
     os.makedirs(os.path.dirname(OUT_PROFILES) or '.', exist_ok=True)
     with open(OUT_PROFILES, 'w', encoding='utf-8') as f:
         json.dump(merged, f, ensure_ascii=False, indent=1)
     print(f"已生成 {OUT_PROFILES}，学员数：{len(merged)}（腾讯文档新聚合 {len(new_list)}，云端保留 {len(merged) - len(new_list)}）")
-    push_profiles(merged)
+    ok = push_profiles(merged, cloud_sha)
+    return 0 if ok else 3
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)
