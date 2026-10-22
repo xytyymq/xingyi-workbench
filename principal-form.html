@@ -214,7 +214,7 @@ var COLS = {
 var REV_TYPES = ['续费/订金','新报名','散客/场地','穿线'];
 var BUILD='20261021';
 (function(){ try{ var p=localStorage.getItem('xy_pf_build'); if(p&&p!==BUILD){ var t=document.getElementById('toast'); if(t){ t.textContent='🔄 检测到新版，请刷新本页以生效'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},5000);} } localStorage.setItem('xy_pf_build',BUILD); }catch(e){} })();
-var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', REVENUE_PATH='data/revenue-ledger.json';
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', REVENUE_PATH='data/revenue-ledger.json', REPORT_PATH='data/principal-report.json';
 
 function $(id){return document.getElementById(id);}
 // 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
@@ -224,6 +224,82 @@ function todayISO(){return new Date().toISOString().slice(0,10);}
 function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);}
 function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
 function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
+
+// ===== 前台保存即刷新：纯 JS 重算营收/周报并写回 principal-report.json（替代 GitHub Action 的「on push」触发）=====
+// 与 gen_principal_report.py 的 read_revenue / read_week_revenue 口径完全一致，零腾讯依赖、零服务器。
+var REVENUE_TYPES=['续费/订金','新报名','散客/场地','穿线'];
+var VENUE_GOAL_MONTH=24000, REV_GOAL_MONTH=52000;
+function _rnd(n){return Math.round(n);}
+// 本地日期工具（严禁用 toISOString，会因 UTC 偏移把周一界面对偏一天）
+function _todayISO(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function _addDaysISO(iso,n){var p=String(iso).split('-');var d=new Date(+p[0],+p[1]-1,+p[2]);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);}
+function _wkStart(iso){
+  var p=String(iso).split('-'); if(p.length<3) return String(iso);
+  var d=new Date(+p[0],+p[1]-1,+p[2]); var day=(d.getDay()+6)%7; d.setDate(d.getDate()-day);
+  return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+}
+function _readRevenueJS(lg){
+  var today=_todayISO(), mp=today.slice(0,7);
+  var bt={}; REVENUE_TYPES.forEach(function(t){bt[t]=0;});
+  (lg||[]).forEach(function(r){
+    var t=r.type; if(bt[t]==null) return; var a=parseFloat(r.amount)||0;
+    if(String(r.date||'').slice(0,7)===mp) bt[t]+=a;
+  });
+  var todayTotal=0;
+  (lg||[]).forEach(function(r){ if(String(r.date||'')===today) todayTotal+=parseFloat(r.amount)||0; });
+  var monthTotal=0; REVENUE_TYPES.forEach(function(t){monthTotal+=bt[t];});
+  var byType=REVENUE_TYPES.filter(function(t){return bt[t]>0;}).map(function(t){return {name:t,amount:_rnd(bt[t])};});
+  return {
+    month_total:_rnd(monthTotal), today_total:_rnd(todayTotal), by_type:byType,
+    derived:{ course:_rnd(bt['续费/订金']+bt['新报名']), coach_enroll:_rnd(bt['续费/订金']+bt['新报名']),
+      venue:_rnd(bt['散客/场地']), string:_rnd(bt['穿线']) },
+    venue_goal:VENUE_GOAL_MONTH, total_goal:REV_GOAL_MONTH,
+    note:'含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。'
+  };
+}
+function _readWeekJS(lg){
+  var thisWS=_wkStart(_todayISO()); var lastWS=_addDaysISO(thisWS,-7);
+  function agg(ws){ var total=0; var bt={}; REVENUE_TYPES.forEach(function(t){bt[t]=0;});
+    (lg||[]).forEach(function(r){ if(_wkStart(String(r.date||''))===ws){ var a=parseFloat(r.amount)||0; total+=a; if(bt[r.type]!=null) bt[r.type]+=a; } });
+    return {total:_rnd(total), by_type:REVENUE_TYPES.filter(function(t){return bt[t]>0;}).map(function(t){return {name:t,amount:_rnd(bt[t])};})};
+  }
+  return {this_week:agg(thisWS), last_week:agg(lastWS)};
+}
+// 读/写对象型 JSON（principal-report.json 是对象不是数组，不能用 ghSave 的数组 merge）
+function ghReadJson(path){
+  return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
+    {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}})
+  .then(function(r){
+    if(r.status===404) return {json:null,sha:null};
+    if(!r.ok) throw new Error('读取 '+path+' 失败 HTTP '+r.status);
+    return r.json().then(function(m){ var j=null; try{j=JSON.parse(b64d(m.content||''));}catch(e){j=null;} return {json:j,sha:m.sha}; });
+  });
+}
+function ghWriteJson(path, json, msg){
+  return ghReadJson(path).then(function(st){
+    var body={message:msg,content:b64e(JSON.stringify(json,null,2)),branch:BRANCH};
+    if(st.sha) body.sha=st.sha;
+    return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{method:'PUT',
+      headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)})
+    .then(function(rr){
+      if(rr.status===200||rr.status===201) return true;
+      if(rr.status===409||rr.status===422) return new Promise(function(res){setTimeout(res,700);}).then(function(){return ghWriteJson(path,json,msg);});
+      return rr.text().then(function(t){throw new Error('写入 '+path+' 失败 HTTP '+rr.status+' '+String(t).slice(0,110));});
+    });
+  });
+}
+// 保存台账后调用：重算 finance.revenue / finance.week 并写回报告（其余字段保留全量生成器结果）
+function regenReportFromLedger(lg){
+  var rev=_readRevenueJS(lg), wk=_readWeekJS(lg);
+  return ghReadJson(REPORT_PATH).then(function(st){
+    var rep=(st.json&&typeof st.json==='object')?st.json:{};
+    if(!rep.finance) rep.finance={};
+    rep.finance.revenue=rev; rep.finance.week=wk;
+    return ghWriteJson(REPORT_PATH, rep, 'chore: 前台保存自动刷新营收/周报（finance.revenue·week）').then(function(){
+      try{ if(window.__autoRefreshNote) console.log('[营收自动刷新] month_total='+rev.month_total+' week='+wk.this_week.total); }catch(e){}
+    }).catch(function(e){ console.warn('营收分析自动刷新失败（不影响台账）',e); });
+  }).catch(function(e){ console.warn('读取报告失败，跳过自动刷新',e); });
+}
 
 // ===== GitHub 读写底层：禁缓存读取 + 写入冲突（409/422 sha 不符）自动重拉合并重试 =====
 // 注：不能加 Cache-Control 请求头（GitHub CORS 白名单不含它，浏览器会直接拦死），
@@ -486,7 +562,11 @@ $('saveCloud').addEventListener('click',function(){
     var extra=(lg.length?' +营收台账('+lg.length+'笔)':'');
     toast('✅ 已同步云端（日报'+rec[COLS.date]+extra+'）');
     // 保存成功后刷新本月累计（营收台账已更新）
-    ghRead(REVENUE_PATH).then(function(st){ renderSalarySummary(st.list||[], null); }).catch(function(){});
+    ghRead(REVENUE_PATH).then(function(st){
+      renderSalarySummary(st.list||[], null);
+      // 营收分析自动刷新：重算 finance.revenue/week 并写回 principal-report.json（录入即更新，不依赖服务器）
+      regenReportFromLedger(st.list||[]);
+    }).catch(function(){});
   }).catch(function(e){
     var m=(e&&e.message)||String(e||'');
     if(/超时/.test(m)) m='云端响应超时，请检查网络后重试';
