@@ -381,13 +381,16 @@ function collectLedger(){
   document.querySelectorAll('#ledgerList .lg-row').forEach(function(row){
     var amount=row.querySelector('.lg-amount').value.trim();
     var date=row.querySelector('.lg-date').value.trim();
-    if(!amount||!date) return;   // 金额/日期为必填；姓名/收款人可后补
+    var name=row.querySelector('.lg-name').value.trim();
+    var collector=row.querySelector('.lg-collector').value.trim();
+    // 五项必填：日期·学员/客户·金额·类型·收款人（收款人=对账 + 教练业绩归属，绝不可空）
+    if(!date||!name||!amount||!collector) return;
     out.push({
       date:date,
-      name:row.querySelector('.lg-name').value.trim(),
+      name:name,
       amount:amount,
       type:row.querySelector('.lg-type').value,
-      collector:row.querySelector('.lg-collector').value.trim()
+      collector:collector
     });
   });
   return out;
@@ -451,6 +454,24 @@ $('saveCloud').addEventListener('click',function(){
   }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步') ];
 
   // 统一营收台账：仅在本页有登记行时才写（无行跳过，省一次读写）
+  // 保存前校验：每笔 日期·学员/客户·金额·类型·收款人 五项必填，收款人为空直接拦截
+  var lgRowsWarn=[];
+  document.querySelectorAll('#ledgerList .lg-row').forEach(function(row){
+    var amt=row.querySelector('.lg-amount').value.trim();
+    var dt=row.querySelector('.lg-date').value.trim();
+    var nm=row.querySelector('.lg-name').value.trim();
+    var col=row.querySelector('.lg-collector').value.trim();
+    [row.querySelector('.lg-amount'),row.querySelector('.lg-date'),row.querySelector('.lg-name'),row.querySelector('.lg-collector')].forEach(function(el){ if(el) el.style.border=''; });
+    if(!dt||!nm||!amt||!col){
+      lgRowsWarn.push(row);
+      if(!col) row.querySelector('.lg-collector').style.border='2px solid #FF6B6B';
+      if(!nm) row.querySelector('.lg-name').style.border='2px solid #FF6B6B';
+    }
+  });
+  if(lgRowsWarn.length){
+    toast('⚠️ 营收台账每笔 5 项必填（日期·学员/客户·金额·收款人），红框为缺失项，补填后再保存');
+    btn._busy=false; btn.disabled=false; btn.textContent=origTxt; return;
+  }
   var lg=collectLedger();
   if(lg.length){
     tasks.push(ghSave(REVENUE_PATH, function(list){
