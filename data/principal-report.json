@@ -5,13 +5,13 @@
   "lights": [
     {
       "level": "yellow",
-      "text": "本月报名 2/10 人，进度落后于时间线（应到 6.8）"
+      "text": "本月报名 4/10 人，进度落后于时间线（应到 6.8）"
     }
   ],
   "funnel": {
     "new_leads_today": 0.0,
     "trial_arrive_rate": null,
-    "month_signups": 2.0,
+    "month_signups": 4.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
@@ -51,7 +51,7 @@
         "string": 100
       },
       "venue_goal": 24000,
-      "total_goal": 52000,
+      "total_goal": 52800,
       "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
     },
     "week": {
@@ -186,14 +186,15 @@
       "date": "10-21",
       "leads": 0.0,
       "trials": 0.0,
-      "signups": -2.0,
+      "signups": 0.0,
       "classes": 0.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 0 · 开课 12 节",
+  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 12 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
     "month_target": 10
-  }
+  },
+  "month_signups": 4.0
 }
