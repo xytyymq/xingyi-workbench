@@ -1,21 +1,17 @@
 {
-  "generated_at": "2026-10-21 08:31",
-  "data_date": "2026-10-20",
-  "overall": "red",
+  "generated_at": "2026-10-22 08:30",
+  "data_date": "2026-10-21",
+  "overall": "yellow",
   "lights": [
     {
-      "level": "green",
-      "text": "试课到场率 100%（≥80% 达标）"
-    },
-    {
       "level": "yellow",
-      "text": "本月报名 4/10 人，进度落后于时间线（应到 6.5）"
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 6.8）"
     }
   ],
   "funnel": {
     "new_leads_today": 0.0,
-    "trial_arrive_rate": "100%",
-    "month_signups": 4.0,
+    "trial_arrive_rate": null,
+    "month_signups": 2.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
@@ -73,17 +69,9 @@
       }
     }
   },
-  "coach": [
-    {
-      "level": "yellow",
-      "text": "今日带课但员工日报缺卡：张玉玲、瞿佳康"
-    },
-    {
-      "level": "yellow",
-      "text": "今日有课但巡课记录为空——巡课未执行"
-    }
-  ],
+  "coach": [],
   "boss_todos": [
+    "2026-10-21｜邀约本月体测",
     "2026-10-20｜采购体能课器材，完成本月少儿班测评，对部分需要续课的家长跟进。",
     "2026-10-19｜采购体能了课器材，跟进这个月少儿班测评",
     "2026-10-18｜体能课器材采购",
@@ -91,22 +79,22 @@
   ],
   "cross_check": [
     {
-      "level": "red",
-      "text": "开课节数打架：日报报 2 节，上课记录实际 13 条，需核实"
+      "level": "green",
+      "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "彭佳妤、段梦迪、邓琬妮",
+  "callback": "曹心语、邓琬妮、盛呈栩",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
     "this_month": 2.0,
-    "latest_title": "无",
+    "latest_title": "",
     "latest_status": ""
   },
   "touch": {
     "count": 1.0,
     "types": "微信/群消息推送",
-    "feedback": "段梦迪的妈妈有问价格，先做了测评，暑假在九江，推荐了年卡，暂时只报了舞蹈培训班，后期还有跟进邀约下一次课。"
+    "feedback": "吴帛珅妈妈有咨询成人班价格，明天有课约她来试课。"
   },
   "tice": {
     "month_done": 0,
@@ -134,13 +122,6 @@
     ]
   },
   "week_rows": [
-    {
-      "date": "10-14",
-      "leads": 0.0,
-      "trials": 0.0,
-      "signups": 0.0,
-      "classes": 0.0
-    },
     {
       "date": "10-15",
       "leads": 0.0,
@@ -182,9 +163,16 @@
       "trials": 1.0,
       "signups": 0.0,
       "classes": 2.0
+    },
+    {
+      "date": "10-21",
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": -2.0,
+      "classes": 0.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 12 节",
+  "week_summary": "本周合计：新线索 0 · 报名 0 · 开课 12 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
