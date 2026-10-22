@@ -19,6 +19,22 @@ CUTOFF = date(2026, 9, 1)   # 只自动发放 2026-09 起（对齐老板口径�
 DELTA = 10
 REASON = "到课1节"
 
+# 教练填表错别字/异体字映射（与 gen_parent_msg.py 保持一致，发现新错法两处都加）
+# ⚠️ 方向 = 错字 → 正确名。2026-10-22 大哥确认：邹书云/黄文晧 是同一人的错写，
+#    正确名以学员名册(students.json)为准 = 邹书芸/黄文皓。
+NAME_ALIAS = {
+    "徐梓宸": "徐梓辰", "彭嘉妤": "彭嘉好", "彭佳妤": "彭嘉好",
+    "邓琬妮": "邓琬宁",
+    "熊沁杰尼": "熊沁杰妮",
+    "黄文晧": "黄文皓", "振洪宇": "洪振宇", "振洪新": "洪振新",
+    "邹书云": "邹书芸",
+}
+
+
+def canon_name(nm):
+    nm = (nm or "").strip()
+    return NAME_ALIAS.get(nm, nm)
+
 
 def resolve_token():
     t = os.environ.get("GITHUB_TOKEN")
@@ -114,6 +130,7 @@ def main():
         if not d or d < CUTOFF:
             continue
         for nm in split_students(stu):
+            nm = canon_name(nm)
             key = (nm, d.isoformat())
             if key in seen:
                 continue
