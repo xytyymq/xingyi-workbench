@@ -152,6 +152,12 @@
   <!-- 续课战报条 -->
   <div class="renew-bar" id="renewBar" style="margin-top:8px;background:var(--card-strong);border:1px solid var(--line);border-left:3px solid var(--neon);border-radius:10px;padding:10px 12px;font-size:12.5px;color:var(--text)"></div>
 
+  <!-- 营收台账自检 -->
+  <section class="panel" id="ledgerAuditPanel" style="display:none">
+    <h2><span class="ico">🧾</span> 营收台账自检 <span class="pill" id="ledgerAuditLevel"></span></h2>
+    <div id="ledgerAudit"></div>
+  </section>
+
   <!-- 红黄绿灯 -->
   <section class="panel">
     <h2><span class="ico">🚨</span> 红黄绿灯 <span class="pill">含数据校验</span></h2>
@@ -263,6 +269,27 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
       + (rn.goal!=null ? ` · 目标 ¥${rn.goal} · 达成率 <b style="color:${rn.goal_rate&&rn.goal_rate.indexOf('超')>=0?'var(--green)':'var(--cyan)'}">${rn.goal_rate}</b>` : ` · <b style="color:var(--cyan)">目标待设定</b>`)
       + (rn.note||'')
     : '📈 续课战报：待接入夜间自动化（续费台账）';
+
+  // 营收台账自检
+  const la = d.finance?.ledger_audit || {};
+  if (la && la.checks && la.checks.length) {
+    document.getElementById("ledgerAuditPanel").style.display = "";
+    const lvTxt = la.level === 'green' ? '✅ 通过' : la.level === 'yellow' ? '⚠️ 待补' : '❌ 异常';
+    document.getElementById("ledgerAuditLevel").textContent = lvTxt;
+    let laHtml = '<div style="font-size:12.5px;line-height:1.95">';
+    (la.checks || []).forEach(c => {
+      const icon = c.ok ? '✅' : (c.level === 'warn' ? '⚠️' : '❌');
+      laHtml += icon + ' ' + c.name + '：' + (c.msg || '') + '<br>';
+    });
+    laHtml += '</div>';
+    if (la.missing_collector && la.missing_collector.length) {
+      laHtml += '<div style="margin-top:8px;padding:8px 10px;border-left:3px solid var(--neon);background:var(--card-strong);border-radius:8px;font-size:12px;color:var(--muted)">'
+        + '⚠️ <b>' + la.missing_collector.length + '</b> 笔历史录入缺收款人（不影响营收总额，影响教练业绩归属）：<br>';
+      la.missing_collector.forEach(r => { laHtml += '· ' + (r.date || '') + ' ' + (r.name || '') + ' ' + (r.type || '') + ' ¥' + Math.round(r.amount || 0) + '<br>'; });
+      laHtml += '请在「营收台账」补录收款人。</div>';
+    }
+    document.getElementById("ledgerAudit").innerHTML = laHtml;
+  }
 
   // 红黄绿灯 + 数据交叉校验
   let lightsHtml=(d.lights||[]).map(x=>item(x.level,x.text)).join("")||'<div class="empty">今日无异常</div>';
