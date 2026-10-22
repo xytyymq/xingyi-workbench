@@ -53,6 +53,14 @@
     .ring .rp{top:24px;font-size:16px;line-height:20px}
     .ring .rl{top:41px;font-size:12px;line-height:14px}
   }
+  /* 本月营收汇总横条（月度目标三圈下方，大哥 2026-10-22 拍板：总目标¥52000） */
+  .revsum{margin-top:10px;background:linear-gradient(90deg,rgba(86,216,240,.14),rgba(198,249,75,.10));
+    border:1px solid var(--line);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .revsum .rs-l{font-size:12px;color:var(--muted)}
+  .revsum .rs-v{font-size:20px;font-weight:800;color:var(--green)}
+  .revsum .rs-v small{font-size:12px;color:var(--muted);font-weight:500}
+  .revsum .rs-rate{font-size:13px;font-weight:800}
+  .revsum .rs-break{font-size:10px;color:var(--muted);width:100%}
   /* 漏斗 */
   .funnel{display:flex;align-items:flex-end;gap:8px;height:120px}
   .fcol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
@@ -142,7 +150,10 @@ function render(d){
   var rev=d.finance&&d.finance.revenue||{};
   var goal=rn.goal||28800, amt=rn.month_amount||0, rcnt=rn.month_count||0;
   var rate=rn.goal_rate!=null?parseFloat(rn.goal_rate)/100:(goal?amt/goal:0);
-  var rrate=goal?Math.min(1,(rev.month_total||0)/goal):0;
+  // 场地收入目标（大哥 2026-10-22 拍板 ¥24000）+ 营收总目标（四类合计 ¥52000）
+  var vgoal=rev.venue_goal||24000, vamt=(rev.derived&&rev.derived.venue)||0;
+  var vrate=vgoal?Math.min(1,vamt/vgoal):0;
+  var tgoal=rev.total_goal||52000, trate=tgoal?Math.min(1,(rev.month_total||0)/tgoal):0;
   var mt=d.kpi&&d.kpi.month_target||10;
   var ms=d.funnel&&d.funnel.month_signups||0;
   var srate=mt?ms/mt:0;
@@ -154,9 +165,14 @@ function render(d){
     '<div class="gauge"><div class="t">本月报名人数</div>'+ring(srate,'目标')+
       '<div class="v">'+ms+' <small>/ '+mt+' 人</small></div>'+
       '<div class="s" style="color:'+(srate>=0.8?'var(--green)':srate>=0.4?'var(--yellow)':'var(--red)')+'">完成 '+Math.round(srate*100)+'%</div></div>'+
-    '<div class="gauge"><div class="t">本月营收</div>'+ring(rrate,'对标续费目标')+
-      '<div class="v">¥'+Math.round(rev.month_total||0).toLocaleString()+'</div>'+
-      '<div class="s">今日 ¥'+Math.round(rev.today_total||0)+' · '+(rev.by_type?rev.by_type.map(function(x){return x.name+'¥'+x.amount;}).join(' / '):'')+'</div></div>'+
+    '<div class="gauge"><div class="t">本月场地收入</div>'+ring(vrate,'目标')+
+      '<div class="v">¥'+Math.round(vamt).toLocaleString()+' <small>/ ¥'+vgoal.toLocaleString()+'</small></div>'+
+      '<div class="s" style="color:'+(vrate>=0.8?'var(--green)':vrate>=0.4?'var(--yellow)':'var(--red)')+'">完成 '+Math.round(vrate*100)+'%</div></div>'+
+    '</div>'+
+    '<div class="revsum"><span class="rs-l">💰 本月营收汇总</span>'+
+      '<span class="rs-v">¥'+Math.round(rev.month_total||0).toLocaleString()+' <small>/ 总目标 ¥'+tgoal.toLocaleString()+'</small></span>'+
+      '<span class="rs-rate" style="color:'+(trate>=0.8?'var(--green)':trate>=0.4?'var(--yellow)':'var(--red)')+'">达成 '+Math.round(trate*100)+'%</span>'+
+      '<span class="rs-break">'+(rev.by_type?rev.by_type.map(function(x){return x.name+' ¥'+Math.round(x.amount).toLocaleString();}).join(' · '):'')+'</span>'+
     '</div></div>';
 
   // 漏斗（今日）
