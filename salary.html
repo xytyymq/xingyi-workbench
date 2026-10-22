@@ -124,7 +124,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
   <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
   <div class="field"><label>日常其他考核分（0–300，月底评）</label><input type="number" id="f_daily" placeholder="如 300"></div>
-  <div class="hint">课程实收 / 教练招生业绩 / 场地收入 来自《校长日报》填写页<b>「营收台账」逐笔登记</b>，<b>自动按月汇总</b>填入（点下方按钮可重算）；体测邀约次数来自每日填写（考核校长工作，不计入营收）。日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标18000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%。<b>总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成</b>（不再单列总业绩提成）。</div>
+  <div class="hint">课程实收 / 教练招生业绩 / 场地收入 来自《校长日报》填写页<b>「营收台账」逐笔登记</b>，<b>自动按月汇总</b>填入（点下方按钮可重算）；体测邀约次数来自每日填写（考核校长工作，不计入营收）。日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标24000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%。<b>总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成</b>（不再单列总业绩提成）。</div>
   <button class="cta ghost" id="reAgg" type="button" style="margin-top:10px">↻ 重新汇总本月日报</button>
   <button class="cta" id="saveSalary" type="button">保存本月核算</button>
 </div>
@@ -156,10 +156,10 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
   <summary>📐 计算公式与口径说明（2026-10-18 修正版）</summary>
   <p>校长月总收入 = <code>底薪3500</code> + <code>KPI绩效(分项加权，满分1200)</code> + <code>教练管理奖金(教练招生×1%)</code> + <code>招生阶梯提成(课程实收×档位)</code></p>
   <p><b>KPI 绩效（满分1200，两项加权，未达标按比例发）：</b></p>
-  <p>· 场地达标 700元 = 场地收入 ÷ 18000 × 700（封顶700）<br>
+  <p>· 场地达标 700元 = 场地收入 ÷ 24000 × 700（封顶700）<br>
      · 日常工作 500元 = 体测邀约硬性 200（本月完成÷66×200，封顶200）+ 日常其他 300（校长考核分 0–300）</p>
   <p>招生阶梯提成（按课程实收）：&lt;18000→2% / 18000–24999→4% / 25000–34999→6% / ≥35000→8%</p>
-  <p>四档阶梯参考（KPI 满分、教练招生6000、场地18000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。注：体测邀约目标 66 为当前「从未体测=新生(58)×1 + 已测老生(24)÷3」的首测清栏冲刺值，58 人全部建档后自然回落约 27 次/月。实际工资以本页输入实时计算为准。</p>
+  <p>四档阶梯参考（KPI 满分、教练招生6000、场地24000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。注：体测邀约目标 66 为当前「从未体测=新生(58)×1 + 已测老生(24)÷3」的首测清栏冲刺值，58 人全部建档后自然回落约 27 次/月。实际工资以本页输入实时计算为准。</p>
   <p>返回 <a class="link" href="report.html">校长日报看板 →</a>　·　<a class="link" href="principal-form.html">填报校长日报 →</a></p>
 </details>
 
@@ -217,8 +217,8 @@ function calc(r){
   var testDone=Math.max(0,num(r.testDone||0));        // 本月体测邀约完成次数
   var TEST_TARGET=66;                                  // 月度目标：新生(从未体测58)×1 + 老生(已测24)/3 ≈ 66；首测清栏冲刺值，清零后回落≈27
   var otherDaily=Math.max(0,Math.min(300,num(r.daily))); // 日常其他考核分 0-300
-  // KPI 绩效分项加权：场地700(目标18000) + 体测邀约硬性200 + 日常其他300
-  var venueKpi  = 700*Math.min(venue/18000,1);
+  // KPI 绩效分项加权：场地700(目标24000) + 体测邀约硬性200 + 日常其他300
+  var venueKpi  = 700*Math.min(venue/24000,1);
   var testKpi   = 200*Math.min(testDone/TEST_TARGET,1); // 硬性：按比例给分，封顶200
   var dailyKpi  = testKpi+otherDaily;                  // 封顶500
   var performance = venueKpi+dailyKpi;
@@ -257,7 +257,7 @@ function renderSlip(r){
   $('slipMonth').textContent = (r.month||'—')+' 月';
   var rows=[
     ['底薪（固定）', c.base, ''],
-    ['KPI·场地达标', c.venueKpi, '场地 '+yuan(c.venue)+' ÷18000 ×700', true],
+    ['KPI·场地达标', c.venueKpi, '场地 '+yuan(c.venue)+' ÷24000 ×700', true],
     ['KPI·体测邀约(硬性)', c.testKpi, '完成 '+c.testDone+'/'+c.testTarget+' ×200（封顶200）', true],
     ['KPI·日常其他', c.otherDaily, '考核分(0–300)', true],
     ['教练管理奖金', c.coachBonus, '教练招生 '+yuan(c.coach)+' ×1%'],
@@ -274,9 +274,9 @@ function renderSlip(r){
 
 // ===== 四档阶梯 =====
 function renderLadder(curCourse){
-  // 固定场景：日常500满分、场地18000达标、教练招生6000
+  // 固定场景：日常500满分、场地24000达标、教练招生6000
   var tiers=[{n:'未达标',c:8000},{n:'保底档',c:18000},{n:'正常档',c:25000},{n:'冲刺档',c:35000}];
-  var sums=tiers.map(function(t){ return calc({course:t.c,venue:18000,daily:300,testDone:66,coach:6000}).sum; });
+  var sums=tiers.map(function(t){ return calc({course:t.c,venue:24000,daily:300,testDone:66,coach:6000}).sum; });
   var max=Math.max.apply(null,sums);
   var html=tiers.map(function(t,i){
     var cur = (tierOf(curCourse)===t.n)?' cur':'';
