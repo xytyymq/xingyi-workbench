@@ -39,6 +39,8 @@ LEAD_STALE_DAYS = 2       # 线索 48h 未跟进
 MONTH_TARGET = 10         # 月报名目标
 # 体测月度计划：动态 = 当月上课学生数 × 80%（大哥 2026-10-14 拍板），不再用固定常量
 RENEW_GOAL_MONTH = 28800  # 续费月度目标金额（大哥 2026-10-14 拍板 ¥28800；None=不显示目标完成率）
+VENUE_GOAL_MONTH = 24000  # 场地收入月度目标金额（大哥 2026-10-22 拍板 ¥24000）
+REV_GOAL_MONTH = 52000    # 本月营收总目标（四类合计，大哥 2026-10-22 拍板 ¥52000）
 
 CLOSED_STATUS = ("已报名", "已流失")
 
@@ -384,6 +386,8 @@ def read_revenue():
         "today_total": round(today_total),
         "by_type": by_type_list,
         "derived": derived,
+        "venue_goal": VENUE_GOAL_MONTH,
+        "total_goal": REV_GOAL_MONTH,
         "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。",
     }
 
