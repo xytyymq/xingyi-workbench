@@ -2,7 +2,7 @@
   {
     "date": "2026-10-17",
     "name": "黄俊安",
-    "amount": 300,
+    "amount": "300",
     "type": "续费/订金",
     "collector": "未记录"
   },
@@ -26,5 +26,40 @@
     "amount": 50,
     "type": "穿线",
     "collector": "江教练"
+  },
+  {
+    "date": "2026-10-18",
+    "name": "谢晨希",
+    "amount": "300",
+    "type": "续费/订金",
+    "collector": "未记录"
+  },
+  {
+    "date": "2026-10-16",
+    "name": "盛呈栩",
+    "amount": "3080",
+    "type": "续费/订金",
+    "collector": ""
+  },
+  {
+    "date": "2026-10-11",
+    "name": "黄文皓",
+    "amount": "300",
+    "type": "续费/订金",
+    "collector": ""
+  },
+  {
+    "date": "2026-10-13",
+    "name": "刘伟",
+    "amount": "980",
+    "type": "新报名",
+    "collector": ""
+  },
+  {
+    "date": "2026-10-21",
+    "name": "10.1—10.21场地费总共",
+    "amount": "3859.28",
+    "type": "散客/场地",
+    "collector": ""
   }
 ]
