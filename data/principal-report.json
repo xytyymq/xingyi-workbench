@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22 08:30",
+  "generated_at": "2026-10-22 17:49",
   "data_date": "2026-10-21",
   "overall": "yellow",
   "lights": [
@@ -17,19 +17,27 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 600.0,
-      "month_count": 2,
+      "month_amount": 4280.0,
+      "month_count": 5,
       "goal": 28800,
-      "goal_rate": "2%",
+      "goal_rate": "15%",
       "note": ""
     },
     "revenue": {
-      "month_total": 700,
+      "month_total": 9219,
       "today_total": 0,
       "by_type": [
         {
           "name": "续费/订金",
-          "amount": 600
+          "amount": 4280
+        },
+        {
+          "name": "新报名",
+          "amount": 980
+        },
+        {
+          "name": "散客/场地",
+          "amount": 3859
         },
         {
           "name": "穿线",
@@ -37,17 +45,21 @@
         }
       ],
       "derived": {
-        "course": 600,
-        "coach_enroll": 600,
-        "venue": 0,
+        "course": 5260,
+        "coach_enroll": 5260,
+        "venue": 3859,
         "string": 100
       },
       "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
     },
     "week": {
       "this_week": {
-        "total": 50,
+        "total": 3909,
         "by_type": [
+          {
+            "name": "散客/场地",
+            "amount": 3859
+          },
           {
             "name": "穿线",
             "amount": 50
@@ -55,11 +67,15 @@
         ]
       },
       "last_week": {
-        "total": 650,
+        "total": 5010,
         "by_type": [
           {
             "name": "续费/订金",
-            "amount": 600
+            "amount": 3980
+          },
+          {
+            "name": "新报名",
+            "amount": 980
           },
           {
             "name": "穿线",
@@ -83,7 +99,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "曹心语、邓琬妮、盛呈栩",
+  "callback": "邓琬妮、刘槿辰、邓安淇",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
