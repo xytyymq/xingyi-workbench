@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星羿体育 · 校长日报填写</title>
+<style>
+:root{
+  --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+  --orange:#FF8A3D; --white:#fff; --muted:#9fb0d0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
+  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:8px 4px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand{font-size:18px;font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.date{font-size:12px;color:var(--cyan)}
+.section-title{font-size:13px;color:var(--green);font-weight:700;margin:20px 4px 10px;letter-spacing:1px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:14px;margin-bottom:10px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.field input,.field textarea,.renew-row input,.renew-row select{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.15);
+  border-radius:10px;padding:11px;color:var(--white);font-size:15px;font-family:inherit}
+.field input:focus,.field textarea:focus{border-color:var(--green)}
+.field textarea{resize:vertical;min-height:58px;line-height:1.5}
+input[type=date]{color-scheme:dark}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.optional{color:var(--orange);font-size:10px;margin-left:4px}
+.funnel{margin-top:6px}
+.funnel-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.funnel-row .fl{font-size:11px;color:var(--muted);width:42px;flex-shrink:0}
+.funnel-row .bar{height:9px;border-radius:5px;background:linear-gradient(90deg,var(--green),var(--cyan));flex:1;transition:width .25s}
+.funnel-row .num{font-size:13px;font-weight:700;width:30px;text-align:right;color:var(--green)}
+.cta{display:block;text-align:center;background:var(--orange);color:#1a0d00;font-weight:700;
+  border-radius:30px;padding:14px;margin-top:16px;text-decoration:none;font-size:15px;border:none;width:100%;cursor:pointer}
+.cta.ghost{background:transparent;color:var(--cyan);border:1px solid var(--cyan);margin-top:10px}
+.foot{text-align:center;font-size:11px;color:var(--muted);margin:14px 0}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--green);color:#0a1a00;
+  padding:12px 20px;border-radius:24px;font-weight:700;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+.readonly{background:rgba(198,249,75,.08);border-color:rgba(198,249,75,.3)}
+.readonly .big{font-size:15px;font-weight:700;color:var(--green);line-height:1.6}
+a.link{color:var(--cyan);text-decoration:none;font-weight:700}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand">星羿体育<small>校长日报填写 · 卡片版</small></div>
+  <div class="date" id="today">2026-10-14 周三</div>
+</div>
+
+<div class="card readonly">
+  <div class="card-head"><span class="card-title">📊 本月营收战报（自动）</span><span class="tag">校长日报</span></div>
+  <div class="big">每笔收款在下方「营收台账」登记即可，日报每晚自动汇总本月营收 / 续课额 / 按类型拆分，<a class="link" href="report.html" target="_blank" rel="noopener">点此查看 →</a></div>
+  <div class="hint">营收 = 报名 + 续费 + 订金 + 散客/场地 + 穿线，全部逐笔登记；收款人必填（对账 + 教练业绩归属）。订金只算订金（待转营收，单列）；体测邀约次数单独填（考核校长工作，不计入营收）。</div>
+</div>
+
+<div class="section-title">基础信息</div>
+<div class="card">
+  <div class="grid2">
+    <div class="field"><label>日期</label><input type="date" id="f_date"></div>
+    <div class="field"><label>填报人</label><input type="text" id="f_who" placeholder="如 王双双"></div>
+  </div>
+</div>
+
+<div class="section-title">经营结果</div>
+<div class="card">
+  <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
+</div>
+
+<div class="section-title">招生漏斗</div>
+<div class="card">
+  <div class="grid2">
+    <div class="field"><label>新线索</label><input type="number" id="f_lead" placeholder="0"></div>
+    <div class="field"><label>试课预约</label><input type="number" id="f_book" placeholder="0"></div>
+    <div class="field"><label>试课到场</label><input type="number" id="f_show" placeholder="0"></div>
+    <div class="field"><label>今日报名</label><input type="number" id="f_sign" placeholder="0"></div>
+  </div>
+  <div class="funnel" id="funnel"></div>
+  <div class="hint">线索 → 预约 → 到场 → 报名，填数自动画漏斗。</div>
+</div>
+
+<div class="section-title">今日三件事</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">🎬 入学视频</span><span class="tag">媒体库</span></div>
+  <div class="grid2">
+    <div class="field"><label>今日新增条数</label><input type="number" id="f_video" placeholder="0"></div>
+    <div class="field"><label>最新一条标题</label><input type="text" id="f_video_title" placeholder="如 小宇启蒙第3课"></div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">💬 家长沟通</span><span class="tag">家长消息</span></div>
+  <div class="field"><label>今日触达家长数</label><input type="number" id="f_touch" placeholder="0"></div>
+  <div class="field"><label>反馈摘要</label><textarea id="f_fb" placeholder="家长原话 / 诉求点，一句话即可"></textarea></div>
+</div>
+
+<div class="section-title">营收台账（每笔收款登记）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">💰 营收台账</span><span class="tag">统一台账</span></div>
+  <div class="hint" style="margin-bottom:10px">每一笔收款登记一行：<b>日期 · 学员/客户 · 金额 · 类型 · 收款人</b>。类型选「报名 / 续费 / 订金 / 散客/场地 / 穿线」。<b>收款人必填</b>（对账 + 教练业绩归属）。保存即写入工作台营收台账，校长日报自动汇总本月营收与拆分。</div>
+  <div id="ledgerList"></div>
+  <button class="cta ghost" id="addLedger" type="button" style="margin-top:10px">+ 添加一笔收款</button>
+</div>
+
+<div class="section-title">备注（选填）</div>
+<div class="card">
+  <div class="field"><label>异常与问题 / 明日重点 / 需决策 / 教练反馈<span class="optional">选填</span></label>
+  <textarea id="f_note" placeholder="有内容才填：如 买6号场子网 / 明日邀约重点 / 待定定价… 没内容留空即可"></textarea></div>
+  <div class="hint">原表 4 个文字列已合并为 1 个选填框，日常留空不强制填「无」。</div>
+</div>
+
+<div class="section-title">校长工作考核（每天填）</div>
+<div class="card">
+  <div class="card-head"><span class="card-title">🎯 体测邀约（考核校长）</span><span class="tag">不计入营收</span></div>
+  <div class="grid2">
+    <div class="field"><label>今日体测邀约次数</label><input type="number" id="f_sal_test" placeholder="0"></div>
+  </div>
+  <div class="hint">体测邀约是<b>考核校长工作</b>的指标（工资页按本月完成÷66 计 KPI），<b>不计入营收</b>。营收请在上方「营收台账」逐笔登记，工资页会据此自动汇总课程实收 / 教练招生业绩 / 场地收入。</div>
+</div>
+
+<div class="card readonly">
+  <div class="card-head"><span class="card-title">📊 本月累计（来自营收台账）</span><span class="tag">自动</span></div>
+  <div class="big" id="salSum">加载中…</div>
+  <div class="funnel" id="salProg" style="margin-top:10px"></div>
+  <div class="hint">课程实收 / 场地 / 教练招生 由上方「营收台账」自动汇总；体测为下方每日填写。完整工资核算在《校长工资核算页》（后台）。</div>
+</div>
+
+<button class="cta" id="saveCloud">保存并同步云端</button>
+<button class="cta ghost" id="saveLocal">仅存本机（离线）</button>
+<div class="foot">星羿体育 · 见证每一次成长｜填完点「保存并同步云端」即自动写入工作台</div>
+<div class="foot" style="opacity:.45;font-size:11px;margin-top:4px">客户端版本 v20261021</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="xy-auth.js?v=20261020"></script>
+<script>
+// ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
+// 校长浏览器可能缓存旧版 xy-auth.js（无代理拦截）→ 占位令牌直连 GitHub → 401。
+// 此内联段与 xy-auth.js 的拦截互斥（__proxied 标志），旧版 xy-auth 时由这里兜底。
+(function () {
+  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
+  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
+  function setup() {
+    if (!window.XYGate || window.XYGate.__proxied) return false;
+    window.XYGate.__proxied = true;
+    var _fetch = window.fetch ? window.fetch.bind(window) : null;
+    if (!_fetch) return true;
+    window.fetch = function (input, opts) {
+      opts = opts || {};
+      var url = (typeof input === 'string') ? input : (input && input.url) || '';
+      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
+        var rest = url.slice(GH_BASE.length);
+        var q = rest.indexOf('?');
+        var path = q >= 0 ? rest.slice(0, q) : rest;
+        var method = (opts.method || 'GET').toUpperCase();
+        if (method === 'GET') {
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+            method: 'GET',
+            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
+          });
+        }
+        if (method === 'PUT') {
+          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
+          var nb = JSON.stringify({
+            path: path,
+            message: body.message,
+            content: body.content,
+            sha: body.sha,
+            branch: body.branch || 'main'
+          });
+          return _fetch(XY_PROXY + '/github-save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
+            body: nb
+          });
+        }
+      }
+      return _fetch.apply(null, arguments);
+    };
+    return true;
+  }
+  if (!setup()) {
+    // xy-auth.js 是旧版（没注册代理）→ 立即兜底注册
+    setup.__retry = 0;
+    var tm = setInterval(function () {
+      if (setup() || ++setup.__retry > 20) clearInterval(tm);
+    }, 50);
+  }
+})();
+</script>
+<script>
+// ===== 字段与腾讯文档日报表表头严格一致（夜间脚本按这些列名读取）=====
+// 云同步令牌取自本机 XYGate（xy-auth.js → localStorage，右下角「云授权」按钮粘贴一次即可），不写死在源码
+var COLS = {
+  date:'日期', who:'填报人',
+  lessons:'今日开课节数',
+  lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数',
+  video:'入学视频新增数', videoTitle:'入学视频标题(选填)',
+  touch:'家长沟通触达数', touchFb:'家长沟通反馈(选填)',
+  note:'备注（选填）',
+  salTestDay:'salaryTestDay'
+};
+var REV_TYPES = ['报名','续费','订金','散客/场地','穿线'];
+var BUILD='20261021';
+(function(){ try{ var p=localStorage.getItem('xy_pf_build'); if(p&&p!==BUILD){ var t=document.getElementById('toast'); if(t){ t.textContent='🔄 检测到新版，请刷新本页以生效'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},5000);} } localStorage.setItem('xy_pf_build',BUILD); }catch(e){} })();
+var REPO='xytyymq/xingyi-workbench', PATH='data/principal-daily.json', BRANCH='main', REVENUE_PATH='data/revenue-ledger.json';
+
+function $(id){return document.getElementById(id);}
+// 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : 'proxy'; } // 无本地令牌时返回占位，由 xy-auth.js 拦截走后端代理
+function val(id){return $(id).value.trim();}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);}
+function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
+
+// ===== GitHub 读写底层：禁缓存读取 + 写入冲突（409/422 sha 不符）自动重拉合并重试 =====
+// 注：不能加 Cache-Control 请求头（GitHub CORS 白名单不含它，浏览器会直接拦死），
+// 改用每次唯一的时间戳参数 _t 穿透浏览器缓存（等效强制回源，且不新增预检头）。
+// 关键修复：所有 fetch 套 20s 超时兜底。代理后端（xingyi-salary）偶发挂起不会让 promise 永久 pending，
+// 超时即 reject → 走 catch 给出明确失败提示，不再「一直显示正在上传」。
+var XY_TIMEOUT=20000;
+function withTimeout(p, ms, label){
+  return new Promise(function(res, rej){
+    var t=setTimeout(function(){ rej(new Error(label||'请求超时')); }, ms);
+    p.then(function(v){ clearTimeout(t); res(v); }, function(e){ clearTimeout(t); rej(e); });
+  });
+}
+function ghFetch(url, opts){
+  // 注意：内联代理不转发 AbortController signal，故用「手动超时 reject」而非 abort，确保挂起也能兜住
+  return withTimeout(fetch(url, opts||{}), XY_TIMEOUT, '云端请求超时（'+Math.round(XY_TIMEOUT/1000)+'s）');
+}
+function ghRead(path){
+  return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
+    {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}})
+  .then(function(r){
+    if(r.status===404) return {list:[],sha:null};
+    if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
+    return r.json().then(function(m){
+      var list=[]; try{ var t=b64d(m.content||''); list=t?JSON.parse(t):[]; }catch(e){ list=[]; }
+      return {list:Array.isArray(list)?list:[],sha:m.sha};
+    });
+  });
+}
+function ghSave(path, mergeFn, msg, tries){
+  if(tries==null) tries=2;
+  return ghRead(path).then(function(st){
+    var merged=mergeFn(st.list||[]);
+    var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+    if(st.sha) body.sha=st.sha;
+    return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
+      method:'PUT',
+      headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    }).then(function(rr){
+      if(rr.status===200||rr.status===201) return true;
+      if((rr.status===409||rr.status===422) && tries>1){
+        // 云端刚被别处（另一台设备/夜间脚本）更新，等一拍重新拉最新内容再合并写一次
+        return new Promise(function(res){setTimeout(res,700);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+      }
+      if(rr.status>=500 && tries>1){
+        // 代理/服务器偶发 5xx（如 502 Bad Gateway），退避后重试，避免随机失败
+        return new Promise(function(res){setTimeout(res,800*tries);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+      }
+      return rr.text().then(function(t){ throw new Error('写入失败 HTTP '+rr.status+' '+String(t).slice(0,110)); });
+    });
+  });
+}
+
+// 日期 / 顶部
+$('today').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+$('f_date').value = todayISO();
+
+// 漏斗实时绘制
+var fIds=['f_lead','f_book','f_show','f_sign'], fLabels=['线索','预约','到场','报名'];
+function drawFunnel(){
+  var vals=fIds.map(function(id){return Math.max(0,parseInt(val(id)||0,10));});
+  var max=Math.max(1,Math.max.apply(null,vals));
+  $('funnel').innerHTML = vals.map(function(v,i){
+    return '<div class="funnel-row"><span class="fl">'+fLabels[i]+'</span><span class="bar" style="width:'+Math.round(v/max*100)+'%"></span><span class="num">'+v+'</span></div>';
+  }).join('');
+}
+fIds.forEach(function(id){$(id).addEventListener('input',drawFunnel);});
+
+// 收集（列名 = 腾讯文档表头）
+function collect(){
+  var rec={};
+  rec[COLS.date]=val('f_date');
+  rec[COLS.who]=val('f_who');
+  rec[COLS.lead]=val('f_lead')||'0';
+  rec[COLS.book]=val('f_book')||'0';
+  rec[COLS.show]=val('f_show')||'0';
+  rec[COLS.sign]=val('f_sign')||'0';
+  rec[COLS.lessons]=val('f_lessons')||'0';
+  rec[COLS.note]=val('f_note');
+  rec[COLS.video]=val('f_video')||'0';
+  rec[COLS.videoTitle]=val('f_video_title');
+  rec[COLS.touch]=val('f_touch')||'0';
+  rec[COLS.touchFb]=val('f_fb');
+  rec[COLS.salTestDay]=val('f_sal_test')||'0';
+  return rec;
+}
+
+// 回填
+function prefill(rec){
+  if(!rec) return;
+  function set(id,k){var e=$(id);if(e&&rec[k]!=null&&rec[k]!=='')e.value=rec[k];}
+  set('f_who',COLS.who);
+  set('f_lessons',COLS.lessons);
+  set('f_lead',COLS.lead);set('f_book',COLS.book);set('f_show',COLS.show);set('f_sign',COLS.sign);
+  set('f_video',COLS.video);set('f_video_title',COLS.videoTitle);
+  set('f_touch',COLS.touch);set('f_fb',COLS.touchFb);set('f_note',COLS.note);
+  set('f_sal_test',COLS.salTestDay);
+  drawFunnel();
+}
+
+// 本机缓存
+function lsKey(d){return 'xy_daily_'+d;}
+function saveLocal(rec){try{localStorage.setItem(lsKey(rec[COLS.date]),JSON.stringify(rec));}catch(e){}}
+function loadLocal(d){try{var s=localStorage.getItem(lsKey(d));return s?JSON.parse(s):null;}catch(e){return null;}}
+
+// 启动：先回填本机，再尝试云端（跨设备同步）
+prefill(loadLocal(todayISO()));
+drawFunnel();
+(function loadCloud(){
+  var ledgerP = ghRead(REVENUE_PATH).then(function(st){ return st.list||[]; }).catch(function(){ return []; });
+  ghRead(PATH).then(function(st){
+    var list=st.list||[];
+    var rec=list.filter(function(x){return x[COLS.date]===todayISO();})[0];
+    // 本机已有当天草稿时不被云端旧行覆盖，避免填一半被冲掉
+    if(rec && !loadLocal(todayISO())) prefill(rec);
+    return ledgerP.then(function(ledger){ renderSalarySummary(ledger, list); });
+  }).catch(function(){ ledgerP.then(function(ledger){ renderSalarySummary(ledger, []); }); });
+})();
+
+// 输入即缓存（防丢失）
+['f_who','f_lessons','f_lead','f_book','f_show','f_sign',
+ 'f_video','f_video_title','f_touch','f_fb','f_note',
+ 'f_sal_test'].forEach(function(id){
+  $(id).addEventListener('input',function(){saveLocal(collect());});
+});
+
+// 仅存本机
+$('saveLocal').addEventListener('click',function(){
+  var rec=collect(); saveLocal(rec);
+  toast('已存本机 '+rec[COLS.date]+'（未同步云端）');
+});
+
+// ===== 统一营收台账（每笔收款一行，独立文件 data/revenue-ledger.json）=====
+function ledgerRowHTML(r){
+  r=r||{};
+  var typeOpts = REV_TYPES.map(function(t){ return '<option'+(r.type===t?' selected':'')+'>'+t+'</option>'; }).join('');
+  return '<div class="lg-row" style="display:grid;grid-template-columns:1.1fr 1.5fr .9fr 1.3fr 1.1fr 30px;gap:6px;margin-bottom:8px;align-items:center">'+
+    '<input class="lg-date" type="date" value="'+(r.date||todayISO())+'">'+
+    '<input class="lg-name" placeholder="学员/客户" value="'+escAttr(r.name||'')+'">'+
+    '<input class="lg-amount" type="number" placeholder="金额" value="'+(r.amount!=null?r.amount:'')+'">'+
+    '<select class="lg-type">'+typeOpts+'</select>'+
+    '<input class="lg-collector" placeholder="收款人" value="'+escAttr(r.collector||'')+'">'+
+    '<button class="lg-del" type="button" style="background:rgba(255,107,107,.18);border:none;color:#FF6B6B;border-radius:8px;height:38px;font-size:18px;cursor:pointer">×</button>'+
+    '</div>';
+}
+function bindDelLedger(){ document.querySelectorAll('#ledgerList .lg-del').forEach(function(b){ b.onclick=function(){ b.parentNode.remove(); }; }); }
+function renderLedger(list){
+  var box=document.getElementById('ledgerList');
+  box.innerHTML = (list&&list.length) ? list.map(ledgerRowHTML).join('') : '<div class="hint" style="margin-bottom:8px">暂无记录，点下方「+ 添加一笔收款」开始登记。</div>';
+  bindDelLedger();
+}
+function collectLedger(){
+  var out=[];
+  document.querySelectorAll('#ledgerList .lg-row').forEach(function(row){
+    var amount=row.querySelector('.lg-amount').value.trim();
+    var date=row.querySelector('.lg-date').value.trim();
+    if(!amount||!date) return;   // 金额/日期为必填；姓名/收款人可后补
+    out.push({
+      date:date,
+      name:row.querySelector('.lg-name').value.trim(),
+      amount:amount,
+      type:row.querySelector('.lg-type').value,
+      collector:row.querySelector('.lg-collector').value.trim()
+    });
+  });
+  return out;
+}
+document.getElementById('addLedger').onclick=function(){
+  document.getElementById('ledgerList').insertAdjacentHTML('beforeend',ledgerRowHTML({})); bindDelLedger();
+};
+
+function escAttr(s){return String(s||'').replace(/"/g,'&quot;');}
+(function loadLedger(){
+  ghRead(REVENUE_PATH).then(function(st){ renderLedger(st.list||[]); }).catch(function(){});
+})();
+
+// ===== 本月累计汇总（仅原始加总 + 目标进度，不含工资公式，不在卡上暴露核算）=====
+var SAL_TARGET_VENUE=18000, SAL_TARGET_TEST=66;
+function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
+function renderSalarySummary(ledger, daily){
+  var m=todayISO().slice(0,7);
+  var s={course:0,venue:0,coach:0,test:0};
+  (ledger||[]).forEach(function(x){
+    if((x.date||'').slice(0,7)!==m) return;
+    var amt=Math.max(0,parseFloat(x.amount||0)||0);
+    if(x.type==='报名'||x.type==='续费'){ s.course+=amt; s.coach+=amt; }
+    else if(x.type==='散客/场地'){ s.venue+=amt; }
+  });
+  (daily||[]).forEach(function(x){
+    if((x[COLS.date]||'').slice(0,7)!==m) return;
+    s.test+=Math.max(0,parseFloat(x[COLS.salTestDay]||0)||0);
+  });
+  $('salSum').innerHTML='课程 <b>'+yuan(s.course)+'</b> · 场地 <b>'+yuan(s.venue)+'</b><br>教练招生 <b>'+yuan(s.coach)+'</b> · 体测 <b>'+s.test+'</b> 次';
+  var vp=Math.min(100,Math.round(s.venue/SAL_TARGET_VENUE*100)), tp=Math.min(100,Math.round(s.test/SAL_TARGET_TEST*100));
+  $('salProg').innerHTML=
+    '<div class="funnel-row"><span class="fl">场地</span><span class="bar" style="width:'+vp+'%"></span><span class="num">'+vp+'%</span></div>'+
+    '<div class="funnel-row"><span class="fl">体测</span><span class="bar" style="width:'+tp+'%"></span><span class="num">'+tp+'%</span></div>';
+}
+
+// 保存并同步云端（日报主行 + 续费台账 + 穿线台账）
+// 优化：① _busy 在保存真正结束（成功/失败）才复位，不再 1.5s 强行复位导致重复提交；
+//       ② 按钮在保存期间禁用并显示「⏳ 正在上传…」，结束恢复；
+//       ③ 续费/穿线若本页无登记行则跳过写请求（无行不写），日常只填日报时由 3 次读写降为 1 次；
+//       ④ 三个台账文件互相独立，用 Promise.all 并行写入，进一步提速。
+$('saveCloud').addEventListener('click',function(){
+  var btn=this;
+  var rec=collect();
+  if(!rec[COLS.date]){toast('请先选日期');return;}
+  if(btn._busy){ toast('正在上传，请稍等…'); return; }
+  btn._busy=true;
+  var origTxt=btn.textContent;
+  btn.disabled=true;
+  btn.textContent='⏳ 正在上传…';
+
+  // 主流程：日报主行（始终写入）
+  var tasks=[ ghSave(PATH, function(list){
+    var found=false;
+    var merged=(list||[]).map(function(r){
+      if(r[COLS.date]===rec[COLS.date]){ found=true; return Object.assign({},r,rec); }
+      return r;
+    });
+    if(!found) merged.push(rec);
+    return merged;
+  }, 'chore: 校长日报 '+rec[COLS.date]+' 表单同步') ];
+
+  // 统一营收台账：仅在本页有登记行时才写（无行跳过，省一次读写）
+  var lg=collectLedger();
+  if(lg.length){
+    tasks.push(ghSave(REVENUE_PATH, function(list){
+      var seen={}; (list||[]).forEach(function(r){ seen[(r.date||'')+'|'+(r.name||'')+'|'+(r.type||'')+'|'+(r.collector||'')]=r; });
+      lg.forEach(function(r){ seen[(r.date||'')+'|'+(r.name||'')+'|'+(r.type||'')+'|'+(r.collector||'')]=r; });
+      return Object.keys(seen).map(function(k){return seen[k];});
+    }, 'chore: 营收台账更新').catch(function(e){ console.warn('营收台账写入失败（不影响日报）',e); }));
+  }
+
+  Promise.all(tasks).then(function(){
+    saveLocal(rec);
+    var extra=(lg.length?' +营收台账('+lg.length+'笔)':'');
+    toast('✅ 已同步云端（日报'+rec[COLS.date]+extra+'）');
+    // 保存成功后刷新本月累计（营收台账已更新）
+    ghRead(REVENUE_PATH).then(function(st){ renderSalarySummary(st.list||[], null); }).catch(function(){});
+  }).catch(function(e){
+    var m=(e&&e.message)||String(e||'');
+    if(/超时/.test(m)) m='云端响应超时，请检查网络后重试';
+    if(/HTTP 401/.test(m)||(!_gt()&&window.XYGate&&!XYGate.hasToken())){
+      toast('🔑 授权已过期/未授权：点右下角「云授权」重新粘贴令牌后再保存');
+    }else{
+      toast('云端写入失败：'+m+'　请再点一次保存');
+    }
+  }).then(function(){
+    btn._busy=false; btn.disabled=false; btn.textContent=origTxt;
+  });
+});
+</script>
+</body>
+</html>
