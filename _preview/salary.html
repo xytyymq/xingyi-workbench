@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>星羿体育 · 校长工资核算</title>
+<style>
+:root{
+  --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+  --orange:#FF8A3D; --white:#fff; --muted:#9fb0d0; --line:rgba(255,255,255,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
+  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:8px 4px 14px;border-bottom:1px solid var(--line)}
+.brand{font-size:18px;font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;background:rgba(198,249,75,.16);color:var(--green);font-weight:700;white-space:nowrap}
+.card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
+.section-title{font-size:13px;color:var(--green);font-weight:700;margin:18px 4px 2px;letter-spacing:1px}
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.field input{width:100%;background:rgba(0,0,0,.28);border:1px solid var(--line);
+  border-radius:10px;padding:11px;color:var(--white);font-size:15px;font-family:inherit}
+.field input:focus{border-color:var(--green)}
+input[type=month]{color-scheme:dark}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+
+/* KPI 上下文 */
+.kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
+.kpi{background:rgba(0,0,0,.22);border-radius:10px;padding:9px 6px;text-align:center}
+.kpi .n{font-size:17px;font-weight:800;color:var(--cyan)}
+.kpi .l{font-size:10px;color:var(--muted);margin-top:2px}
+.ctx-meta{font-size:11px;color:var(--muted);border-top:1px dashed var(--line);padding-top:8px;margin-top:4px}
+.ctx-ok{color:var(--green)} .ctx-warn{color:var(--orange)}
+
+/* 工资条 */
+.slip{margin-top:4px}
+.slip-row{display:flex;justify-content:space-between;align-items:baseline;
+  padding:9px 2px;border-bottom:1px dashed rgba(255,255,255,.08);font-size:13.5px}
+.slip-row .k{color:var(--muted)}
+.slip-row .v{font-weight:700;font-variant-numeric:tabular-nums}
+.slip-row .sub{font-size:10.5px;color:var(--muted);margin-left:6px;font-weight:400}
+.slip-row.kpi-sub .k{color:var(--cyan)}
+.slip-row.kpi-sub .v{color:var(--cyan)}
+.slip-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+  background:rgba(198,249,75,.12);border:1px solid rgba(198,249,75,.3);border-radius:12px;padding:13px 14px}
+.slip-total .k{font-size:14px;font-weight:700}
+.slip-total .v{font-size:24px;font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.tier-flag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;
+  background:var(--orange);color:#1a0d00;font-weight:700;margin-left:8px;vertical-align:middle}
+
+/* 四档阶梯 */
+.ladder{margin-top:4px}
+.lad-row{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.lad-name{width:54px;font-size:11px;color:var(--muted);flex-shrink:0}
+.lad-bar{height:22px;border-radius:6px;background:linear-gradient(90deg,var(--green),var(--cyan));
+  display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:11px;font-weight:700;color:#06102C;min-width:44px;transition:width .5s}
+.lad-row.cur .lad-bar{outline:2px solid var(--orange);outline-offset:1px}
+.lad-row.cur .lad-name{color:var(--green);font-weight:700}
+
+.cta{display:block;text-align:center;background:var(--orange);color:#1a0d00;font-weight:700;
+  border-radius:30px;padding:13px;margin-top:14px;text-decoration:none;font-size:15px;border:none;width:100%;cursor:pointer}
+.cta.ghost{background:transparent;color:var(--cyan);border:1px solid var(--cyan);margin-top:10px}
+.foot{text-align:center;font-size:11px;color:var(--muted);margin:16px 0}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--green);color:#0a1a00;
+  padding:12px 20px;border-radius:24px;font-weight:700;font-size:13px;opacity:0;transition:.3s;pointer-events:none;max-width:90%;text-align:center}
+.toast.show{opacity:1}
+details{font-size:11.5px;color:var(--muted);line-height:1.7}
+details summary{cursor:pointer;color:var(--cyan);font-size:12px;margin-top:4px}
+details code{color:var(--green);background:rgba(0,0,0,.25);padding:1px 5px;border-radius:4px}
+a.link{color:var(--cyan);text-decoration:none;font-weight:700}
+
+/* 打印/导出给校长专用：只留工资条，白底黑字 */
+.print-head{display:none}
+@media print{
+  @page{margin:14mm}
+  html,body{background:#fff !important;color:#111 !important}
+  body *{visibility:hidden}
+  #slipCard,#slipCard *{visibility:visible}
+  #slipCard{position:absolute;left:0;top:0;width:100%;border:1px solid #ccc !important;
+    background:#fff !important;box-shadow:none !important;color:#111 !important}
+  .print-head{display:block !important;visibility:visible;margin-bottom:10px;
+    font-size:18px;font-weight:800;text-align:center;color:#111}
+  .slip-row .k,.slip-row .sub{color:#555 !important}
+  .slip-row .v{color:#111 !important}
+  .slip-total{background:#eef7d6 !important;border-color:#b6d65a !important}
+  .slip-total .k{color:#1a1a1a !important}
+  .slip-total .v{color:#1a6b00 !important}
+  .cta,.hint,.foot,details,.section-title,.header{display:none !important}
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="brand">星羿体育<small>校长工资核算</small></div>
+  <div class="badge">已打通校长日报</div>
+</div>
+
+<!-- KPI 上下文（来自校长日报分析 principal-report.json） -->
+<div class="card" id="kpiCard">
+  <div class="card-head"><span class="card-title">📡 校长日报 KPI 上下文</span><span class="tag" id="ctxDate">加载中…</span></div>
+  <div class="kpi-row" id="kpiRow"></div>
+  <div class="ctx-meta" id="ctxMeta"></div>
+  <div class="hint">数据自动取自《校长日报》看板（试课到场率 / 月报名进度 / 续费）。下方「日常工作考核分」请结合以上指标与日常管理完成度自估填写。</div>
+</div>
+
+<!-- 算薪输入 -->
+<div class="section-title">月度薪资核算输入</div>
+<div class="card" id="calcCard">
+  <div class="card-head"><span class="card-title">💰 核算参数</span><span class="tag">工资页读取</span></div>
+  <div class="field"><label>核算月份</label><input type="month" id="f_month"></div>
+  <div class="grid2">
+    <div class="field"><label>课程实收（元）</label><input type="number" id="f_course" placeholder="0"></div>
+    <div class="field"><label>教练招生业绩（元）</label><input type="number" id="f_coach" placeholder="0"></div>
+  </div>
+  <div class="field"><label>场地收入（元）</label><input type="number" id="f_venue" placeholder="0"></div>
+  <div class="field"><label>本月体测邀约完成次数（目标 66）</label><input type="number" id="f_test" placeholder="0"></div>
+  <div class="field"><label>日常其他考核分（0–300，月底评）</label><input type="number" id="f_daily" placeholder="如 300"></div>
+  <div class="hint">课程实收 / 教练招生业绩 / 场地收入 来自《校长日报》填写页<b>「营收台账」逐笔登记</b>，<b>自动按月汇总</b>填入（点下方按钮可重算）；体测邀约次数来自每日填写（考核校长工作，不计入营收）。日常考核分月底在此一次性评。底薪固定 3500；<b>KPI 绩效满分 1200 = 场地达标700（目标24000元）+ 日常工作500（体测邀约硬性200 + 日常其他300）</b>。体测邀约按 完成÷66 比例给分（封顶200，硬性）；教练管理奖金 = 教练招生 × <b>1%</b>；招生阶梯提成按课程实收 2/4/6/8%。<b>总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成</b>（不再单列总业绩提成）。</div>
+  <button class="cta ghost" id="reAgg" type="button" style="margin-top:10px">↻ 重新汇总本月日报</button>
+  <button class="cta" id="saveSalary" type="button">保存本月核算</button>
+</div>
+
+<!-- 工资条 -->
+<div class="section-title">工资条（实时计算）</div>
+<div class="card" id="slipCard">
+  <div class="print-head">星羿体育 · 校长月度工资条（<span id="printHeadMonth">—</span>）</div>
+  <div class="card-head"><span class="card-title">🧾 校长月度工资明细</span><span class="tag" id="slipMonth">—</span></div>
+  <div class="slip" id="slip"></div>
+  <div class="slip-total">
+    <span class="k">本月应发合计<span class="tier-flag" id="tierFlag"></span></span>
+    <span class="v" id="totalPay">¥0</span>
+  </div>
+  <button class="cta ghost" id="exportSlip" type="button" style="margin-top:12px">🖨️ 导出 / 打印工资条（给校长）</button>
+</div>
+
+<!-- 四档阶梯 -->
+<div class="section-title">四档阶梯参考</div>
+<div class="card" id="ladderCard">
+  <div class="card-head"><span class="card-title">🪜 业绩—收入阶梯</span><span class="tag">KPI满分/教练招生6000</span></div>
+  <div class="ladder" id="ladder"></div>
+  <div class="hint">横坐标为月度总收入；橙色描边 = 当前课程实收所处档位（按实际 KPI 与教练招生重算）。</div>
+</div>
+
+<div class="foot">星羿体育 · 见证每一次成长｜公式经 2026-10-21 校长确认：总工资 = 底薪 + KPI绩效 + 教练管理奖金 + 招生阶梯提成</div>
+
+<details>
+  <summary>📐 计算公式与口径说明（2026-10-18 修正版）</summary>
+  <p>校长月总收入 = <code>底薪3500</code> + <code>KPI绩效(分项加权，满分1200)</code> + <code>教练管理奖金(教练招生×1%)</code> + <code>招生阶梯提成(课程实收×档位)</code></p>
+  <p><b>KPI 绩效（满分1200，两项加权，未达标按比例发）：</b></p>
+  <p>· 场地达标 700元 = 场地收入 ÷ 24000 × 700（封顶700）<br>
+     · 日常工作 500元 = 体测邀约硬性 200（本月完成÷66×200，封顶200）+ 日常其他 300（校长考核分 0–300）</p>
+  <p>招生阶梯提成（按课程实收）：&lt;18000→2% / 18000–24999→4% / 25000–34999→6% / ≥35000→8%</p>
+  <p>四档阶梯参考（KPI 满分、教练招生6000、场地24000达标）：未达标 5080 / 保底 5840 / 正常 6760 / 冲刺 8435 元。注：体测邀约目标 66 为当前「从未体测=新生(58)×1 + 已测老生(24)÷3」的首测清栏冲刺值，58 人全部建档后自然回落约 27 次/月。实际工资以本页输入实时计算为准。</p>
+  <p>返回 <a class="link" href="report.html">校长日报看板 →</a>　·　<a class="link" href="principal-form.html">填报校长日报 →</a></p>
+</details>
+
+<div class="toast" id="toast"></div>
+
+<script src="xy-auth.js"></script>
+<script>
+// ===== GitHub 读写（工资输入写回 principal-salary.json），令牌取自本机 XYGate（xy-auth.js → localStorage），不写死在源码 =====
+var REPO='xytyymq/xingyi-workbench', BRANCH='main', SALARY_PATH='data/principal-salary.json';
+
+function $(id){return document.getElementById(id);}
+// 令牌取自本机 XYGate（xy-auth.js 存入 localStorage），不再硬编码
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : 'proxy'; } // 无本地令牌时返回占位，由 xy-auth.js 拦截走后端代理
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);}
+function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
+function num(v){var n=parseFloat(v);return isNaN(n)?0:n;}
+function yuan(n){return '¥'+Math.round(n).toLocaleString('zh-CN');}
+
+// 数据读取：优先相对路径（GitHub Pages / 本地预览均可），失败回退 API
+function readJSON(path){
+  return fetch(path+'?_t='+Date.now(),{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('rel '+r.status); return r.json(); })
+    .catch(function(){ return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now(),
+      {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}}).then(function(r){
+        if(r.status===404) return null; if(!r.ok) throw new Error('api '+r.status);
+        return r.json().then(function(m){ try{return JSON.parse(b64d(m.content||''));}catch(e){return null;} });
+    }); });
+}
+function ghRead(path){
+  return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now(),
+    {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}})
+    .then(function(r){ if(r.status===404) return {list:[],sha:null}; if(!r.ok) throw new Error('读取失败 '+r.status);
+      return r.json().then(function(m){ var list=[]; try{list=JSON.parse(b64d(m.content||''));}catch(e){} return {list:Array.isArray(list)?list:[],sha:m.sha}; }); });
+}
+function ghSave(path, mergeFn, msg, tries){
+  if(tries==null) tries=2;
+  return ghRead(path).then(function(st){
+    var merged=mergeFn(st.list||[]);
+    var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+    if(st.sha) body.sha=st.sha;
+    return fetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{method:'PUT',
+      headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json','Content-Type':'application/json'},
+      body:JSON.stringify(body)}).then(function(rr){
+        if(rr.status===200||rr.status===201) return true;
+        if((rr.status===409||rr.status===422)&&tries>1) return new Promise(function(res){setTimeout(res,700);}).then(function(){return ghSave(path,mergeFn,msg,tries-1);});
+        return rr.text().then(function(t){throw new Error('写入失败 '+rr.status+' '+String(t).slice(0,110));});
+    });
+  });
+}
+
+// ===== 算薪核心（2026-10-18 校长确认修正版）=====
+function calc(r){
+  var base=3500, kpiFull=1200;
+  var course=num(r.course), venue=num(r.venue||r.evening), coach=num(r.coach);
+  var testDone=Math.max(0,num(r.testDone||0));        // 本月体测邀约完成次数
+  var TEST_TARGET=66;                                  // 月度目标：新生(从未体测58)×1 + 老生(已测24)/3 ≈ 66；首测清栏冲刺值，清零后回落≈27
+  var otherDaily=Math.max(0,Math.min(300,num(r.daily))); // 日常其他考核分 0-300
+  // KPI 绩效分项加权：场地700(目标24000) + 体测邀约硬性200 + 日常其他300
+  var venueKpi  = 700*Math.min(venue/24000,1);
+  var testKpi   = 200*Math.min(testDone/TEST_TARGET,1); // 硬性：按比例给分，封顶200
+  var dailyKpi  = testKpi+otherDaily;                  // 封顶500
+  var performance = venueKpi+dailyKpi;
+  var coachBonus = coach*0.01;                          // 教练招生 ×1%
+  var enrollRate = course<18000?0.02 : course<25000?0.04 : course<35000?0.06 : 0.08;
+  var enrollBonus= course*enrollRate;
+  // 注：2026-10-21 校长确认，总工资 = 底薪 + KPI + 教练管理奖金 + 招生阶梯提成；
+  //     不再单列“总业绩提成(2/2.5/3%)”组件（避免与招生阶梯提成重复计课程实收）。
+  var sum=base+performance+coachBonus+enrollBonus;
+  return {base:base,performance:performance,venueKpi:venueKpi,venue:venue,testKpi:testKpi,testDone:testDone,testTarget:TEST_TARGET,
+    otherDaily:otherDaily,dailyKpi:dailyKpi,kpiFull:kpiFull,
+    coach:coach,coachBonus:coachBonus,course:course,enrollRate:enrollRate,enrollBonus:enrollBonus,sum:sum};
+}
+function tierOf(course){ return course<18000?'未达标' : course<25000?'保底档' : course<35000?'正常档' : '冲刺档'; }
+function pct(x){return (x*100).toFixed(1).replace(/\.0$/,'')+'%';}
+
+// ===== KPI 上下文（校长日报分析）=====
+function renderContext(rep){
+  if(!rep){ $('ctxDate').textContent='未取到日报'; $('kpiRow').innerHTML='<div class="hint">校长日报数据暂不可达，可手动填写下方核算参数。</div>'; return; }
+  $('ctxDate').textContent='数据截止 '+ (rep.data_date||rep.generated_at||'—');
+  var f=rep.funnel||{}, fin=(rep.finance&&rep.finance.renew)||{}, k=rep.kpi||{};
+  var trial=f.trial_arrive_rate||'–', sign=f.month_signups!=null?f.month_signups:'–', target=k.month_target||10;
+  var renewAmt=fin.month_amount!=null?fin.month_amount:0, renewCnt=fin.month_count||0, renewGoal=fin.goal||0;
+  $('kpiRow').innerHTML=
+    '<div class="kpi"><div class="n">'+trial+'</div><div class="l">试课到场率(红线80%)</div></div>'+
+    '<div class="kpi"><div class="n">'+sign+'/'+target+'</div><div class="l">本月报名</div></div>'+
+    '<div class="kpi"><div class="n">'+yuan(renewAmt)+'</div><div class="l">本月续费('+renewCnt+'人)</div></div>';
+  var rateTxt = (renewGoal&&renewAmt)?('目标完成率 '+(renewAmt/renewGoal*100).toFixed(0)+'%（目标'+yuan(renewGoal)+'）'):'';
+  var overallCls = rep.overall==='green'?'ctx-ok':(rep.overall==='red'?'ctx-warn':'ctx-warn');
+  $('ctxMeta').innerHTML='日报总评：<span class="'+overallCls+'">'+({'red':'🔴 红灯','yellow':'🟡 黄灯','green':'🟢 绿灯'}[rep.overall]||'—')+'</span>　'+rateTxt;
+}
+
+// ===== 工资条渲染 =====
+function renderSlip(r){
+  var c=calc(r);
+  $('slipMonth').textContent = (r.month||'—')+' 月';
+  var rows=[
+    ['底薪（固定）', c.base, ''],
+    ['KPI·场地达标', c.venueKpi, '场地 '+yuan(c.venue)+' ÷24000 ×700', true],
+    ['KPI·体测邀约(硬性)', c.testKpi, '完成 '+c.testDone+'/'+c.testTarget+' ×200（封顶200）', true],
+    ['KPI·日常其他', c.otherDaily, '考核分(0–300)', true],
+    ['教练管理奖金', c.coachBonus, '教练招生 '+yuan(c.coach)+' ×1%'],
+    ['招生阶梯提成', c.enrollBonus, '课程实收 '+yuan(c.course)+' ×'+pct(c.enrollRate)]
+  ];
+  $('slip').innerHTML = rows.map(function(x){
+    var cls=x[3]?' slip-row kpi-sub':'slip-row';
+    return '<div class="'+cls+'"><span class="k">'+x[0]+'<span class="sub">'+x[2]+'</span></span><span class="v">'+yuan(x[1])+'</span></div>';
+  }).join('');
+  $('totalPay').textContent = yuan(c.sum);
+  $('tierFlag').textContent = tierOf(c.course);
+  return c;
+}
+
+// ===== 四档阶梯 =====
+function renderLadder(curCourse){
+  // 固定场景：日常500满分、场地24000达标、教练招生6000
+  var tiers=[{n:'未达标',c:8000},{n:'保底档',c:18000},{n:'正常档',c:25000},{n:'冲刺档',c:35000}];
+  var sums=tiers.map(function(t){ return calc({course:t.c,venue:24000,daily:300,testDone:66,coach:6000}).sum; });
+  var max=Math.max.apply(null,sums);
+  var html=tiers.map(function(t,i){
+    var cur = (tierOf(curCourse)===t.n)?' cur':'';
+    return '<div class="lad-row'+cur+'"><span class="lad-name">'+t.n+'</span>'+
+      '<span class="lad-bar" style="width:'+Math.max(18,Math.round(sums[i]/max*100))+'%">'+yuan(sums[i])+'</span></div>';
+  }).join('');
+  $('ladder').innerHTML=html;
+}
+
+// ===== 状态 =====
+var report=null, salaryData=null;
+function refresh(){
+  var r={ month:$('f_month').value, course:$('f_course').value,
+    venue:$('f_venue').value, coach:$('f_coach').value, daily:$('f_daily').value, testDone:$('f_test').value };
+  renderSlip(r);
+  renderLadder(num(r.course));
+}
+['f_course','f_venue','f_coach','f_daily','f_test'].forEach(function(id){ $(id).addEventListener('input',refresh); });
+$('f_month').addEventListener('change',function(){ loadSalary(this.value); });
+
+// ===== 读取校长日报上下文 =====
+readJSON('data/principal-report.json').then(renderContext).catch(function(){ renderContext(null); });
+
+// ===== 读取/回填本月考算输入（优先快照，否则聚合统一营收台账 + 体测日报）=====
+// 课程实收 = 报名 + 续费；教练招生业绩 = 报名 + 续费（续费也算招生业绩）；订金单列不并入职收；
+// 场地收入 = 散客/场地；体测邀约次数 = 校长日报 principal-daily.json（考核校长工作，不计入营收）。
+function aggregateDaily(month){
+  var ledP = readJSON('data/revenue-ledger.json').then(function(rows){
+    rows=rows||[]; var s={course:0,venue:0,coach:0};
+    rows.forEach(function(x){
+      if((x.date||'').slice(0,7)!==month) return;
+      var amt=Math.max(0,num(x.amount||0));
+      if(x.type==='报名'||x.type==='续费'){ s.course+=amt; s.coach+=amt; }
+      else if(x.type==='散客/场地'){ s.venue+=amt; }
+    });
+    return s;
+  }).catch(function(){ return {course:0,venue:0,coach:0}; });
+  var dailyP = readJSON('data/principal-daily.json').then(function(list){
+    list=list||[]; var test=0;
+    list.forEach(function(x){ if((x['日期']||'').slice(0,7)!==month) return; test+=Math.max(0,num(x['salaryTestDay']||0)); });
+    return {test:test};
+  }).catch(function(){ return {test:0}; });
+  return Promise.all([ledP,dailyP]).then(function(rs){ return Object.assign(rs[0], rs[1]); });
+}
+function fillAgg(s){
+  $('f_course').value=s.course||'';
+  $('f_venue').value=s.venue||'';
+  $('f_coach').value=s.coach||'';
+  $('f_test').value=s.test||'';
+}
+function loadSalary(month){
+  return readJSON('data/principal-salary.json').then(function(list){
+    list=list||[];
+    var rec=list.filter(function(x){return x.salaryMonth===month;})[0];
+    if(rec){
+      // 优先用已保存的当月快照（稳定、可手动修正）
+      $('f_course').value=rec.courseRevenue||'';
+      $('f_venue').value=rec.venueRevenue||rec.eveningRevenue||''; $('f_coach').value=rec.coachEnroll||'';
+      $('f_daily').value=rec.dailyWork||''; $('f_test').value=rec.testDone||'';
+      salaryData=rec;
+    } else {
+      // 无快照：聚合校长日报当日填写
+      return aggregateDaily(month).then(function(s){ fillAgg(s); $('f_daily').value=''; salaryData=null; refresh(); });
+    }
+    refresh();
+  }).catch(function(){ refresh(); });
+}
+$('reAgg').addEventListener('click',function(){
+  var month=$('f_month').value;
+  aggregateDaily(month).then(function(s){
+    var total=s.course+s.venue+s.coach+s.test;
+    // 保护：本月日报还没有任何「每日工资」记录时，不拿 0 去覆盖已有的手动快照
+    if(total===0){
+      toast('本月日报暂无每日工资记录，未覆盖现有数据');
+      return;
+    }
+    fillAgg(s); refresh(); toast('已重新汇总本月日报');
+  });
+});
+
+// ===== 导出 / 打印工资条（给校长）=====
+$('exportSlip').addEventListener('click',function(){
+  $('printHeadMonth').textContent=$('f_month').value||'—';
+  window.print();
+});
+
+// ===== 保存 =====
+$('saveSalary').addEventListener('click',function(){
+  var month=$('f_month').value;
+  if(!month){toast('请先选核算月份');return;}
+  var rec={salaryMonth:month, courseRevenue:$('f_course').value||'0',
+    venueRevenue:$('f_venue').value||'0',
+    coachEnroll:$('f_coach').value||'0', dailyWork:$('f_daily').value||'0',
+    testDone:$('f_test').value||'0',
+    updated:new Date().toISOString().slice(0,10)};
+  $('saveSalary').textContent='保存中…';
+  ghSave(SALARY_PATH, function(list){
+    list=list||[]; var found=false;
+    var merged=list.map(function(r){ if(r.salaryMonth===month){found=true;return Object.assign({},r,rec);} return r; });
+    if(!found) merged.push(rec);
+    return merged;
+  }, 'chore: 校长薪资核算 '+month).then(function(){
+    $('saveSalary').textContent='保存本月核算';
+    salaryData=rec; toast('✅ 已保存到云端（'+month+'）');
+  }).catch(function(e){ $('saveSalary').textContent='保存本月核算'; toast('保存失败：'+(e.message||e)); });
+});
+
+// ===== 初始化 =====
+$('f_month').value=new Date().toISOString().slice(0,7);
+loadSalary($('f_month').value);
+</script>
+</body>
+</html>
