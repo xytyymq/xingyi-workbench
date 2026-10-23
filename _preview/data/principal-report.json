@@ -24,27 +24,23 @@
   },
   "finance": {
     "renew": {
-      "month_amount": 3080,
-      "month_count": 1,
+      "month_amount": 0,
+      "month_count": 0,
       "goal": 28800,
-      "goal_rate": "11%",
+      "goal_rate": "0%",
       "note": ""
     },
     "revenue": {
-      "month_total": 9219,
+      "month_total": 8919,
       "today_total": 0,
       "by_type": [
         {
           "name": "报名",
-          "amount": 980
-        },
-        {
-          "name": "续费",
-          "amount": 3080
+          "amount": 4060
         },
         {
           "name": "订金",
-          "amount": 1200
+          "amount": 900
         },
         {
           "name": "散客/场地",
@@ -58,7 +54,7 @@
       "derived": {
         "course": 4060,
         "coach_enroll": 4060,
-        "deposit": 1200,
+        "deposit": 900,
         "venue": 3859,
         "string": 100
       },
@@ -81,19 +77,15 @@
         ]
       },
       "last_week": {
-        "total": 5010,
+        "total": 4710,
         "by_type": [
           {
             "name": "报名",
-            "amount": 980
-          },
-          {
-            "name": "续费",
-            "amount": 3080
+            "amount": 4060
           },
           {
             "name": "订金",
-            "amount": 900
+            "amount": 600
           },
           {
             "name": "穿线",
@@ -103,7 +95,7 @@
       }
     },
     "ledger_audit": {
-      "total": 9,
+      "total": 8,
       "checks": [
         {
           "name": "关键字段完整",
@@ -123,7 +115,7 @@
         {
           "name": "月汇总勾稽",
           "ok": true,
-          "msg": "month_total=9219 = Σby_type=9219"
+          "msg": "month_total=8919 = Σby_type=8919"
         },
         {
           "name": "重复检测",
@@ -142,7 +134,7 @@
         {
           "date": "2026-10-16",
           "name": "盛呈栩",
-          "type": "续费",
+          "type": "报名",
           "amount": 3080
         },
         {
