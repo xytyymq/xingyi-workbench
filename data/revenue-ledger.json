@@ -3,14 +3,14 @@
     "date": "2026-10-17",
     "name": "黄俊安",
     "amount": "300",
-    "type": "续费/订金",
+    "type": "订金",
     "collector": "未记录"
   },
   {
     "date": "2026-10-17",
     "name": "谢晨希",
-    "amount": 300,
-    "type": "续费/订金",
+    "amount": "300",
+    "type": "订金",
     "collector": "未记录"
   },
   {
@@ -31,28 +31,28 @@
     "date": "2026-10-18",
     "name": "谢晨希",
     "amount": "300",
-    "type": "续费/订金",
+    "type": "订金",
     "collector": "未记录"
   },
   {
     "date": "2026-10-16",
     "name": "盛呈栩",
     "amount": "3080",
-    "type": "续费/订金",
+    "type": "续费",
     "collector": ""
   },
   {
     "date": "2026-10-11",
     "name": "黄文皓",
     "amount": "300",
-    "type": "续费/订金",
+    "type": "订金",
     "collector": ""
   },
   {
     "date": "2026-10-13",
     "name": "刘伟",
     "amount": "980",
-    "type": "新报名",
+    "type": "报名",
     "collector": ""
   },
   {
@@ -61,33 +61,5 @@
     "amount": "3859.28",
     "type": "散客/场地",
     "collector": ""
-  },
-  {
-    "date": "2026-10-22",
-    "name": "接龙四人",
-    "amount": "60",
-    "type": "散客/场地",
-    "collector": "王双双"
-  },
-  {
-    "date": "2026-10-22",
-    "name": "方太场地",
-    "amount": "200",
-    "type": "散客/场地",
-    "collector": "王双双"
-  },
-  {
-    "date": "2026-10-22",
-    "name": "穿线xb63",
-    "amount": "70",
-    "type": "穿线",
-    "collector": "江教练"
-  },
-  {
-    "date": "2026-10-22",
-    "name": "0077（两小时）",
-    "amount": "47.6",
-    "type": "散客/场地",
-    "collector": "王双双"
   }
 ]
