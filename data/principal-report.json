@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-10-23 08:30",
-  "data_date": "2026-10-22",
-  "overall": "red",
+  "generated_at": "2026-10-22 19:38（营收自动刷新）",
+  "data_date": "2026-10-21",
+  "overall": "yellow",
   "lights": [
     {
       "level": "yellow",
-      "text": "本月报名 4/10 人，进度落后于时间线（应到 7.1）"
+      "text": "本月报名 4/10 人，进度落后于时间线（应到 6.8）"
     }
   ],
   "funnel": {
@@ -17,54 +17,59 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 4280.0,
-      "month_count": 5,
+      "month_amount": 3080,
+      "month_count": 1,
       "goal": 28800,
-      "goal_rate": "15%",
+      "goal_rate": "11%",
       "note": ""
     },
     "revenue": {
-      "month_total": 9597,
+      "month_total": 9219,
       "today_total": 0,
       "by_type": [
         {
-          "name": "续费/订金",
-          "amount": 4280
-        },
-        {
-          "name": "新报名",
+          "name": "报名",
           "amount": 980
         },
         {
+          "name": "续费",
+          "amount": 3080
+        },
+        {
+          "name": "订金",
+          "amount": 1200
+        },
+        {
           "name": "散客/场地",
-          "amount": 4167
+          "amount": 3859
         },
         {
           "name": "穿线",
-          "amount": 170
+          "amount": 100
         }
       ],
       "derived": {
-        "course": 5260,
-        "coach_enroll": 5260,
-        "venue": 4167,
-        "string": 170
+        "course": 4060,
+        "coach_enroll": 4060,
+        "deposit": 1200,
+        "venue": 3859,
+        "string": 100
       },
       "venue_goal": 24000,
       "total_goal": 52800,
-      "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
+      "note": "含报名·续费·订金·散客场地·穿线；订金只算订金（待转营收，单列不并入职收）。课程实收=报名+续费；收款人仅作对账/教练业绩归属，不计入营收。《收支记账》已废弃，营收以本台账为准。"
     },
     "week": {
       "this_week": {
-        "total": 4287,
+        "total": 3909,
         "by_type": [
           {
             "name": "散客/场地",
-            "amount": 4167
+            "amount": 3859
           },
           {
             "name": "穿线",
-            "amount": 120
+            "amount": 50
           }
         ]
       },
@@ -72,12 +77,16 @@
         "total": 5010,
         "by_type": [
           {
-            "name": "续费/订金",
-            "amount": 3980
+            "name": "报名",
+            "amount": 980
           },
           {
-            "name": "新报名",
-            "amount": 980
+            "name": "续费",
+            "amount": 3080
+          },
+          {
+            "name": "订金",
+            "amount": 900
           },
           {
             "name": "穿线",
@@ -85,18 +94,72 @@
           }
         ]
       }
+    },
+    "ledger_audit": {
+      "total": 9,
+      "checks": [
+        {
+          "name": "关键字段完整",
+          "ok": true,
+          "msg": "date/name/amount/type 齐全"
+        },
+        {
+          "name": "金额合法",
+          "ok": true,
+          "msg": "全部为正数"
+        },
+        {
+          "name": "类型合法",
+          "ok": true,
+          "msg": "均在 5 类内"
+        },
+        {
+          "name": "月汇总勾稽",
+          "ok": true,
+          "msg": "month_total=9219 = Σby_type=9219"
+        },
+        {
+          "name": "重复检测",
+          "ok": true,
+          "msg": "无重复录入"
+        },
+        {
+          "name": "收款人",
+          "ok": false,
+          "level": "warn",
+          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
+        }
+      ],
+      "level": "yellow",
+      "missing_collector": [
+        {
+          "date": "2026-10-16",
+          "name": "盛呈栩",
+          "type": "续费",
+          "amount": 3080
+        },
+        {
+          "date": "2026-10-11",
+          "name": "黄文皓",
+          "type": "订金",
+          "amount": 300
+        },
+        {
+          "date": "2026-10-13",
+          "name": "刘伟",
+          "type": "报名",
+          "amount": 980
+        },
+        {
+          "date": "2026-10-21",
+          "name": "10.1—10.21场地费总共",
+          "type": "散客/场地",
+          "amount": 3859
+        }
+      ]
     }
   },
-  "coach": [
-    {
-      "level": "yellow",
-      "text": "今日带课但员工日报缺卡：瞿佳康"
-    },
-    {
-      "level": "yellow",
-      "text": "今日有课但巡课记录为空——巡课未执行"
-    }
-  ],
+  "coach": [],
   "boss_todos": [
     "2026-10-21｜邀约本月体测",
     "2026-10-20｜采购体能课器材，完成本月少儿班测评，对部分需要续课的家长跟进。",
@@ -106,11 +169,11 @@
   ],
   "cross_check": [
     {
-      "level": "red",
-      "text": "开课节数打架：日报报 2 节，上课记录实际 4 条，需核实"
+      "level": "green",
+      "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "曹心语、朱梓檬、沈熠南",
+  "callback": "邓琬妮、刘槿辰、邓安淇",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -121,7 +184,7 @@
   "touch": {
     "count": 1.0,
     "types": "微信/群消息推送",
-    "feedback": "刘槿辰妈妈说要回家商量下，下节课来的时候跟进。"
+    "feedback": "吴帛珅妈妈有咨询成人班价格，明天有课约她来试课。"
   },
   "tice": {
     "month_done": 0,
@@ -131,24 +194,31 @@
     "total_students": 7,
     "latest_date": "2026-08-30",
     "latest_student": "高梓杰",
-    "active_students": 28,
+    "active_students": 27,
     "month_plan": 22,
     "rate": "0%"
   },
   "stringing": {
-    "month_count": 3,
-    "month_amount": 170.0,
-    "month_jobs": 3,
+    "month_count": 2,
+    "month_amount": 100.0,
+    "month_jobs": 2,
     "by_stringer": [
       {
         "stringer": "江教练",
-        "jobs": 3,
+        "jobs": 2,
         "count": 0.0,
-        "amount": 170.0
+        "amount": 100.0
       }
     ]
   },
   "week_rows": [
+    {
+      "date": "10-15",
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
+    },
     {
       "date": "10-16",
       "leads": 0,
@@ -190,19 +260,13 @@
       "trials": 0.0,
       "signups": 0.0,
       "classes": 0.0
-    },
-    {
-      "date": "10-22",
-      "leads": 0.0,
-      "trials": -1.0,
-      "signups": 0.0,
-      "classes": 2.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 13 节",
+  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 12 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
     "month_target": 10
-  }
+  },
+  "month_signups": 4.0
 }
