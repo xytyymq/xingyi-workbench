@@ -54,5 +54,47 @@
     "amount": "3859.28",
     "type": "散客/场地",
     "collector": ""
+  },
+  {
+    "date": "2026-10-23",
+    "name": "穿线XB63",
+    "amount": "70",
+    "type": "穿线",
+    "collector": "江教练"
+  },
+  {
+    "date": "2026-10-23",
+    "name": "coco场地",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-23",
+    "name": "穿线BG65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-23",
+    "name": "万梓琪",
+    "amount": "300",
+    "type": "续费/订金",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-23",
+    "name": "黄俊安",
+    "amount": "5380",
+    "type": "续费/订金",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-23",
+    "name": "老朱",
+    "amount": "120",
+    "type": "散客/场地",
+    "collector": "桂飞"
   }
 ]
