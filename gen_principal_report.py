@@ -40,7 +40,7 @@ MONTH_TARGET = 10         # 月报名目标
 # 体测月度计划：动态 = 当月上课学生数 × 80%（大哥 2026-10-14 拍板），不再用固定常量
 RENEW_GOAL_MONTH = 28800  # 续费月度目标金额（大哥 2026-10-14 拍板 ¥28800；None=不显示目标完成率）
 VENUE_GOAL_MONTH = 24000  # 场地收入月度目标金额（大哥 2026-10-22 拍板 ¥24000）
-REV_GOAL_MONTH = 52000    # 本月营收总目标（四类合计，大哥 2026-10-22 拍板 ¥52000）
+REV_GOAL_MONTH = 52800   # 本月营收总目标（四类合计，大哥 2026-10-22 拍板：续费28800+场地24000 已达下限，故 52800）
 
 CLOSED_STATUS = ("已报名", "已流失")
 
@@ -289,8 +289,10 @@ def read_tice(active_students_month=None):
     }
 
 
-# 统一营收台账的 4 个类型（校长日报填写页下拉选项，与此保持一致）
-REVENUE_TYPES = ("续费/订金", "新报名", "散客/场地", "穿线")
+# 统一营收台账的 5 个类型（校长日报填写页下拉选项，与此保持一致）
+# 大哥 2026-10-23 口径：订金单列（只算订金，不并入职收）；报名=新生整期报名；续费=老生续费。
+# 课程实收 / 教练招生业绩 = 报名 + 续费；订金作为「待转营收」单独跟踪。
+REVENUE_TYPES = ("报名", "续费", "订金", "散客/场地", "穿线")
 
 
 def _read_ledger():
@@ -313,13 +315,14 @@ def _read_ledger():
 
 
 def read_renew():
-    """本月续课额：取自统一营收台账中 type=续费/订金的金额汇总（原 renew-records.json 已并入）。
+    """本月续课额：取自统一营收台账中 type=续费 的金额汇总（老生续费；原 renew-records.json 已并入）。
     返回 {month_amount, month_count, goal, goal_rate, note}。
     关键：即使台账缺失/无数据/读取失败，也始终返回目标与达成率（金额=0、达成率=0%），
-    保证校长日报永远能看到『当月续课总金额』与『达成率』，而非被『待接入』隐藏。"""
+    保证校长日报永远能看到『当月续课总金额』与『达成率』，而非被『待接入』隐藏。
+    注：订金(type=订金)属于报名定金，单列不计入续费；报名(type=报名)为新生整期报名，亦不计入续费。"""
     mp = datetime.date.today().isoformat()[:7]
     rows = _read_ledger()
-    month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") == "续费/订金"]
+    month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") == "续费"]
     amount = sum(to_f(r.get("amount")) for r in month_rows)
     count = len(month_rows)
     goal = RENEW_GOAL_MONTH
@@ -355,11 +358,12 @@ def read_stringing():
 
 
 def read_revenue():
-    """汇总统一营收台账（4 类）作为校长日报看板的『本月营收』。
+    """汇总统一营收台账（5 类）作为校长日报看板的『本月营收』。
     数据来源：data/revenue-ledger.json（校长日报填写页『营收台账』逐笔登记）。
-    口径：续费/订金 + 新报名 + 散客/场地 + 穿线 全部计入营收；
+    口径（大哥 2026-10-23）：报名(新生整期) + 续费(老生续费) + 订金(报名定金) + 散客/场地 + 穿线；
          收款人(collector) 仅作对账/教练业绩归属，不计入营收总额。
-    派生（供校长工资核算）：课程实收=续费/订金+新报名；教练招生业绩=续费/订金+新报名；场地收入=散客/场地。
+         订金只算订金，单列作为「待转营收」跟踪，不并入职收总额（课程实收=报名+续费）。
+    派生（供校长工资核算）：课程实收=报名+续费；教练招生业绩=报名+续费；场地收入=散客/场地；订金=订金(待转)。
     返回 {month_total, today_total, by_type, derived, note}。"""
     mp = datetime.date.today().isoformat()[:7]
     today_iso = datetime.date.today().isoformat()
@@ -376,10 +380,11 @@ def read_revenue():
     month_total = sum(by_type.values())
     by_type_list = [{"name": t, "amount": round(v)} for t, v in by_type.items() if v > 0]
     derived = {
-        "course": round(by_type["续费/订金"] + by_type["新报名"]),        # 课程实收（工资页用）
-        "coach_enroll": round(by_type["续费/订金"] + by_type["新报名"]),  # 教练招生业绩（工资页用，含续费）
-        "venue": round(by_type["散客/场地"]),                            # 场地收入（工资页用）
-        "string": round(by_type["穿线"]),                                # 穿线（仅营收，不进工资）
+        "course": round(by_type["报名"] + by_type["续费"]),          # 课程实收（工资页用，报名+续费）
+        "coach_enroll": round(by_type["报名"] + by_type["续费"]),    # 教练招生业绩（工资页用，报名+续费）
+        "deposit": round(by_type["订金"]),                            # 订金（待转营收，单列）
+        "venue": round(by_type["散客/场地"]),                         # 场地收入（工资页用）
+        "string": round(by_type["穿线"]),                             # 穿线（仅营收，不进工资）
     }
     return {
         "month_total": round(month_total),
@@ -388,7 +393,75 @@ def read_revenue():
         "derived": derived,
         "venue_goal": VENUE_GOAL_MONTH,
         "total_goal": REV_GOAL_MONTH,
-        "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。",
+        "note": "含报名·续费·订金·散客场地·穿线；订金只算订金（待转营收，单列不并入职收）。课程实收=报名+续费；收款人仅作对账/教练业绩归属，不计入营收。《收支记账》已废弃，营收以本台账为准。",
+    }
+
+
+def read_ledger_audit(rows=None):
+    """营收台账自检（用户 2026-10-22 拍板：废弃《收支记账》，以统一营收台账为准）。
+    返回 {total, checks:[{name,ok,level?,msg}], level, missing_collector:[...]}。
+    level: green 全通过 / yellow 仅历史收款人缺失 / red 关键字段·金额·类型·汇总异常。"""
+    if rows is None:
+        rows = _read_ledger()
+    VALID = ("报名", "续费", "订金", "散客/场地", "穿线")
+    mp = datetime.date.today().isoformat()[:7]
+    checks = []
+
+    miss_field = [r for r in rows if not all(str(r.get(k) or '').strip() for k in ("date", "name", "amount", "type"))]
+    checks.append({"name": "关键字段完整", "ok": not miss_field,
+                   "msg": "date/name/amount/type 齐全" if not miss_field else f"{len(miss_field)} 笔缺关键字段"})
+
+    nonpos = []
+    for r in rows:
+        try:
+            if to_f(r.get("amount")) <= 0:
+                nonpos.append(r)
+        except Exception:
+            nonpos.append(r)
+    checks.append({"name": "金额合法", "ok": not nonpos,
+                   "msg": "全部为正数" if not nonpos else f"{len(nonpos)} 笔金额非正/无法解析"})
+
+    bad_type = [r for r in rows if r.get("type") not in VALID]
+    checks.append({"name": "类型合法", "ok": not bad_type,
+                   "msg": "均在 4 类内" if not bad_type else f"{len(bad_type)} 笔类型越界"})
+
+    by_type = {t: 0.0 for t in VALID}
+    for r in rows:
+        if r.get("type") in VALID and str(r.get("date") or "").startswith(mp):
+            by_type[r["type"]] += to_f(r.get("amount"))
+    month_total = round(sum(by_type.values()))
+    sum_by_type = round(sum(by_type.values()))
+    diff = abs(month_total - sum_by_type)
+    checks.append({"name": "月汇总勾稽", "ok": diff <= 1,
+                   "msg": f"month_total={month_total} = Σby_type={sum_by_type}" if diff <= 1
+                          else f"month_total={month_total} 与 Σby_type={sum_by_type} 差 {diff}"})
+
+    seen = {}
+    for r in rows:
+        k = (r.get("date"), r.get("name"), str(r.get("amount")))
+        seen[k] = seen.get(k, 0) + 1
+    dups = [k for k, v in seen.items() if v > 1]
+    checks.append({"name": "重复检测", "ok": not dups,
+                   "msg": "无重复录入" if not dups else f"{len(dups)} 组疑似重复（同日期+同名+同金额）"})
+
+    miss_coll = [r for r in rows if not str(r.get("collector") or '').strip()]
+    checks.append({"name": "收款人", "ok": not miss_coll, "level": "warn",
+                   "msg": "齐全" if not miss_coll else f"{len(miss_coll)} 笔历史缺收款人（不影响营收，影响教练业绩归属）"})
+
+    level = "green"
+    if any((not c["ok"]) for c in checks if c["name"] != "收款人"):
+        level = "red"
+    elif miss_coll:
+        level = "yellow"
+    return {
+        "total": len(rows),
+        "checks": checks,
+        "level": level,
+        "missing_collector": [
+            {"date": r.get("date"), "name": r.get("name"), "type": r.get("type"),
+             "amount": round(to_f(r.get("amount")))}
+            for r in miss_coll
+        ],
     }
 
 
