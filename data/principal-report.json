@@ -1,39 +1,39 @@
 {
-  "generated_at": "2026-10-23 15:01（营收自动刷新）",
-  "data_date": "2026-10-21",
+  "generated_at": "2026-10-24 08:31",
+  "data_date": "2026-10-23",
   "overall": "yellow",
   "lights": [
     {
       "level": "yellow",
-      "text": "本月报名 4/10 人，进度落后于时间线（应到 6.8）"
+      "text": "本月报名 4/10 人，进度落后于时间线（应到 7.4）"
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
+    "new_leads_today": 0.0,
     "trial_arrive_rate": null,
-    "month_signups": 4,
+    "month_signups": 4.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 0,
-      "month_count": 0,
+      "month_amount": 10640.0,
+      "month_count": 7,
       "goal": 28800,
-      "goal_rate": "0%",
+      "goal_rate": "37%",
       "note": ""
     },
     "revenue": {
-      "month_total": 10079,
-      "today_total": 6120,
+      "month_total": 18899,
+      "today_total": 0,
       "by_type": [
         {
           "name": "续费/订金",
-          "amount": 5680
+          "amount": 10640
         },
         {
           "name": "散客/场地",
-          "amount": 4179
+          "amount": 8039
         },
         {
           "name": "穿线",
@@ -41,18 +41,18 @@
         }
       ],
       "derived": {
-        "course": 5680,
-        "coach_enroll": 5680,
-        "venue": 4179,
+        "course": 10640,
+        "coach_enroll": 10640,
+        "venue": 8039,
         "string": 220
       },
       "venue_goal": 24000,
-      "total_goal": 52000,
+      "total_goal": 52800,
       "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
     },
     "week": {
       "this_week": {
-        "total": 10029,
+        "total": 13889,
         "by_type": [
           {
             "name": "续费/订金",
@@ -60,7 +60,7 @@
           },
           {
             "name": "散客/场地",
-            "amount": 4179
+            "amount": 8039
           },
           {
             "name": "穿线",
@@ -72,74 +72,15 @@
         "total": 4710,
         "by_type": [
           {
+            "name": "续费/订金",
+            "amount": 4660
+          },
+          {
             "name": "穿线",
             "amount": 50
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 8,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 5 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=8919 = Σby_type=8919"
-        },
-        {
-          "name": "重复检测",
-          "ok": true,
-          "msg": "无重复录入"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "yellow",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [],
@@ -156,18 +97,18 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "邓琬妮、刘槿辰、邓安淇",
+  "callback": "沈熠南、高筠皓、邓泽兮",
   "video": {
-    "today": 0,
-    "this_week": 0,
-    "this_month": 2,
+    "today": 0.0,
+    "this_week": 0.0,
+    "this_month": 2.0,
     "latest_title": "",
     "latest_status": ""
   },
   "touch": {
-    "count": 1,
+    "count": 2.0,
     "types": "微信/群消息推送",
-    "feedback": "吴帛珅妈妈有咨询成人班价格，明天有课约她来试课。"
+    "feedback": "万梓琪妈妈回去看下小朋友的课表，再决定报次卡还是年卡"
   },
   "tice": {
     "month_done": 0,
@@ -177,79 +118,84 @@
     "total_students": 7,
     "latest_date": "2026-08-30",
     "latest_student": "高梓杰",
-    "active_students": 27,
+    "active_students": 28,
     "month_plan": 22,
     "rate": "0%"
   },
   "stringing": {
-    "month_count": 2,
-    "month_amount": 100,
-    "month_jobs": 2,
+    "month_count": 4,
+    "month_amount": 220.0,
+    "month_jobs": 4,
     "by_stringer": [
       {
         "stringer": "江教练",
-        "jobs": 2,
-        "count": 0,
-        "amount": 100
+        "jobs": 3,
+        "count": 0.0,
+        "amount": 170.0
+      },
+      {
+        "stringer": "张玉玲",
+        "jobs": 1,
+        "count": 0.0,
+        "amount": 50.0
       }
     ]
   },
   "week_rows": [
     {
-      "date": "10-15",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 1
-    },
-    {
-      "date": "10-16",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0
-    },
-    {
       "date": "10-17",
-      "leads": 0,
-      "trials": 2,
-      "signups": 1,
-      "classes": 6
+      "leads": 0.0,
+      "trials": 2.0,
+      "signups": 1.0,
+      "classes": 6.0
     },
     {
       "date": "10-18",
-      "leads": 0,
-      "trials": 0,
-      "signups": 1,
-      "classes": 3
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 1.0,
+      "classes": 3.0
     },
     {
       "date": "10-19",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0
     },
     {
       "date": "10-20",
-      "leads": 0,
-      "trials": 1,
-      "signups": 0,
-      "classes": 2
+      "leads": 0.0,
+      "trials": 1.0,
+      "signups": 0.0,
+      "classes": 2.0
     },
     {
       "date": "10-21",
-      "leads": 0,
-      "trials": 0,
-      "signups": 0,
-      "classes": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 0.0
+    },
+    {
+      "date": "10-22",
+      "leads": 0.0,
+      "trials": -1.0,
+      "signups": 0.0,
+      "classes": 2.0
+    },
+    {
+      "date": "10-23",
+      "leads": 0.0,
+      "trials": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 12 节",
+  "week_summary": "本周合计：新线索 0 · 报名 2 · 开课 14 节",
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
     "month_target": 10
-  },
-  "month_signups": 4
+  }
 }
