@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-24 08:31",
+  "generated_at": "2026-10-24 15:01（营收自动刷新）",
   "data_date": "2026-10-23",
   "overall": "yellow",
   "lights": [
@@ -24,12 +24,16 @@
       "note": ""
     },
     "revenue": {
-      "month_total": 18899,
+      "month_total": 13219,
       "today_total": 0,
       "by_type": [
         {
-          "name": "续费/订金",
-          "amount": 10640
+          "name": "报名",
+          "amount": 4060
+        },
+        {
+          "name": "订金",
+          "amount": 900
         },
         {
           "name": "散客/场地",
@@ -41,23 +45,20 @@
         }
       ],
       "derived": {
-        "course": 10640,
-        "coach_enroll": 10640,
+        "course": 4060,
+        "coach_enroll": 4060,
+        "deposit": 900,
         "venue": 8039,
         "string": 220
       },
       "venue_goal": 24000,
       "total_goal": 52800,
-      "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
+      "note": "含报名·续费·订金·散客场地·穿线；订金只算订金（待转营收，单列不并入职收）。课程实收=报名+续费；收款人仅作对账/教练业绩归属，不计入营收。《收支记账》已废弃，营收以本台账为准。"
     },
     "week": {
       "this_week": {
-        "total": 13889,
+        "total": 8209,
         "by_type": [
-          {
-            "name": "续费/订金",
-            "amount": 5680
-          },
           {
             "name": "散客/场地",
             "amount": 8039
@@ -72,8 +73,12 @@
         "total": 4710,
         "by_type": [
           {
-            "name": "续费/订金",
-            "amount": 4660
+            "name": "报名",
+            "amount": 4060
+          },
+          {
+            "name": "订金",
+            "amount": 600
           },
           {
             "name": "穿线",
@@ -81,6 +86,69 @@
           }
         ]
       }
+    },
+    "ledger_audit": {
+      "total": 20,
+      "checks": [
+        {
+          "name": "关键字段完整",
+          "ok": true,
+          "msg": "date/name/amount/type 齐全"
+        },
+        {
+          "name": "金额合法",
+          "ok": true,
+          "msg": "全部为正数"
+        },
+        {
+          "name": "类型合法",
+          "ok": false,
+          "msg": "7 笔类型越界"
+        },
+        {
+          "name": "月汇总勾稽",
+          "ok": true,
+          "msg": "month_total=13219 = Σby_type=13219"
+        },
+        {
+          "name": "重复检测",
+          "ok": false,
+          "msg": "6 组疑似重复（同日期+同名+同金额）"
+        },
+        {
+          "name": "收款人",
+          "ok": false,
+          "level": "warn",
+          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
+        }
+      ],
+      "level": "red",
+      "missing_collector": [
+        {
+          "date": "2026-10-16",
+          "name": "盛呈栩",
+          "type": "报名",
+          "amount": 3080
+        },
+        {
+          "date": "2026-10-11",
+          "name": "黄文皓",
+          "type": "订金",
+          "amount": 300
+        },
+        {
+          "date": "2026-10-13",
+          "name": "刘伟",
+          "type": "报名",
+          "amount": 980
+        },
+        {
+          "date": "2026-10-21",
+          "name": "10.1—10.21场地费总共",
+          "type": "散客/场地",
+          "amount": 3859
+        }
+      ]
     }
   },
   "coach": [],
