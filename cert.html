@@ -607,7 +607,17 @@ function queueSize(){ return certQueue().length; }
 // 单次：登录 + 提交奖状。返回后端 JSON（{ok:true,award} 或 {ok:true,duplicate:true}）
 async function postAward(body, pwd){
   const lr = await fetch(XY_API + '/api/admin/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({pwd})});
-  if(!lr.ok){ localStorage.removeItem('xy_admin_pwd'); const e = new Error('口令不对（'+lr.status+'）'); e.auth = true; throw e; }
+  if(!lr.ok){
+    // 只有后端「明确拒绝口令」（401，或 403+JSON）才清除已存口令；
+    // 网关抖动（404/5xx/HTML，沙箱域名间歇性发生）不清——否则会把正确口令误删，
+    // 导致之后每次存档都重新弹「首次存档请输入工作台口令」。其余错误走重试。
+    let authFail = (lr.status === 401);
+    if(!authFail && lr.status === 403 && (lr.headers.get('content-type')||'').indexOf('json') >= 0) authFail = true;
+    if(authFail) localStorage.removeItem('xy_admin_pwd');
+    const e = new Error(authFail ? '口令不对（'+lr.status+'）' : '后端暂时不可达（'+lr.status+'），稍后自动重试');
+    e.auth = authFail;
+    throw e;
+  }
   const token = (await lr.json()).token;
   localStorage.setItem('xy_admin_pwd', pwd);
   const ar = await fetch(XY_API + '/api/admin/award', {method:'POST', headers:{'X-Token':token,'Content-Type':'application/json'}, body: JSON.stringify(body)});
@@ -621,6 +631,8 @@ async function archiveCert(silent){
   const body = certBodyFromForm();
   if(!body.name){ if(!silent) alert('请先填学员姓名'); return {ok:false, error:'no-name'}; }
   let pwd = localStorage.getItem('xy_admin_pwd') || '';
+  let stored = !!pwd;
+  let reAsked = false;
   if(!pwd){
     if(silent) return {ok:false, error:'no-pwd'};
     pwd = prompt('首次存档请输入工作台口令（之后不再询问）') || '';
@@ -634,7 +646,16 @@ async function archiveCert(silent){
       return {ok:true};
     }catch(err){
       lastErr = err;
-      if(err.auth) break;                                        // 口令错不重试
+      if(err.auth){
+        // 已存口令被后端拒绝（如后台改过口令）：现场重问一次，避免卡死
+        if(stored && !silent && !reAsked){
+          reAsked = true; stored = false;
+          const np = prompt('口令已失效，请重新输入工作台口令') || '';
+          if(!np) break;
+          pwd = np; continue;
+        }
+        break;                                                   // 口令错不重试
+      }
       if(attempt < 3) await new Promise(r => setTimeout(r, 800 * attempt));  // 网络抖动退避
     }
   }
