@@ -180,5 +180,33 @@
     "amount": "10",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-10-25",
+    "name": "下午场一小时",
+    "amount": "48",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-25",
+    "name": "吴帛珅",
+    "amount": "5680",
+    "type": "新报名",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-25",
+    "name": "BG65+手胶",
+    "amount": "65",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-25",
+    "name": "熊安然",
+    "amount": "5680",
+    "type": "续费/订金",
+    "collector": "王双双"
   }
 ]
