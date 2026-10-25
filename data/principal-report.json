@@ -13,76 +13,79 @@
     }
   ],
   "funnel": {
-    "new_leads_today": 3.0,
+    "new_leads_today": 3,
     "trial_arrive_rate": "0%",
-    "month_signups": 4.0,
+    "month_signups": 4,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 10640.0,
+      "month_amount": 10640,
       "month_count": 7,
       "goal": 28800,
       "goal_rate": "37%",
       "note": ""
     },
     "revenue": {
-      "month_total": 13677,
-      "today_total": 0,
+      "month_total": 30830,
+      "today_total": 11473,
       "by_type": [
         {
-          "name": "报名",
-          "amount": 4060
+          "name": "续费/订金",
+          "amount": 16320
         },
         {
-          "name": "订金",
-          "amount": 900
+          "name": "新报名",
+          "amount": 5680
         },
         {
           "name": "散客/场地",
-          "amount": 8497
+          "amount": 8545
         },
         {
           "name": "穿线",
-          "amount": 220
+          "amount": 285
         }
       ],
       "derived": {
-        "course": 4060,
-        "coach_enroll": 4060,
-        "deposit": 900,
-        "venue": 8497,
-        "string": 220
+        "course": 22000,
+        "coach_enroll": 22000,
+        "venue": 8545,
+        "string": 285
       },
       "venue_goal": 24000,
-      "total_goal": 52800,
-      "note": "含报名·续费·订金·散客场地·穿线；订金只算订金（待转营收，单列不并入职收）。课程实收=报名+续费；收款人仅作对账/教练业绩归属，不计入营收。《收支记账》已废弃，营收以本台账为准。"
+      "total_goal": 52000,
+      "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
     },
     "week": {
       "this_week": {
-        "total": 8667,
+        "total": 25820,
         "by_type": [
           {
+            "name": "续费/订金",
+            "amount": 11360
+          },
+          {
+            "name": "新报名",
+            "amount": 5680
+          },
+          {
             "name": "散客/场地",
-            "amount": 8497
+            "amount": 8545
           },
           {
             "name": "穿线",
-            "amount": 170
+            "amount": 235
           }
         ]
       },
       "last_week": {
-        "total": 4710,
+        "total": 9370,
         "by_type": [
           {
-            "name": "报名",
-            "amount": 4060
-          },
-          {
-            "name": "订金",
-            "amount": 600
+            "name": "续费/订金",
+            "amount": 4660
           },
           {
             "name": "穿线",
@@ -171,14 +174,14 @@
   ],
   "callback": "刘槿辰、邓安淇、沈熠南",
   "video": {
-    "today": 2.0,
-    "this_week": 2.0,
-    "this_month": 4.0,
+    "today": 2,
+    "this_week": 2,
+    "this_month": 4,
     "latest_title": "上课记录",
     "latest_status": ""
   },
   "touch": {
-    "count": 0.0,
+    "count": 0,
     "types": "微信/群消息推送",
     "feedback": "吴帛珅妈妈 明天来缴费。\n肖卓佑约了明天下午两点来试课。"
   },
@@ -196,72 +199,72 @@
   },
   "stringing": {
     "month_count": 4,
-    "month_amount": 220.0,
+    "month_amount": 220,
     "month_jobs": 4,
     "by_stringer": [
       {
         "stringer": "江教练",
         "jobs": 3,
-        "count": 0.0,
-        "amount": 170.0
+        "count": 0,
+        "amount": 170
       },
       {
         "stringer": "张玉玲",
         "jobs": 1,
-        "count": 0.0,
-        "amount": 50.0
+        "count": 0,
+        "amount": 50
       }
     ]
   },
   "week_rows": [
     {
       "date": "10-18",
-      "leads": 0.0,
-      "trials": 0.0,
-      "signups": 1.0,
-      "classes": 3.0
+      "leads": 0,
+      "trials": 0,
+      "signups": 1,
+      "classes": 3
     },
     {
       "date": "10-19",
-      "leads": 0.0,
-      "trials": 0.0,
-      "signups": 0.0,
-      "classes": 0.0
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0
     },
     {
       "date": "10-20",
-      "leads": 0.0,
-      "trials": 1.0,
-      "signups": 0.0,
-      "classes": 2.0
+      "leads": 0,
+      "trials": 1,
+      "signups": 0,
+      "classes": 2
     },
     {
       "date": "10-21",
-      "leads": 0.0,
-      "trials": 0.0,
-      "signups": 0.0,
-      "classes": 0.0
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 0
     },
     {
       "date": "10-22",
-      "leads": 0.0,
-      "trials": -1.0,
-      "signups": 0.0,
-      "classes": 2.0
+      "leads": 0,
+      "trials": -1,
+      "signups": 0,
+      "classes": 2
     },
     {
       "date": "10-23",
-      "leads": 0.0,
-      "trials": 0.0,
-      "signups": 0.0,
-      "classes": 1.0
+      "leads": 0,
+      "trials": 0,
+      "signups": 0,
+      "classes": 1
     },
     {
       "date": "10-24",
-      "leads": 3.0,
-      "trials": 3.0,
-      "signups": 0.0,
-      "classes": 5.0
+      "leads": 3,
+      "trials": 3,
+      "signups": 0,
+      "classes": 5
     }
   ],
   "week_summary": "本周合计：新线索 3 · 报名 1 · 开课 13 节",
