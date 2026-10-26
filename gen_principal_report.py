@@ -528,6 +528,72 @@ def to_f(s):
         return 0.0
 
 
+def to_n(s):
+    """非负计数：负数一律按 0 算。
+    大哥 2026-10-26 口径：前台填报的计数类字段（线索/试课预约/试课到场/报名/开课/
+    触达/入学视频）不允许为负；历史上出现过的 -1 一律按 0 计，避免图表出现负值、
+    汇总被拉低。金额类仍用 to_f（退款/冲抵可能为负，不做钳制）。"""
+    v = to_f(s)
+    return v if v > 0 else 0.0
+
+
+def build_month_weeks(principal, cls, data_date):
+    """本月按自然周（周一为界）聚合，供周会「本月每周对比」使用。
+    只统计落在本月内的日期；每周带 days_filled（已填报天数），
+    避免拿半周数据跟整周对比造成误判。
+    返回 {month, weeks:[...], totals:{...}}"""
+    dt = datetime.date.fromisoformat(data_date)
+    mp = data_date[:7]
+    m_start = datetime.date(dt.year, dt.month, 1)
+    m_end = (datetime.date(dt.year + (dt.month == 12), dt.month % 12 + 1, 1)
+             - datetime.timedelta(days=1))
+    first_monday = m_start - datetime.timedelta(days=m_start.weekday())
+
+    cls_by_day = {}
+    for c in cls:
+        if c.get("_d"):
+            cls_by_day[c["_d"]] = cls_by_day.get(c["_d"], 0) + 1
+
+    weeks = []
+    ws = first_monday
+    idx = 0
+    while ws <= m_end:
+        idx += 1
+        we = ws + datetime.timedelta(days=6)          # 该周周日
+        lo = max(ws, m_start)
+        hi = min(we, m_end)
+        rows = [r for r in principal if r.get("_d") and lo.isoformat() <= r["_d"] <= hi.isoformat()]
+        by_day = {}
+        for r in rows:
+            by_day.setdefault(r["_d"], to_n(r.get("今日开课节数")))
+        all_days = [(lo + datetime.timedelta(days=i)).isoformat()
+                    for i in range((hi - lo).days + 1)]
+        classes = sum(by_day.get(d, cls_by_day.get(d, 0)) for d in all_days)
+        leads = sum(to_n(r.get("今日新线索数")) for r in rows)
+        trials = sum(to_n(r.get("试课预约数")) for r in rows)
+        arrive = sum(to_n(r.get("试课到场数")) for r in rows)
+        signups = sum(to_n(r.get("今日报名数")) for r in rows)
+        weeks.append({
+            "idx": idx,
+            "label": f"第{idx}周 {ws.strftime('%m/%d')}–{we.strftime('%m/%d')}",
+            "start": ws.isoformat(), "end": we.isoformat(),
+            "leads": leads, "trials": trials, "arrive": arrive,
+            "signups": signups, "classes": classes,
+            "arrive_rate": f"{arrive / trials:.0%}" if trials > 0 else "—",
+            "days_filled": len(by_day), "days_span": len(all_days),
+            "is_current": ws <= dt <= we,
+        })
+        ws = we + datetime.timedelta(days=1)
+
+    # 环比：每周 vs 上一周
+    for i in range(1, len(weeks)):
+        for k in ("leads", "trials", "arrive", "signups", "classes"):
+            weeks[i]["delta_" + k] = weeks[i][k] - weeks[i - 1][k]
+
+    totals = {k: sum(w[k] for w in weeks) for k in ("leads", "trials", "arrive", "signups", "classes")}
+    return {"month": mp, "weeks": weeks, "totals": totals}
+
+
 def main():
     today = datetime.date.today()
     today_iso = today.isoformat()
@@ -573,7 +639,7 @@ def main():
 
     # ---- 0. 月报名进度（独立于日报是否缺卡） ----
     month_prefix = today_iso[:7]
-    month_signups = sum(to_f(r.get("今日报名数")) for r in principal if (r["_d"] or "").startswith(month_prefix))
+    month_signups = sum(to_n(r.get("今日报名数")) for r in principal if (r["_d"] or "").startswith(month_prefix))
     days_in_month = (datetime.date(dt.year + (dt.month == 12), dt.month % 12 + 1, 1) - datetime.timedelta(days=1)).day
     expected = MONTH_TARGET * dt.day / days_in_month
     behind = month_signups < expected - 0.5
@@ -584,7 +650,7 @@ def main():
     else:
         p = p_today[0]
         # 2. 试课到场率（红线 80%）
-        booked, arrive = to_f(p.get("试课预约数")), to_f(p.get("试课到场数"))
+        booked, arrive = to_n(p.get("试课预约数")), to_n(p.get("试课到场数"))
         if booked > 0:
             rate = arrive / booked
             level = "red" if rate < TRIAL_RATE_RED else "green"
@@ -596,7 +662,7 @@ def main():
         lights.append({"level": "yellow" if behind else "green",
                        "text": f"本月报名 {month_signups:.0f}/{MONTH_TARGET} 人，进度{'落后于' if behind else '达到'}时间线（应到 {expected:.1f}）"})
         # 4. 交叉校验（数据打架检测）
-        reported_classes = to_f(p.get("今日开课节数"))
+        reported_classes = to_n(p.get("今日开课节数"))
         actual_classes = len(cls_today)
         if reported_classes and actual_classes and reported_classes != actual_classes:
             cross_check.append({"level": "red", "text": f"开课节数打架：日报报 {reported_classes:.0f} 节，上课记录实际 {actual_classes} 条，需核实"})
@@ -648,11 +714,11 @@ def main():
     # ---- 8.5 入学视频 & 家长沟通（每日填报新增列） ----
     wk_start = (dt - datetime.timedelta(days=dt.weekday())).isoformat()
     mp = today_iso[:7]
-    video_today = to_f(p_today[0].get("入学视频新增数")) if p_today else 0
-    video_week = sum(to_f(r.get("入学视频新增数")) for r in principal if (r["_d"] or "") >= wk_start)
-    video_month = sum(to_f(r.get("入学视频新增数")) for r in principal if (r["_d"] or "").startswith(mp))
+    video_today = to_n(p_today[0].get("入学视频新增数")) if p_today else 0
+    video_week = sum(to_n(r.get("入学视频新增数")) for r in principal if (r["_d"] or "") >= wk_start)
+    video_month = sum(to_n(r.get("入学视频新增数")) for r in principal if (r["_d"] or "").startswith(mp))
     video_title = (p_today[0].get("入学视频标题(选填)") or "").strip() if p_today else ""
-    touch_count = to_f(p_today[0].get("家长沟通触达数")) if p_today else 0
+    touch_count = to_n(p_today[0].get("家长沟通触达数")) if p_today else 0
     touch_feedback = (p_today[0].get("家长沟通反馈(选填)") or "").strip() if p_today else ""
     video = {"today": video_today, "this_week": video_week, "this_month": video_month,
              "latest_title": video_title, "latest_status": ""}
@@ -682,15 +748,21 @@ def main():
         d = (datetime.date.fromisoformat(today_iso) - datetime.timedelta(days=i)).isoformat()
         prow = next((r for r in principal if r["_d"] == d), None)
         week_rows.append({
-            "date": d[5:], "leads": to_f(prow.get("今日新线索数")) if prow else 0,
-            "trials": to_f(prow.get("试课预约数")) if prow else 0,
-            "signups": to_f(prow.get("今日报名数")) if prow else 0,
-            "classes": to_f(prow.get("今日开课节数")) if prow else len([r for r in cls if r["_d"] == d]),
+            "date": d[5:], "leads": to_n(prow.get("今日新线索数")) if prow else 0,
+            "trials": to_n(prow.get("试课预约数")) if prow else 0,
+            "arrive": to_n(prow.get("试课到场数")) if prow else 0,
+            "signups": to_n(prow.get("今日报名数")) if prow else 0,
+            "classes": to_n(prow.get("今日开课节数")) if prow else len([r for r in cls if r["_d"] == d]),
         })
     wk_classes = sum(r["classes"] for r in week_rows)
     wk_leads = sum(r["leads"] for r in week_rows)
     wk_signups = sum(r["signups"] for r in week_rows)
-    week_summary = (f"本周合计：新线索 {wk_leads:.0f} · 报名 {wk_signups:.0f} · 开课 {wk_classes:.0f} 节")
+    wk_trials = sum(r["trials"] for r in week_rows)
+    week_summary = (f"本周合计：新线索 {wk_leads:.0f} · 试课 {wk_trials:.0f} · "
+                    f"报名 {wk_signups:.0f} · 开课 {wk_classes:.0f} 节")
+
+    # ---- 10.1 本月按自然周对比（周会用） ----
+    month_weeks = build_month_weeks(principal, cls, today_iso)
 
     # ---- 汇总灯级 ----
     all_levels = [l["level"] for l in lights] + [c["level"] for c in cross_check] + [c["level"] for c in coach]
@@ -698,13 +770,13 @@ def main():
 
     # ---- 漏斗 ----
     funnel = {
-        "new_leads_today": to_f(p_today[0].get("今日新线索数")) if p_today else 0,
+        "new_leads_today": to_n(p_today[0].get("今日新线索数")) if p_today else 0,
         "trial_arrive_rate": None,
         "month_signups": month_signups,
         "month_pace_note": "",
     }
     if p_today:
-        booked, arrive = to_f(p_today[0].get("试课预约数")), to_f(p_today[0].get("试课到场数"))
+        booked, arrive = to_n(p_today[0].get("试课预约数")), to_n(p_today[0].get("试课到场数"))
         if booked > 0:
             funnel["trial_arrive_rate"] = f"{arrive / booked:.0%}"
         funnel["month_pace_note"] = "落后于时间线" if behind else "达标"
@@ -731,6 +803,7 @@ def main():
         "stringing": stringing,
         "week_rows": week_rows,
         "week_summary": week_summary,
+        "month_weeks": month_weeks,
         "kpi": {"trial_rate_red": "80%", "lead_stale": "48h", "month_target": MONTH_TARGET},
     }
 
