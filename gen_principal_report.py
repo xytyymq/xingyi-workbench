@@ -537,11 +537,13 @@ def to_n(s):
     return v if v > 0 else 0.0
 
 
-def build_month_weeks(principal, cls, data_date):
+def build_month_weeks(principal, cls, data_date, ledger_week=None):
     """本月按自然周（周一为界）聚合，供周会「本月每周对比」使用。
     只统计落在本月内的日期；每周带 days_filled（已填报天数），
     避免拿半周数据跟整周对比造成误判。
+    ledger_week: [(date_iso, amount, type)] 来自统一营收台账，用于每周业绩。
     返回 {month, weeks:[...], totals:{...}}"""
+    ledger_week = ledger_week or []
     dt = datetime.date.fromisoformat(data_date)
     mp = data_date[:7]
     m_start = datetime.date(dt.year, dt.month, 1)
@@ -573,12 +575,20 @@ def build_month_weeks(principal, cls, data_date):
         trials = sum(to_n(r.get("试课预约数")) for r in rows)
         arrive = sum(to_n(r.get("试课到场数")) for r in rows)
         signups = sum(to_n(r.get("今日报名数")) for r in rows)
+        promo = sum(to_n(r.get("今日社交媒体推广次数")) for r in rows)
+        promo_leads = sum(to_n(r.get("社交媒体咨询数")) for r in rows)
+        # 业绩：营收台账按自然周聚合（只算落在本周区间的笔数）
+        wk_rev = sum(amt for (d_, amt, tp) in ledger_week if lo.isoformat() <= d_ <= hi.isoformat())
+        wk_sign_rev = sum(amt for (d_, amt, tp) in ledger_week
+                          if lo.isoformat() <= d_ <= hi.isoformat() and tp in ("报名", "新报名", "续费", "续费/订金"))
         weeks.append({
             "idx": idx,
             "label": f"第{idx}周 {ws.strftime('%m/%d')}–{we.strftime('%m/%d')}",
             "start": ws.isoformat(), "end": we.isoformat(),
             "leads": leads, "trials": trials, "arrive": arrive,
             "signups": signups, "classes": classes,
+            "promo": promo, "promo_leads": promo_leads,
+            "revenue": round(wk_rev), "signup_revenue": round(wk_sign_rev),
             "arrive_rate": f"{arrive / trials:.0%}" if trials > 0 else "—",
             "days_filled": len(by_day), "days_span": len(all_days),
             "is_current": ws <= dt <= we,
@@ -587,11 +597,122 @@ def build_month_weeks(principal, cls, data_date):
 
     # 环比：每周 vs 上一周
     for i in range(1, len(weeks)):
-        for k in ("leads", "trials", "arrive", "signups", "classes"):
+        for k in ("leads", "trials", "arrive", "signups", "classes", "promo", "promo_leads", "revenue"):
             weeks[i]["delta_" + k] = weeks[i][k] - weeks[i - 1][k]
 
-    totals = {k: sum(w[k] for w in weeks) for k in ("leads", "trials", "arrive", "signups", "classes")}
+    totals = {k: sum(w[k] for w in weeks)
+              for k in ("leads", "trials", "arrive", "signups", "classes",
+                        "promo", "promo_leads", "revenue", "signup_revenue")}
     return {"month": mp, "weeks": weeks, "totals": totals}
+
+
+def build_promo_stats(principal, data_date):
+    """社交媒体推广统计：今日 / 本周 / 本月次数与咨询数 + 连续打卡天数(streak)。
+    口径（大哥 2026-10-26）：每天至少 1 次；只统计已填报的日报行。
+    streak = 从 data_date 往前，连续「有填报且推广次数 ≥1」的天数。"""
+    by_day = {}
+    for r in principal:
+        d = r.get("_d")
+        if not d:
+            continue
+        by_day[d] = {
+            "promo": to_n(r.get("今日社交媒体推广次数")),
+            "leads": to_n(r.get("社交媒体咨询数")),
+            "filled": True,
+        }
+    today = datetime.date.fromisoformat(data_date)
+    wk_start = (today - datetime.timedelta(days=today.weekday())).isoformat()
+    mp = data_date[:7]
+
+    def agg(pred):
+        rows = [v for d, v in by_day.items() if pred(d)]
+        return {
+            "promo": sum(v["promo"] for v in rows),
+            "leads": sum(v["leads"] for v in rows),
+            "days": len(rows),
+        }
+
+    today_v = by_day.get(data_date, {"promo": 0, "leads": 0, "filled": False})
+    week = agg(lambda d: d >= wk_start)
+    month = agg(lambda d: d.startswith(mp))
+
+    # 连续打卡：从 data_date 往前数（跳过没填报的日子不算断）
+    streak = 0
+    cur = today
+    for _ in range(120):
+        k = cur.isoformat()
+        if k not in by_day:
+            break
+        if by_day[k]["promo"] < 1:
+            break
+        streak += 1
+        cur -= datetime.timedelta(days=1)
+
+    return {
+        "today_promo": today_v["promo"],
+        "today_leads": today_v["leads"],
+        "today_filled": today_v["filled"],
+        "week_promo": week["promo"], "week_leads": week["leads"], "week_days": week["days"],
+        "month_promo": month["promo"], "month_leads": month["leads"], "month_days": month["days"],
+        "streak": streak,
+        "target_daily": 1, "target_weekly": 5, "target_monthly": 20,
+    }
+
+
+def read_leads_repo():
+    """读取工作台线索登记 data/leads.json（带来源渠道下拉的新登记入口）。
+    返回 list[dict]；读取失败/缺失返回 []。"""
+    tok = resolve_token()
+    if not tok:
+        return []
+    try:
+        m = _gh(f"https://api.github.com/repos/{REPO}/contents/data/leads.json?ref={BRANCH}", tok)
+        if m and m.get("content"):
+            import base64 as _b64
+            d = json.loads(_b64.b64decode(m["content"]).decode("utf-8"))
+            return d if isinstance(d, list) else []
+    except Exception:
+        return []
+    return []
+
+
+def build_source_mix(leads_repo, leads_tdoc, month_prefix):
+    """线索来源构成：工作台新登记（有来源）+ 腾讯文档历史（无来源→未标注）。
+    返回 {total, labeled, mix:[{name,count}], unlabeled}。"""
+    mix = {}
+    labeled = 0
+    total = 0
+    for r in (leads_repo or []):
+        src = str(r.get("来源渠道") or r.get("source") or "").strip() or "未标注"
+        d = str(r.get("登记日期") or r.get("date") or "")
+        if month_prefix and d and not d.startswith(month_prefix):
+            continue
+        mix[src] = mix.get(src, 0) + 1
+        labeled += 1 if src != "未标注" else 0
+        total += 1
+    # 腾讯文档历史线索：来源列全空 → 计未标注
+    hist_unlabeled = 0
+    for r in (leads_tdoc or []):
+        d = str(r.get("_reg") or r.get("登记日期") or "")
+        src = str(r.get("来源渠道") or "").strip()
+        if src:
+            mix[src] = mix.get(src, 0) + 1
+            labeled += 1
+            total += 1
+        else:
+            hist_unlabeled += 1
+            total += 1
+    items = sorted(mix.items(), key=lambda kv: -kv[1])
+    if hist_unlabeled:
+        mix.setdefault("未标注", 0)
+        mix["未标注"] += hist_unlabeled
+        items = sorted(mix.items(), key=lambda kv: -kv[1])
+    return {
+        "total": total,
+        "labeled": labeled,
+        "unlabeled": hist_unlabeled,
+        "mix": [{"name": k, "count": v} for k, v in items],
+    }
 
 
 def main():
@@ -615,6 +736,14 @@ def main():
     for r in leads:
         r["_reg"] = parse_date(r.get("登记日期"))
         r["_touch"] = parse_date(r.get("最后跟进日期")) or r["_reg"]
+    # 工作台「招生线索登记」页的新线索（data/leads.json）并入 leads：
+    # 这样 48h 跟进预警、来源构成、状态漏斗对新旧线索统一生效。
+    leads_tdoc = list(leads)
+    _repo_leads = read_leads_repo()
+    for r in _repo_leads:
+        r["_reg"] = parse_date(r.get("登记日期"))
+        r["_touch"] = parse_date(r.get("最后跟进日期")) or r["_reg"]
+    leads = leads + _repo_leads
     for r in emp:
         r["_d"] = parse_date(r.get("日期"))
     for r in xun:
@@ -644,6 +773,9 @@ def main():
     expected = MONTH_TARGET * dt.day / days_in_month
     behind = month_signups < expected - 0.5
 
+    # ---- 0.5 社交媒体推广统计（灯级要用，必须先算） ----
+    promo_stats = build_promo_stats(principal, today_iso)
+
     # ---- 1. 校长日报缺卡 ----
     if not p_today:
         lights.append({"level": "red", "text": "校长今日日报未填报（打烊前必填 1 行），今天的数据全是盲区"})
@@ -661,6 +793,14 @@ def main():
         # 3. 月报名进度
         lights.append({"level": "yellow" if behind else "green",
                        "text": f"本月报名 {month_signups:.0f}/{MONTH_TARGET} 人，进度{'落后于' if behind else '达到'}时间线（应到 {expected:.1f}）"})
+        # 3.5 社交媒体推广（大哥 2026-10-26：每天至少 1 次，0 次只黄灯不硬罚）
+        _pp = promo_stats["today_promo"]
+        if promo_stats["today_filled"]:
+            if _pp < 1:
+                lights.append({"level": "yellow", "text": "今日社交媒体推广 0 次——每天至少 1 次，抖音/小红书/视频号/朋友圈任选其一"})
+            else:
+                lights.append({"level": "green", "text": f"今日社交媒体推广 {_pp:.0f} 次，带来咨询 {promo_stats['today_leads']:.0f} 个"
+                                                         + (f"（已连续 {promo_stats['streak']} 天）" if promo_stats["streak"] > 1 else "")})
         # 4. 交叉校验（数据打架检测）
         reported_classes = to_n(p.get("今日开课节数"))
         actual_classes = len(cls_today)
@@ -762,7 +902,21 @@ def main():
                     f"报名 {wk_signups:.0f} · 开课 {wk_classes:.0f} 节")
 
     # ---- 10.1 本月按自然周对比（周会用） ----
-    month_weeks = build_month_weeks(principal, cls, today_iso)
+    _ledger_rows = _read_ledger()
+    _ledger_week = []
+    for _r in _ledger_rows:
+        _d = str(_r.get("date") or "")
+        if not _d:
+            continue
+        _ledger_week.append((_d, to_f(_r.get("amount")), str(_r.get("type") or "")))
+    month_weeks = build_month_weeks(principal, cls, today_iso, _ledger_week)
+
+    # ---- 10.2 社交媒体推广统计 + 线索来源构成 ----
+    if promo_stats["week_promo"] < promo_stats["target_weekly"] and promo_stats["week_days"] >= 3:
+        lights.append({"level": "yellow",
+                       "text": f"本周社交媒体推广 {promo_stats['week_promo']:.0f} 次（目标 {promo_stats['target_weekly']} 次/周），"
+                               f"带来咨询 {promo_stats['week_leads']:.0f} 个"})
+    source_mix = build_source_mix(_repo_leads, leads_tdoc, month_prefix)
 
     # ---- 汇总灯级 ----
     all_levels = [l["level"] for l in lights] + [c["level"] for c in cross_check] + [c["level"] for c in coach]
@@ -804,6 +958,8 @@ def main():
         "week_rows": week_rows,
         "week_summary": week_summary,
         "month_weeks": month_weeks,
+        "promo": promo_stats,
+        "source_mix": source_mix,
         "kpi": {"trial_rate_red": "80%", "lead_stale": "48h", "month_target": MONTH_TARGET},
     }
 
