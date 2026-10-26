@@ -40,12 +40,17 @@ def run_chrome(chrome, args, timeout=120):
 
 
 def measure_height(chrome):
-    r = run_chrome(chrome, ["--virtual-time-budget=12000", "--window-size=480,1400", "--dump-dom", PAGE_SHOT])
+    # 用「矮视口」测高：视口远小于内容时 documentElement.scrollHeight 才等于真实内容高；
+    # 若用高视口，scrollHeight 会被视口撑大，导致出图底部大片留白。
+    r = run_chrome(chrome, ["--virtual-time-budget=12000", "--window-size=480,360", "--dump-dom", PAGE_SHOT])
     dom = r.stdout.decode("utf-8", "ignore")
     m = re.search(r'data-shot-h="(\d+)"', dom)
     if not m:
         return None
-    return max(700, min(4400, int(m.group(1))))
+    h = int(m.group(1))
+    if h <= 360:          # 视口没被内容撑开 → 量高失败
+        return None
+    return max(700, min(4400, h))
 
 
 def shoot(chrome, height, out_png):
