@@ -125,7 +125,7 @@ function renderMonthlyDetail(n){
 function renderCross(filter){
   const names=coachList(filter);
   let html="<table><tr><th class='name'>教练</th>"+SLOTS.map(s=>`<th>${esc(s)}</th>`).join("")+"<th>未录</th><th>合计</th></tr>";
-  let tot=[0]*(SLOTS.length+1);
+  let tot=new Array(SLOTS.length+1).fill(0);
   names.forEach(n=>{
     const c=DATA.coaches[n];let row=0;
     html+="<tr><td class='name'>"+esc(n)+"</td>";
