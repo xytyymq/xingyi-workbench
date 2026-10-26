@@ -109,50 +109,94 @@ svg{width:100%;height:auto;display:block;}
 .xy-footer{text-align:center;font-size:11.5px;color:var(--muted);margin:30px 14px 36px;line-height:1.9;}
 .xy-footer a{color:var(--teal-700);text-decoration:none;font-weight:700;}
 </style>
-<script src="xy-auth.js"></script><script>
-// ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
-(function () {
-  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
-  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
-  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
-  function setup() {
-    if (!window.XYGate || window.XYGate.__proxied) return false;
-    window.XYGate.__proxied = true;
-    var _fetch = window.fetch ? window.fetch.bind(window) : null;
-    if (!_fetch) return true;
-    window.fetch = function (input, opts) {
-      opts = opts || {};
-      var url = (typeof input === 'string') ? input : (input && input.url) || '';
-      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
-        var rest = url.slice(GH_BASE.length);
-        var q = rest.indexOf('?');
-        var path = q >= 0 ? rest.slice(0, q) : rest;
-        var method = (opts.method || 'GET').toUpperCase();
-        if (method === 'GET') {
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
-            method: 'GET',
-            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
-          });
-        }
-        if (method === 'PUT') {
-          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
-          var nb = JSON.stringify({ path: path, message: body.message, content: body.content, sha: body.sha, branch: body.branch || 'main' });
-          return _fetch(XY_PROXY + '/github-save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
-            body: nb
-          });
-        }
-      }
-      return _fetch.apply(null, arguments);
-    };
-    return true;
-  }
-  if (!setup()) {
-    setup.__retry = 0;
-    var tm = setInterval(function () { if (setup() || ++setup.__retry > 20) clearInterval(tm); }, 50);
-  }
-})();
+<script src="xy-auth.js"></script><script>
+
+// ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
+
+(function () {
+
+  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+
+  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
+
+  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
+
+  function setup() {
+
+    if (!window.XYGate || window.XYGate.__proxied) return false;
+
+    window.XYGate.__proxied = true;
+
+    var _fetch = window.fetch ? window.fetch.bind(window) : null;
+
+    if (!_fetch) return true;
+
+    window.fetch = function (input, opts) {
+
+      opts = opts || {};
+
+      var url = (typeof input === 'string') ? input : (input && input.url) || '';
+
+      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
+
+        var rest = url.slice(GH_BASE.length);
+
+        var q = rest.indexOf('?');
+
+        var path = q >= 0 ? rest.slice(0, q) : rest;
+
+        var method = (opts.method || 'GET').toUpperCase();
+
+        if (method === 'GET') {
+
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+
+            method: 'GET',
+
+            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
+
+          });
+
+        }
+
+        if (method === 'PUT') {
+
+          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
+
+          var nb = JSON.stringify({ path: path, message: body.message, content: body.content, sha: body.sha, branch: body.branch || 'main' });
+
+          return _fetch(XY_PROXY + '/github-save', {
+
+            method: 'POST',
+
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
+
+            body: nb
+
+          });
+
+        }
+
+      }
+
+      return _fetch.apply(null, arguments);
+
+    };
+
+    return true;
+
+  }
+
+  if (!setup()) {
+
+    setup.__retry = 0;
+
+    var tm = setInterval(function () { if (setup() || ++setup.__retry > 20) clearInterval(tm); }, 50);
+
+  }
+
+})();
+
 </script>
 </head>
 <body>
@@ -322,10 +366,14 @@ function curStudent(){ return data.find(s=>s.id===current); }
 
 let listQ = '', listExpanded = false;
 function latestTestDate(s){
+  // 2026-10-27 修复：只返回「真实体测日期」。
+  // 原先无体测时回退 createdAt（建档日），导致：
+  //   ① 刚建档、0 次体测的学员被排到「体测时间最新」列表最前面；
+  //   ② 卡片上 0 次体测却显示「最近 <建档日>」，文案自相矛盾。
   let ds = (s.tests||[]).map(t=>t.date||'').filter(Boolean);
   if(ds.length) return ds.sort().slice(-1)[0];
-  return s.createdAt || '';
-}
+  return '';
+  }
 function renderStudents(){
   const box = studentList;
   if(!data.length){ box.innerHTML = '<div class="note">还没有学员，先在上面新建一个。</div>'; renderStudentSelect(); return; }
@@ -333,7 +381,13 @@ function renderStudents(){
   if(listQ){
     arr = arr.filter(s => (s.name||'').indexOf(listQ) >= 0);
   } else {
-    arr.sort((a,b)=> (latestTestDate(b)||'').localeCompare(latestTestDate(a)||''));
+    // 2026-10-27 修复：有体测的排前面（按最近体测日倒序），0 次体测的排后面（按建档日倒序）
+  arr.sort((a,b)=>{
+    const da=latestTestDate(a), db=latestTestDate(b);
+    if(!!da !== !!db) return da ? -1 : 1;
+    if(da) return db.localeCompare(da);
+    return (b.createdAt||'').localeCompare(a.createdAt||'');
+  });
     if(!listExpanded) arr = arr.slice(0, 3);
   }
   const tip = document.getElementById('listTip');
@@ -345,7 +399,7 @@ function renderStudents(){
   }
   box.innerHTML = arr.map(s=>`
     <div class="student ${s.id===current?'active':''}" onclick="selectStudent('${s.id}')">
-      <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测${latestTestDate(s)?' · 最近 '+latestTestDate(s):''}</div></div>
+      <div><div class="nm">${s.name}</div><div class="meta">${s.cls} · ${s.gender} · ${s.tests.length}次体测${latestTestDate(s)?' · 最近 '+latestTestDate(s):(s.createdAt?' · 建档 '+s.createdAt:' · 尚未体测')}</div></div>
       <button class="del" onclick="event.stopPropagation();delStudent('${s.id}')">删除</button>
     </div>`).join("");
   renderStudentSelect();
