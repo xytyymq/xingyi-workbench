@@ -84,6 +84,14 @@
   .ds{font-size:8.5px;margin-left:2px}
   .up{color:var(--green)} .down{color:var(--red)}
   .hint{font-size:10.5px;color:var(--muted);line-height:1.6;margin-top:8px}
+  .stitle{font-size:11px;color:var(--green);font-weight:700;margin:14px 0 4px}
+  .srcrow{display:flex;align-items:center;gap:7px;font-size:10.5px;padding:4px 0}
+  .srcrow .nm{width:66px;color:var(--muted);flex-shrink:0}
+  .srcrow .bar2{flex:1;height:12px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden}
+  .srcrow .bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:5px}
+  .srcrow .ct{width:26px;text-align:right;font-weight:800;color:var(--green)}
+  .streak{display:inline-block;background:rgba(198,249,75,.16);color:var(--green);font-size:10px;
+    font-weight:800;padding:3px 9px;border-radius:999px;margin-top:7px}
   .hint b{color:var(--yellow)}
 
   /* ===== 灯级 ===== */
@@ -179,6 +187,41 @@ function render(rep){
   var wkRevenue = (rep.finance&&rep.finance.week&&rep.finance.week.this_week)||{total:0};
   hints.push('💰 本周营收 ¥'+Math.round(wkRevenue.total||0).toLocaleString('zh-CN'));
 
+  // ---- 社交媒体推广 KPI ----
+  var pr = rep.promo||{};
+  var promoKpi =
+    '<div class="kpi"><div class="n">'+num(pr.today_promo)+'</div><div class="l">今日推广</div></div>'+
+    '<div class="kpi"><div class="n">'+num(pr.today_leads)+'</div><div class="l">今日咨询</div></div>'+
+    '<div class="kpi"><div class="n">'+num(pr.week_promo)+'</div><div class="l">本周次数</div></div>'+
+    '<div class="kpi"><div class="n">'+num(pr.week_leads)+'</div><div class="l">本周咨询</div></div>';
+  var streakHtml = (num(pr.streak)>1) ? '<div><span class="streak">🔥 已连续 '+num(pr.streak)+' 天达成每日推广</span></div>' : '';
+  var promoHint = '本周目标 '+num(pr.target_weekly||5)+' 次（每日至少 1 次）· 本月累计 '+num(pr.month_promo)+' 次 / 咨询 '+num(pr.month_leads)+' 个';
+
+  // ---- ② 业绩与推广表 ----
+  var h2='<table><thead><tr><th>周次</th><th>推广</th><th>咨询</th><th>营收</th><th>报名业绩</th></tr></thead><tbody>';
+  var b2=weeks.map(function(w){
+    var rng2=String(w.label||'').replace(/^第\d+周\s*/,'');
+    return '<tr class="'+(w.is_current?'cur':'')+'"><td><span class="wname">第'+w.idx+'周</span><span class="wsub">'+esc(rng2)+'</span></td>'+
+      '<td>'+num(w.promo)+d(w.delta_promo)+'</td>'+
+      '<td>'+num(w.promo_leads)+d(w.delta_promo_leads)+'</td>'+
+      '<td>¥'+Math.round(num(w.revenue)).toLocaleString('zh-CN')+'</td>'+
+      '<td>¥'+Math.round(num(w.signup_revenue)).toLocaleString('zh-CN')+'</td></tr>';
+  }).join('');
+  var f2='<tr class="tot"><td>本月合计</td><td>'+num(tot.promo)+'</td><td>'+num(tot.promo_leads)+'</td><td>¥'+Math.round(num(tot.revenue)).toLocaleString('zh-CN')+'</td><td>¥'+Math.round(num(tot.signup_revenue)).toLocaleString('zh-CN')+'</td></tr>';
+  var table2 = weeks.length ? h2+b2+f2+'</tbody></table>' : '';
+
+  // ---- 线索来源构成 ----
+  var sm = rep.source_mix||{};
+  var srcHtml='';
+  if(sm.mix && sm.mix.length){
+    var mx=Math.max.apply(null, sm.mix.map(function(x){return x.count;}).concat([1]));
+    srcHtml = sm.mix.map(function(x){
+      var w=Math.max(6, Math.round(x.count/mx*100));
+      return '<div class="srcrow"><span class="nm">'+esc(x.name)+'</span><span class="bar2"><i style="width:'+w+'%"></i></span><span class="ct">'+x.count+'</span></div>';
+    }).join('');
+    srcHtml += '<div class="hint">共 '+sm.total+' 条 · 已标注 '+num(sm.labeled)+' 条 · 未标注 '+num(sm.unlabeled)+' 条（腾讯文档历史线索当时没填来源）</div>';
+  } else { srcHtml='<div class="hint">暂无线索来源数据</div>'; }
+
   // ---- 灯级 ----
   var lights=(rep.lights||[]).slice(0,4).map(function(l){
     var ic=l.level==='red'?'🔴':l.level==='yellow'?'🟡':'🟢';
@@ -207,16 +250,23 @@ function render(rep){
       '<div class="trail"></div>'+
       '<div class="band"></div>'+
     '</div>'+
-    '<div class="sec"><div class="sec-t">本周关键指标（近 7 天）</div>'+
+    '<div class="sec"><div class="sec-t">本周招生漏斗（近 7 天）</div>'+
       '<div class="card"><div class="kpis">'+
         '<div class="kpi"><div class="n">'+s.leads+'</div><div class="l">新线索</div></div>'+
         '<div class="kpi"><div class="n">'+s.trials+'</div><div class="l">试课预约</div></div>'+
         '<div class="kpi"><div class="n">'+s.signups+'</div><div class="l">报名</div></div>'+
         '<div class="kpi"><div class="n">'+s.classes+'</div><div class="l">开课节</div></div>'+
       '</div></div></div>'+
+    '<div class="sec"><div class="sec-t">社交媒体推广（每天至少 1 次）</div>'+
+      '<div class="card"><div class="kpis">'+promoKpi+'</div>'+streakHtml+
+      '<div class="hint">'+promoHint+'</div></div></div>'+
     '<div class="sec"><div class="sec-t">本月每周对比</div>'+
-      '<div class="card">'+(bars?'<div class="bars">'+bars+'</div>':'')+table+
+      '<div class="card">'+(bars?'<div class="bars">'+bars+'</div>':'')+
+      '<div class="stitle">① 招生漏斗</div>'+table+
+      '<div class="stitle">② 业绩与推广</div>'+table2+
       '<div class="hint">'+hints.join('<br>')+'</div></div></div>'+
+    '<div class="sec"><div class="sec-t">线索来源构成（归因）</div>'+
+      '<div class="card">'+srcHtml+'</div></div>'+
     '<div class="sec"><div class="sec-t">红黄绿灯</div><div class="card">'+lights+'</div></div>'+
     '<div class="codecard"><div class="l"><b>星羿体育 · 见证每一次成长</b>校长周报 · 本月每周对比</div>'+
       '<a class="cta" href="weekly-report.html">打开周报看板 →</a></div>'+
