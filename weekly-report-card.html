@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿 · 校长周报</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --navy:#0C1C42; --navy2:#06102C; --green:#C6F94B; --cyan:#56D8F0;
+    --red:#FF6B6B; --yellow:#FFD166; --ok:#3DDC84; --orange:#FF8A3D;
+    --muted:#9fb0d0; --line:rgba(255,255,255,.12);
+  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(120% 80% at 0% 0%,#16306b 0%,var(--navy) 38%,var(--navy2) 100%);
+    color:#fff;min-height:100vh;padding:14px;}
+  .wrap{max-width:460px;margin:0 auto;background:rgba(255,255,255,.04);border:1px solid var(--line);
+    border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.4);position:relative}
+
+  /* ===== 顶部 ===== */
+  .top{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 11px;
+    border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(198,249,75,.12),transparent)}
+  .brand{font-weight:800;font-size:17px;letter-spacing:.5px}
+  .brand b{color:var(--green)}
+  .meta{text-align:right;font-size:10.5px;color:var(--muted);line-height:1.6}
+  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:700}
+  .b-green{background:rgba(61,220,132,.18);color:var(--ok)}
+  .b-yellow{background:rgba(255,209,102,.18);color:var(--yellow)}
+  .b-red{background:rgba(255,107,107,.18);color:var(--red)}
+
+  /* ===== 主视觉（打卡墙规范） ===== */
+  .hero{position:relative;padding:18px 18px 20px;overflow:hidden}
+  .speed{position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,transparent,var(--green) 22%,var(--cyan) 46%,transparent 78%);opacity:.9}
+  .hero .kicker{display:inline-block;font-size:10.5px;font-weight:700;color:var(--navy);
+    background:var(--green);padding:2px 9px;border-radius:999px;margin-bottom:9px;letter-spacing:1px}
+  .hero h1{font-size:40px;line-height:1.02;font-weight:900;letter-spacing:-1px;color:var(--green);
+    text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 26px rgba(198,249,75,.28);-webkit-text-stroke:.4px rgba(6,16,44,.9)}
+  .hero h1 small{display:block;font-size:12px;font-weight:600;color:#fff;letter-spacing:2px;margin-top:6px;
+    text-shadow:none;-webkit-text-stroke:0}
+  .hero .sumline{margin-top:10px;font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:.3px}
+  .racket{position:absolute;right:-26px;bottom:-30px;width:132px;height:132px;opacity:.2}
+  .shuttle{position:absolute;right:74px;top:14px;width:26px;height:26px;opacity:.45;transform:rotate(-18deg)}
+  .band{position:absolute;right:-52px;bottom:-26px;width:190px;height:74px;transform:rotate(-16deg);
+    background:linear-gradient(90deg,rgba(198,249,75,.05),var(--green));opacity:.85;pointer-events:none}
+
+  /* ===== 通用区块 ===== */
+  .sec{padding:0 18px 4px}
+  .sec-t{font-size:13px;font-weight:800;color:var(--green);letter-spacing:1.2px;margin:14px 0 8px;
+    display:flex;align-items:center;gap:6px}
+  .sec-t:before{content:"";width:3px;height:13px;background:var(--green);border-radius:2px;display:inline-block}
+  .card{background:rgba(0,0,0,.2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+
+  /* ===== KPI ===== */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+  .kpi{background:rgba(0,0,0,.26);border-radius:10px;padding:9px 2px;text-align:center}
+  .kpi .n{font-size:22px;font-weight:900;color:var(--green);font-variant-numeric:tabular-nums;line-height:1}
+  .kpi .l{font-size:10px;color:var(--muted);margin-top:4px}
+
+  /* ===== 本月每周对比 ===== */
+  .bars{display:flex;align-items:flex-end;gap:6px;height:56px;margin:2px 0 8px}
+  .bars .col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:3px}
+  .bars .col i{display:block;width:100%;border-radius:3px 3px 0 0;min-height:3px;
+    background:linear-gradient(180deg,rgba(86,216,240,.6),rgba(86,216,240,.22))}
+  .bars .col.cur i{background:linear-gradient(180deg,var(--green),rgba(198,249,75,.3))}
+  .bars .col s{font-size:11px;text-decoration:none;color:var(--muted);font-weight:800}
+  .bars .col.cur s{color:var(--green)}
+  .bars .col b{font-size:9.5px;color:var(--muted);font-weight:500}
+  table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+  th{font-size:9.5px;color:var(--muted);font-weight:500;padding:5px 2px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child{text-align:left;width:84px}
+  td{padding:7px 2px;text-align:right;border-bottom:1px dashed rgba(255,255,255,.08);font-variant-numeric:tabular-nums}
+  td:first-child{text-align:left}
+  tr.cur td{background:rgba(198,249,75,.1)}
+  tr.cur td:first-child{box-shadow:inset 3px 0 0 var(--green)}
+  tr.tot td{border-bottom:none;color:var(--muted);font-size:10.5px;padding-top:8px}
+  .wname{font-weight:800}
+  .wsub{display:block;font-size:8.5px;color:var(--muted);font-weight:400;line-height:1.3}
+  .r-bad{color:var(--red);font-weight:800}
+  .r-ok{color:var(--green);font-weight:800}
+  .r-na{color:var(--muted)}
+  .ds{font-size:8.5px;margin-left:2px}
+  .up{color:var(--green)} .down{color:var(--red)}
+  .hint{font-size:10.5px;color:var(--muted);line-height:1.6;margin-top:8px}
+  .hint b{color:var(--yellow)}
+
+  /* ===== 灯级 ===== */
+  .light{display:flex;gap:7px;align-items:flex-start;padding:7px 9px;border-radius:9px;margin-bottom:5px;
+    font-size:11.5px;line-height:1.45}
+  .light.red{background:rgba(255,107,107,.14);border-left:3px solid var(--red)}
+  .light.yellow{background:rgba(255,209,102,.12);border-left:3px solid var(--yellow)}
+  .light.green{background:rgba(198,249,75,.12);border-left:3px solid var(--green)}
+
+  /* ===== 底部码卡 ===== */
+  .codecard{margin:14px 18px 18px;background:#fff;border-radius:12px;padding:11px 13px;
+    border:2px solid var(--green);display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .codecard .l{font-size:10px;color:#5a6478;line-height:1.5}
+  .codecard .l b{display:block;font-size:12.5px;color:var(--navy);font-weight:800}
+  .cta{background:var(--orange);color:#fff;font-size:11.5px;font-weight:800;padding:7px 13px;border-radius:999px;
+    white-space:nowrap;text-decoration:none;box-shadow:0 4px 14px rgba(255,138,61,.35)}
+  .foot{text-align:center;font-size:10px;color:var(--muted);line-height:1.7;padding:0 18px 16px}
+
+  .savebar{position:fixed;bottom:16px;right:12px;z-index:50;background:var(--green);color:#0C1C42;
+    font-size:13px;font-weight:800;border:0;padding:9px 14px;border-radius:999px;
+    box-shadow:0 4px 16px rgba(0,0,0,.35);cursor:pointer}
+  .load{padding:40px 18px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<button class="savebar" id="saveBtn" type="button">📥 保存图片</button>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <div class="brand"><b>星羿</b> · 校长周报</div>
+      <div class="meta" id="m_date">数据截止 —</div>
+    </div>
+    <div>
+      <span class="badge b-green" id="m_overall">—</span>
+      <div class="meta" id="m_gen">生成 —</div>
+    </div>
+  </div>
+  <div id="body"><div class="load">加载中…</div></div>
+</div>
+<script>
+function esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function num(v){var n=parseFloat(v);return isNaN(n)?0:n;}
+function d(v){if(v===undefined||v===null)return '';if(v>0)return '<span class="ds up">+'+v+'</span>';if(v<0)return '<span class="ds down">'+v+'</span>';return '';}
+
+function render(rep){
+  var mw = rep.month_weeks||{};
+  var weeks = mw.weeks||[];
+  var tot = mw.totals||{};
+  var monthStr = String(mw.month||rep.data_date||'').replace('-','年')+'月';
+
+  document.getElementById('m_date').textContent='数据截止 '+(rep.data_date||'—');
+  document.getElementById('m_gen').textContent='生成 '+(String(rep.generated_at||'—').slice(0,16));
+  var ov = rep.overall;
+  var tagMap={red:'🔴 红灯',yellow:'🟡 黄灯',green:'🟢 绿灯'};
+  var badge=document.getElementById('m_overall');
+  badge.textContent=tagMap[ov]||'—';
+  badge.className='badge '+(ov==='red'?'b-red':ov==='yellow'?'b-yellow':'b-green');
+
+  // ---- 本周 KPI（近 7 天聚合）----
+  var rows=rep.week_rows||[];
+  var s={leads:0,trials:0,arrive:0,signups:0,classes:0};
+  rows.forEach(function(r){s.leads+=num(r.leads);s.trials+=num(r.trials);s.arrive+=num(r.arrive||0);s.signups+=num(r.signups);s.classes+=num(r.classes);});
+
+  // ---- 柱状图 ----
+  var maxSign=Math.max.apply(null,weeks.map(function(w){return num(w.signups);}).concat([1]));
+  var bars=weeks.map(function(w){
+    var h=Math.max(3,Math.round(num(w.signups)/maxSign*38));
+    return '<div class="col'+(w.is_current?' cur':'')+'"><s>'+num(w.signups)+'</s><i style="height:'+h+'px"></i><b>第'+w.idx+'周</b></div>';
+  }).join('');
+
+  // ---- 明细表 ----
+  var head='<table><thead><tr><th>周次</th><th>线索</th><th>试课</th><th>到场</th><th>报名</th><th>开课</th><th>到场率</th></tr></thead><tbody>';
+  var body=weeks.map(function(w){
+    var rate=w.arrive_rate, rc='r-na';
+    if(rate&&rate!=='—'&&num(w.trials)>0){ rc=parseFloat(rate)<80?'r-bad':'r-ok'; }
+    var fill=(w.days_filled<w.days_span)?'<span class="wsub">'+w.days_filled+'/'+w.days_span+'天已填</span>':'';
+    var rng=String(w.label||'').replace(/^第\d+周\s*/,'');
+    return '<tr class="'+(w.is_current?'cur':'')+'"><td><span class="wname">第'+w.idx+'周</span><span class="wsub">'+esc(rng)+'</span>'+fill+'</td>'+
+      '<td>'+num(w.leads)+d(w.delta_leads)+'</td><td>'+num(w.trials)+'</td><td>'+num(w.arrive)+'</td>'+
+      '<td>'+num(w.signups)+d(w.delta_signups)+'</td><td>'+num(w.classes)+d(w.delta_classes)+'</td>'+
+      '<td class="'+rc+'">'+rate+'</td></tr>';
+  }).join('');
+  var totRate=num(tot.trials)>0?Math.round(num(tot.arrive)/num(tot.trials)*100)+'%':'—';
+  var foot='<tr class="tot"><td>本月合计</td><td>'+num(tot.leads)+'</td><td>'+num(tot.trials)+'</td><td>'+num(tot.arrive)+'</td><td>'+num(tot.signups)+'</td><td>'+num(tot.classes)+'</td><td>'+totRate+'</td></tr>';
+  var table = weeks.length ? head+body+foot+'</tbody></table>' : '<div class="hint">暂无本月周度数据</div>';
+
+  // ---- 提示 ----
+  var hints=[];
+  var bad=weeks.filter(function(w){return num(w.trials)>0&&w.arrive_rate&&w.arrive_rate!=='—'&&parseFloat(w.arrive_rate)<80;});
+  if(bad.length) hints.push('⚠️ '+bad.map(function(w){return '第'+w.idx+'周到场率 '+w.arrive_rate;}).join('、')+' 低于 80% 红线 → 周会重点盯试课跟进');
+  var partial=weeks.filter(function(w){return w.days_filled<w.days_span;});
+  if(partial.length) hints.push('ℹ️ '+partial.map(function(w){return '第'+w.idx+'周仅填 '+w.days_filled+'/'+w.days_span+' 天';}).join('、')+"，对比时注意口径");
+  var wkRevenue = (rep.finance&&rep.finance.week&&rep.finance.week.this_week)||{total:0};
+  hints.push('💰 本周营收 ¥'+Math.round(wkRevenue.total||0).toLocaleString('zh-CN'));
+
+  // ---- 灯级 ----
+  var lights=(rep.lights||[]).slice(0,4).map(function(l){
+    var ic=l.level==='red'?'🔴':l.level==='yellow'?'🟡':'🟢';
+    return '<div class="light '+l.level+'"><span>'+ic+'</span><span>'+esc(l.text)+'</span></div>';
+  }).join('') || '<div class="light green"><span>🟢</span><span>本周无异常</span></div>';
+
+  document.getElementById('body').innerHTML =
+    '<div class="hero"><div class="speed"></div>'+
+      '<span class="kicker">周会沟通专用</span>'+
+      '<h1>'+esc(monthStr)+'周报<small>本月每周对比 · 一眼看懂趋势</small></h1>'+
+      '<div class="sumline">'+esc(rep.week_summary||'')+'</div>'+
+      '<svg class="racket" viewBox="0 0 100 100" fill="none" stroke="#C6F94B" stroke-width="2.4">'+
+        '<ellipse cx="50" cy="38" rx="27" ry="32"/><path d="M50 6v64M23 38h54M30 20c8 10 8 26 0 36M70 20c-8 10-8 26 0 36M41 70l-6 14M59 70l6 14" stroke-width="1.2"/>'+
+        '<path d="M44 84h12" stroke-width="3"/></svg>'+
+      '<svg class="shuttle" viewBox="0 0 40 40" fill="#C6F94B"><circle cx="20" cy="27" r="9" opacity=".9"/>'+
+        '<path d="M13 12l14 10M27 12L13 22" stroke="#C6F94B" stroke-width="3.4" stroke-linecap="round" fill="none"/></svg>'+
+      '<div class="band"></div>'+
+    '</div>'+
+    '<div class="sec"><div class="sec-t">本周关键指标（近 7 天）</div>'+
+      '<div class="card"><div class="kpis">'+
+        '<div class="kpi"><div class="n">'+s.leads+'</div><div class="l">新线索</div></div>'+
+        '<div class="kpi"><div class="n">'+s.trials+'</div><div class="l">试课预约</div></div>'+
+        '<div class="kpi"><div class="n">'+s.signups+'</div><div class="l">报名</div></div>'+
+        '<div class="kpi"><div class="n">'+s.classes+'</div><div class="l">开课节</div></div>'+
+      '</div></div></div>'+
+    '<div class="sec"><div class="sec-t">本月每周对比</div>'+
+      '<div class="card">'+(bars?'<div class="bars">'+bars+'</div>':'')+table+
+      '<div class="hint">'+hints.join('<br>')+'</div></div></div>'+
+    '<div class="sec"><div class="sec-t">红黄绿灯</div><div class="card">'+lights+'</div></div>'+
+    '<div class="codecard"><div class="l"><b>星羿体育 · 见证每一次成长</b>校长周报 · 本月每周对比</div>'+
+      '<a class="cta" href="weekly-report.html">打开周报看板 →</a></div>'+
+    '<div class="foot">数据来源：校长日报卡片板 · 招生线索 · 上课记录 · 营收台账<br>本图由每日 08:30 自动化生成，可直接发群 / 周会投屏</div>';
+
+  window.__reportDate = rep.data_date||'latest';
+
+  if(/[?&]shot=1/.test(location.search)){
+    var sb0=document.getElementById('saveBtn'); if(sb0) sb0.style.display='none';
+    var setH=function(){try{document.body.setAttribute('data-shot-h',document.documentElement.scrollHeight);}catch(e){}};
+    setH(); requestAnimationFrame(function(){setH();setTimeout(setH,120);});
+  }
+}
+(function(){
+  var url='data/principal-report.json?_t='+Date.now()+Math.random().toString(36).slice(2,7);
+  fetch(url,{cache:'no-store'}).then(function(r){return r.json();}).then(render).catch(function(e){
+    document.getElementById('body').innerHTML='<div class="load">加载失败：'+(e.message||e)+'<br>请确认 data/principal-report.json 已生成。</div>';
+  });
+})();
+// 保存图片
+(function(){
+  var btn=document.getElementById('saveBtn'); if(!btn) return;
+  btn.addEventListener('click',function(){
+    var fname='星羿校长周报-'+(window.__reportDate||'latest')+'.png';
+    var target=document.querySelector('.wrap');
+    if(typeof html2canvas==='function'&&target){
+      btn.textContent='⏳ 生成中…'; btn.disabled=true;
+      html2canvas(target,{scale:2,backgroundColor:'#0C1C42',logging:false,useCORS:true}).then(function(canvas){
+        var a=document.createElement('a'); a.download=fname; a.href=canvas.toDataURL('image/png');
+        document.body.appendChild(a); a.click(); a.remove();
+        btn.textContent='📥 保存图片'; btn.disabled=false;
+      }).catch(function(){ btn.textContent='📥 保存图片'; btn.disabled=false; window.location.href='weekly-report-card-latest.png'; });
+    }else{ window.location.href='weekly-report-card-latest.png'; }
+  });
+})();
+</script>
+<script src="html2canvas.min.js"></script>
+</body>
+</html>
