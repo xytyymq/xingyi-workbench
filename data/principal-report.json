@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26 16:11",
+  "generated_at": "2026-10-26 16:21",
   "data_date": "2026-10-25",
   "overall": "yellow",
   "lights": [
@@ -101,7 +101,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "邓泽兮、朱梓檬、邓安淇",
+  "callback": "段梦迪、盛呈栩、匡景辰",
   "video": {
     "today": 0.0,
     "this_week": 2.0,
@@ -378,7 +378,12 @@
     "total": 37,
     "labeled": 0,
     "unlabeled": 37,
-    "mix": []
+    "mix": [
+      {
+        "name": "未标注",
+        "count": 37
+      }
+    ]
   },
   "kpi": {
     "trial_rate_red": "80%",
