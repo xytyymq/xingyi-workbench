@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>星羿体育 · 招生线索登记</title>
+<style>
+:root{--navy:#0C1C42;--navy2:#06102C;--green:#C6F94B;--cyan:#56D8F0;--orange:#FF8A3D;
+  --white:#fff;--muted:#9fb0d0;--red:#FF6B6B;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(160deg,var(--navy),var(--navy2));color:var(--white);
+  min-height:100vh;padding:16px;max-width:480px;margin:0 auto}
+.header{display:flex;justify-content:space-between;align-items:flex-end;
+  padding:8px 4px 16px;border-bottom:1px solid rgba(255,255,255,.1)}
+.brand{font-size:18px;font-weight:700}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+.date{font-size:12px;color:var(--cyan)}
+.section-title{font-size:13px;color:var(--green);font-weight:700;margin:20px 4px 10px;letter-spacing:1px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:14px;margin-bottom:10px}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.card-title{font-size:14px;font-weight:600}
+.tag{font-size:10px;padding:2px 7px;border-radius:20px;background:rgba(86,216,240,.18);color:var(--cyan)}
+.field{margin-bottom:11px}
+.field:last-child{margin-bottom:0}
+.field label{font-size:12px;color:var(--muted);display:block;margin-bottom:5px}
+.field input,.field textarea,.field select{width:100%;background:rgba(0,0,0,.28);
+  border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:11px;color:var(--white);
+  font-size:15px;font-family:inherit}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--green)}
+.field select{color-scheme:dark}
+.field textarea{resize:vertical;min-height:52px;line-height:1.5}
+input[type=date]{color-scheme:dark}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hint{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.55}
+.hint b{color:var(--cyan)}
+.req{color:var(--orange);margin-left:3px}
+.cta{width:100%;background:var(--green);color:#0C1C42;border:0;border-radius:12px;padding:14px;
+  font-size:15px;font-weight:800;font-family:inherit;margin-top:6px}
+.cta:disabled{opacity:.55}
+.cta.ghost{background:transparent;color:var(--cyan);border:1px solid rgba(86,216,240,.4)}
+/* 线索列表 */
+.lead{background:rgba(0,0,0,.22);border:1px solid rgba(255,255,255,.1);border-radius:11px;
+  padding:11px 12px;margin-bottom:8px}
+.lead.warn{border-color:rgba(255,107,107,.55);background:rgba(255,107,107,.10)}
+.lead.done{opacity:.6}
+.lead-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lead-name{font-weight:700;font-size:14px}
+.lead-src{font-size:10px;padding:2px 8px;border-radius:20px;background:rgba(198,249,75,.16);color:var(--green);font-weight:700}
+.lead-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.6}
+.lead-meta b{color:var(--white);font-weight:600}
+.lead-alert{font-size:11px;color:var(--red);font-weight:700;margin-top:5px}
+.st{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700}
+.st-未联系{background:rgba(255,107,107,.18);color:#FF9C9C}
+.st-已联系{background:rgba(86,216,240,.18);color:var(--cyan)}
+.st-已约试课{background:rgba(255,209,102,.18);color:#FFD166}
+.st-已试课{background:rgba(255,209,102,.18);color:#FFD166}
+.st-已报名{background:rgba(61,220,132,.18);color:#3DDC84}
+.st-已流失{background:rgba(159,176,208,.16);color:var(--muted)}
+.mini{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:var(--white);
+  border-radius:8px;padding:5px 10px;font-size:11px;font-weight:700;font-family:inherit;margin-top:7px}
+.mini:active{background:rgba(198,249,75,.2)}
+.empty{text-align:center;color:var(--muted);font-size:12px;padding:22px 10px}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:var(--green);
+  color:#0a1a00;padding:12px 20px;border-radius:24px;font-weight:700;font-size:13px;opacity:0;
+  transition:.3s;pointer-events:none;max-width:90%;text-align:center;z-index:99}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">星羿体育<small>招生线索登记 · 带来源归因</small></div>
+  <div class="date" id="hdDate">—</div>
+</div>
+
+<div class="section-title">登记新线索</div>
+<div class="card">
+  <div class="field"><label>登记日期</label><input type="date" id="f_date"></div>
+  <div class="grid2">
+    <div class="field"><label>孩子姓名<span class="req">*</span></label><input type="text" id="f_name" placeholder="如 王小明"></div>
+    <div class="field"><label>年龄</label><input type="number" id="f_age" min="3" max="18" placeholder="如 8"></div>
+  </div>
+  <div class="grid2">
+    <div class="field"><label>家长姓名</label><input type="text" id="f_parent" placeholder="选填"></div>
+    <div class="field"><label>联系电话<span class="req">*</span></label><input type="tel" id="f_phone" placeholder="选填"></div>
+  </div>
+  <div class="field"><label>来源渠道<span class="req">*</span></label>
+    <select id="f_source">
+      <option value="">请选择来源…</option>
+      <option>抖音</option>
+      <option>小红书</option>
+      <option>视频号</option>
+      <option>微信朋友圈</option>
+      <option>老带新</option>
+      <option>地推</option>
+      <option>异业合作</option>
+      <option>到店咨询</option>
+      <option>其他</option>
+    </select>
+  </div>
+  <div class="grid2">
+    <div class="field"><label>意向班型</label><input type="text" id="f_class" placeholder="如 周六上午十点"></div>
+    <div class="field"><label>状态</label>
+      <select id="f_status">
+        <option>未联系</option><option>已联系</option><option>已约试课</option>
+        <option>已试课</option><option>已报名</option><option>已流失</option>
+      </select>
+    </div>
+  </div>
+  <div class="field"><label>试课日期</label><input type="date" id="f_trial"></div>
+  <div class="field"><label>跟进记录</label><textarea id="f_note" placeholder="家长原话 / 意向 / 下次跟进时间"></textarea></div>
+  <div class="field"><label>跟进人</label><input type="text" id="f_owner" placeholder="如 王双双"></div>
+  <button class="cta" id="btnSave" type="button">保存并同步云端</button>
+  <div class="hint">登记日期自动填今天、最后跟进日期自动同步 —— 这样周报的「48h 未跟进」和「来源构成」才能真正算出来。</div>
+</div>
+
+<div class="section-title">已登记线索（按登记日期倒序）</div>
+<div class="card">
+  <div id="leadList"><div class="empty">加载中…</div></div>
+  <div class="hint" id="sumHint"></div>
+</div>
+
+<div class="section-title">历史档案</div>
+<div class="card">
+  <div class="hint">2026-10-26 之前登记的 37 条线索在腾讯文档《招生线索登记》里，来源渠道未填，报表中计为「未标注」。新线索从这里登记即可。</div>
+  <a class="cta ghost" style="display:block;text-align:center;text-decoration:none;line-height:46px" href="https://docs.qq.com/sheet/DnBYNQ2JrZ2gLWJX/view" target="_blank" rel="noopener">打开腾讯文档历史档案 →</a>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="xy-auth.js?v=20261020"></script>
+
+<script>
+
+// ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
+
+// 校长浏览器可能缓存旧版 xy-auth.js（无代理拦截）→ 占位令牌直连 GitHub → 401。
+
+// 此内联段与 xy-auth.js 的拦截互斥（__proxied 标志），旧版 xy-auth 时由这里兜底。
+
+(function () {
+
+  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+
+  var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
+
+  var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
+
+  function setup() {
+
+    if (!window.XYGate || window.XYGate.__proxied) return false;
+
+    window.XYGate.__proxied = true;
+
+    var _fetch = window.fetch ? window.fetch.bind(window) : null;
+
+    if (!_fetch) return true;
+
+    window.fetch = function (input, opts) {
+
+      opts = opts || {};
+
+      var url = (typeof input === 'string') ? input : (input && input.url) || '';
+
+      if (typeof url === 'string' && url.indexOf(GH_BASE) === 0) {
+
+        var rest = url.slice(GH_BASE.length);
+
+        var q = rest.indexOf('?');
+
+        var path = q >= 0 ? rest.slice(0, q) : rest;
+
+        var method = (opts.method || 'GET').toUpperCase();
+
+        if (method === 'GET') {
+
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+
+            method: 'GET',
+
+            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
+
+          });
+
+        }
+
+        if (method === 'PUT') {
+
+          var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
+
+          var nb = JSON.stringify({
+
+            path: path,
+
+            message: body.message,
+
+            content: body.content,
+
+            sha: body.sha,
+
+            branch: body.branch || 'main'
+
+          });
+
+          return _fetch(XY_PROXY + '/github-save', {
+
+            method: 'POST',
+
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
+
+            body: nb
+
+          });
+
+        }
+
+      }
+
+      return _fetch.apply(null, arguments);
+
+    };
+
+    return true;
+
+  }
+
+  if (!setup()) {
+
+    // xy-auth.js 是旧版（没注册代理）→ 立即兜底注册
+
+    setup.__retry = 0;
+
+    var tm = setInterval(function () {
+
+      if (setup() || ++setup.__retry > 20) clearInterval(tm);
+
+    }, 50);
+
+  }
+
+})();
+
+</script>
+<script>
+var XY_TIMEOUT=20000;
+
+function withTimeout(p, ms, label){
+
+  return new Promise(function(res, rej){
+
+    var t=setTimeout(function(){ rej(new Error(label||'请求超时')); }, ms);
+
+    p.then(function(v){ clearTimeout(t); res(v); }, function(e){ clearTimeout(t); rej(e); });
+
+  });
+
+}
+
+function ghFetch(url, opts){
+
+  // 注意：内联代理不转发 AbortController signal，故用「手动超时 reject」而非 abort，确保挂起也能兜住
+
+  return withTimeout(fetch(url, opts||{}), XY_TIMEOUT, '云端请求超时（'+Math.round(XY_TIMEOUT/1000)+'s）');
+
+}
+
+function ghRead(path){
+
+  return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path+'?ref='+BRANCH+'&_t='+Date.now()+Math.random().toString(36).slice(2,7),
+
+    {headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json'}})
+
+  .then(function(r){
+
+    if(r.status===404) return {list:[],sha:null};
+
+    if(!r.ok) throw new Error('读取云端失败 HTTP '+r.status);
+
+    return r.json().then(function(m){
+
+      var list=[]; try{ var t=b64d(m.content||''); list=t?JSON.parse(t):[]; }catch(e){ list=[]; }
+
+      return {list:Array.isArray(list)?list:[],sha:m.sha};
+
+    });
+
+  });
+
+}
+
+function ghSave(path, mergeFn, msg, tries){
+
+  if(tries==null) tries=2;
+
+  return ghRead(path).then(function(st){
+
+    var merged=mergeFn(st.list||[]);
+
+    var body={message:msg,content:b64e(JSON.stringify(merged,null,2)),branch:BRANCH};
+
+    if(st.sha) body.sha=st.sha;
+
+    return ghFetch('https://api.github.com/repos/'+REPO+'/contents/'+path,{
+
+      method:'PUT',
+
+      headers:{Authorization:'Bearer '+_gt(),Accept:'application/vnd.github+json','Content-Type':'application/json'},
+
+      body:JSON.stringify(body)
+
+    }).then(function(rr){
+
+      if(rr.status===200||rr.status===201) return true;
+
+      if((rr.status===409||rr.status===422) && tries>1){
+
+        // 云端刚被别处（另一台设备/夜间脚本）更新，等一拍重新拉最新内容再合并写一次
+
+        return new Promise(function(res){setTimeout(res,700);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+
+      }
+
+      if(rr.status>=500 && tries>1){
+
+        // 代理/服务器偶发 5xx（如 502 Bad Gateway），退避后重试，避免随机失败
+
+        return new Promise(function(res){setTimeout(res,800*tries);}).then(function(){ return ghSave(path, mergeFn, msg, tries-1); });
+
+      }
+
+      return rr.text().then(function(t){ throw new Error('写入失败 HTTP '+rr.status+' '+String(t).slice(0,110)); });
+
+    });
+
+  });
+
+}
+</script>
+<script>
+
+var REPO='xytyymq/xingyi-workbench', PATH='data/leads.json', BRANCH='main';
+var SOURCE_OPTIONS=['抖音','小红书','视频号','微信朋友圈','老带新','地推','异业合作','到店咨询','其他'];
+var STATUS_OPTIONS=['未联系','已联系','已约试课','已试课','已报名','已流失'];
+var CLOSED=['已报名','已流失'];
+
+function $(id){return document.getElementById(id);}
+function _gt(){ return (window.XYGate && XYGate.ghToken) ? XYGate.ghToken() : 'proxy'; }
+function val(id){return $(id).value.trim();}
+function todayISO(){return new Date().toISOString().slice(0,10);}
+function toast(msg){var t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2600);}
+function b64e(s){return btoa(unescape(encodeURIComponent(s)));}
+function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+
+var LEADS=[];
+
+function collectLead(){
+  return {
+    '登记日期': val('f_date'),
+    '孩子姓名': val('f_name'),
+    '年龄': val('f_age'),
+    '家长姓名': val('f_parent'),
+    '联系电话': val('f_phone'),
+    '来源渠道': val('f_source'),
+    '意向班型': val('f_class'),
+    '状态': val('f_status')||'未联系',
+    '试课日期': val('f_trial'),
+    '跟进记录': val('f_note'),
+    '最后跟进日期': val('f_date'),
+    '跟进人': val('f_owner')
+  };
+}
+
+function renderList(){
+  var box=$('leadList');
+  if(!LEADS.length){ box.innerHTML='<div class="empty">还没有登记过线索</div>'; $('sumHint').textContent=''; return; }
+  var now=Date.now();
+  var html=LEADS.slice().reverse().map(function(r,idx){
+    var src=r['来源渠道']||'未标注';
+    var st=r['状态']||'未联系';
+    var last=r['最后跟进日期']||r['登记日期']||'';
+    var over=false;
+    if(last){ var t=Date.parse(last+'T00:00:00'); if(!isNaN(t)) over=(now-t)/86400000>2; }
+    var isClosed=CLOSED.indexOf(st)>=0;
+    var cls='lead'+(isClosed?' done':(over?' warn':''));
+    var alert = over&&!isClosed ? '<div class="lead-alert">⚠️ 已 '+Math.floor((now-Date.parse(last+'T00:00:00'))/86400000)+' 天未跟进（超 48h）</div>' : '';
+    var act = (st==='未联系'||st==='已联系'||st==='已约试课') ?
+      '<button class="mini" data-i="'+idx+'" data-act="touch">标记已跟进</button> ' : '';
+    var act2 = (st!=='已报名'&&st!=='已流失') ?
+      '<button class="mini" data-i="'+idx+'" data-act="sign">已报名</button> ' : '';
+    return '<div class="'+cls+'"><div class="lead-top"><span class="lead-name">'+esc(r['孩子姓名']||'（未填姓名）')+
+      (r['年龄']?' · '+esc(r['年龄'])+'岁':'')+'</span><span class="st st-'+esc(st)+'">'+esc(st)+'</span></div>'+
+      '<div class="lead-meta">来源 <b>'+esc(src)+'</b>'+(r['意向班型']?' · 意向 '+esc(r['意向班型']):'')+
+      (r['联系电话']?' · '+esc(r['联系电话']):'')+'<br>登记 '+(r['登记日期']||'—')+' · 最后跟进 '+(last||'—')+
+      (r['跟进人']?' · '+esc(r['跟进人']):'')+'</div>'+alert+act+act2+'</div>';
+  }).join('');
+  box.innerHTML=html;
+  var cnt={}; LEADS.forEach(function(r){ var s=r['来源渠道']||'未标注'; cnt[s]=(cnt[s]||0)+1; });
+  var mix=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}).map(function(k){return k+' '+cnt[k];}).join(' · ');
+  $('sumHint').innerHTML='共 <b>'+LEADS.length+'</b> 条 · 来源构成：'+esc(mix);
+}
+
+function loadLeads(){
+  return ghRead(PATH).then(function(st){
+    LEADS = (st.list&&st.list.length)? st.list : [];
+    renderList();
+  }).catch(function(e){ $('leadList').innerHTML='<div class="empty">读取失败：'+esc(e.message||e)+'</div>'; });
+}
+
+$('btnSave').addEventListener('click',function(){
+  var btn=this, rec=collectLead();
+  if(!rec['孩子姓名']){ toast('请填孩子姓名'); return; }
+  if(!rec['来源渠道']){ toast('请选择来源渠道 —— 这是归因的关键，不选就白登记了'); $('f_source').style.border='2px solid #FF6B6B'; return; }
+  if(!rec['联系电话']){ toast('建议填联系电话，方便回访'); }
+  if(btn._busy){ toast('正在上传，请稍等…'); return; }
+  btn._busy=true; btn.disabled=true; btn.textContent='⏳ 正在上传…';
+  ghSave(PATH, function(list){
+    var arr=list||[];
+    // 同名同电话视为同一人：覆盖更新，不重复新增
+    var hit=-1;
+    arr.forEach(function(r,i){ if(r['孩子姓名']===rec['孩子姓名'] && (r['联系电话']||'')===(rec['联系电话']||'')) hit=i; });
+    if(hit>=0){ arr[hit]=Object.assign({},arr[hit],rec); }
+    else arr.push(rec);
+    return arr;
+  }, 'chore: 招生线索登记 '+rec['登记日期']+' '+rec['孩子姓名'])
+  .then(function(){
+    btn._busy=false; btn.disabled=false; btn.textContent='保存并同步云端';
+    toast('已保存并同步云端 ✓');
+    ['f_name','f_age','f_parent','f_phone','f_class','f_trial','f_note'].forEach(function(id){ $(id).value=''; });
+    $('f_source').value=''; $('f_status').value='未联系';
+    return loadLeads();
+  }).catch(function(e){
+    btn._busy=false; btn.disabled=false; btn.textContent='保存并同步云端';
+    toast('保存失败：'+String(e.message||e).slice(0,90));
+  });
+});
+
+// 列表操作：标记已跟进 / 已报名
+$('leadList').addEventListener('click',function(ev){
+  var b=ev.target.closest('button[data-act]');
+  if(!b) return;
+  var i=parseInt(b.getAttribute('data-i'),10);
+  var act=b.getAttribute('data-act');
+  var r=LEADS[LEADS.length-1-i];
+  if(!r) return;
+  var upd=Object.assign({},r);
+  if(act==='touch'){ upd['最后跟进日期']=todayISO(); if(upd['状态']==='未联系') upd['状态']='已联系'; }
+  if(act==='sign'){ upd['状态']='已报名'; upd['最后跟进日期']=todayISO(); }
+  b.disabled=true; b.textContent='…';
+  ghSave(PATH, function(list){
+    var arr=(list||[]).slice();
+    var j=-1;
+    arr.forEach(function(x,k){ if(x['孩子姓名']===r['孩子姓名'] && (x['联系电话']||'')===(r['联系电话']||'')) j=k; });
+    if(j>=0) arr[j]=upd;
+    return arr;
+  }, 'chore: 线索跟进更新 '+(r['孩子姓名']||'')).then(function(){
+    toast(act==='sign'?'已标记报名 ✓':'已记录跟进 ✓');
+    return loadLeads();
+  }).catch(function(e){ toast('操作失败：'+String(e.message||e).slice(0,80)); loadLeads(); });
+});
+
+(function(){
+  $('hdDate').textContent=new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+  $('f_date').value=todayISO();
+  loadLeads();
+})();
+
+</script>
+</body>
+</html>
