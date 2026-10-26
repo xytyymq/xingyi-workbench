@@ -69,19 +69,16 @@ def shoot(chrome, height, out_png):
 
 
 def _read_full(resp):
-    """分块读完响应，处理 IncompleteRead（长连接被掐断）。"""
+    """分块读完响应。
+    注意：本机到 api.github.com 的连接会在响应中途被掐断（声明 951 字节却只吐 601 字节），
+    抛出 IncompleteRead。此时不能拿"半截数据"去解析 JSON —— 必须把异常抛给上层重试，
+    否则会得到 JSONDecodeError 这类误导性报错。"""
     raw = b""
     while True:
-        try:
-            buf = resp.read(65536)
-            if not buf:
-                break
-            raw += buf
-        except Exception as e:
-            partial = getattr(e, "partial", None)
-            if partial:
-                raw += partial
+        buf = resp.read(65536)
+        if not buf:
             break
+        raw += buf
     return raw
 
 
