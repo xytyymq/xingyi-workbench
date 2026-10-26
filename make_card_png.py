@@ -7,7 +7,7 @@
  3) 上传到仓库 report-card-latest.png + report-card-<data_date>.png
 全部 best-effort：任何一步失败只打印日志，不抛异常、不阻断主流程。
 """
-import base64, glob, json, os, re, shutil, subprocess, sys, tempfile, urllib.request, urllib.error
+import base64, glob, json, os, re, shutil, subprocess, sys, tempfile, time, urllib.request, urllib.error
 
 REPO = "xytyymq/xingyi-workbench"
 BRANCH = "main"
@@ -67,6 +67,24 @@ def shoot(chrome, height, out_png):
     return os.path.exists(out_png) and os.path.getsize(out_png) > 20000
 
 
+
+def _read_full(resp):
+    """分块读完响应，处理 IncompleteRead（长连接被掐断）。"""
+    raw = b""
+    while True:
+        try:
+            buf = resp.read(65536)
+            if not buf:
+                break
+            raw += buf
+        except Exception as e:
+            partial = getattr(e, "partial", None)
+            if partial:
+                raw += partial
+            break
+    return raw
+
+
 def gh_api(method, path, data=None):
     url = f"https://api.github.com/repos/{REPO}/contents/{path}?ref={BRANCH}"
     req = urllib.request.Request(url, method=method)
@@ -78,15 +96,33 @@ def gh_api(method, path, data=None):
     if data is not None:
         req.add_header("Content-Type", "application/json")
         req.data = json.dumps(data).encode("utf-8")
-    try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            return json.loads(resp.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
+    last = None
+    for attempt in range(4):
         try:
-            return json.loads(e.read().decode("utf-8"))
-        except Exception:
-            return {"error": str(e)}
-
+            with urllib.request.urlopen(req, timeout=120) as resp:
+                return json.loads(_read_full(resp).decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            try:
+                body = json.loads(e.read().decode("utf-8"))
+            except Exception:
+                body = {"error": str(e)}
+            if e.code in (409, 422) and attempt < 3:
+                time.sleep(1.5 * (attempt + 1))
+                continue
+            return body
+        except Exception as e:
+            last = f"{type(e).__name__}: {e}"
+            print(f"    [retry {attempt+1}/3] {last}")
+            time.sleep(2.0 * (attempt + 1))
+            # 重建请求（urllib.Request 的 data 不可复用）
+            req = urllib.request.Request(url, method=method)
+            req.add_header("Authorization", "Bearer " + tok)
+            req.add_header("Accept", "application/vnd.github+json")
+            req.add_header("User-Agent", "workbuddy-card-png")
+            if data is not None:
+                req.add_header("Content-Type", "application/json")
+                req.data = json.dumps(data).encode("utf-8")
+    return {"error": str(last)}
 
 def data_date():
     j = gh_api("GET", "data/principal-report.json")
