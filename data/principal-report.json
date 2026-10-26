@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-26 15:01（营收自动刷新）",
+  "generated_at": "2026-10-26 15:16",
   "data_date": "2026-10-25",
   "overall": "yellow",
   "lights": [
@@ -21,10 +21,10 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 16920.0,
-      "month_count": 10,
+      "month_amount": 0,
+      "month_count": 0,
       "goal": 28800,
-      "goal_rate": "59%",
+      "goal_rate": "0%",
       "note": ""
     },
     "revenue": {
@@ -77,69 +77,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 33,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": false,
-          "msg": "11 笔类型越界"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=13855 = Σby_type=13855"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "7 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [],
@@ -156,7 +93,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "匡景辰、高筠皓、段梦迪",
+  "callback": "邓安淇、匡景辰、朱梓檬",
   "video": {
     "today": 0.0,
     "this_week": 2.0,
@@ -217,6 +154,7 @@
       "date": "10-19",
       "leads": 0.0,
       "trials": 0.0,
+      "arrive": 0.0,
       "signups": 0.0,
       "classes": 0.0
     },
@@ -224,6 +162,7 @@
       "date": "10-20",
       "leads": 0.0,
       "trials": 1.0,
+      "arrive": 1.0,
       "signups": 0.0,
       "classes": 2.0
     },
@@ -231,13 +170,15 @@
       "date": "10-21",
       "leads": 0.0,
       "trials": 0.0,
+      "arrive": 0.0,
       "signups": 0.0,
       "classes": 0.0
     },
     {
       "date": "10-22",
       "leads": 0.0,
-      "trials": -1.0,
+      "trials": 0.0,
+      "arrive": 0.0,
       "signups": 0.0,
       "classes": 2.0
     },
@@ -245,6 +186,7 @@
       "date": "10-23",
       "leads": 0.0,
       "trials": 0.0,
+      "arrive": 0.0,
       "signups": 0.0,
       "classes": 1.0
     },
@@ -252,6 +194,7 @@
       "date": "10-24",
       "leads": 3.0,
       "trials": 3.0,
+      "arrive": 0.0,
       "signups": 0.0,
       "classes": 5.0
     },
@@ -259,11 +202,119 @@
       "date": "10-25",
       "leads": 2.0,
       "trials": 1.0,
+      "arrive": 1.0,
       "signups": 2.0,
       "classes": 4.0
     }
   ],
-  "week_summary": "本周合计：新线索 5 · 报名 2 · 开课 14 节",
+  "week_summary": "本周合计：新线索 5 · 试课 5 · 报名 2 · 开课 14 节",
+  "month_weeks": {
+    "month": "2026-10",
+    "weeks": [
+      {
+        "idx": 1,
+        "label": "第1周 09/28–10/04",
+        "start": "2026-09-28",
+        "end": "2026-10-04",
+        "leads": 6.0,
+        "trials": 14.0,
+        "arrive": 13.0,
+        "signups": 2.0,
+        "classes": 7.0,
+        "arrive_rate": "93%",
+        "days_filled": 4,
+        "days_span": 4,
+        "is_current": false
+      },
+      {
+        "idx": 2,
+        "label": "第2周 10/05–10/11",
+        "start": "2026-10-05",
+        "end": "2026-10-11",
+        "leads": 4.0,
+        "trials": 31.0,
+        "arrive": 31.0,
+        "signups": 0.0,
+        "classes": 15.0,
+        "arrive_rate": "100%",
+        "days_filled": 7,
+        "days_span": 7,
+        "is_current": false,
+        "delta_leads": -2.0,
+        "delta_trials": 17.0,
+        "delta_arrive": 18.0,
+        "delta_signups": -2.0,
+        "delta_classes": 8.0
+      },
+      {
+        "idx": 3,
+        "label": "第3周 10/12–10/18",
+        "start": "2026-10-12",
+        "end": "2026-10-18",
+        "leads": 0.0,
+        "trials": 2.0,
+        "arrive": 2.0,
+        "signups": 2.0,
+        "classes": 10.0,
+        "arrive_rate": "100%",
+        "days_filled": 6,
+        "days_span": 7,
+        "is_current": false,
+        "delta_leads": -4.0,
+        "delta_trials": -29.0,
+        "delta_arrive": -29.0,
+        "delta_signups": 2.0,
+        "delta_classes": -5.0
+      },
+      {
+        "idx": 4,
+        "label": "第4周 10/19–10/25",
+        "start": "2026-10-19",
+        "end": "2026-10-25",
+        "leads": 5.0,
+        "trials": 5.0,
+        "arrive": 2.0,
+        "signups": 2.0,
+        "classes": 14.0,
+        "arrive_rate": "40%",
+        "days_filled": 7,
+        "days_span": 7,
+        "is_current": true,
+        "delta_leads": 5.0,
+        "delta_trials": 3.0,
+        "delta_arrive": 0.0,
+        "delta_signups": 0.0,
+        "delta_classes": 4.0
+      },
+      {
+        "idx": 5,
+        "label": "第5周 10/26–11/01",
+        "start": "2026-10-26",
+        "end": "2026-11-01",
+        "leads": 0,
+        "trials": 0,
+        "arrive": 0,
+        "signups": 0,
+        "classes": 0,
+        "arrive_rate": "—",
+        "days_filled": 0,
+        "days_span": 6,
+        "is_current": false,
+        "delta_leads": -5.0,
+        "delta_trials": -5.0,
+        "delta_arrive": -2.0,
+        "delta_signups": -2.0,
+        "delta_classes": -14.0
+      }
+    ],
+    "totals": {
+      "leads": 15.0,
+      "trials": 52.0,
+      "arrive": 48.0,
+      "signups": 6.0,
+      "classes": 46.0
+    }
+  },
   "kpi": {
     "trial_rate_red": "80%",
     "lead_stale": "48h",
