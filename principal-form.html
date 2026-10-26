@@ -75,16 +75,16 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 <div class="section-title">经营结果</div>
 <div class="card">
-  <div class="field"><label>开课节数</label><input type="number" id="f_lessons" placeholder="0"></div>
+  <div class="field"><label>开课节数</label><input type="number" id="f_lessons" min="0" placeholder="0"></div>
 </div>
 
 <div class="section-title">招生漏斗</div>
 <div class="card">
   <div class="grid2">
-    <div class="field"><label>新线索</label><input type="number" id="f_lead" placeholder="0"></div>
-    <div class="field"><label>试课预约</label><input type="number" id="f_book" placeholder="0"></div>
-    <div class="field"><label>试课到场</label><input type="number" id="f_show" placeholder="0"></div>
-    <div class="field"><label>今日报名</label><input type="number" id="f_sign" placeholder="0"></div>
+    <div class="field"><label>新线索</label><input type="number" id="f_lead" min="0" placeholder="0"></div>
+    <div class="field"><label>试课预约</label><input type="number" id="f_book" min="0" placeholder="0"></div>
+    <div class="field"><label>试课到场</label><input type="number" id="f_show" min="0" placeholder="0"></div>
+    <div class="field"><label>今日报名</label><input type="number" id="f_sign" min="0" placeholder="0"></div>
   </div>
   <div class="funnel" id="funnel"></div>
   <div class="hint">线索 → 预约 → 到场 → 报名，填数自动画漏斗。</div>
@@ -94,13 +94,13 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 <div class="card">
   <div class="card-head"><span class="card-title">🎬 入学视频</span><span class="tag">媒体库</span></div>
   <div class="grid2">
-    <div class="field"><label>今日新增条数</label><input type="number" id="f_video" placeholder="0"></div>
+    <div class="field"><label>今日新增条数</label><input type="number" id="f_video" min="0" placeholder="0"></div>
     <div class="field"><label>最新一条标题</label><input type="text" id="f_video_title" placeholder="如 小宇启蒙第3课"></div>
   </div>
 </div>
 <div class="card">
   <div class="card-head"><span class="card-title">💬 家长沟通</span><span class="tag">家长消息</span></div>
-  <div class="field"><label>今日触达家长数</label><input type="number" id="f_touch" placeholder="0"></div>
+  <div class="field"><label>今日触达家长数</label><input type="number" id="f_touch" min="0" placeholder="0"></div>
   <div class="field"><label>反馈摘要</label><textarea id="f_fb" placeholder="家长原话 / 诉求点，一句话即可"></textarea></div>
 </div>
 
@@ -123,7 +123,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 <div class="card">
   <div class="card-head"><span class="card-title">🎯 体测邀约（考核校长）</span><span class="tag">不计入营收</span></div>
   <div class="grid2">
-    <div class="field"><label>今日体测邀约次数</label><input type="number" id="f_sal_test" placeholder="0"></div>
+    <div class="field"><label>今日体测邀约次数</label><input type="number" id="f_sal_test" min="0" placeholder="0"></div>
   </div>
   <div class="hint">体测邀约是<b>考核校长工作</b>的指标（工资页按本月完成÷66 计 KPI），<b>不计入营收</b>。营收请在上方「营收台账」逐笔登记，工资页会据此自动汇总课程实收 / 教练招生业绩 / 场地收入。</div>
 </div>
@@ -369,22 +369,52 @@ function drawFunnel(){
 }
 fIds.forEach(function(id){$(id).addEventListener('input',drawFunnel);});
 
+// ===== 负数拦截（2026-10-26 大哥口径：计数类字段一律不许填负数）=====
+var NUM_FIELDS=[
+  {id:'f_lessons',label:'开课节数'},{id:'f_lead',label:'新线索'},
+  {id:'f_book',label:'试课预约'},{id:'f_show',label:'试课到场'},
+  {id:'f_sign',label:'今日报名'},{id:'f_video',label:'入学视频新增'},
+  {id:'f_touch',label:'家长沟通触达'},{id:'f_sal_test',label:'体测邀约次数'}
+];
+// 返回负数字段列表（同时给标红）
+function checkNegatives(){
+  var bad=[];
+  NUM_FIELDS.forEach(function(f){
+    var el=$(f.id); if(!el) return;
+    var raw=el.value.trim();
+    var isBad = raw!=='' && !isNaN(parseFloat(raw)) && parseFloat(raw)<0;
+    el.style.border = isBad ? '2px solid #FF6B6B' : '';
+    if(isBad) bad.push(f.label+'('+raw+')');
+  });
+  return bad;
+}
+NUM_FIELDS.forEach(function(f){
+  var el=$(f.id); if(el) el.addEventListener('input',function(){checkNegatives();});
+});
+// 计数取数：负数按 0（兜底，防本机缓存/脚本绕过 UI 直写）
+function nn(id){
+  var v=val(id);
+  if(v==='') return '0';
+  var n=parseFloat(v);
+  return (isNaN(n)||n<0) ? '0' : String(n);
+}
+
 // 收集（列名 = 腾讯文档表头）
 function collect(){
   var rec={};
   rec[COLS.date]=val('f_date');
   rec[COLS.who]=val('f_who');
-  rec[COLS.lead]=val('f_lead')||'0';
-  rec[COLS.book]=val('f_book')||'0';
-  rec[COLS.show]=val('f_show')||'0';
-  rec[COLS.sign]=val('f_sign')||'0';
-  rec[COLS.lessons]=val('f_lessons')||'0';
+  rec[COLS.lead]=nn('f_lead');
+  rec[COLS.book]=nn('f_book');
+  rec[COLS.show]=nn('f_show');
+  rec[COLS.sign]=nn('f_sign');
+  rec[COLS.lessons]=nn('f_lessons');
   rec[COLS.note]=val('f_note');
-  rec[COLS.video]=val('f_video')||'0';
+  rec[COLS.video]=nn('f_video');
   rec[COLS.videoTitle]=val('f_video_title');
-  rec[COLS.touch]=val('f_touch')||'0';
+  rec[COLS.touch]=nn('f_touch');
   rec[COLS.touchFb]=val('f_fb');
-  rec[COLS.salTestDay]=val('f_sal_test')||'0';
+  rec[COLS.salTestDay]=nn('f_sal_test');
   return rec;
 }
 
@@ -430,6 +460,8 @@ drawFunnel();
 // 仅存本机
 $('saveLocal').addEventListener('click',function(){
   var rec=collect(); saveLocal(rec);
+  var _negs=checkNegatives();
+  if(_negs.length){ toast('⚠️ 计数不能填负数：'+_negs.join('、')+'，请改成 0 或正确数字'); return; }
   toast('已存本机 '+rec[COLS.date]+'（未同步云端）');
 });
 
@@ -512,6 +544,8 @@ $('saveCloud').addEventListener('click',function(){
   var btn=this;
   var rec=collect();
   if(!rec[COLS.date]){toast('请先选日期');return;}
+  var _negs=checkNegatives();
+  if(_negs.length){ toast('⚠️ 计数不能填负数：'+_negs.join('、')+'，请改成 0 或正确数字'); return; }
   if(btn._busy){ toast('正在上传，请稍等…'); return; }
   btn._busy=true;
   var origTxt=btn.textContent;
