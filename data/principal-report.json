@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-27 08:38",
+  "generated_at": "2026-10-27 10:09",
   "data_date": "2026-10-25",
   "overall": "yellow",
   "lights": [
@@ -29,19 +29,23 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 0,
-      "month_count": 0,
+      "month_amount": 16920.0,
+      "month_count": 10,
       "goal": 28800,
-      "goal_rate": "0%",
+      "goal_rate": "59%",
       "note": ""
     },
     "revenue": {
-      "month_total": 13855,
+      "month_total": 36455,
       "today_total": 0,
       "by_type": [
         {
           "name": "报名",
-          "amount": 4060
+          "amount": 9740
+        },
+        {
+          "name": "续费",
+          "amount": 16920
         },
         {
           "name": "订金",
@@ -57,8 +61,8 @@
         }
       ],
       "derived": {
-        "course": 4060,
-        "coach_enroll": 4060,
+        "course": 26660,
+        "coach_enroll": 26660,
         "deposit": 900,
         "venue": 8545,
         "string": 350
@@ -73,8 +77,16 @@
         "by_type": []
       },
       "last_week": {
-        "total": 8845,
+        "total": 25885,
         "by_type": [
+          {
+            "name": "报名",
+            "amount": 5680
+          },
+          {
+            "name": "续费",
+            "amount": 11360
+          },
           {
             "name": "散客/场地",
             "amount": 8545
@@ -101,7 +113,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "曹心语、盛呈栩、邹书芸",
+  "callback": "盛呈栩、邓泽兮、曹心语",
   "video": {
     "today": 0.0,
     "this_week": 2.0,
