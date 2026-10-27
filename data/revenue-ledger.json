@@ -229,5 +229,40 @@
     "amount": "65",
     "type": "穿线",
     "collector": "桂飞"
+  },
+  {
+    "date": "2026-10-26",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "桂飞"
+  },
+  {
+    "date": "2026-10-26",
+    "name": "ab线",
+    "amount": "70",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-25",
+    "name": "订场一小时",
+    "amount": "68",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-26",
+    "name": "coco场地费",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-26",
+    "name": "散场接龙(3男3女）",
+    "amount": "60",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
