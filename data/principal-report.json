@@ -36,12 +36,24 @@
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 9343,
-      "today_total": 0,
+      "month_total": 37138,
+      "today_total": 235,
       "by_type": [
         {
+          "name": "报名",
+          "amount": 9740
+        },
+        {
+          "name": "续费",
+          "amount": 16920
+        },
+        {
+          "name": "订金",
+          "amount": 900
+        },
+        {
           "name": "散客/场地",
-          "amount": 8873
+          "amount": 9108
         },
         {
           "name": "穿线",
@@ -49,22 +61,22 @@
         }
       ],
       "derived": {
-        "course": 0,
-        "coach_enroll": 0,
-        "venue": 8873,
+        "course": 26660,
+        "coach_enroll": 26660,
+        "venue": 9108,
         "string": 470
       },
       "venue_goal": 24000,
       "total_goal": 52000,
-      "note": "含续费/订金·新报名·散客场地·穿线；收款人仅作对账不计入营收。报名费待《收支记账》补记账后再并入全口径。"
+      "note": "含报名·续费·订金·散客场地·穿线；收款人仅作对账不计入营收。"
     },
     "week": {
       "this_week": {
-        "total": 380,
+        "total": 615,
         "by_type": [
           {
             "name": "散客/场地",
-            "amount": 260
+            "amount": 495
           },
           {
             "name": "穿线",
@@ -75,6 +87,14 @@
       "last_week": {
         "total": 25953,
         "by_type": [
+          {
+            "name": "报名",
+            "amount": 5680
+          },
+          {
+            "name": "续费",
+            "amount": 11360
+          },
           {
             "name": "散客/场地",
             "amount": 8613
