@@ -229,5 +229,26 @@
     "amount": "35",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-10-28",
+    "name": "coco",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-28",
+    "name": "会员饶涛一小时",
+    "amount": "59.84",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-28",
+    "name": "接龙10个人",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
