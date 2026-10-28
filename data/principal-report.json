@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-28 02:23",
+  "generated_at": "2026-10-28 08:37",
   "data_date": "2026-10-27",
   "overall": "yellow",
   "lights": [
@@ -21,11 +21,11 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 21100.0,
-      "month_count": 6,
+      "month_amount": 11360.0,
+      "month_count": 3,
       "goal": 28800,
-      "goal_rate": "73%",
-      "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
+      "goal_rate": "39%",
+      "note": ""
     },
     "revenue": {
       "month_total": 31578,
@@ -98,69 +98,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 33,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=31578 = Σby_type=31578"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "2 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [],
@@ -177,7 +114,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "盛呈栩、邓泽兮、曹心语",
+  "callback": "朱梓檬、邓琬宁、朱思然",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
