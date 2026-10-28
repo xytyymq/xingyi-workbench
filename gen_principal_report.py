@@ -315,21 +315,21 @@ def _read_ledger():
 
 
 def read_renew():
-    """本月续课额：取自统一营收台账中 type=续费 的金额汇总（老生续费；原 renew-records.json 已并入）。
+    """本月续费+报名额：取自统一营收台账中 type=续费 或 type=报名 的金额汇总（课程实收口径）。
     返回 {month_amount, month_count, goal, goal_rate, note}。
     关键：即使台账缺失/无数据/读取失败，也始终返回目标与达成率（金额=0、达成率=0%），
     保证校长日报永远能看到『当月续课总金额』与『达成率』，而非被『待接入』隐藏。
-    注：订金(type=订金)属于报名定金，单列不计入续费；报名(type=报名)为新生整期报名，亦不计入续费。"""
+    注：订金(type=订金)属于报名定金，单列不计入续费；续费+报名=课程实收总额。"""
     mp = datetime.date.today().isoformat()[:7]
     rows = _read_ledger()
-    month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") == "续费"]
+    month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") in ("续费", "报名")]
     amount = sum(to_f(r.get("amount")) for r in month_rows)
     count = len(month_rows)
     goal = RENEW_GOAL_MONTH
     rate = (f"{amount / goal:.0%}" if goal else None)
     return {
         "month_amount": amount, "month_count": count,
-        "goal": goal, "goal_rate": rate, "note": "",
+        "goal": goal, "goal_rate": rate, "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 \u00a528800。",
     }
 
 
