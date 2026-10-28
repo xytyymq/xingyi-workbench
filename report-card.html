@@ -159,7 +159,7 @@ function render(d){
   var srate=mt?ms/mt:0;
 
   var hero='<div class="sec"><div class="sec-t">🎯 月度目标完成度（核心）</div><div class="hero">'+
-    '<div class="gauge"><div class="t">本月续费额</div>'+ring(rate,'目标')+
+    '<div class="gauge"><div class="t">续费+报名</div>'+ring(rate,'目标')+
       '<div class="v">¥'+amt.toLocaleString()+' <small>/ ¥'+goal.toLocaleString()+'</small></div>'+
       '<div class="s" style="color:'+(rate>=0.8?'var(--green)':rate>=0.4?'var(--yellow)':'var(--red)')+'">'+rcnt+' 笔成交（含报名） · 完成 '+Math.round(rate*100)+'%</div></div>'+
     '<div class="gauge"><div class="t">本月报名人数</div>'+ring(srate,'目标')+
