@@ -25,11 +25,11 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 11360.0,
-      "month_count": 3,
+      "month_amount": 21100.0,
+      "month_count": 6,
       "goal": 28800,
-      "goal_rate": "39%",
-      "note": ""
+      "goal_rate": "73%",
+      "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
       "month_total": 31838,
