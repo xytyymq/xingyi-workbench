@@ -278,5 +278,19 @@
     "amount": "50",
     "type": "穿线",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-10-29",
+    "name": "客人包场",
+    "amount": "110",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-29",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "张玉玲"
   }
 ]
