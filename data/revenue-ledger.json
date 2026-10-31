@@ -292,5 +292,33 @@
     "amount": "50",
     "type": "穿线",
     "collector": "张玉玲"
+  },
+  {
+    "date": "2026-10-31",
+    "name": "文姐订场",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-31",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-31",
+    "name": "熊一鸣",
+    "amount": "5680",
+    "type": "续费",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-31",
+    "name": "下午场两小时",
+    "amount": "96",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
