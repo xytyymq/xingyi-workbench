@@ -198,11 +198,66 @@ def read_repo_daily():
         return []
 
 
+def read_tice_from_profiles(active_students_month=None):
+    """体测统计改读 data/profiles.json（学员体测档案，23:00 管线维护）。
+    原腾讯文档『体测明细』子表 2026-08-30 后已弃用，读它恒显示旧数（待批项②）。"""
+    data = None
+    try:
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "profiles.json")
+        if os.path.exists(p):
+            data = json.loads(open(p, encoding="utf-8").read())
+    except Exception as e:
+        print(f"  [tice] 本地 profiles.json 读取失败：{type(e).__name__}: {e}")
+    if data is None:
+        try:
+            tok = resolve_token()
+            m = _gh(f"https://api.github.com/repos/{REPO}/contents/data/profiles.json?ref={BRANCH}", tok) if tok else None
+            if m and m.get("content"):
+                data = json.loads(base64.b64decode(m["content"]).decode("utf-8"))
+        except Exception as e:
+            print(f"  [tice] 远端 profiles.json 读取失败：{type(e).__name__}: {e}")
+    if not isinstance(data, list) or not data:
+        return None
+
+    recs = []  # (date, person)
+    for s in data:
+        nm = str(s.get("name") or "").strip()
+        persons = [x.strip() for x in re.split(r"[/、,，]", nm) if x.strip()] or [nm]
+        for t in (s.get("tests") or []):
+            d = parse_date(t.get("date"))
+            if d:
+                recs += [(d, ps) for ps in persons]
+    if not recs:
+        return None
+
+    today = _asof()
+    mp = today.isoformat()[:7]
+    q = (today.month - 1) // 3 + 1
+    month_recs = [r for r in recs if r[0].startswith(mp)]
+    month_students = len({ps for _, ps in month_recs})
+    quarter_cnt = sum(1 for d, _ in recs if d[:4] == str(today.year) and (int(d[5:7]) - 1) // 3 + 1 == q)
+    cum = len({ps for _, ps in recs})
+    latest = max(recs, key=lambda x: x[0])
+    plan_base = active_students_month if active_students_month else cum
+    plan = round(plan_base * 0.8)
+    return {
+        "month_done": len(month_recs), "month_students": month_students,
+        "quarter_done": quarter_cnt, "quarter_label": f"Q{q}",
+        "total_students": cum, "latest_date": latest[0], "latest_student": latest[1],
+        "active_students": active_students_month or 0,
+        "month_plan": plan,
+        "rate": (f"{month_students / plan:.0%}" if plan else "–"),
+    }
+
+
 def read_tice(active_students_month=None):
     """读取体测档案（腾讯文档 F_TICE），解析『体测明细』段，按时间分类聚合。
     月度计划 = 当月上课学生数 × 80%（大哥口径：先看上课学生基数）。
     返回 {month_done, month_students, quarter_done, quarter_label, total_students,
           latest_date, latest_student, active_students, month_plan, rate}；任意失败返回 None。"""
+    _pf = read_tice_from_profiles(active_students_month)
+    if _pf:
+        return _pf
     try:
         r = tdoc("tencent-docs", "get_content", json.dumps({"file_id": F_TICE}))
         sc = r.get("result", {}).get("structuredContent", {}) or {}
@@ -261,7 +316,7 @@ def read_tice(active_students_month=None):
         recs.append((d, key))
     if not recs:
         return None
-    today = datetime.date.today()
+    today = _asof()
     mp = today.isoformat()[:7]
     q = (today.month - 1) // 3 + 1
     month_cnt = sum(1 for d, _ in recs if d.startswith(mp))
@@ -294,6 +349,14 @@ def read_tice(active_students_month=None):
 # 课程实收 / 教练招生业绩 = 报名 + 续费；订金作为「待转营收」单独跟踪。
 REVENUE_TYPES = ("报名", "续费", "订金", "散客/场地", "穿线")
 
+# 报表基准日：所有「本月 / 当日」聚合统一跟随 data_date（而非系统日期），
+# 避免月初跨月错位——如 11-01 早间取数日仍为 10-31 时，财务不应跳去统计空白的 11 月。
+_ASOF_DATE = None
+
+
+def _asof():
+    return _ASOF_DATE or datetime.date.today()
+
 
 def _read_ledger():
     """读取统一营收台账 data/revenue-ledger.json（校长日报填写页『营收台账』逐笔登记）。
@@ -320,7 +383,7 @@ def read_renew():
     关键：即使台账缺失/无数据/读取失败，也始终返回目标与达成率（金额=0、达成率=0%），
     保证校长日报永远能看到『当月续课总金额』与『达成率』，而非被『待接入』隐藏。
     注：订金(type=订金)属于报名定金，单列不计入续费；续费+报名=课程实收总额。"""
-    mp = datetime.date.today().isoformat()[:7]
+    mp = _asof().isoformat()[:7]
     rows = _read_ledger()
     month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") in ("续费", "报名")]
     amount = sum(to_f(r.get("amount")) for r in month_rows)
@@ -329,7 +392,7 @@ def read_renew():
     rate = (f"{amount / goal:.0%}" if goal else None)
     return {
         "month_amount": amount, "month_count": count,
-        "goal": goal, "goal_rate": rate, "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 \u00a528800。",
+        "goal": goal, "goal_rate": rate, "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。",
     }
 
 
@@ -337,7 +400,7 @@ def read_stringing():
     """穿线统计：取自统一营收台账中 type=穿线 的行（原 stringing-records.json 已并入）。
     按本月聚合：每个收款人（穿线师）的单量 / 金额。
     返回 {month_count, month_amount, month_jobs, by_stringer:[{stringer,jobs,count,amount}]}。"""
-    mp = datetime.date.today().isoformat()[:7]
+    mp = _asof().isoformat()[:7]
     rows = _read_ledger()
     month_rows = [r for r in rows if (r.get("date") or "").startswith(mp) and r.get("type") == "穿线"]
     agg = {}
@@ -365,8 +428,8 @@ def read_revenue():
          订金只算订金，单列作为「待转营收」跟踪，不并入职收总额（课程实收=报名+续费）。
     派生（供校长工资核算）：课程实收=报名+续费；教练招生业绩=报名+续费；场地收入=散客/场地；订金=订金(待转)。
     返回 {month_total, today_total, by_type, derived, note}。"""
-    mp = datetime.date.today().isoformat()[:7]
-    today_iso = datetime.date.today().isoformat()
+    mp = _asof().isoformat()[:7]
+    today_iso = _asof().isoformat()
     rows = _read_ledger()
     by_type = {t: 0.0 for t in REVENUE_TYPES}
     for r in rows:
@@ -404,7 +467,7 @@ def read_ledger_audit(rows=None):
     if rows is None:
         rows = _read_ledger()
     VALID = ("报名", "续费", "订金", "散客/场地", "穿线")
-    mp = datetime.date.today().isoformat()[:7]
+    mp = _asof().isoformat()[:7]
     checks = []
 
     miss_field = [r for r in rows if not all(str(r.get(k) or '').strip() for k in ("date", "name", "amount", "type"))]
@@ -469,7 +532,7 @@ def read_week_revenue():
     """本周/上周营收（按自然周，周一为界），含按类型拆分与环比。
     供周报模块 weekly-report.html 使用。"""
     rows = _read_ledger()
-    today = datetime.date.today()
+    today = _asof()
     wk_start = today - datetime.timedelta(days=today.weekday())
     last_start = wk_start - datetime.timedelta(days=7)
     end = wk_start + datetime.timedelta(days=7)
@@ -519,6 +582,19 @@ def parse_date(s, fallback=None):
         except ValueError:
             pass
     return fallback
+
+
+# 只有「看起来像日期」的串才允许用 fallback 补年份；否则（如「8 20」空格分隔）一律判 None，
+# 避免把畸形值当成今天而虚增当日数据。
+_DATEISH = re.compile(r"^\s*(?:\d{5}|\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d{1,2}\s*[月./-]\s*\d{1,2})")
+
+
+def parse_date_strict(s, fallback):
+    """严格解析：ISO / Excel 序列号 / `10.31` / `10月31日` 均可，畸形值返回 None。"""
+    t = str(s or "").strip()
+    if not t or not _DATEISH.match(t):
+        return None
+    return parse_date(t, fallback)
 
 
 def to_f(s):
@@ -745,11 +821,11 @@ def main():
         r["_touch"] = parse_date(r.get("最后跟进日期")) or r["_reg"]
     leads = leads + _repo_leads
     for r in emp:
-        r["_d"] = parse_date(r.get("日期"))
+        r["_d"] = parse_date_strict(r.get("日期"), today_iso)
     for r in xun:
-        r["_d"] = parse_date(r.get("日期"))
+        r["_d"] = parse_date_strict(r.get("日期"), today_iso)
     for r in cls:
-        r["_d"] = parse_date(r.get("日期"))
+        r["_d"] = parse_date_strict(r.get("日期"), today_iso)
 
     # 2026-10-17：有效数据日期 —— 适配"每天早上跑、当天日报往往还没填"场景。
     # 今天若已填报则用今天；否则取仓库里最近有数据的一天（避免漏斗/开课/视频全是盲区）。
@@ -760,6 +836,8 @@ def main():
         data_date = today_iso
     dt = datetime.date.fromisoformat(data_date)
     today_iso = data_date  # 后续所有"当日"分析统一用 data_date
+    global _ASOF_DATE
+    _ASOF_DATE = dt       # 财务/体测/周营收的"本月·本周"同步锚定 data_date，避免月初跨月错位
 
     p_today = [r for r in principal if r["_d"] == today_iso]
     cls_today = [r for r in cls if r["_d"] == today_iso]
@@ -803,9 +881,15 @@ def main():
                                                          + (f"（已连续 {promo_stats['streak']} 天）" if promo_stats["streak"] > 1 else "")})
         # 4. 交叉校验（数据打架检测）
         reported_classes = to_n(p.get("今日开课节数"))
-        actual_classes = len(cls_today)
+        # 上课记录是「学员级行」，一节 2 小时的班会有 6-8 行；直接拿行数比节数必然打架。
+        # 正确口径：按 (教练, 班级, 时段) 去重计场次，成人 1V1 单列（日报历来不计入少儿班节数）。
+        _sess = {(str(r.get("教练") or "").strip(), str(r.get("班级") or "").strip(),
+                  str(r.get("时段") or "").strip()) for r in cls_today}
+        _sess_kids = {s for s in _sess if "成人" not in s[1] and "一对一" not in s[1] and "成人" not in s[2]}
+        actual_classes = len(_sess_kids) if _sess_kids else len(_sess)
+        actual_rows = len(cls_today)
         if reported_classes and actual_classes and reported_classes != actual_classes:
-            cross_check.append({"level": "red", "text": f"开课节数打架：日报报 {reported_classes:.0f} 节，上课记录实际 {actual_classes} 条，需核实"})
+            cross_check.append({"level": "red", "text": f"开课节数打架：日报报 {reported_classes:.0f} 节，上课记录实际 {actual_classes} 个班次（{actual_rows} 条学员记录），需核实"})
         if not cross_check:
             cross_check.append({"level": "green", "text": "日报 vs 上课记录 数字一致，无打架"})
 
