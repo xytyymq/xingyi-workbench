@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01 08:50",
+  "generated_at": "2026-11-01 08:51",
   "data_date": "2026-10-31",
   "overall": "red",
   "lights": [
@@ -115,7 +115,7 @@
   "coach": [
     {
       "level": "yellow",
-      "text": "今日带课但员工日报缺卡：张玉玲"
+      "text": "今日带课但员工日报缺卡：张玉玲、瞿佳康"
     },
     {
       "level": "yellow",
@@ -132,10 +132,10 @@
   "cross_check": [
     {
       "level": "red",
-      "text": "开课节数打架：日报报 4 节，上课记录实际 8 条，需核实"
+      "text": "开课节数打架：日报报 4 节，上课记录实际 28 条，需核实"
     }
   ],
-  "callback": "黄俊安、周俊辉、盛呈栩",
+  "callback": "吴泓睿、山译博、徐梓辰",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -156,9 +156,9 @@
     "total_students": 53,
     "latest_date": "2026-10-07",
     "latest_student": "邹可怡",
-    "active_students": 38,
-    "month_plan": 30,
-    "rate": "60%"
+    "active_students": 90,
+    "month_plan": 72,
+    "rate": "25%"
   },
   "stringing": {
     "month_count": 11,
@@ -308,7 +308,7 @@
         "trials": 2.0,
         "arrive": 2.0,
         "signups": 2.0,
-        "classes": 10.0,
+        "classes": 17.0,
         "promo": 0.0,
         "promo_leads": 0.0,
         "revenue": 4710,
@@ -321,7 +321,7 @@
         "delta_trials": -29.0,
         "delta_arrive": -29.0,
         "delta_signups": 2.0,
-        "delta_classes": -5.0,
+        "delta_classes": 2.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": 4410
@@ -348,7 +348,7 @@
         "delta_trials": 3.0,
         "delta_arrive": 0.0,
         "delta_signups": 0.0,
-        "delta_classes": 4.0,
+        "delta_classes": -3.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": 21243
@@ -386,7 +386,7 @@
       "trials": 55.0,
       "arrive": 51.0,
       "signups": 7.0,
-      "classes": 55.0,
+      "classes": 62.0,
       "promo": 0.0,
       "promo_leads": 0.0,
       "revenue": 38294,
