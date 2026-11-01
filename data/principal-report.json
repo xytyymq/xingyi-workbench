@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01 08:52",
+  "generated_at": "2026-11-01 15:00（营收自动刷新）",
   "data_date": "2026-10-31",
   "overall": "red",
   "lights": [
@@ -36,36 +36,15 @@
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 38294,
-      "today_total": 5926,
-      "by_type": [
-        {
-          "name": "报名",
-          "amount": 9740
-        },
-        {
-          "name": "续费",
-          "amount": 17040
-        },
-        {
-          "name": "订金",
-          "amount": 900
-        },
-        {
-          "name": "散客/场地",
-          "amount": 9994
-        },
-        {
-          "name": "穿线",
-          "amount": 620
-        }
-      ],
+      "month_total": 0,
+      "today_total": 0,
+      "by_type": [],
       "derived": {
-        "course": 26780,
-        "coach_enroll": 26780,
-        "deposit": 900,
-        "venue": 9994,
-        "string": 620
+        "course": 0,
+        "coach_enroll": 0,
+        "deposit": 0,
+        "venue": 0,
+        "string": 0
       },
       "venue_goal": 24000,
       "total_goal": 52800,
@@ -110,6 +89,69 @@
           }
         ]
       }
+    },
+    "ledger_audit": {
+      "total": 46,
+      "checks": [
+        {
+          "name": "关键字段完整",
+          "ok": true,
+          "msg": "date/name/amount/type 齐全"
+        },
+        {
+          "name": "金额合法",
+          "ok": true,
+          "msg": "全部为正数"
+        },
+        {
+          "name": "类型合法",
+          "ok": true,
+          "msg": "均在 4 类内"
+        },
+        {
+          "name": "月汇总勾稽",
+          "ok": true,
+          "msg": "month_total=0 = Σby_type=0"
+        },
+        {
+          "name": "重复检测",
+          "ok": false,
+          "msg": "3 组疑似重复（同日期+同名+同金额）"
+        },
+        {
+          "name": "收款人",
+          "ok": false,
+          "level": "warn",
+          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
+        }
+      ],
+      "level": "red",
+      "missing_collector": [
+        {
+          "date": "2026-10-16",
+          "name": "盛呈栩",
+          "type": "报名",
+          "amount": 3080
+        },
+        {
+          "date": "2026-10-11",
+          "name": "黄文皓",
+          "type": "订金",
+          "amount": 300
+        },
+        {
+          "date": "2026-10-13",
+          "name": "刘伟",
+          "type": "报名",
+          "amount": 980
+        },
+        {
+          "date": "2026-10-21",
+          "name": "10.1—10.21场地费总共",
+          "type": "散客/场地",
+          "amount": 3859
+        }
+      ]
     }
   },
   "coach": [
