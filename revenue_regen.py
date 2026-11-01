@@ -39,11 +39,21 @@ def main():
         print("错误：缺少 GITHUB_TOKEN 环境变量"); sys.exit(1)
 
     report, _sha = read_current(tok)
+    # 2026-11-02 修：独立运行时全量生成器 main 未执行，G._ASOF_DATE 保持 None，
+    # _asof() 回落 today → 月初兜底刷新用错月份（revenue 已切新月、renew 仍是上月，
+    # 2026-11-01 实测踩坑）。现锚定"本月/本周"到报告 data_date，与全量生成器
+    # main 中 _ASOF_DATE=dt 的设计一致（避免月初跨月错位）。
+    try:
+        G._ASOF_DATE = datetime.date.fromisoformat(str(report.get("data_date")))
+        print(f"ASOF 锚定 data_date={G._ASOF_DATE}")
+    except Exception as _e:
+        print(f"[warn] data_date 锚定失败，沿用 today：{type(_e).__name__}: {_e}")
     rev = G.read_revenue()
     wk = G.read_week_revenue()
     report.setdefault("finance", {})
     report["finance"]["revenue"] = rev
     report["finance"]["week"] = wk
+    report["finance"]["ledger_audit"] = G.read_ledger_audit()
     report["generated_at"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + "（营收自动刷新）"
 
     payload = json.dumps(report, ensure_ascii=False, indent=2).encode("utf-8")
