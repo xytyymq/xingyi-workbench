@@ -135,7 +135,7 @@
       "text": "开课节数打架：日报报 4 节，上课记录实际 10 个班次（28 条学员记录），需核实"
     }
   ],
-  "callback": "熊一鸣、高筠皓、卢明锐",
+  "callback": "段昀芃、刘铭燇、梁晟宇",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -149,16 +149,16 @@
     "feedback": "洪振新洪振宇找飞哥聊；周语安爸爸说续课的事找周语安妈妈；杨济鸿续课的是找妈妈聊；段昀芃想报年卡"
   },
   "tice": {
-    "month_done": 18,
-    "month_students": 18,
-    "quarter_done": 18,
+    "month_done": 37,
+    "month_students": 36,
+    "quarter_done": 37,
     "quarter_label": "Q4",
-    "total_students": 53,
-    "latest_date": "2026-10-07",
-    "latest_student": "邹可怡",
+    "total_students": 75,
+    "latest_date": "2026-10-27",
+    "latest_student": "苏灵萌",
     "active_students": 90,
     "month_plan": 72,
-    "rate": "25%"
+    "rate": "50%"
   },
   "stringing": {
     "month_count": 11,
