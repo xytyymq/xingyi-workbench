@@ -1,11 +1,15 @@
 {
-  "generated_at": "2026-10-31 15:01（营收自动刷新）",
-  "data_date": "2026-10-30",
+  "generated_at": "2026-11-01 08:48",
+  "data_date": "2026-10-31",
   "overall": "red",
   "lights": [
     {
+      "level": "green",
+      "text": "试课到场率 100%（≥80% 达标）"
+    },
+    {
       "level": "yellow",
-      "text": "本月报名 6/10 人，进度落后于时间线（应到 9.7）"
+      "text": "本月报名 7/10 人，进度落后于时间线（应到 10.0）"
     },
     {
       "level": "yellow",
@@ -17,54 +21,34 @@
     }
   ],
   "funnel": {
-    "new_leads_today": 0,
-    "trial_arrive_rate": null,
-    "month_signups": 6,
+    "new_leads_today": 1.0,
+    "trial_arrive_rate": "100%",
+    "month_signups": 7.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 21100,
-      "month_count": 6,
+      "month_amount": 0,
+      "month_count": 0,
       "goal": 28800,
-      "goal_rate": "73%",
+      "goal_rate": "0%",
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 38294,
-      "today_total": 5926,
-      "by_type": [
-        {
-          "name": "报名",
-          "amount": 9740
-        },
-        {
-          "name": "续费",
-          "amount": 17040
-        },
-        {
-          "name": "订金",
-          "amount": 900
-        },
-        {
-          "name": "散客/场地",
-          "amount": 9994
-        },
-        {
-          "name": "穿线",
-          "amount": 620
-        }
-      ],
+      "month_total": 0,
+      "today_total": 0,
+      "by_type": [],
       "derived": {
-        "course": 26780,
-        "coach_enroll": 26780,
-        "venue": 9994,
-        "string": 620
+        "course": 0,
+        "coach_enroll": 0,
+        "deposit": 0,
+        "venue": 0,
+        "string": 0
       },
       "venue_goal": 24000,
-      "total_goal": 52000,
-      "note": "含报名·续费·订金·散客场地·穿线；收款人仅作对账不计入营收。"
+      "total_goal": 52800,
+      "note": "含报名·续费·订金·散客场地·穿线；订金只算订金（待转营收，单列不并入职收）。课程实收=报名+续费；收款人仅作对账/教练业绩归属，不计入营收。《收支记账》已废弃，营收以本台账为准。"
     },
     "week": {
       "this_week": {
@@ -105,69 +89,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 42,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=32368 = Σby_type=32368"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "3 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [
@@ -190,124 +111,99 @@
   "cross_check": [
     {
       "level": "red",
-      "text": "开课节数打架：日报报 1 节，上课记录实际 4 条，需核实"
+      "text": "开课节数打架：日报报 4 节，上课记录实际 8 条，需核实"
     }
   ],
-  "callback": "黄俊安、盛呈栩、米勒",
+  "callback": "卢梓睿、段昀芃、周俊辉",
   "video": {
-    "today": 0,
-    "this_week": 0,
-    "this_month": 4,
+    "today": 0.0,
+    "this_week": 0.0,
+    "this_month": 4.0,
     "latest_title": "",
     "latest_status": ""
   },
   "touch": {
-    "count": 0,
+    "count": 5.0,
     "types": "微信/群消息推送",
-    "feedback": ""
+    "feedback": "洪振新洪振宇找飞哥聊；周语安爸爸说续课的事找周语安妈妈；杨济鸿续课的是找妈妈聊；段昀芃想报年卡"
   },
   "tice": {
-    "month_done": 18,
-    "month_students": 18,
+    "month_done": 0,
+    "month_students": 0,
     "quarter_done": 18,
     "quarter_label": "Q4",
     "total_students": 53,
     "latest_date": "2026-10-07",
     "latest_student": "邹可怡",
-    "active_students": 31,
-    "month_plan": 25,
-    "rate": "72%"
+    "active_students": 38,
+    "month_plan": 30,
+    "rate": "0%"
   },
   "stringing": {
-    "month_count": 10,
-    "month_amount": 570,
-    "month_jobs": 10,
-    "by_stringer": [
-      {
-        "stringer": "王双双",
-        "jobs": 3,
-        "count": 0,
-        "amount": 185
-      },
-      {
-        "stringer": "江教练",
-        "jobs": 3,
-        "count": 0,
-        "amount": 170
-      },
-      {
-        "stringer": "桂飞",
-        "jobs": 2,
-        "count": 0,
-        "amount": 115
-      },
-      {
-        "stringer": "张玉玲",
-        "jobs": 2,
-        "count": 0,
-        "amount": 100
-      }
-    ]
+    "month_count": 0,
+    "month_amount": 0,
+    "month_jobs": 0,
+    "by_stringer": []
   },
   "week_rows": [
     {
-      "date": "10-24",
-      "leads": 3,
-      "trials": 3,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 5
-    },
-    {
       "date": "10-25",
-      "leads": 2,
-      "trials": 1,
-      "arrive": 1,
-      "signups": 2,
-      "classes": 4
+      "leads": 2.0,
+      "trials": 1.0,
+      "arrive": 1.0,
+      "signups": 2.0,
+      "classes": 4.0
     },
     {
       "date": "10-26",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 0.0
     },
     {
       "date": "10-27",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 1
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
     },
     {
       "date": "10-28",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 1
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
     },
     {
       "date": "10-29",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 2
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 2.0
     },
     {
       "date": "10-30",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 1
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
+    },
+    {
+      "date": "10-31",
+      "leads": 1.0,
+      "trials": 3.0,
+      "arrive": 3.0,
+      "signups": 1.0,
+      "classes": 4.0
     }
   ],
-  "week_summary": "本周合计：新线索 5 · 试课 4 · 报名 2 · 开课 14 节",
+  "week_summary": "本周合计：新线索 3 · 试课 4 · 报名 3 · 开课 13 节",
   "month_weeks": {
     "month": "2026-10",
     "weeks": [
@@ -316,13 +212,13 @@
         "label": "第1周 09/28–10/04",
         "start": "2026-09-28",
         "end": "2026-10-04",
-        "leads": 6,
-        "trials": 14,
-        "arrive": 13,
-        "signups": 2,
-        "classes": 7,
-        "promo": 0,
-        "promo_leads": 0,
+        "leads": 6.0,
+        "trials": 14.0,
+        "arrive": 13.0,
+        "signups": 2.0,
+        "classes": 7.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
         "revenue": 0,
         "signup_revenue": 0,
         "arrive_rate": "93%",
@@ -335,26 +231,26 @@
         "label": "第2周 10/05–10/11",
         "start": "2026-10-05",
         "end": "2026-10-11",
-        "leads": 4,
-        "trials": 31,
-        "arrive": 31,
-        "signups": 0,
-        "classes": 15,
-        "promo": 0,
-        "promo_leads": 0,
+        "leads": 4.0,
+        "trials": 31.0,
+        "arrive": 31.0,
+        "signups": 0.0,
+        "classes": 15.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
         "revenue": 300,
         "signup_revenue": 0,
         "arrive_rate": "100%",
         "days_filled": 7,
         "days_span": 7,
         "is_current": false,
-        "delta_leads": -2,
-        "delta_trials": 17,
-        "delta_arrive": 18,
-        "delta_signups": -2,
-        "delta_classes": 8,
-        "delta_promo": 0,
-        "delta_promo_leads": 0,
+        "delta_leads": -2.0,
+        "delta_trials": 17.0,
+        "delta_arrive": 18.0,
+        "delta_signups": -2.0,
+        "delta_classes": 8.0,
+        "delta_promo": 0.0,
+        "delta_promo_leads": 0.0,
         "delta_revenue": 300
       },
       {
@@ -362,26 +258,26 @@
         "label": "第3周 10/12–10/18",
         "start": "2026-10-12",
         "end": "2026-10-18",
-        "leads": 0,
-        "trials": 2,
-        "arrive": 2,
-        "signups": 2,
-        "classes": 10,
-        "promo": 0,
-        "promo_leads": 0,
+        "leads": 0.0,
+        "trials": 2.0,
+        "arrive": 2.0,
+        "signups": 2.0,
+        "classes": 10.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
         "revenue": 4710,
         "signup_revenue": 4060,
         "arrive_rate": "100%",
         "days_filled": 6,
         "days_span": 7,
         "is_current": false,
-        "delta_leads": -4,
-        "delta_trials": -29,
-        "delta_arrive": -29,
-        "delta_signups": 2,
-        "delta_classes": -5,
-        "delta_promo": 0,
-        "delta_promo_leads": 0,
+        "delta_leads": -4.0,
+        "delta_trials": -29.0,
+        "delta_arrive": -29.0,
+        "delta_signups": 2.0,
+        "delta_classes": -5.0,
+        "delta_promo": 0.0,
+        "delta_promo_leads": 0.0,
         "delta_revenue": 4410
       },
       {
@@ -389,26 +285,26 @@
         "label": "第4周 10/19–10/25",
         "start": "2026-10-19",
         "end": "2026-10-25",
-        "leads": 5,
-        "trials": 5,
-        "arrive": 2,
-        "signups": 2,
-        "classes": 14,
-        "promo": 0,
-        "promo_leads": 0,
+        "leads": 5.0,
+        "trials": 5.0,
+        "arrive": 2.0,
+        "signups": 2.0,
+        "classes": 14.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
         "revenue": 25953,
         "signup_revenue": 17040,
         "arrive_rate": "40%",
         "days_filled": 7,
         "days_span": 7,
         "is_current": false,
-        "delta_leads": 5,
-        "delta_trials": 3,
-        "delta_arrive": 0,
-        "delta_signups": 0,
-        "delta_classes": 4,
-        "delta_promo": 0,
-        "delta_promo_leads": 0,
+        "delta_leads": 5.0,
+        "delta_trials": 3.0,
+        "delta_arrive": 0.0,
+        "delta_signups": 0.0,
+        "delta_classes": 4.0,
+        "delta_promo": 0.0,
+        "delta_promo_leads": 0.0,
         "delta_revenue": 21243
       },
       {
@@ -416,51 +312,51 @@
         "label": "第5周 10/26–11/01",
         "start": "2026-10-26",
         "end": "2026-11-01",
-        "leads": 0,
-        "trials": 0,
-        "arrive": 0,
-        "signups": 0,
-        "classes": 5,
-        "promo": 0,
-        "promo_leads": 0,
-        "revenue": 1405,
-        "signup_revenue": 0,
-        "arrive_rate": "—",
-        "days_filled": 5,
+        "leads": 1.0,
+        "trials": 3.0,
+        "arrive": 3.0,
+        "signups": 1.0,
+        "classes": 9.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
+        "revenue": 7331,
+        "signup_revenue": 5680,
+        "arrive_rate": "100%",
+        "days_filled": 6,
         "days_span": 6,
         "is_current": true,
-        "delta_leads": -5,
-        "delta_trials": -5,
-        "delta_arrive": -2,
-        "delta_signups": -2,
-        "delta_classes": -9,
-        "delta_promo": 0,
-        "delta_promo_leads": 0,
-        "delta_revenue": -24548
+        "delta_leads": -4.0,
+        "delta_trials": -2.0,
+        "delta_arrive": 1.0,
+        "delta_signups": -1.0,
+        "delta_classes": -5.0,
+        "delta_promo": 0.0,
+        "delta_promo_leads": 0.0,
+        "delta_revenue": -18622
       }
     ],
     "totals": {
-      "leads": 15,
-      "trials": 52,
-      "arrive": 48,
-      "signups": 6,
-      "classes": 51,
-      "promo": 0,
-      "promo_leads": 0,
-      "revenue": 32368,
-      "signup_revenue": 21100
+      "leads": 16.0,
+      "trials": 55.0,
+      "arrive": 51.0,
+      "signups": 7.0,
+      "classes": 55.0,
+      "promo": 0.0,
+      "promo_leads": 0.0,
+      "revenue": 38294,
+      "signup_revenue": 26780
     }
   },
   "promo": {
-    "today_promo": 0,
-    "today_leads": 0,
+    "today_promo": 0.0,
+    "today_leads": 0.0,
     "today_filled": true,
-    "week_promo": 0,
-    "week_leads": 0,
-    "week_days": 5,
-    "month_promo": 0,
-    "month_leads": 0,
-    "month_days": 29,
+    "week_promo": 0.0,
+    "week_leads": 0.0,
+    "week_days": 6,
+    "month_promo": 0.0,
+    "month_leads": 0.0,
+    "month_days": 30,
     "streak": 0,
     "target_daily": 1,
     "target_weekly": 5,
