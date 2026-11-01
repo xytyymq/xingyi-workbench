@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-01 08:48",
+  "generated_at": "2026-11-01 08:50",
   "data_date": "2026-10-31",
   "overall": "red",
   "lights": [
@@ -29,22 +29,43 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 0,
-      "month_count": 0,
+      "month_amount": 26780.0,
+      "month_count": 7,
       "goal": 28800,
-      "goal_rate": "0%",
+      "goal_rate": "93%",
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 0,
-      "today_total": 0,
-      "by_type": [],
+      "month_total": 38294,
+      "today_total": 5926,
+      "by_type": [
+        {
+          "name": "报名",
+          "amount": 9740
+        },
+        {
+          "name": "续费",
+          "amount": 17040
+        },
+        {
+          "name": "订金",
+          "amount": 900
+        },
+        {
+          "name": "散客/场地",
+          "amount": 9994
+        },
+        {
+          "name": "穿线",
+          "amount": 620
+        }
+      ],
       "derived": {
-        "course": 0,
-        "coach_enroll": 0,
-        "deposit": 0,
-        "venue": 0,
-        "string": 0
+        "course": 26780,
+        "coach_enroll": 26780,
+        "deposit": 900,
+        "venue": 9994,
+        "string": 620
       },
       "venue_goal": 24000,
       "total_goal": 52800,
@@ -114,7 +135,7 @@
       "text": "开课节数打架：日报报 4 节，上课记录实际 8 条，需核实"
     }
   ],
-  "callback": "卢梓睿、段昀芃、周俊辉",
+  "callback": "黄俊安、周俊辉、盛呈栩",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -128,8 +149,8 @@
     "feedback": "洪振新洪振宇找飞哥聊；周语安爸爸说续课的事找周语安妈妈；杨济鸿续课的是找妈妈聊；段昀芃想报年卡"
   },
   "tice": {
-    "month_done": 0,
-    "month_students": 0,
+    "month_done": 18,
+    "month_students": 18,
     "quarter_done": 18,
     "quarter_label": "Q4",
     "total_students": 53,
@@ -137,13 +158,38 @@
     "latest_student": "邹可怡",
     "active_students": 38,
     "month_plan": 30,
-    "rate": "0%"
+    "rate": "60%"
   },
   "stringing": {
-    "month_count": 0,
-    "month_amount": 0,
-    "month_jobs": 0,
-    "by_stringer": []
+    "month_count": 11,
+    "month_amount": 620.0,
+    "month_jobs": 11,
+    "by_stringer": [
+      {
+        "stringer": "王双双",
+        "jobs": 4,
+        "count": 0.0,
+        "amount": 235.0
+      },
+      {
+        "stringer": "江教练",
+        "jobs": 3,
+        "count": 0.0,
+        "amount": 170.0
+      },
+      {
+        "stringer": "桂飞",
+        "jobs": 2,
+        "count": 0.0,
+        "amount": 115.0
+      },
+      {
+        "stringer": "张玉玲",
+        "jobs": 2,
+        "count": 0.0,
+        "amount": 100.0
+      }
+    ]
   },
   "week_rows": [
     {
