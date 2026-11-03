@@ -355,5 +355,12 @@
     "amount": "200",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-03",
+    "name": "bg65ti",
+    "amount": "55",
+    "type": "穿线",
+    "collector": "王双双"
   }
 ]
