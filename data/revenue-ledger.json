@@ -362,5 +362,47 @@
     "amount": "55",
     "type": "穿线",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-04",
+    "name": "coco",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-04",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-04",
+    "name": "散场接龙10元一人",
+    "amount": "110",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-16",
+    "name": "盛呈栩",
+    "amount": "3080",
+    "type": "报名",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-13",
+    "name": "刘伟",
+    "amount": "980",
+    "type": "报名",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-10-11",
+    "name": "黄文皓",
+    "amount": "300",
+    "type": "订金",
+    "collector": "王双双"
   }
 ]
