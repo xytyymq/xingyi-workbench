@@ -404,5 +404,26 @@
     "amount": "300",
     "type": "订金",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-05",
+    "name": "方太2片",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-05",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-05",
+    "name": "自带线",
+    "amount": "30",
+    "type": "穿线",
+    "collector": "王双双"
   }
 ]
