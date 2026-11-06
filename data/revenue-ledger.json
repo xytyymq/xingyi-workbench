@@ -425,5 +425,12 @@
     "amount": "30",
     "type": "穿线",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-06",
+    "name": "coco俱乐部",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "张玉玲"
   }
 ]
