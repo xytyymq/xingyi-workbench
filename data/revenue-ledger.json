@@ -432,5 +432,26 @@
     "amount": "100",
     "type": "散客/场地",
     "collector": "张玉玲"
+  },
+  {
+    "date": "2026-11-07",
+    "name": "方太2片场",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-07",
+    "name": "66n",
+    "amount": "60",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-07",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
   }
 ]
