@@ -474,5 +474,33 @@
     "amount": "5680",
     "type": "报名",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-09",
+    "name": "会员0077两小时",
+    "amount": "47.6",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-09",
+    "name": "coco1片场",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-09",
+    "name": "9人场地接龙",
+    "amount": "117",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-09",
+    "name": "毕律师xb63",
+    "amount": "70",
+    "type": "穿线",
+    "collector": "王双双"
   }
 ]
