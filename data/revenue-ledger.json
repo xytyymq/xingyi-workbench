@@ -544,5 +544,33 @@
     "amount": "300",
     "type": "订金",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-11",
+    "name": "自带线+护线管",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-11",
+    "name": "coco俱乐部",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-11",
+    "name": "老朱",
+    "amount": "100",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-10",
+    "name": "0077（私教课1v1）",
+    "amount": "1000",
+    "type": "报名",
+    "collector": "王双双"
   }
 ]
