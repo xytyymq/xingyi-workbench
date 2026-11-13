@@ -570,6 +570,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 <button class="cta" id="saveCloud">保存并同步云端</button>
+<button class="cta ghost" id="exportLocal" type="button" style="margin-top:10px">📤 导出本机记录（找回/备份用）</button>
 
 
 
@@ -2464,6 +2465,22 @@ function flushQueue(){
   });
   chain.then(function(){ var left=_qLoad(); if(left.length){ setSync('pending','还有 '+left.length+' 条待同步（联网后自动补传）'); } else { setSync('ok','全部已同步云端'); try{ ghRead(REVENUE_PATH).then(function(st){ renderSalarySummary(st.list||[], null); }).catch(function(){}); }catch(e){} } });
 }
+function exportLocal(){
+  try{
+    var out={daily:{},queue:[]};
+    for(var i=0;i<localStorage.length;i++){
+      var k=localStorage.key(i);
+      if(k&&k.indexOf('xy_daily_')===0){ try{ out.daily[k]=JSON.parse(localStorage.getItem(k)); }catch(e){} }
+    }
+    try{ out.queue=JSON.parse(localStorage.getItem('xy_sync_queue_v1')||'[]'); }catch(e){}
+    var blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='星羿校长日报_本机记录_'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast('已导出本机记录（各日草稿+待同步），发给馆长即可找回云端');
+  }catch(e){ toast('导出失败：'+e.message); }
+}
+$('exportLocal').addEventListener('click', exportLocal);
 window.addEventListener('online', function(){ setTimeout(flushQueue, 800); });
 setInterval(flushQueue, 30000);
 flushQueue(); // 进入页面自动补传上一次未成功的记录（恢复 10-26 类丢失）
