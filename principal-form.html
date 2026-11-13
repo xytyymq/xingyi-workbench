@@ -690,7 +690,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY), {
 
 
 
@@ -698,7 +698,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
+            headers: { 'Accept': 'application/vnd.github+json' }
 
 
 
@@ -746,7 +746,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-          return _fetch(XY_PROXY + '/github-save', {
+          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY), {
 
 
 
@@ -754,7 +754,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
+            headers: { 'Content-Type': 'text/plain' },
 
 
 
