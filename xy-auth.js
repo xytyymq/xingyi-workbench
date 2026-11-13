@@ -303,7 +303,7 @@
 // 各页面 _gt() 返回占位串 'proxy' 即可触发请求、被此处拦截。
 // ============================================================
 (function () {
-  var XY_PROXY = 'https://xingyi-salary.app.workbuddy.host';
+  var XY_PROXY = 'https://1463961668-d6ydjnfw5t.ap-guangzhou.tencentscf.com';
   var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
   var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
   if (window.XYGate && !window.XYGate.__proxied) {
