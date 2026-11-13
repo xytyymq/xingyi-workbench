@@ -1,70 +1,40 @@
-// Phase 2/3 数据访问层：前端 → 后端 KV 服务
-// API_BASE 来自 js/config.js：空字符串 "" = 同源（前端与后端同一端口部署），
-// 其他值 = 后端公网地址。注意：空串是 falsy，必须显式判断 undefined，不能用 ||。
-const cfgBase = window.TRIAL_CONFIG && window.TRIAL_CONFIG.API_BASE;
-const API_BASE = (cfgBase !== undefined && cfgBase !== null) ? cfgBase : "http://192.168.1.27:8089";
+// 星羿家长端 · 数据访问层（纯静态版）
+// ============================================================
+// 原后端 b74f149…app.workbuddy.host 已被 WorkBuddy 平台回收（返回 403「链接不完整」），
+// 故家长端改为纯静态：不再发起任何后端请求。所有「写」操作降级为本地 no-op，
+// 所有「读」操作返回安全默认值或走 GitHub Pages 静态 JSON（data/growth.json 等），
+// 任何情况下都不抛错 —— 这是根除「后端 403 导致白屏/报错」的关键。
+// 核心价值（看体测报告 / 成长 / 积分 / 消息）全部由静态数据支撑，不受后端影响。
+// ============================================================
 
+window.TRIAL_CONFIG = window.TRIAL_CONFIG || {};
+// 纯静态模式：强制禁用后端
+window.TRIAL_CONFIG.API_BASE = "";
+
+const API_BASE = "";
+
+// 纯静态：不发起任何网络请求，直接返回错误标记（调用方均按 error 安全处理）
 async function api(path, opts = {}) {
-  const url = API_BASE + path;
-  try {
-    const r = await fetch(url, { ...opts, headers: { "Content-Type": "application/json", ...(opts.headers || {}) } });
-    if (!r.ok) return { error: "http " + r.status };
-    return await r.json();
-  } catch (e) { return { error: String(e) }; }
+  return { error: "static-mode" };
 }
 
 const Store = {
-  // 预约
-  async getBookings(childId) {
-    const j = await api("/api/bookings?childId=" + encodeURIComponent(childId));
-    return j.bookings || [];
-  },
-  async addBooking(childId, b) {
-    const j = await api("/api/booking", {
-      method: "POST",
-      body: JSON.stringify({ childId, time: b.time, phone: b.phone || "", name: b.name || "" })
-    });
-    return j.booking || b;
-  },
-  // 体测报告（Phase 2 起真实存储；无数据时馆端可用 mock 兜底）
-  async getReport(childId) {
-    const j = await api("/api/report?childId=" + encodeURIComponent(childId));
-    return j.report;
-  },
-  async saveReport(childId, report) {
-    return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report }) });
-  },
-  // 家长问卷：GET 旧报告 → 合并 parent（保留教练 entries）→ POST
-  async saveParentSurvey(childId, parent) {
-    let old = null;
-    try { const j = await this.getReport(childId); old = j || null; } catch { /* 忽略 */ }
-    const merged = { ...(old || {}), parent, updatedAt: new Date().toISOString() };
-    return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report: merged }) });
-  },
-  // 教练体测：GET 旧报告 → 追加 entry（保留家长 parent）→ POST
-  async saveCoachEntry(childId, entry) {
-    let old = null;
-    try { const j = await this.getReport(childId); old = j || null; } catch { /* 忽略 */ }
-    const entries = (old && old.entries ? old.entries : []).concat(entry);
-    const merged = { ...(old || {}), entries, updatedAt: new Date().toISOString() };
-    return await api("/api/report", { method: "POST", body: JSON.stringify({ childId, report: merged }) });
-  },
-  // 馆长聚合接口
-  async adminBookings(key) {
-    const j = await api("/api/admin/bookings?key=" + encodeURIComponent(key));
-    return j;
-  },
-  // 手机号找回孩子（老生换设备/写法不一致）：只返回 [{childId, name}]，不含手机号
-  async lookupPhone(phone) {
-    const j = await api("/api/lookup?phone=" + encodeURIComponent(phone));
-    return j.children || [];
-  },
-  // 成长数据：上课记录（按姓名匹配）+ 奖状
-  // 优先后端接口；后端不可用（平台网关异常等）时回退 Pages 静态快照 data/growth.json
+  // 预约：不再写后端，返回传入对象即可（UI 已改为引导加微信）
+  async getBookings(childId) { return []; },
+  async addBooking(childId, b) { return b || {}; },
+
+  // 体测报告：改为读静态 profiles.json（见 app.js fetchProfiles），此处返回 null 安全兜底
+  async getReport(childId) { return null; },
+  async saveReport(childId, report) { return {}; },
+  async saveParentSurvey(childId, parent) { return {}; },
+  async saveCoachEntry(childId, entry) { return {}; },
+  async adminBookings(key) { return {}; },
+
+  // 手机号找回：降级为本地登录（app.js 登录流程已有本地兜底）
+  async lookupPhone(phone) { return []; },
+
+  // 成长数据：优先静态 data/growth.json（保留原兜底逻辑，确保不白屏）
   async getGrowth(childId, name) {
-    const q = "childId=" + encodeURIComponent(childId || "") + "&name=" + encodeURIComponent(name || "");
-    const j = await api("/api/growth?" + q);
-    if (!j.error) return { classes: j.classes || [], awards: j.awards || [], source: "live" };
     try {
       const r = await fetch("../data/growth.json?t=" + Date.now(), { cache: "no-store" });
       if (r.ok) {
@@ -79,20 +49,10 @@ const Store = {
         return { classes, awards: pick(s.awards), source: "static", updated: s.updated || "" };
       }
     } catch (e) { /* 静态也取不到 */ }
-    throw new Error(j.error);
+    return { classes: [], awards: [], source: "static" };
   },
-  // 家长反馈：提交 + 查自己的反馈
-  async addFeedback(childId, name, text) {
-    const j = await api("/api/feedback", {
-      method: "POST",
-      body: JSON.stringify({ childId, name, text })
-    });
-    if (j.error) throw new Error(j.error);
-    return j.feedback || null;
-  },
-  async getMyFeedback(childId) {
-    const j = await api("/api/feedback?childId=" + encodeURIComponent(childId));
-    if (j.error) throw new Error(j.error);
-    return j.feedback || [];
-  }
+
+  // 反馈：不再写后端
+  async addFeedback(childId, name, text) { return null; },
+  async getMyFeedback(childId) { return []; }
 };
