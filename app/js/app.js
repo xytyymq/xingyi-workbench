@@ -613,15 +613,8 @@ async function fillSurvey(child) {
 }
 
 async function submitSurvey(child) {
-  const v = id => { const el = document.getElementById(id); return el ? el.value.trim() : ""; };
-  const exp = Array.from(document.querySelectorAll(".sExp")).filter(c => c.checked).map(c => c.value);
-  const parent = {
-    gender: v("sGender"), birth: v("sBirth"), grade: v("sGrade"), prior: v("sPrior"),
-    base: v("sBase"), pers: v("sPers"), weekly: v("sWeekly"),
-    expect: exp, health: v("sHealth"), want: v("sWant"), filledAt: new Date().toISOString()
-  };
-  await Store.saveParentSurvey(child.childId, parent);
-  toast("已保存，教练马上能看到 ✅");
+  // 纯静态：本端不再支持在线提交，引导家长把信息发给教练/馆长
+  toast("家长档案请在馆内由教练填写，或直接微信发给教练 ✅");
 }
 
 function esc2safe(s) {
@@ -1139,18 +1132,9 @@ async function fillMessage(child) {
   };
   try { render(await Store.getMyFeedback(child.childId)); }
   catch (e) { box.innerHTML = '<p class="muted">反馈记录暂时加载不了（网络开小差了）。</p>'; }
-  btn.onclick = async () => {
-    const ta = document.getElementById("fbText");
-    const text = ((ta && ta.value) || "").trim();
-    if (!text) { toast("写点什么再提交吧"); return; }
-    btn.disabled = true; const old = btn.textContent; btn.textContent = "提交中…";
-    try {
-      await Store.addFeedback(child.childId, child.name, text);
-      if (ta) ta.value = "";
-      toast("已提交，馆长在工作台能看到 ✅");
-      render(await Store.getMyFeedback(child.childId));
-    } catch (e) { toast("提交失败：" + e.message); }
-    btn.disabled = false; btn.textContent = old;
+  btn.onclick = () => {
+    // 纯静态：本端不再支持在线提交，引导家长直接联系馆长/教练微信
+    toast("反馈请直接联系馆长或教练微信，我们马上处理 ✅");
   };
   bindContactCopy();
 }
@@ -1205,14 +1189,11 @@ function bindEvents(h, child) {
       el.onclick = () => { selSlot = el.dataset.slot; render(); };
     });
     const bb = document.getElementById("bookBtn");
-    if (bb) bb.onclick = async () => {
-      if (!selSlot) { toast("请先选一个时段"); return; }
-      const c = Auth.current();
-      await Store.addBooking(c.childId, { time: selSlot, phone: c.phone, name: c.name });
-      toast("预约成功 ✅ " + (CONTACT.coachWechat
-        ? "加微信备注「" + c.name + "+" + c.phone + "」"
-        : "到店报手机号即可"));
-      selSlot = null; render();
+    if (bb) bb.onclick = () => {
+      // 纯静态：不在线提交，引导家长加教练微信预约（微信块在页面上方，可复制）
+      toast(CONTACT.coachWechat
+        ? "预约请加教练微信（上方已显示，可复制）✅"
+        : "预约请到店报手机号，或联系教练");
     };
     bindContactCopy(); // 绑定预约页老师微信的「复制」按钮
   }
