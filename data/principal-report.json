@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12 15:01（营收自动刷新）",
+  "generated_at": "2026-11-13 08:36",
   "data_date": "2026-11-11",
   "overall": "yellow",
   "lights": [
@@ -33,7 +33,7 @@
     },
     "revenue": {
       "month_total": 11955,
-      "today_total": 0,
+      "today_total": 350,
       "by_type": [
         {
           "name": "报名",
@@ -102,69 +102,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 82,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=11955 = Σby_type=11955"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "8 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [
@@ -190,7 +127,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "徐翕然、于菀然、戴子涵",
+  "callback": "廖宇轩、戴子涵、于菀昕",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -345,7 +282,7 @@
         "trials": 0.0,
         "arrive": 0.0,
         "signups": 0.0,
-        "classes": 2.0,
+        "classes": 6.0,
         "promo": 0.0,
         "promo_leads": 0.0,
         "revenue": 2630,
@@ -358,7 +295,7 @@
         "delta_trials": -1.0,
         "delta_arrive": -1.0,
         "delta_signups": -2.0,
-        "delta_classes": -10.0,
+        "delta_classes": -6.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -6551
@@ -385,7 +322,7 @@
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
         "delta_signups": 0.0,
-        "delta_classes": -2.0,
+        "delta_classes": -6.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -2630
@@ -450,7 +387,7 @@
       "trials": 1.0,
       "arrive": 1.0,
       "signups": 2.0,
-      "classes": 18.0,
+      "classes": 22.0,
       "promo": 0.0,
       "promo_leads": 0.0,
       "revenue": 11956,
