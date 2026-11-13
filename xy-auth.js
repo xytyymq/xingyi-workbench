@@ -320,9 +320,9 @@
         var method = (opts.method || 'GET').toUpperCase();
         if (method === 'GET') {
           // 读：透明转发，保留 GitHub 原始状态码（含 404）供前端分支判断
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path), {
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY), {
             method: 'GET',
-            headers: { 'Accept': 'application/vnd.github+json', 'X-Proxy-Key': PROXY_KEY }
+            headers: { 'Accept': 'application/vnd.github+json' }
           });
         }
         if (method === 'PUT') {
@@ -335,9 +335,9 @@
             sha: body.sha,
             branch: body.branch || 'main'
           });
-          return _fetch(XY_PROXY + '/github-save', {
+          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-Proxy-Key': PROXY_KEY },
+            headers: { 'Content-Type': 'text/plain' },
             body: nb
           });
         }
