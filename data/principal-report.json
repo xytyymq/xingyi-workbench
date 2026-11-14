@@ -1,21 +1,25 @@
 {
-  "generated_at": "2026-11-14 08:31",
+  "generated_at": "2026-11-14 08:33",
   "data_date": "2026-11-13",
   "overall": "red",
   "lights": [
     {
       "level": "yellow",
-      "text": "本月报名 0/10 人，进度落后于时间线（应到 4.3）"
+      "text": "本月报名 2/10 人，进度落后于时间线（应到 4.3）"
     },
     {
       "level": "yellow",
       "text": "今日社交媒体推广 0 次——每天至少 1 次，抖音/小红书/视频号/朋友圈任选其一"
+    },
+    {
+      "level": "yellow",
+      "text": "本周社交媒体推广 0 次（目标 5 次/周），带来咨询 0 个"
     }
   ],
   "funnel": {
     "new_leads_today": 0.0,
     "trial_arrive_rate": null,
-    "month_signups": 0.0,
+    "month_signups": 2.0,
     "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
@@ -127,7 +131,7 @@
       "text": "开课节数打架：日报报 1 节，上课记录实际 3 个班次（8 条学员记录），需核实"
     }
   ],
-  "callback": "盛呈栩、何皓轩、戴子阳",
+  "callback": "刘铭燇、邓安淇、徐诺唯",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -168,43 +172,43 @@
   "week_rows": [
     {
       "date": "11-07",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 27
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 5.0
     },
     {
       "date": "11-08",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 20
+      "leads": 0.0,
+      "trials": 1.0,
+      "arrive": 1.0,
+      "signups": 1.0,
+      "classes": 4.0
     },
     {
       "date": "11-09",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 0
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 0.0
     },
     {
       "date": "11-10",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 10
+      "leads": 1.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
     },
     {
       "date": "11-11",
-      "leads": 0,
-      "trials": 0,
-      "arrive": 0,
-      "signups": 0,
-      "classes": 1
+      "leads": 0.0,
+      "trials": 0.0,
+      "arrive": 0.0,
+      "signups": 0.0,
+      "classes": 1.0
     },
     {
       "date": "11-12",
@@ -223,7 +227,7 @@
       "classes": 1.0
     }
   ],
-  "week_summary": "本周合计：新线索 0 · 试课 0 · 报名 0 · 开课 60 节",
+  "week_summary": "本周合计：新线索 1 · 试课 1 · 报名 1 · 开课 13 节",
   "month_weeks": {
     "month": "2026-11",
     "weeks": [
@@ -251,24 +255,24 @@
         "label": "第2周 11/02–11/08",
         "start": "2026-11-02",
         "end": "2026-11-08",
-        "leads": 0,
-        "trials": 0,
-        "arrive": 0,
-        "signups": 0,
-        "classes": 67,
-        "promo": 0,
-        "promo_leads": 0,
+        "leads": 2.0,
+        "trials": 1.0,
+        "arrive": 1.0,
+        "signups": 2.0,
+        "classes": 12.0,
+        "promo": 0.0,
+        "promo_leads": 0.0,
         "revenue": 9181,
         "signup_revenue": 7660,
-        "arrive_rate": "—",
-        "days_filled": 0,
+        "arrive_rate": "100%",
+        "days_filled": 7,
         "days_span": 7,
         "is_current": false,
-        "delta_leads": 0.0,
-        "delta_trials": 0.0,
-        "delta_arrive": 0.0,
-        "delta_signups": 0.0,
-        "delta_classes": 63.0,
+        "delta_leads": 2.0,
+        "delta_trials": 1.0,
+        "delta_arrive": 1.0,
+        "delta_signups": 2.0,
+        "delta_classes": 8.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": 9036
@@ -278,24 +282,24 @@
         "label": "第3周 11/09–11/15",
         "start": "2026-11-09",
         "end": "2026-11-15",
-        "leads": 0.0,
+        "leads": 1.0,
         "trials": 0.0,
         "arrive": 0.0,
         "signups": 0.0,
-        "classes": 13.0,
+        "classes": 4.0,
         "promo": 0.0,
         "promo_leads": 0.0,
         "revenue": 5879,
         "signup_revenue": 3780,
         "arrive_rate": "—",
-        "days_filled": 2,
+        "days_filled": 5,
         "days_span": 7,
         "is_current": true,
-        "delta_leads": 0.0,
-        "delta_trials": 0.0,
-        "delta_arrive": 0.0,
-        "delta_signups": 0.0,
-        "delta_classes": -54.0,
+        "delta_leads": -1.0,
+        "delta_trials": -1.0,
+        "delta_arrive": -1.0,
+        "delta_signups": -2.0,
+        "delta_classes": -8.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -3302
@@ -318,11 +322,11 @@
         "days_filled": 0,
         "days_span": 7,
         "is_current": false,
-        "delta_leads": 0.0,
+        "delta_leads": -1.0,
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
         "delta_signups": 0.0,
-        "delta_classes": -13.0,
+        "delta_classes": -4.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -5879
@@ -383,11 +387,11 @@
       }
     ],
     "totals": {
-      "leads": 0.0,
-      "trials": 0.0,
-      "arrive": 0.0,
-      "signups": 0.0,
-      "classes": 84.0,
+      "leads": 3.0,
+      "trials": 1.0,
+      "arrive": 1.0,
+      "signups": 2.0,
+      "classes": 20.0,
       "promo": 0.0,
       "promo_leads": 0.0,
       "revenue": 15205,
@@ -400,10 +404,10 @@
     "today_filled": true,
     "week_promo": 0.0,
     "week_leads": 0.0,
-    "week_days": 2,
+    "week_days": 5,
     "month_promo": 0.0,
     "month_leads": 0.0,
-    "month_days": 3,
+    "month_days": 13,
     "streak": 0,
     "target_daily": 1,
     "target_weekly": 5,
