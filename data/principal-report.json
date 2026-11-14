@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-14 16:36（营收自动刷新）",
+  "generated_at": "2026-11-14 16:41",
   "data_date": "2026-11-13",
   "overall": "yellow",
   "lights": [
     {
-      "level": "yellow",
-      "text": "本月报名 2/10 人，进度落后于时间线（应到 4.3）"
+      "level": "green",
+      "text": "本月报名（台账成交单数）4/10 笔，进度达到时间线（应到 4.3）"
     },
     {
       "level": "yellow",
@@ -19,8 +19,8 @@
   "funnel": {
     "new_leads_today": 0.0,
     "trial_arrive_rate": null,
-    "month_signups": 2.0,
-    "month_pace_note": "落后于时间线"
+    "month_signups": 4,
+    "month_pace_note": "达标"
   },
   "stale_leads": [],
   "finance": {
@@ -106,69 +106,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 94,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=16473 = Σby_type=16473"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "8 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [],
@@ -183,9 +120,13 @@
     {
       "level": "green",
       "text": "日报 vs 上课记录 数字一致，无打架"
+    },
+    {
+      "level": "yellow",
+      "text": "疑似重复报名：本月「黄俊安妈妈毛毛球会员」等同日期·同金额出现多笔，请核实是否同一人（影响月报名人数统计）"
     }
   ],
-  "callback": "刘槿辰、朱梓芊、曹心语",
+  "callback": "曹心语、盛呈栩、朱梓芊",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -293,7 +234,7 @@
         "leads": 0.0,
         "trials": 0.0,
         "arrive": 0.0,
-        "signups": 0.0,
+        "signups": 0,
         "classes": 4.0,
         "promo": 0.0,
         "promo_leads": 0.0,
@@ -312,7 +253,7 @@
         "leads": 2.0,
         "trials": 1.0,
         "arrive": 1.0,
-        "signups": 2.0,
+        "signups": 1,
         "classes": 12.0,
         "promo": 0.0,
         "promo_leads": 0.0,
@@ -325,7 +266,7 @@
         "delta_leads": 2.0,
         "delta_trials": 1.0,
         "delta_arrive": 1.0,
-        "delta_signups": 2.0,
+        "delta_signups": 1,
         "delta_classes": 8.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
@@ -339,7 +280,7 @@
         "leads": 1.0,
         "trials": 0.0,
         "arrive": 0.0,
-        "signups": 0.0,
+        "signups": 3,
         "classes": 4.0,
         "promo": 0.0,
         "promo_leads": 0.0,
@@ -352,7 +293,7 @@
         "delta_leads": -1.0,
         "delta_trials": -1.0,
         "delta_arrive": -1.0,
-        "delta_signups": -2.0,
+        "delta_signups": 2,
         "delta_classes": -8.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
@@ -379,7 +320,7 @@
         "delta_leads": -1.0,
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
-        "delta_signups": 0.0,
+        "delta_signups": -3,
         "delta_classes": -4.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
@@ -444,7 +385,7 @@
       "leads": 3.0,
       "trials": 1.0,
       "arrive": 1.0,
-      "signups": 2.0,
+      "signups": 4,
       "classes": 20.0,
       "promo": 0.0,
       "promo_leads": 0.0,
