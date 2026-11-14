@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-11-14 16:49",
+  "generated_at": "2026-11-14 17:20（合并黄俊安妈妈重复报名）",
   "data_date": "2026-11-13",
   "overall": "yellow",
   "lights": [
     {
-      "level": "green",
-      "text": "本月报名（台账成交单数）4/10 笔，进度达到时间线（应到 4.3）"
+      "level": "yellow",
+      "text": "本月报名（台账成交单数）3/10 笔，进度落后于时间线（应到 4.3）"
     },
     {
       "level": "yellow",
@@ -19,8 +19,8 @@
   "funnel": {
     "new_leads_today": 0.0,
     "trial_arrive_rate": null,
-    "month_signups": 4,
-    "month_pace_note": "达标"
+    "month_signups": 3,
+    "month_pace_note": "落后于时间线"
   },
   "stale_leads": [],
   "finance": {
@@ -32,14 +32,14 @@
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 16473,
+      "month_total": 15473,
       "today_total": 0,
       "refund": 0,
-      "net": 16473,
+      "net": 15473,
       "by_type": [
         {
           "name": "报名",
-          "amount": 8680
+          "amount": 7680
         },
         {
           "name": "续费",
@@ -55,8 +55,8 @@
         }
       ],
       "derived": {
-        "course": 12440,
-        "coach_enroll": 12440,
+        "course": 11440,
+        "coach_enroll": 11440,
         "deposit": 0,
         "venue": 3144,
         "string": 889
@@ -67,11 +67,11 @@
     },
     "week": {
       "this_week": {
-        "total": 7148,
+        "total": 6148,
         "by_type": [
           {
             "name": "报名",
-            "amount": 3000
+            "amount": 2000
           },
           {
             "name": "续费",
@@ -122,10 +122,6 @@
     {
       "level": "green",
       "text": "日报 vs 上课记录 数字一致，无打架"
-    },
-    {
-      "level": "yellow",
-      "text": "疑似重复报名：本月「黄俊安妈妈毛毛球会员」等同日期·同金额出现多笔，请核实是否同一人（影响月报名人数统计）"
     }
   ],
   "callback": "曹心语、高筠皓、刘槿辰",
@@ -282,12 +278,12 @@
         "leads": 1.0,
         "trials": 0.0,
         "arrive": 0.0,
-        "signups": 3,
+        "signups": 2,
         "classes": 4.0,
         "promo": 0.0,
         "promo_leads": 0.0,
-        "revenue": 7148,
-        "signup_revenue": 4780,
+        "revenue": 6148,
+        "signup_revenue": 3780,
         "arrive_rate": "—",
         "days_filled": 5,
         "days_span": 7,
@@ -295,11 +291,11 @@
         "delta_leads": -1.0,
         "delta_trials": -1.0,
         "delta_arrive": -1.0,
-        "delta_signups": 2,
+        "delta_signups": 1,
         "delta_classes": -8.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
-        "delta_revenue": -2033
+        "delta_revenue": -3033
       },
       {
         "idx": 4,
@@ -322,11 +318,11 @@
         "delta_leads": -1.0,
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
-        "delta_signups": -3,
+        "delta_signups": -2,
         "delta_classes": -4.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
-        "delta_revenue": -7148
+        "delta_revenue": -6148
       },
       {
         "idx": 5,
@@ -387,12 +383,12 @@
       "leads": 3.0,
       "trials": 1.0,
       "arrive": 1.0,
-      "signups": 4,
+      "signups": 3,
       "classes": 20.0,
       "promo": 0.0,
       "promo_leads": 0.0,
-      "revenue": 16474,
-      "signup_revenue": 12440
+      "revenue": 15474,
+      "signup_revenue": 11440
     }
   },
   "promo": {
