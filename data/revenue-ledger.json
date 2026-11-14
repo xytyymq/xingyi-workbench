@@ -16,14 +16,14 @@
   {
     "date": "2026-10-19",
     "name": "穿线·BG65",
-    "amount": 50,
+    "amount": "50",
     "type": "穿线",
     "collector": "江教练"
   },
   {
     "date": "2026-10-17",
     "name": "穿线·自带线",
-    "amount": 50,
+    "amount": "50",
     "type": "穿线",
     "collector": "江教练"
   },
