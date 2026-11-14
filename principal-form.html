@@ -343,7 +343,9 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-    <div class="field"><label>今日报名</label><input type="number" id="f_sign" min="0" placeholder="0"></div>
+    <div class="field"><label>今日报名<small>（选填·已并入营收台账）</small></label><input type="number" id="f_sign" min="0" placeholder="0"></div>
+
+    <div class="field"><label>今日退费/流失数</label><input type="number" id="f_refund" min="0" placeholder="0"></div>
 
 
 
@@ -457,7 +459,7 @@ a.link{color:var(--cyan);text-decoration:none;font-weight:700}
 
 
 
-  <div class="hint" style="margin-bottom:10px">每一笔收款登记一行：<b>日期 · 学员/客户 · 金额 · 类型 · 收款人</b>。类型选「报名 / 续费 / 订金 / 散客/场地 / 穿线」。<b>收款人必填</b>（对账 + 教练业绩归属）。保存即写入工作台营收台账，校长日报自动汇总本月营收与拆分。</div>
+  <div class="hint" style="margin-bottom:10px">每一笔收款登记一行：<b>日期 · 学员/客户 · 金额 · 类型 · 收款人</b>。类型选「报名 / 续费 / 订金 / 散客/场地 / 穿线 / 退费」（退费记一笔退款，系统自动从营收中扣除）。<b>收款人必填</b>（对账 + 教练业绩归属）。保存即写入工作台营收台账，校长日报自动汇总本月营收与拆分。</div>
 
 
 
@@ -850,7 +852,7 @@ var COLS = {
 
 
 
-  lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数',
+  lead:'今日新线索数', book:'试课预约数', show:'试课到场数', sign:'今日报名数', refund:'今日退费/流失数',
 
 
 
@@ -876,11 +878,11 @@ var COLS = {
 
 
 
-var REV_TYPES = ['报名','续费','订金','散客/场地','穿线'];
+var REV_TYPES = ['报名','续费','订金','散客/场地','穿线','退费'];
 
 
 
-var BUILD='20261027';
+var BUILD='20261114';
 
 
 
@@ -941,7 +943,7 @@ function b64d(b){return decodeURIComponent(escape(atob(b.replace(/\s/g,''))));}
 
 
 
-var REVENUE_TYPES=['报名','续费','订金','散客/场地','穿线'];
+var REVENUE_TYPES=['报名','续费','订金','散客/场地','穿线','退费'];
 
 
 
@@ -1021,11 +1023,11 @@ function _readRevenueJS(lg){
 
 
 
-  var monthTotal=0; REVENUE_TYPES.forEach(function(t){monthTotal+=bt[t];});
+  var POS=['报名','续费','订金','散客/场地','穿线']; var monthTotal=0; POS.forEach(function(t){monthTotal+=bt[t];}); var refund=bt['退费']||0; var net=monthTotal-refund;
 
 
 
-  var byType=REVENUE_TYPES.filter(function(t){return bt[t]>0;}).map(function(t){return {name:t,amount:_rnd(bt[t])};});
+  var byType=REVENUE_TYPES.filter(function(t){return bt[t]!==0;}).map(function(t){return {name:t,amount:_rnd(t==='退费'?-bt[t]:bt[t])};});
 
 
 
@@ -1033,7 +1035,7 @@ function _readRevenueJS(lg){
 
 
 
-    month_total:_rnd(monthTotal), today_total:_rnd(todayTotal), by_type:byType,
+    month_total:_rnd(monthTotal), today_total:_rnd(todayTotal), refund:_rnd(refund), net:_rnd(net), by_type:byType,
 
 
 
@@ -1073,11 +1075,11 @@ function _readWeekJS(lg){
 
 
 
-    (lg||[]).forEach(function(r){ if(_wkStart(String(r.date||''))===ws){ var a=parseFloat(r.amount)||0; total+=a; if(bt[r.type]!=null) bt[r.type]+=a; } });
+    (lg||[]).forEach(function(r){ if(_wkStart(String(r.date||''))===ws){ var a=parseFloat(r.amount)||0; if(bt[r.type]!=null) bt[r.type]+=a; if(r.type!=='退费') total+=a; } });
 
 
 
-    return {total:_rnd(total), by_type:REVENUE_TYPES.filter(function(t){return bt[t]>0;}).map(function(t){return {name:t,amount:_rnd(bt[t])};})};
+    return {total:_rnd(total), by_type:REVENUE_TYPES.filter(function(t){return bt[t]!==0;}).map(function(t){return {name:t,amount:_rnd(t==='退费'?-bt[t]:bt[t])};})};
 
 
 
@@ -1521,7 +1523,8 @@ var NUM_FIELDS=[
 
   {id:'f_touch',label:'家长沟通触达'},{id:'f_sal_test',label:'体测邀约次数'},
 
-  {id:'f_promo',label:'今日推广次数'},{id:'f_promo_leads',label:'推广咨询数'}
+  {id:'f_promo',label:'今日推广次数'},{id:'f_promo_leads',label:'推广咨询数'},
+  {id:'f_refund',label:'今日退费/流失数'}
 
 ];
 
@@ -1638,6 +1641,7 @@ function collect(){
   rec[COLS.promoLeads]=nn('f_promo_leads');
 
   rec[COLS.promoNote]=val('f_promo_note');
+  rec[COLS.refund]=nn('f_refund');
 
 
 
@@ -1691,7 +1695,7 @@ function prefill(rec){
 
   set('f_sal_test',COLS.salTestDay);
 
-  set('f_promo',COLS.promo); set('f_promo_leads',COLS.promoLeads); set('f_promo_note',COLS.promoNote);
+  set('f_promo',COLS.promo); set('f_promo_leads',COLS.promoLeads); set('f_promo_note',COLS.promoNote); set('f_refund',COLS.refund);
 
 
 
