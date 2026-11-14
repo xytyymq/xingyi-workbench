@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-14 16:41",
+  "generated_at": "2026-11-14 16:49",
   "data_date": "2026-11-13",
   "overall": "yellow",
   "lights": [
@@ -34,6 +34,8 @@
     "revenue": {
       "month_total": 16473,
       "today_total": 0,
+      "refund": 0,
+      "net": 16473,
       "by_type": [
         {
           "name": "报名",
@@ -126,7 +128,7 @@
       "text": "疑似重复报名：本月「黄俊安妈妈毛毛球会员」等同日期·同金额出现多笔，请核实是否同一人（影响月报名人数统计）"
     }
   ],
-  "callback": "曹心语、盛呈栩、朱梓芊",
+  "callback": "曹心语、高筠皓、刘槿辰",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
