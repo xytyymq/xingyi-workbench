@@ -16,14 +16,14 @@
   {
     "date": "2026-10-19",
     "name": "穿线·BG65",
-    "amount": "50",
+    "amount": 50,
     "type": "穿线",
     "collector": "江教练"
   },
   {
     "date": "2026-10-17",
     "name": "穿线·自带线",
-    "amount": "50",
+    "amount": 50,
     "type": "穿线",
     "collector": "江教练"
   },
@@ -599,13 +599,6 @@
     "name": "方太2片场",
     "amount": "200",
     "type": "散客/场地",
-    "collector": "王双双"
-  },
-  {
-    "date": "2026-11-13",
-    "name": "黄俊安妈妈毛毛球会员",
-    "amount": "1000",
-    "type": "报名",
     "collector": "王双双"
   },
   {
