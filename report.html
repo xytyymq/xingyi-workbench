@@ -258,7 +258,9 @@ fetch("data/principal-report.json?ts="+Date.now()).then(r=>r.json()).then(d=>{
   setK("kTouch", touch.count!=null?touch.count+" 位":"–");
   const revOk = rev && rev.month_total!=null;
   document.getElementById("revenueBar").innerHTML = revOk
-    ? `💰 本月营收：<b style="color:var(--cyan)">¥${Math.round(rev.month_total||0)}</b>`
+    ? `💰 本月营收（毛）：<b style="color:var(--cyan)">¥${Math.round(rev.month_total||0)}</b>`
+      + (rev.net!=null? ` · 净营收 <b style="color:var(--green)">¥${Math.round(rev.net)}</b>`:'')
+      + (rev.refund? ` · 退费 <b style="color:#ff6b6b">-¥${Math.round(rev.refund)}</b>`:'')
       + (rev.today_total? ` · 今日 <b>¥${Math.round(rev.today_total)}</b>`:'')
       + (rev.by_type&&rev.by_type.length? ' · ' + rev.by_type.map(x=>`${x.name} ¥${Math.round(x.amount)}`).join(' · ') : '')
       + (rev.note||'')
