@@ -621,5 +621,40 @@
     "amount": "50",
     "type": "穿线",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-12",
+    "name": "柳哥65ti",
+    "amount": "55",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-12",
+    "name": "熊风bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-13",
+    "name": "散场",
+    "amount": "114",
+    "type": "散客/场地",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-13",
+    "name": "自带线+护线管",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-13",
+    "name": "黄俊安妈妈（毛毛球俱乐部）",
+    "amount": "1000",
+    "type": "报名",
+    "collector": "王双双"
   }
 ]
