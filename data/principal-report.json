@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-15 15:02（营收自动刷新）",
+  "generated_at": "2026-11-16 08:44",
   "data_date": "2026-11-14",
   "overall": "red",
   "lights": [
@@ -33,9 +33,7 @@
     },
     "revenue": {
       "month_total": 16673,
-      "today_total": 0,
-      "refund": 0,
-      "net": 16673,
+      "today_total": 200,
       "by_type": [
         {
           "name": "报名",
@@ -108,69 +106,6 @@
           }
         ]
       }
-    },
-    "ledger_audit": {
-      "total": 95,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=16673 = Σby_type=16673"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "8 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [
@@ -196,7 +131,7 @@
       "text": "开课节数打架：日报报 5 节，上课记录实际 10 个班次（34 条学员记录），需核实"
     }
   ],
-  "callback": "邓泽兮、吴泓睿、余念一",
+  "callback": "吴予楠、戴子涵、周语安",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -217,9 +152,9 @@
     "total_students": 83,
     "latest_date": "2026-11-01",
     "latest_student": "于菀然",
-    "active_students": 64,
-    "month_plan": 51,
-    "rate": "10%"
+    "active_students": 66,
+    "month_plan": 53,
+    "rate": "9%"
   },
   "stringing": {
     "month_count": 16,
@@ -351,7 +286,7 @@
         "trials": 0.0,
         "arrive": 0.0,
         "signups": 0.0,
-        "classes": 9.0,
+        "classes": 38.0,
         "promo": 0.0,
         "promo_leads": 0.0,
         "revenue": 7348,
@@ -364,7 +299,7 @@
         "delta_trials": -1.0,
         "delta_arrive": -1.0,
         "delta_signups": -2.0,
-        "delta_classes": -3.0,
+        "delta_classes": 26.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -1833
@@ -391,7 +326,7 @@
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
         "delta_signups": 0.0,
-        "delta_classes": -9.0,
+        "delta_classes": -38.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -7348
@@ -456,7 +391,7 @@
       "trials": 1.0,
       "arrive": 1.0,
       "signups": 2.0,
-      "classes": 25.0,
+      "classes": 54.0,
       "promo": 0.0,
       "promo_leads": 0.0,
       "revenue": 16674,
