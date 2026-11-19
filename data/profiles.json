@@ -4828,7 +4828,28 @@
     "gender": "",
     "cls": "",
     "createdAt": "2026-11-17",
-    "tests": [],
+    "tests": [
+      {
+        "date": "2026-11-19",
+        "m": {
+          "height": 144,
+          "sitReach": 8,
+          "singleStand": 56,
+          "wallSquat": 120,
+          "posture": "正常/正常/正常",
+          "run50": 9.03,
+          "standingJump": 132,
+          "verticalJump": 220,
+          "rope": 138,
+          "swing15": 9,
+          "footwork": 22.5,
+          "serve": 4,
+          "rally": 5,
+          "clear": 10
+        },
+        "note": ""
+      }
+    ],
     "lessons": []
   }
 ]
