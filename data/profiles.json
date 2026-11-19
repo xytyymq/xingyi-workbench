@@ -4036,6 +4036,26 @@
           "clear": 4
         },
         "note": ""
+      },
+      {
+        "date": "2026-11-19",
+        "m": {
+          "height": 145,
+          "sitReach": 7,
+          "singleStand": 30,
+          "wallSquat": 52,
+          "posture": "正常/正常/正常",
+          "run50": 9.73,
+          "standingJump": 170,
+          "verticalJump": 230,
+          "rope": 110,
+          "swing15": 10,
+          "footwork": 23,
+          "serve": 10,
+          "rally": 3,
+          "clear": 10
+        },
+        "note": ""
       }
     ],
     "lessons": []
