@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-20 15:01（营收自动刷新）",
+  "generated_at": "2026-11-21 08:39",
   "data_date": "2026-11-19",
   "overall": "yellow",
   "lights": [
@@ -25,17 +25,15 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 21400.0,
-      "month_count": 9,
+      "month_amount": 0,
+      "month_count": 0,
       "goal": 28800,
-      "goal_rate": "74%",
+      "goal_rate": "0%",
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
       "month_total": 27449,
-      "today_total": 0,
-      "refund": 0,
-      "net": 27449,
+      "today_total": 3450,
       "by_type": [
         {
           "name": "报名",
@@ -67,110 +65,13 @@
     },
     "week": {
       "this_week": {
-        "total": 10421,
-        "by_type": [
-          {
-            "name": "报名",
-            "amount": 5680
-          },
-          {
-            "name": "续费",
-            "amount": 3080
-          },
-          {
-            "name": "散客/场地",
-            "amount": 1501
-          },
-          {
-            "name": "穿线",
-            "amount": 160
-          }
-        ]
+        "total": 0,
+        "by_type": []
       },
       "last_week": {
-        "total": 7702,
-        "by_type": [
-          {
-            "name": "报名",
-            "amount": 3200
-          },
-          {
-            "name": "续费",
-            "amount": 1780
-          },
-          {
-            "name": "散客/场地",
-            "amount": 2128
-          },
-          {
-            "name": "穿线",
-            "amount": 594
-          }
-        ]
+        "total": 0,
+        "by_type": []
       }
-    },
-    "ledger_audit": {
-      "total": 107,
-      "checks": [
-        {
-          "name": "关键字段完整",
-          "ok": true,
-          "msg": "date/name/amount/type 齐全"
-        },
-        {
-          "name": "金额合法",
-          "ok": true,
-          "msg": "全部为正数"
-        },
-        {
-          "name": "类型合法",
-          "ok": true,
-          "msg": "均在 4 类内"
-        },
-        {
-          "name": "月汇总勾稽",
-          "ok": true,
-          "msg": "month_total=27449 = Σby_type=27449"
-        },
-        {
-          "name": "重复检测",
-          "ok": false,
-          "msg": "8 组疑似重复（同日期+同名+同金额）"
-        },
-        {
-          "name": "收款人",
-          "ok": false,
-          "level": "warn",
-          "msg": "4 笔历史缺收款人（不影响营收，影响教练业绩归属）"
-        }
-      ],
-      "level": "red",
-      "missing_collector": [
-        {
-          "date": "2026-10-16",
-          "name": "盛呈栩",
-          "type": "报名",
-          "amount": 3080
-        },
-        {
-          "date": "2026-10-11",
-          "name": "黄文皓",
-          "type": "订金",
-          "amount": 300
-        },
-        {
-          "date": "2026-10-13",
-          "name": "刘伟",
-          "type": "报名",
-          "amount": 980
-        },
-        {
-          "date": "2026-10-21",
-          "name": "10.1—10.21场地费总共",
-          "type": "散客/场地",
-          "amount": 3859
-        }
-      ]
     }
   },
   "coach": [
@@ -196,7 +97,7 @@
       "text": "日报 vs 上课记录 数字一致，无打架"
     }
   ],
-  "callback": "韩子蓉、吴泓睿、黄文皓",
+  "callback": "段智真、朱梦玥、戴子涵",
   "video": {
     "today": 0.0,
     "this_week": 0.0,
@@ -378,7 +279,7 @@
         "trials": 2.0,
         "arrive": 2.0,
         "signups": 0.0,
-        "classes": 3.0,
+        "classes": 10.0,
         "promo": 0.0,
         "promo_leads": 0.0,
         "revenue": 10421,
@@ -391,7 +292,7 @@
         "delta_trials": 0.0,
         "delta_arrive": 0.0,
         "delta_signups": 0.0,
-        "delta_classes": -10.0,
+        "delta_classes": -3.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": 2719
@@ -418,7 +319,7 @@
         "delta_trials": -2.0,
         "delta_arrive": -2.0,
         "delta_signups": 0.0,
-        "delta_classes": -3.0,
+        "delta_classes": -10.0,
         "delta_promo": 0.0,
         "delta_promo_leads": 0.0,
         "delta_revenue": -10421
@@ -456,7 +357,7 @@
       "trials": 5.0,
       "arrive": 5.0,
       "signups": 2.0,
-      "classes": 32.0,
+      "classes": 39.0,
       "promo": 0.0,
       "promo_leads": 0.0,
       "revenue": 27449,
