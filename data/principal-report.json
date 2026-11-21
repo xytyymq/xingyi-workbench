@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-21 08:44",
+  "generated_at": "2026-11-21 09:05",
   "data_date": "2026-11-21",
   "overall": "red",
   "lights": [
@@ -17,10 +17,10 @@
   "stale_leads": [],
   "finance": {
     "renew": {
-      "month_amount": 21400.0,
-      "month_count": 9,
+      "month_amount": 0,
+      "month_count": 0,
       "goal": 28800,
-      "goal_rate": "74%",
+      "goal_rate": "0%",
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
@@ -103,7 +103,7 @@
   "coach": [],
   "boss_todos": [],
   "cross_check": [],
-  "callback": "周乐洋、盛呈栩、黄文皓",
+  "callback": "卢梓睿、戴子涵、林显琛",
   "video": {
     "today": 0,
     "this_week": 0,
