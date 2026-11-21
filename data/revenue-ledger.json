@@ -747,5 +747,19 @@
     "amount": "200",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-20",
+    "name": "场地接龙",
+    "amount": "511.6",
+    "type": "散客/场地",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-11-20",
+    "name": "66n",
+    "amount": "60",
+    "type": "穿线",
+    "collector": "张玉玲"
   }
 ]
