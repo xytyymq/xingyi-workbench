@@ -775,5 +775,19 @@
     "amount": "70",
     "type": "穿线",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-22",
+    "name": "bg65",
+    "amount": "50",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-22",
+    "name": "场地费",
+    "amount": "48",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
