@@ -303,7 +303,7 @@
 // 各页面 _gt() 返回占位串 'proxy' 即可触发请求、被此处拦截。
 // ============================================================
 (function () {
-  var XY_PROXY = 'https://1463961668-d6ydjnfw5t.ap-guangzhou.tencentscf.com';
+  var XY_PROXY = 'https://xy-gh-proxy-free.app.workbuddy.host';
   var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
   var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
   if (window.XYGate && !window.XYGate.__proxied) {
@@ -320,7 +320,7 @@
         var method = (opts.method || 'GET').toUpperCase();
         if (method === 'GET') {
           // 读：透明转发，保留 GitHub 原始状态码（含 404）供前端分支判断
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY), {
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY) + '&sharecode=KWDX375UCR', {
             method: 'GET',
             headers: { 'Accept': 'application/vnd.github+json' }
           });
@@ -335,7 +335,7 @@
             sha: body.sha,
             branch: body.branch || 'main'
           });
-          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY), {
+          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY) + '&sharecode=KWDX375UCR', {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
             body: nb

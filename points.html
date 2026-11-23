@@ -82,7 +82,7 @@
 <script src="xy-auth.js"></script><script>
 // ===== 内联兜底：GitHub Contents 代理拦截（不依赖 xy-auth.js 版本新旧） =====
 (function () {
-  var XY_PROXY = 'https://1463961668-d6ydjnfw5t.ap-guangzhou.tencentscf.com';
+  var XY_PROXY = 'https://xy-gh-proxy-free.app.workbuddy.host';
   var PROXY_KEY = 'xy_p_06ce42d085eff1cbcc7cd90118a2ac47fbeb3ee6951b65f4';
   var GH_BASE = 'https://api.github.com/repos/xytyymq/xingyi-workbench/contents/';
   function setup() {
@@ -99,7 +99,7 @@
         var path = q >= 0 ? rest.slice(0, q) : rest;
         var method = (opts.method || 'GET').toUpperCase();
         if (method === 'GET') {
-          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY), {
+          return _fetch(XY_PROXY + '/github-read?path=' + encodeURIComponent(path) + '&key=' + encodeURIComponent(PROXY_KEY) + '&sharecode=KWDX375UCR', {
             method: 'GET',
             headers: { 'Accept': 'application/vnd.github+json' }
           });
@@ -107,7 +107,7 @@
         if (method === 'PUT') {
           var body = opts.body ? (typeof opts.body === 'string' ? JSON.parse(opts.body) : opts.body) : {};
           var nb = JSON.stringify({ path: path, message: body.message, content: body.content, sha: body.sha, branch: body.branch || 'main' });
-          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY), {
+          return _fetch(XY_PROXY + '/github-save?key=' + encodeURIComponent(PROXY_KEY) + '&sharecode=KWDX375UCR', {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain' },
             body: nb
