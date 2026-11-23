@@ -789,5 +789,19 @@
     "amount": "48",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-23",
+    "name": "65ti",
+    "amount": "55",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-23",
+    "name": "场地费",
+    "amount": "200",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
