@@ -348,6 +348,7 @@ def read_tice(active_students_month=None):
 # 大哥 2026-10-23 口径：订金单列（只算订金，不并入职收）；报名=新生整期报名；续费=老生续费。
 # 课程实收 / 教练招生业绩 = 报名 + 续费；订金作为「待转营收」单独跟踪。
 REVENUE_TYPES = ("报名", "续费", "订金", "散客/场地", "穿线")
+REFUND_TYPE = "退费"   # B 方案 2026-11-14：营收台账新增「退费」类型，作为减项算净营收
 
 # 报表基准日：所有「本月 / 当日」聚合统一跟随 data_date（而非系统日期），
 # 避免月初跨月错位——如 11-01 早间取数日仍为 10-31 时，财务不应跳去统计空白的 11 月。
@@ -441,6 +442,9 @@ def read_revenue():
             by_type[t] += amt
     today_total = sum(to_f(r.get("amount")) for r in rows if str(r.get("date") or "") == today_iso)
     month_total = sum(by_type.values())
+    refund = sum(to_f(r.get("amount")) for r in rows
+                 if r.get("type") == REFUND_TYPE and str(r.get("date") or "").startswith(mp))
+    net = round(month_total - refund)
     by_type_list = [{"name": t, "amount": round(v)} for t, v in by_type.items() if v > 0]
     derived = {
         "course": round(by_type["报名"] + by_type["续费"]),          # 课程实收（工资页用，报名+续费）
@@ -452,6 +456,8 @@ def read_revenue():
     return {
         "month_total": round(month_total),
         "today_total": round(today_total),
+        "refund": round(refund),
+        "net": net,
         "by_type": by_type_list,
         "derived": derived,
         "venue_goal": VENUE_GOAL_MONTH,
@@ -466,7 +472,7 @@ def read_ledger_audit(rows=None):
     level: green 全通过 / yellow 仅历史收款人缺失 / red 关键字段·金额·类型·汇总异常。"""
     if rows is None:
         rows = _read_ledger()
-    VALID = ("报名", "续费", "订金", "散客/场地", "穿线")
+    VALID = ("报名", "续费", "订金", "散客/场地", "穿线", REFUND_TYPE)
     mp = _asof().isoformat()[:7]
     checks = []
 
@@ -650,7 +656,8 @@ def build_month_weeks(principal, cls, data_date, ledger_week=None):
         leads = sum(to_n(r.get("今日新线索数")) for r in rows)
         trials = sum(to_n(r.get("试课预约数")) for r in rows)
         arrive = sum(to_n(r.get("试课到场数")) for r in rows)
-        signups = sum(to_n(r.get("今日报名数")) for r in rows)
+        # 周报名数同步改读营收台账「报名」笔数（与月报名 KPI 同口径，避免周报与 KPI 打架）
+        signups = sum(1 for (d_, amt, tp) in ledger_week if lo.isoformat() <= d_ <= hi.isoformat() and tp == "报名")
         promo = sum(to_n(r.get("今日社交媒体推广次数")) for r in rows)
         promo_leads = sum(to_n(r.get("社交媒体咨询数")) for r in rows)
         # 业绩：营收台账按自然周聚合（只算落在本周区间的笔数）
@@ -844,9 +851,19 @@ def main():
     lights = []          # [{level, text}]
     cross_check = []
 
-    # ---- 0. 月报名进度（独立于日报是否缺卡） ----
+    # ---- 0. 月报名进度（B 方案 2026-11-14：直接读统一营收台账「报名」笔数，不再依赖日报"今日报名数"）
+    # 大哥口径：报名/收入信息统一由营收台账承载，日报不再填这些；看板漏斗须以台账为准，避免失真。
     month_prefix = today_iso[:7]
-    month_signups = sum(to_n(r.get("今日报名数")) for r in principal if (r["_d"] or "").startswith(month_prefix))
+    _ledger_all = _read_ledger()
+    month_signup_rows = [r for r in _ledger_all
+                         if (r.get("date") or "").startswith(month_prefix) and r.get("type") == "报名"]
+    month_signups = len(month_signup_rows)
+    # 疑似同一人重复登记：同日期+同金额+name 前4字相同
+    from collections import defaultdict
+    _sg = defaultdict(list)
+    for r in month_signup_rows:
+        _sg[(r.get("date"), r.get("amount"), (r.get("name") or "").strip()[:4])].append(r)
+    dup_signup_groups = [v for v in _sg.values() if len(v) > 1]
     days_in_month = (datetime.date(dt.year + (dt.month == 12), dt.month % 12 + 1, 1) - datetime.timedelta(days=1)).day
     expected = MONTH_TARGET * dt.day / days_in_month
     behind = month_signups < expected - 0.5
@@ -870,7 +887,7 @@ def main():
                 lights.append({"level": "green", "text": f"试课到场率 {rate:.0%}（≥80% 达标）"})
         # 3. 月报名进度
         lights.append({"level": "yellow" if behind else "green",
-                       "text": f"本月报名 {month_signups:.0f}/{MONTH_TARGET} 人，进度{'落后于' if behind else '达到'}时间线（应到 {expected:.1f}）"})
+                       "text": f"本月报名（台账成交单数）{month_signups:.0f}/{MONTH_TARGET} 笔，进度{'落后于' if behind else '达到'}时间线（应到 {expected:.1f}）"})
         # 3.5 社交媒体推广（大哥 2026-10-26：每天至少 1 次，0 次只黄灯不硬罚）
         _pp = promo_stats["today_promo"]
         if promo_stats["today_filled"]:
@@ -892,6 +909,11 @@ def main():
             cross_check.append({"level": "red", "text": f"开课节数打架：日报报 {reported_classes:.0f} 节，上课记录实际 {actual_classes} 个班次（{actual_rows} 条学员记录），需核实"})
         if not cross_check:
             cross_check.append({"level": "green", "text": "日报 vs 上课记录 数字一致，无打架"})
+    # 疑似重复报名登记（B 方案：报名以台账为准，需排重提醒）
+    if dup_signup_groups:
+        _dn = "、".join(sorted({v[0].get("name") for v in dup_signup_groups}))
+        cross_check.append({"level": "yellow",
+                            "text": f"疑似重复报名：本月「{_dn}」等同日期·同金额出现多笔，请核实是否同一人（影响月报名人数统计）"})
 
     # ---- 5. 线索 48h 未跟进 ----
     stale = []
