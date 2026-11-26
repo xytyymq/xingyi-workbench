@@ -865,7 +865,9 @@ def main():
     for r in _ledger_all:
         if (r.get("date") or "").startswith(month_prefix):
             _sg[(r.get("date"), r.get("amount"), (r.get("name") or "").strip()[:4])].append(r)
-    dup_signup_groups = [v for v in _sg.values() if len(v) > 1]
+    # 只在同名同日同额组内「报名」记录≥2条时才算重复报名（避免场地费多笔被误报）
+    dup_signup_groups = [v for v in _sg.values()
+                         if sum(1 for x in v if x.get("type") == "报名") >= 2]
     # 报名去重：同名同日同额只算1笔；若该组里存在"散客/场地"记录，判定为场地费，不计报名
     _seen_sign = set()
     _uniq_sign = []
