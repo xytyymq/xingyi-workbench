@@ -857,13 +857,29 @@ def main():
     _ledger_all = _read_ledger()
     month_signup_rows = [r for r in _ledger_all
                          if (r.get("date") or "").startswith(month_prefix) and r.get("type") == "报名"]
-    month_signups = len(month_signup_rows)
-    # 疑似同一人重复登记：同日期+同金额+name 前4字相同
+    # 排重容错（2026-11-26）：校长浏览器「待同步补传」队列会把已删的重复报名30秒内补回云端，
+    # 服务端删除无效，故在统计端按 (date, name前4字, amount) 折叠成交单，避免人数/金额虚高。
+    # 大哥已拍板：黄俊安妈妈同日两笔¥1000算1笔；方太2片场¥200是场地费不算报名。
     from collections import defaultdict
     _sg = defaultdict(list)
-    for r in month_signup_rows:
-        _sg[(r.get("date"), r.get("amount"), (r.get("name") or "").strip()[:4])].append(r)
+    for r in _ledger_all:
+        if (r.get("date") or "").startswith(month_prefix):
+            _sg[(r.get("date"), r.get("amount"), (r.get("name") or "").strip()[:4])].append(r)
     dup_signup_groups = [v for v in _sg.values() if len(v) > 1]
+    # 报名去重：同名同日同额只算1笔；若该组里存在"散客/场地"记录，判定为场地费，不计报名
+    _seen_sign = set()
+    _uniq_sign = []
+    for r in month_signup_rows:
+        _k = (r.get("date"), r.get("amount"), (r.get("name") or "").strip()[:4])
+        if _k in _seen_sign:
+            continue
+        _seen_sign.add(_k)
+        # 同名同日同额已在台账别处记为"散客/场地" → 这条报名是误分类，剔除
+        _grp = _sg.get(_k, [])
+        if any(x.get("type") == "散客/场地" for x in _grp):
+            continue
+        _uniq_sign.append(r)
+    month_signups = len(_uniq_sign)
     days_in_month = (datetime.date(dt.year + (dt.month == 12), dt.month % 12 + 1, 1) - datetime.timedelta(days=1)).day
     expected = MONTH_TARGET * dt.day / days_in_month
     behind = month_signups < expected - 0.5
