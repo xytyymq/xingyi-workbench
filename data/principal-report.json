@@ -32,10 +32,10 @@
       "note": "口径含报名（续费+报名=课程实收）；达成率分母为续费目标 ¥28800。"
     },
     "revenue": {
-      "month_total": 34980,
-      "today_total": 265,
+      "month_total": 35100,
+      "today_total": 385,
       "refund": 0,
-      "net": 34980,
+      "net": 35100,
       "by_type": [
         {
           "name": "报名",
@@ -47,7 +47,7 @@
         },
         {
           "name": "散客/场地",
-          "amount": 7436
+          "amount": 7556
         },
         {
           "name": "穿线",
@@ -57,7 +57,7 @@
       "derived": {
         "course": 25960,
         "coach_enroll": 25960,
-        "venue": 7436,
+        "venue": 7556,
         "string": 1584
       },
       "venue_goal": 24000,
@@ -66,7 +66,7 @@
     },
     "week": {
       "this_week": {
-        "total": 6246,
+        "total": 6366,
         "by_type": [
           {
             "name": "报名",
@@ -74,7 +74,7 @@
           },
           {
             "name": "散客/场地",
-            "amount": 1331
+            "amount": 1451
           },
           {
             "name": "穿线",
