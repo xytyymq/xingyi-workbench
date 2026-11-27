@@ -873,5 +873,19 @@
     "amount": "55",
     "type": "散客/场地",
     "collector": "王双双"
+  },
+  {
+    "date": "2026-11-27",
+    "name": "场地费一共",
+    "amount": "205",
+    "type": "散客/场地",
+    "collector": "张玉玲"
+  },
+  {
+    "date": "2026-11-27",
+    "name": "bg80",
+    "amount": "60",
+    "type": "穿线",
+    "collector": "张玉玲"
   }
 ]
