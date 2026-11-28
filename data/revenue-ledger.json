@@ -887,5 +887,26 @@
     "amount": "60",
     "type": "穿线",
     "collector": "张玉玲"
+  },
+  {
+    "date": "2026-11-28",
+    "name": "穿线（自带线）",
+    "amount": "40",
+    "type": "穿线",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-28",
+    "name": "洪振新",
+    "amount": "5680",
+    "type": "续费",
+    "collector": "王双双"
+  },
+  {
+    "date": "2026-11-28",
+    "name": "场地费",
+    "amount": "101",
+    "type": "散客/场地",
+    "collector": "王双双"
   }
 ]
